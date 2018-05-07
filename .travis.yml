@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+  - "8"
+before_install:
+  - echo 'installing dependencies'
+  - sudo apt-get install libcairo2-dev libjpeg-dev libpango1.0-dev libgif-dev build-essential g++
+install:
+  - echo 'installing npm packages'
+  - npm install
+script:
+  # while the dev server is starting we do the rest of the work
+  - npm run build
+  - npm run lint
+  - npm run test
+  - npm run e2e
