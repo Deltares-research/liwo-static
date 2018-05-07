@@ -1,6 +1,9 @@
 # liwo-static
 Static frontend for LIWO (https://www.basisinformatie-overstromingen.nl/liwo/)
 
+# Info 
+[![Build Status](https://travis-ci.org/Deltares/liwo-static.svg?branch=master)](https://travis-ci.org/Deltares/liwo-static)
+
 ## Build Setup
 
 ``` bash
