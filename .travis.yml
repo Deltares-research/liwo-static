@@ -23,9 +23,10 @@ install:
 script:
   # while the dev server is starting we do the rest of the work
   - npm run build
-  - npm run lint
-  - npm run test
-  - npm run e2e
+  # run the following with basurl root
+  - BASE_URL=/ npm run lint
+  - BASE_URL=/ npm run test
+  - BASE_URL=/ npm run e2e
 deploy:
   provider: pages
   skip-cleanup: true
