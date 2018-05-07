@@ -7,27 +7,47 @@ import Contact from './views/Contact.vue'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
       name: 'home',
-      component: Home
+      component: Home,
+      meta: {
+        title: 'Homepage'
+      }
     },
     {
       path: '/maps',
       name: 'maps',
-      component: Maps
+      component: Maps,
+      meta: {
+        title: 'Maps overview'
+      }
     },
     {
       path: '/about',
       name: 'about',
-      component: About
+      component: About,
+      meta: {
+        title: 'About page'
+      }
     },
     {
       path: '/contact',
       name: 'contact',
-      component: Contact
+      component: Contact,
+      meta: {
+        title: 'Contact info'
+      }
     }
   ]
 })
+
+// change title for blind people
+router.beforeEach((to, from, next) => {
+  document.title = to.meta.title
+  next()
+})
+
+export default router
