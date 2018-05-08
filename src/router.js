@@ -14,7 +14,7 @@ const router = new Router({
       name: 'home',
       component: Home,
       meta: {
-        title: 'Homepage'
+        title: 'Home pagina'
       }
     },
     {
@@ -22,7 +22,7 @@ const router = new Router({
       name: 'maps',
       component: Maps,
       meta: {
-        title: 'Maps overview'
+        title: 'Kaarten overzicht'
       }
     },
     {
@@ -30,7 +30,7 @@ const router = new Router({
       name: 'about',
       component: About,
       meta: {
-        title: 'About page'
+        title: 'Over LIWO'
       }
     },
     {
@@ -38,7 +38,7 @@ const router = new Router({
       name: 'contact',
       component: Contact,
       meta: {
-        title: 'Contact info'
+        title: 'Contact informatie'
       }
     }
   ]
