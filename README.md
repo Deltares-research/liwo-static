@@ -15,15 +15,29 @@ npm install
 # serve with hot reload at localhost:8080
 npm run serve
 
-# build for production with minification
-npm run build
-
 # run unit tests
 npm run test
 
 # run e2e tests
 npm run e2e
 
+# security audit
+npm audit
+
+# outdated check
+npm outdated
+
+# build using a different url
+BASE_URL=/liwo-static npm run build
+
+# deploy to github (note that travis does this automatically)
+gh-pages -d dist
+
+# build for production with minification
+npm run build
+
+# deploy to surge (for comparisons)
+surge dist liwo-test.surge.sh
 ```
 ## API
 
