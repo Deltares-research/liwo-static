@@ -1,5 +1,5 @@
 <template>
-  <section class="layer-set-list">
+  <section class="layerset-list">
     <h3>{{title}}</h3>
     <ul>
       <li v-for="item in items" :key="item.id">

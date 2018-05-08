@@ -4,7 +4,7 @@
       <p>Dit informatiesysteem bevat kaartlagen voor professionals van veiligheidsregio's, waterschappen en Rijkwaterstaat, die nodig zijn voor de voorbereiding op watercrises en overstromingen in Nederland. Het gaat hierbij om crisisbeheersing maar het is ook bruikbaar voor ruimtelijke adaptatie en versterking van zelfredzaamheid.</p>
     </header>
     <div class="maps__sections">
-      <layer-set-list
+      <layerset-list
         v-for="layerset in layersets"
         :key="layerset.id"
         :title="layerset.name"
@@ -16,7 +16,7 @@
 
 <script>
 // @ is an alias to /src
-import LayerSetList from '@/components/LayerSetList'
+import LayersetList from '@/components/LayersetList'
 import loadLayersets from '@/lib/load-layersets'
 
 export default {
@@ -27,7 +27,7 @@ export default {
   beforeCreate: async function () {
     this.layersets = await loadLayersets()
   },
-  components: { LayerSetList }
+  components: { LayersetList }
 }
 </script>
 
