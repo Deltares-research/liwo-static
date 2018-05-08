@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
-import Maps from './views/Maps.vue'
-import About from './views/About.vue'
-import Contact from './views/Contact.vue'
+import Home from './views/Home'
+import Maps from './views/Maps'
+import About from './views/About'
+import Contact from './views/Contact'
 
 Vue.use(Router)
 

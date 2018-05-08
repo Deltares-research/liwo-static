@@ -17,6 +17,7 @@
 <script>
 // @ is an alias to /src
 import LayerSetList from '@/components/LayerSetList'
+import loadLayersets from '@/lib/load-layersets'
 
 export default {
   name: 'maps',
@@ -24,19 +25,7 @@ export default {
     return { layersets: [] }
   },
   beforeCreate: async function () {
-    const body = JSON.stringify({username: '', password: '', mode: ''})
-    const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
-    const layersets = await fetch('https://basisinformatie-overstromingen.nl/liwo.ws/Authentication.asmx/Login', {
-      method: 'POST',
-      mode: 'cors',
-      headers,
-      body
-    }).then(res => res.json())
-      .then(data => JSON.parse(data.d))
-      .then(data => data.layersets)
-      .catch(() => ([]))
-
-    this.layersets = layersets
+    this.layersets = await loadLayersets()
   },
   components: { LayerSetList }
 }

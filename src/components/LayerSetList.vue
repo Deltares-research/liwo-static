@@ -18,8 +18,8 @@ export default {
     },
     items: {
       type: Array,
-      validator (value) {
-        return value.every(item => (item.name !== undefined && item.id !== undefined))
+      validator (items) {
+        return items.every(item => (item.name !== undefined && item.id !== undefined))
       }
     }
   }
