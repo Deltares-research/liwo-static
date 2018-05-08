@@ -2,12 +2,8 @@
   <div class="site-outer-wrapper">
     <div class="site-container" id="app">
       <app-header />
-      <div class="site-main">
-        <div id="content" role="main">
-          <!-- main content goes here, based on router view -->
-          <router-view/>
-        </div>
-      </div>
+      <!-- main content goes here, based on router view -->
+      <router-view/>
 
       <footer class="site-footer noindex">
         <img src="https://staticresources.rijkswaterstaat.nl/assets/img/footer-logo.png?v=2.19.2" width="500" height="24" alt="Rijkswaterstaat Ministerie van Infrastructuur en Waterstaat. Water. Wegen. Werken." class="accessibility">
