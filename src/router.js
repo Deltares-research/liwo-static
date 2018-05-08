@@ -26,6 +26,14 @@ const router = new Router({
       }
     },
     {
+      path: '/viewer/:id',
+      name: 'viewer',
+      component: Maps,
+      meta: {
+        title: 'Layered map viewer'
+      }
+    },
+    {
       path: '/about',
       name: 'about',
       component: About,
