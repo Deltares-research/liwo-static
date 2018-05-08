@@ -6,6 +6,8 @@ Static frontend for LIWO (https://www.basisinformatie-overstromingen.nl/liwo/)
 
 ## Build Setup
 
+See the [docs](https://github.com/vuejs/vue-cli/blob/dev/docs/README.md) of the build environment for further details.
+
 ``` bash
 # install dependencies
 npm install
