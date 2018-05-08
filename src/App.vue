@@ -32,11 +32,9 @@
         </div>
       </div>
 
-      <div class="site-main">
-        <div id="content" role="main">
-          <!-- main content goes here, based on router view -->
-          <router-view/>
-        </div>
+      <div id="content" role="main">
+        <!-- main content goes here, based on router view -->
+        <router-view/>
       </div>
 
       <footer class="site-footer noindex">
