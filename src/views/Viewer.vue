@@ -8,8 +8,6 @@
 <script>
 import LiwoMap from '../components/Map.vue'
 
-const url = 'https://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png'
-
 export default {
   components: {
     LiwoMap

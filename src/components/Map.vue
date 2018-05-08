@@ -29,7 +29,6 @@ import 'proj4leaflet'
 
 import mapConfig from '../map.config'
 
-
 export default {
   components: { LMap, LTileLayer },
   data: function () {
