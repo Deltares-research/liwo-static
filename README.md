@@ -1,7 +1,7 @@
 # liwo-static
 Static frontend for LIWO (https://www.basisinformatie-overstromingen.nl/liwo/)
 
-# Info 
+# Info
 [![Build Status](https://travis-ci.org/Deltares/liwo-static.svg?branch=master)](https://travis-ci.org/Deltares/liwo-static)
 
 ## Build Setup
@@ -23,7 +23,9 @@ npm run test
 npm run e2e
 
 ```
+## API
 
+The api that is used to get map information can be found at [swagger](https://app.swaggerhub.com/apis/openearth/basisinformatie-overstromingen.nl).
 
 ## Deployment
 
