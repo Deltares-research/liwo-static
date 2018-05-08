@@ -1,9 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home'
-import Maps from './views/Maps'
 import About from './views/About'
 import Contact from './views/Contact'
+import Home from './views/Home'
+import Maps from './views/Maps'
+import Viewer from './views/Viewer.vue'
 
 Vue.use(Router)
 
@@ -28,7 +29,7 @@ const router = new Router({
     {
       path: '/viewer/:id',
       name: 'viewer',
-      component: Maps,
+      component: Viewer,
       meta: {
         title: 'Layered map viewer'
       }
