@@ -34,4 +34,11 @@ export default {
 @import './styles/rws-embedded.css';
 @import './styles/liwo.css';
 
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
 </style>
