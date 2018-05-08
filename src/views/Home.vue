@@ -136,6 +136,9 @@ export default {
 }
 </script>
 <style>
+.site-main, .site-secondary {
+   max-width: none;
+}
 .landing-cover {
     background-image: url("../img/Rhenen 3 hoogwater 1600-400.jpg");
     /* we're in the content now, move back up a bit */
