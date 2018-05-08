@@ -1,0 +1,12 @@
+.site-nav-title {
+  background: #fdf6bb none repeat scroll 0 0;
+  font-size: 2.2em;
+  line-height: 44px;
+  max-height: 88px;
+  position: relative;
+}
+
+#nav {
+  /* shift a bit back to line out with content */
+  margin-left: -1em;
+}
