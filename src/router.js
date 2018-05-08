@@ -4,6 +4,7 @@ import Home from './views/Home.vue'
 import Maps from './views/Maps.vue'
 import About from './views/About.vue'
 import Contact from './views/Contact.vue'
+import Viewer from './views/Viewer.vue'
 
 Vue.use(Router)
 
@@ -23,6 +24,14 @@ const router = new Router({
       component: Maps,
       meta: {
         title: 'Maps overview'
+      }
+    },
+    {
+      path: '/viewer/:id',
+      name: 'viewer',
+      component: Viewer,
+      meta: {
+        title: 'Layerd map viewer'
       }
     },
     {
