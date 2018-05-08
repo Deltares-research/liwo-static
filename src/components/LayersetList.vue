@@ -1,6 +1,6 @@
 <template>
   <section class="layerset-list">
-    <h3>{{title}}</h3>
+    <h3>{{ title }}</h3>
     <ul>
       <li v-for="item in items" :key="item.id">
         <router-link :to="{ name: 'viewer', params: {id: item.id} }">{{ item.name }}</router-link>
