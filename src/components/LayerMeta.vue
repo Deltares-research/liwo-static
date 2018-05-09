@@ -42,6 +42,7 @@ export default {
   height: 100%;
   background-color: var(--white);
   border: 0;
+  margin:0;
 }
 .layer-meta__table tr:nth-child(even) {
   background-color: var(--light-gray);

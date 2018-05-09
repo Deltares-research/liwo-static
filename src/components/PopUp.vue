@@ -37,10 +37,12 @@ export default {
   width: 100vw;
   height: 100vh;
   z-index:10000;
+  display: flex;
+  flex-direction: column;
 }
 .pop-up__content {
-  max-height: 100%;
   overflow-y: auto;
+  flex: 0 1 100%;
 }
 @media screen and (min-width: 640px) {
   .pop-up {
@@ -48,9 +50,9 @@ export default {
     left: calc(320px + 1rem);
     min-width: 320px;
     width: calc(50vw - 1rem);
+    height: 80vh;
   }
   .pop-up__content {
-  max-height: 80vh;
   overflow-y: auto;
 }
 }
