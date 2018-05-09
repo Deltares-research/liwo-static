@@ -20,8 +20,8 @@ export default {
   props: {
     items: {
       type: Array,
-      validator (value) {
-        return value.every(item => (item.name !== undefined && item.to !== undefined))
+      validator (items) {
+        return items.every(item => (item.name !== undefined && item.to !== undefined))
       }
     }
   }
