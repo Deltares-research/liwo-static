@@ -14,10 +14,10 @@ const center = [52, 5.3]
 const crsType = 'EPSG:28992'
 
 // TODO: Add comment explaining variable
-const maxZoom = 3
+const maxZoom = 12
 
 // TODO: Add comment explaining variable
-const minZoom = 3
+const minZoom = 2
 
 // TODO: Add comment explaining variable
 const origin = [-285401.92, 22598.08]
@@ -39,7 +39,16 @@ const resolutions = [
 const tms = true
 
 // TODO: Add comment explaining variable
-const url = 'https://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png'
+const tileLayers = [
+  {
+    name: 'Achtergrondkaart',
+    url: 'http://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png'
+  },
+  {
+    name: 'Luchtkaart',
+    url: 'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/tms/1.0.0/2016_ortho25/EPSG:28992/{z}/{x}/{y}.png'
+  }
+]
 
 // TODO: Add comment explaining variable
 const zoom = 3
@@ -54,7 +63,7 @@ export default {
   origin,
   proj,
   resolutions,
+  tileLayers,
   tms,
-  url,
   zoom
 }

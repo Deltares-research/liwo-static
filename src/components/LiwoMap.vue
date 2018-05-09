@@ -1,12 +1,12 @@
 <template>
   <l-map
     id="liwo-map"
+    ref="map"
     :zoom="zoom"
     :maxZoom="maxZoom"
     :minZoom="minZoom"
     :center="center"
     :crs="crs"
-    ref="map"
     :continuousWorld="continuousWorld"
   >
     <l-tile-layer
@@ -16,6 +16,10 @@
       :maxZoom="maxZoom"
       :continuousWorld="continuousWorld"
       :attribution="attribution"
+    />
+    <base-layer-control
+      :tileLayers="tileLayers"
+      @baselayer="updateBaseLayer"
     />
   </l-map>
 </template>
@@ -27,21 +31,24 @@ import L from 'leaflet'
 import { LMap, LTileLayer } from 'vue2-leaflet'
 import 'proj4leaflet'
 
+import BaseLayerControl from './BaseLayerControl'
+
 import mapConfig from '../map.config'
 
 export default {
-  components: { LMap, LTileLayer },
+  components: { BaseLayerControl, LMap, LTileLayer },
   data () {
     return {
       continuousWorld: true,
       crs: this.createCrs(),
-      zoom: 3,
-      maxZoom: 13,
-      minZoom: 2,
+      zoom: mapConfig.zoom,
+      maxZoom: mapConfig.maxZoom,
+      minZoom: mapConfig.minZoom,
       center: L.latLng(...mapConfig.center),
-      tms: true,
+      tms: mapConfig.tms,
       attribution: mapConfig.attribution,
-      url: mapConfig.url
+      tileLayers: mapConfig.tileLayers,
+      url: mapConfig.tileLayers[0].url
     }
   },
   methods: {
@@ -51,6 +58,10 @@ export default {
         bounds: L.bounds(mapConfig.bounds),
         origin: mapConfig.origin
       })
+    },
+    updateBaseLayer (url) {
+      console.log('UUUUUrl', url)
+      this.url = url
     }
   }
 }
@@ -63,5 +74,6 @@ export default {
   height: 400px;
   display: block;
   margin: 0 auto;
+  margin-top: 1rem;
 }
 </style>

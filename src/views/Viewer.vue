@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import LiwoMap from '../components/LiwoMap.vue'
+import LiwoMap from '../components/LiwoMap'
 
 export default {
   components: {
