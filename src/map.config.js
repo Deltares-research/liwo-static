@@ -41,11 +41,11 @@ const tms = true
 // TODO: Add comment explaining variable
 const tileLayers = [
   {
-    name: 'Achtergrondkaart',
+    title: 'Achtergrondkaart',
     url: 'http://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png'
   },
   {
-    name: 'Luchtkaart',
+    title: 'Luchtkaart',
     url: 'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/tms/1.0.0/2016_ortho25/EPSG:28992/{z}/{x}/{y}.png'
   }
 ]

@@ -10,7 +10,7 @@
         :key="layer.url"
         :value="layer.url"
       >
-        {{ layer.name }}
+        {{ layer.title }}
       </option>
     </select>
   </form>
@@ -22,7 +22,6 @@ export default {
   methods: {
     selectBaseLayer (event) {
       this.$emit('baselayer', event.target.value)
-      console.log('event', event.target.value)
     }
   }
 }

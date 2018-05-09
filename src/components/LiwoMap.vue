@@ -60,7 +60,6 @@ export default {
       })
     },
     updateBaseLayer (url) {
-      console.log('UUUUUrl', url)
       this.url = url
     }
   }
