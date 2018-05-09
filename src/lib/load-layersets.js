@@ -1,7 +1,7 @@
 const apiBase = 'https://basisinformatie-overstromingen.nl/liwo.ws'
 const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
 
-export async function loadLayersetById (id) {
+export function loadLayersetById (id) {
   const body = JSON.stringify({ id })
   return fetch(`${apiBase}/Maps.asmx/GetLayerSet`, {
     method: 'POST',
@@ -29,7 +29,7 @@ export async function loadLayersetById (id) {
     .catch(() => ([]))
 }
 
-export async function loadLayersets () {
+export function loadLayersets () {
   const body = JSON.stringify({ username: '', password: '', mode: '' })
   return fetch(`${apiBase}/Authentication.asmx/Login`, {
     method: 'POST',
