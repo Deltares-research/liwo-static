@@ -4,15 +4,17 @@
       <h1 class="pop-up__title">
         {{title}}
       </h1>
-      <button @click="close" class="pop-up__close">
+      <button @click="$emit('close')" class="pop-up__close">
         <span class="sr-only">Sluiten</span>
         Sluiten
       </button>
     </header>
-    <slot>
-      Placeholder content
-    </slot>
-  </div>
+    <section class="pop-up__content">
+      <slot>
+        Placeholder content
+      </slot>
+    </section>
+   </div>
 </template>
 
 <script>
@@ -20,11 +22,6 @@ export default {
   props: {
     title: {
       Type: String
-    }
-  },
-  methods: {
-    close () {
-      console.log('close')
     }
   }
 }
@@ -34,8 +31,28 @@ export default {
 @import './variables.css';
 
 .pop-up {
-  position: absolute;
-  width: 320px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index:10000;
+}
+.pop-up__content {
+  max-height: 100%;
+  overflow-y: auto;
+}
+@media screen and (min-width: 640px) {
+  .pop-up {
+    top: 5vh;
+    left: calc(320px + 1rem);
+    min-width: 320px;
+    width: calc(50vw - 1rem);
+  }
+  .pop-up__content {
+  max-height: 80vh;
+  overflow-y: auto;
+}
 }
 .pop-up__header {
   line-height: 44px;
