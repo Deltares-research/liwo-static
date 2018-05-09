@@ -4,5 +4,8 @@
   --light-yellow: #fdf6bb;
   --yellow: #f9e11e;
   --black: #222;
-  --gray: #d5d5d3;
+  --light-gray: #d5d5d3;
+  --medium-gray: #999;
+
+  --shadow: 0 1px 3px rgba(0,0,0,0.3)
 }

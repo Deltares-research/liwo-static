@@ -29,7 +29,7 @@ export default {
 </script>
 
 <style>
-@import './colors.css';
+@import './variables.css';
 
 .segmented-links {
   margin: 0 auto;
@@ -49,10 +49,6 @@ export default {
   border-left: solid 1px var(--grey);
   display: inline-block;
   margin: 0;
-}
-
-.segmented-links li::before {
-  content: none
 }
 
 .segmented-links li:first-child {
