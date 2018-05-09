@@ -24,7 +24,7 @@
 </template>
 
 <style>
-  @import './colors.css';
+  @import './variables.css';
 
   .app-header {
     min-width: 320px;
@@ -58,9 +58,6 @@
   .app-header__nav li {
     margin: 0;
     list-style: none;
-  }
-  .app-header__nav li:before {
-    content: none;
   }
   .app-header__nav a {
     color: inherit;
