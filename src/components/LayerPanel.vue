@@ -19,6 +19,8 @@
           :active="(index === activeIndex)"
           :id="item.id"
           :title="item.title"
+          :subtitle="item.variants[0].title"
+          :metadata="item.variants[0].metadata"
         />
       </li>
     </ul>
