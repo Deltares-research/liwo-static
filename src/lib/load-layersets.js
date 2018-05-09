@@ -11,6 +11,21 @@ export async function loadLayersetById (id) {
   }).then(res => res.json())
     .then(data => JSON.parse(data.d))
     .then(data => data.layerset)
+    // Normalize layerset object
+    .then(layerset => ({
+      ...layerset,
+      title: layerset.name || layerset.title,
+      layers: layerset.layers.map(layer => {
+        const id = layer.layer_id || layer.id
+        const nameSplit = layer.name.split(' - ')
+        const title = (Array.isArray(nameSplit)) ? nameSplit[nameSplit.length - 1] : layer.name
+        return {
+          ...layer,
+          id,
+          title
+        }
+      })
+    }))
     .catch(() => ([]))
 }
 
