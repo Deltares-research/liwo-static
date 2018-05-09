@@ -17,7 +17,7 @@
 <script>
 // @ is an alias to /src
 import LayersetList from '@/components/LayersetList'
-import loadLayersets from '@/lib/load-layersets'
+import { loadLayersets } from '@/lib/load-layersets'
 
 export default {
   name: 'maps',
@@ -25,7 +25,8 @@ export default {
     return { layersets: [] }
   },
   beforeCreate: async function () {
-    this.layersets = await loadLayersets()
+    const layersets = await loadLayersets()
+    this.layersets = layersets
   },
   components: { LayersetList }
 }
