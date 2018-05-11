@@ -42,7 +42,7 @@ const tms = true
 const tileLayers = [
   {
     title: 'Achtergrondkaart',
-    url: 'http://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png'
+    url: 'https://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png'
   },
   {
     title: 'Luchtkaart',
