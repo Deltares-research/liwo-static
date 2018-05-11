@@ -1,3 +1,7 @@
+// polyfills for older browsers
+import 'whatwg-fetch'
+import 'promise-polyfill/src/polyfill'
+
 const apiBase = 'https://basisinformatie-overstromingen.nl/liwo.ws'
 const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
 
@@ -5,7 +9,6 @@ export function loadLayersetById (id) {
   const body = JSON.stringify({ id })
   return fetch(`${apiBase}/Maps.asmx/GetLayerSet`, {
     method: 'POST',
-    mode: 'cors',
     headers,
     body
   }).then(res => res.json())
@@ -33,7 +36,6 @@ export function loadLayersets () {
   const body = JSON.stringify({ username: '', password: '', mode: '' })
   return fetch(`${apiBase}/Authentication.asmx/Login`, {
     method: 'POST',
-    mode: 'cors',
     headers,
     body
   }).then(res => res.json())
