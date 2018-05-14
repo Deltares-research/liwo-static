@@ -22,7 +22,7 @@
       informatie over het gebruik van deze website verwijzen we u naar
       de gebruikershandleiding. De handleiding vindt u op
       de <a href="https://www.helpdeskwater.nl/onderwerpen/applicaties-modellen/applicaties-per/watermanagement/watermanagement/liwo/"
-      target="_blank">LIWO pagina van de helpdesk water</a>.
+      target="_blank" rel="nofollow noopener">LIWO pagina van de helpdesk water</a>.
         </p>
         <h2 data-class="section-head">Techniek</h2>
         <p>
