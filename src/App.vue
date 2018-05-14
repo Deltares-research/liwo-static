@@ -24,9 +24,6 @@ import AppHeader from '../src/components/AppHeader.vue'
 export default {
   components: {
     AppHeader
-  },
-  mounted () {
-    console.log('STORE', this.$store)
   }
 }
 </script>

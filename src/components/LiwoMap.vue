@@ -10,18 +10,18 @@
     :continuousWorld="continuousWorld"
   >
     <l-tile-layer
-      :options="{ tms }"
-      :url="url"
+      :options="{ tms: baseLayer.tms }"
+      :url="baseLayer.url"
       :minZoom="minZoom"
       :maxZoom="maxZoom"
       :continuousWorld="continuousWorld"
       :attribution="attribution"
     />
     <base-layer-control
-      :tileLayers="tileLayers"
+      :tileLayers="baseLayer.tileLayers"
       @baselayer="updateBaseLayer"
     />
-    <liwo-map-layers :layers="items" /> 
+    <liwo-map-layers :layerSet="layerSet" />
   </l-map>
 </template>
 
@@ -38,7 +38,7 @@ import LiwoMapLayers from './LiwoMapLayers'
 import mapConfig from '../map.config'
 
 export default {
-  props: [ 'items' ],
+  props: [ 'layerSet' ],
   components: { BaseLayerControl, LiwoMapLayers, LMap, LTileLayer },
   data () {
     return {
@@ -48,10 +48,12 @@ export default {
       maxZoom: mapConfig.maxZoom,
       minZoom: mapConfig.minZoom,
       center: L.latLng(...mapConfig.center),
-      tms: mapConfig.tms,
       attribution: mapConfig.attribution,
-      tileLayers: mapConfig.tileLayers,
-      url: mapConfig.tileLayers[0].url
+      baseLayer: {
+        tms: mapConfig.tms,
+        tileLayers: mapConfig.tileLayers,
+        url: mapConfig.tileLayers[0].url
+      }
     }
   },
   methods: {
