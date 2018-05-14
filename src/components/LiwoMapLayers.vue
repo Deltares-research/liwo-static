@@ -31,7 +31,7 @@ const DYNAMIC_GEOSERVER_URL = 'http://tl-397.xtr.deltares.nl:8080/geoserver/'
 export default {
   props: [ 'layerSet' ],
   components: {
-    LGeoJson, 
+    LGeoJson,
     LWmsTileLayer
   },
   methods: {
@@ -41,9 +41,9 @@ export default {
         : 'l-wms-tile-layer'
     },
     geoServerURL (namespace) {
-        return namespace === "LIWO_Operationeel" 
-          ? DYNAMIC_GEOSERVER_URL
-          : STATIC_GEOSERVER_URL
+      return namespace === 'LIWO_Operationeel'
+        ? DYNAMIC_GEOSERVER_URL
+        : STATIC_GEOSERVER_URL
     }
   }
 }

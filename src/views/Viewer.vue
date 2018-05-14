@@ -9,13 +9,13 @@
 import LayerPanel from '@/components/LayerPanel'
 import LiwoMap from '@/components/LiwoMap.vue'
 
-import leafletHack from '@/lib/leaflet-hack'
-import { loadLayersetById, loadLayersets } from '@/lib/load-layersets'
+import '@/lib/leaflet-hack'
+import { loadLayersetById } from '@/lib/load-layersets'
 import fetchJSONLayer from '@/lib/fetch-json-layer'
 
 export default {
   data () {
-    return { 
+    return {
       title: '',
       id: 0,
       items: [],
@@ -41,7 +41,7 @@ export default {
       }
 
       if (variant.map.type === 'json') {
-        return { ...variant.map }  // TODO: fetch the JSON
+        return { ...variant.map }
       }
     }
   },
@@ -66,9 +66,9 @@ export default {
             : variant
         })
       )
-      .then(activeLayers => {
-        this.activeLayerSet = activeLayers
-      })
+        .then(activeLayers => {
+          this.activeLayerSet = activeLayers
+        })
     }
   }
 }
