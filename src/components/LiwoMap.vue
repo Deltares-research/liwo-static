@@ -12,9 +12,8 @@
     <l-geo-json
       v-for="layer in layers"
       v-if="layer.type === 'json'"
-      :options="layer.options"
+      :options="{style: layer.style}"
       :geojson="layer.geojson"
-      :style="layer.style"
       :key="layer.id"
       >
     </l-geo-json>
