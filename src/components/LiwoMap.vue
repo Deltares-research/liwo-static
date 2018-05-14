@@ -9,16 +9,15 @@
     :crs="crs"
     :continuousWorld="continuousWorld"
     >
-    <template v-for="layer in layers" >
-      <l-geo-json
-        v-if="layer.type === 'json'"
-        :options="layer.options"
-        :geojson="layer.geojson"
-        :style="layer.style"
-        :key="layer.id"
-        ></l-geo-json>
-    </template>
-
+    <l-geo-json
+      v-for="layer in layers"
+      v-if="layer.type === 'json'"
+      :options="layer.options"
+      :geojson="layer.geojson"
+      :style="layer.style"
+      :key="layer.id"
+      >
+    </l-geo-json>
     <l-tile-layer
       :options="{ tms: baseLayer.tms }"
       :url="baseLayer.url"
@@ -37,15 +36,7 @@
 <script>
 import 'leaflet/dist/leaflet.css'
 
-// as discussed in https://github.com/Leaflet/Leaflet/issues/4968
-// replace default icons by requires
-L.Icon.Default.imagePath = ''
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-  iconUrl: require('leaflet/dist/images/marker-icon.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png')
-})
-
+import Vue from 'vue'
 import L from 'leaflet'
 import _ from 'lodash'
 import { LMap, LTileLayer, LGeoJson } from 'vue2-leaflet'
@@ -54,6 +45,15 @@ import 'proj4leaflet'
 import BaseLayerControl from './BaseLayerControl'
 
 import mapConfig from '../map.config'
+
+// as discussed in https://github.com/Leaflet/Leaflet/issues/4968
+// replace default icons by requires
+delete L.Icon.Default.prototype._getIconUrl
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+})
 
 export default {
   components: { BaseLayerControl, LMap, LTileLayer, LGeoJson },
@@ -74,6 +74,7 @@ export default {
       center: L.latLng(...mapConfig.center),
       crs: this.createCrs(),
       continuousWorld: true,
+      layers: [],
       baseLayer: {
         tms: mapConfig.tms,
         tileLayers: mapConfig.tileLayers,
@@ -81,8 +82,11 @@ export default {
       }
     }
   },
-  computed: {
-    layers () {
+  mounted () {
+    Vue.set(this, 'layers', this.getLayers())
+  },
+  methods: {
+    getLayers () {
       let layers = []
       this.items.forEach(item => {
         let obj = {
@@ -90,28 +94,35 @@ export default {
             ...item
           }
         }
-        item.variants.forEach(variant => {
+        item.variants.forEach(async variant => {
           _.assign(obj.properties, variant)
           _.assign(obj, variant.map)
-          obj.geojson = {
-            "type": "Feature",
-            "geometry": {
-              "type": "Point",
-              "coordinates": [4, 52]
-            },
-            "properties": {
-              "name": "Dinagat Islands"
-            }
+          obj.id = obj.properties.id
+          let url = 'https://geodata.basisinformatie-overstromingen.nl/geoserver/ows'
+          let request = {
+            isActive: true,
+            service: 'WFS',
+            version: '1.0.0',
+            request: 'getFeature',
+            typeName: `${obj.namespace}:${obj.layer}`,
+            outputFormat: 'application/json',
+            srsName: 'EPSG:28992',
+            maxFeatures: 2000
           }
-          console.log('obj', obj)
-          layers.push(obj)
+          let params = new URLSearchParams(request).toString()
+          let urlWithParams = url + '?' + params
+          if (obj.type === 'json') {
+            obj.geojson = await fetch(urlWithParams, {mode: 'cors'})
+              .then(resp => resp.json())
+              .catch(error => console.log('Error:', error, obj))
+            layers.push(obj)
+          } else if (obj.type === 'WMS') {
+            layers.push(obj)
+          }
         })
-
       })
       return layers
-    }
-  },
-  methods: {
+    },
     createCrs () {
       return new L.Proj.CRS(mapConfig.crsType, mapConfig.proj, {
         resolutions: mapConfig.resolutions,

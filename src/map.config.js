@@ -1,7 +1,8 @@
+// eslint-disable-next-line
 const services = {
-  //url for webservice calls [ending with a forward slash]
+  // url for webservice calls [ending with a forward slash]
   WEBSERVICE_URL: 'https://basisinformatie-overstromingen.nl/liwo.ws/',
-  //url for static geoserver [ending with a forward slash]
+  // url for static geoserver [ending with a forward slash]
   STATIC_GEOSERVER_URL: 'https://geodata.basisinformatie-overstromingen.nl/geoserver/ows/',
   ACHTERGRONDKAART: 'https://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png',
   LUCHTFOTOKAART: 'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/tms/1.0.0/2016_ortho25/EPSG:28992/{z}/{x}/{y}.png',
