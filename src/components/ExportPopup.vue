@@ -2,23 +2,28 @@
   <pop-up class="export-popup" title="Exporteer" @close="$emit('close')">
     <form class="export-popup__content export-popup__form-columns">
       <label>Exporteer als:</label>
-      <div class="radio-group">
-        <input type="radio" name="export" v-model="exportType"
-          id="export-zip" value="zip"
-          class="sr-only export-popup__export-input"
-        >
-        <label class="export-popup__export-label" for="export-zip">
-          <span>Zip</span>
-        </label>
-        <input type="radio" name="export" v-model="exportType"
-          id="export-print" value="print"
-          class="sr-only export-popup__export-input"
-        >
-        <label class="export-popup__export-label" for="export-print">
-          <span>Afbeelding</span>
-        </label>
-
-      </div>
+      <ul class="choice-cards export-popup__radio-group">
+        <li class="choice-cards__item">
+          <input type="radio" name="export" v-model="exportType"
+            id="export-zip" value="zip"
+            class="sr-only choice-cards__item__radio export-popup__export-input"
+          >
+          <label class="radio choice-cards__item__label export-popup__export-label" for="export-zip">
+            <span aria-hidden="true" class="icon icon-file-zip icon-2x"></span>
+            <span>Zip</span>
+          </label>
+        </li>
+        <li class="choice-cards__item">
+          <input type="radio" name="export" v-model="exportType"
+            id="export-print" value="print"
+            class="sr-only choice-cards__item__radio export-popup__export-input"
+          >
+          <label class="choice-cards__item__label export-popup__export-label" for="export-print">
+            <span aria-hidden="true" class="icon icon-file-pdf icon-2x"></span>
+            <span>Afbeelding</span>
+          </label>
+        </li>
+      </ul>
       <label>Naam<br><small class="help">De naam van het uitvoerbestand</small></label>
       <input type="text" name="name"
         id="exportName" required  autocomplete="off">
@@ -58,7 +63,7 @@ export default {
     return {
       exportType: undefined,
       exportName: '',
-      layoutName: 'A4 Portrait',
+      layoutName: 'A4 portrait',
       formatName: 'pdf',
       background: true
     }
@@ -71,10 +76,6 @@ export default {
   .export-popup__content {
     padding: 1rem;
     line-height: 1.125;
-  }
-  .export-popup__footer {
-    display: flex;
-    justify-content: flex-start;
   }
   .export-popup__form-columns {
     display: flex;
@@ -89,9 +90,25 @@ export default {
   }
   .export-popup__form-columns > label,
   .export-popup__form-columns > input,
-  .export-popup__form-columns > select,
-  .export-popup__form-columns > .radio-group {
+  .export-popup__form-columns > select {
     display: block;
     width: 40%;
+  }
+  .export-popup__radio-group {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    width: 40%;
+    text-align: left;
+  }
+  .export-popup .choice-cards__item__label {
+    text-align: left;
+  }
+  .export-popup .choice-cards__item__label .icon {
+    margin-top: -0.5em;
+    margin-bottom: -.25em;
+  }
+  .export-popup__footer button {
+    margin-right: 4px;
   }
 </style>
