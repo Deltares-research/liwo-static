@@ -8,17 +8,31 @@
     :center="center"
     :crs="crs"
     :continuousWorld="continuousWorld"
-  >
+    >
+    <template v-for="layer in layers" >
+      <l-geo-json
+        v-if="layer.type === 'geojson'"
+        :options="layer.options"
+        :geojson="layer.geojson"
+        :style="layer.style"
+        :key="layer.id"
+        ></l-geo-json>
+
+      <l-tile-layer
+        v-if="layer.type === 'wms'"
+        :key="layer.id"></l-tile-layer>
+    </template>
+
     <l-tile-layer
-      :options="{ tms }"
-      :url="url"
+      :options="{ tms: baseLayer.tms }"
+      :url="baseLayer.url"
       :minZoom="minZoom"
       :maxZoom="maxZoom"
       :continuousWorld="continuousWorld"
-      :attribution="attribution"
+      :attribution="baseLayer.attribution"
     />
     <base-layer-control
-      :tileLayers="tileLayers"
+      :tileLayers="baseLayer.tileLayers"
       @baselayer="updateBaseLayer"
     />
   </l-map>
@@ -39,16 +53,19 @@ export default {
   components: { BaseLayerControl, LMap, LTileLayer },
   data () {
     return {
-      continuousWorld: true,
-      crs: this.createCrs(),
       zoom: mapConfig.zoom,
       maxZoom: mapConfig.maxZoom,
       minZoom: mapConfig.minZoom,
-      center: L.latLng(...mapConfig.center),
-      tms: mapConfig.tms,
       attribution: mapConfig.attribution,
-      tileLayers: mapConfig.tileLayers,
-      url: mapConfig.tileLayers[0].url
+      center: L.latLng(...mapConfig.center),
+      crs: this.createCrs(),
+      continuousWorld: true,
+      layers: [],
+      baseLayer: {
+        tms: mapConfig.tms,
+        tileLayers: mapConfig.tileLayers,
+        url: mapConfig.tileLayers[0].url
+      }
     }
   },
   methods: {
@@ -60,7 +77,7 @@ export default {
       })
     },
     updateBaseLayer (url) {
-      this.url = url
+      this.baseLayer.url = url
     }
   }
 }
