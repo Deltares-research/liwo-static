@@ -21,6 +21,7 @@
       :tileLayers="tileLayers"
       @baselayer="updateBaseLayer"
     />
+    <liwo-map-layers :layers="items" /> 
   </l-map>
 </template>
 
@@ -32,11 +33,13 @@ import { LMap, LTileLayer } from 'vue2-leaflet'
 import 'proj4leaflet'
 
 import BaseLayerControl from './BaseLayerControl'
+import LiwoMapLayers from './LiwoMapLayers'
 
 import mapConfig from '../map.config'
 
 export default {
-  components: { BaseLayerControl, LMap, LTileLayer },
+  props: [ 'items' ],
+  components: { BaseLayerControl, LiwoMapLayers, LMap, LTileLayer },
   data () {
     return {
       continuousWorld: true,
