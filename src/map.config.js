@@ -1,3 +1,15 @@
+const services = {
+  //url for webservice calls [ending with a forward slash]
+  WEBSERVICE_URL: 'https://basisinformatie-overstromingen.nl/liwo.ws/',
+  //url for static geoserver [ending with a forward slash]
+  STATIC_GEOSERVER_URL: 'https://geodata.basisinformatie-overstromingen.nl/geoserver/ows/',
+  ACHTERGRONDKAART: 'https://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png',
+  LUCHTFOTOKAART: 'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/tms/1.0.0/2016_ortho25/EPSG:28992/{z}/{x}/{y}.png',
+  PDOKLUCHTFOTO: 'http://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wms',
+  PDOKBRTACHTERGROND: 'http://geodata.nationaalgeoregister.nl/tiles/service/wmts',
+  MANUAL_URL: 'https://www.helpdeskwater.nl/onderwerpen/applicaties-modellen/applicaties-per/watermanagement/watermanagement/liwo/'
+}
+
 // TODO: Add comment explaining variable
 const attribution = '&copy <a href="http://www.pdok.nl">PDOK</a>'
 

@@ -1,6 +1,6 @@
 <template>
   <div class="viewer">
-    <liwo-map />
+    <liwo-map :items="items"/>
     <layer-panel :items="items" />
   </div>
 </template>
