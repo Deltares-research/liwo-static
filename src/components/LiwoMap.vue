@@ -39,6 +39,7 @@ import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import _ from 'lodash'
 import { LMap, LTileLayer, LGeoJson } from 'vue2-leaflet'
+import URLSearchParams from 'url-search-params'
 import 'proj4leaflet'
 
 import BaseLayerControl from './BaseLayerControl'
