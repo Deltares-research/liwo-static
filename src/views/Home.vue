@@ -28,9 +28,9 @@
         </p>
         <h3>Account aanvragen</h3>
         <p>
-          Behoort u tot de doelgroep en wilt u een account
-          aanvragen? Selecteert u dan "Account aanvragen" onder de
-          optie "Inloggen".
+          Als u tot de doelgroep behoort en een account wilt
+          aanvragen, selecteer dan "Nieuw account aanvragen"
+          onder <a href="https://www.basisinformatie-overstromingen.nl/liwo/#/login">Inloggen</a>.
         </p>
         <p>
           <a @click="showFaq = !showFaq">Vragen en antwoorden</a>
