@@ -2,17 +2,15 @@
   <div class="pop-up">
     <header class="pop-up__header">
       <h1 class="pop-up__title">
+        <slot name="icon"></slot>
         {{title}}
       </h1>
-      <button @click="$emit('close')" class="pop-up__close">
+      <button @click="$emit('close')" class="pop-up__close icon-close-big panel-close">
         <span class="sr-only">Sluiten</span>
-        Sluiten
       </button>
     </header>
     <section class="pop-up__content">
-      <slot>
-        Placeholder content
-      </slot>
+      <slot><!-- Placeholder content --></slot>
     </section>
    </div>
 </template>
@@ -36,7 +34,7 @@ export default {
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index:10000;
+  z-index: 10000;
   display: flex;
   flex-direction: column;
 }
