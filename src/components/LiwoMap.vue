@@ -12,9 +12,10 @@
     <l-geo-json
       v-for="layer in layers"
       v-if="layer.type === 'json'"
-      :options="{style: layer.style}"
+      :options="{style: feature => setStyle(feature, layer), onEachFeature: feature => onEachFeature(feature, layer)}"
       :geojson="layer.geojson"
       :key="layer.id"
+      :ref="layer.id"
       >
     </l-geo-json>
     <l-tile-layer
@@ -35,9 +36,10 @@
 <script>
 import 'leaflet/dist/leaflet.css'
 
+import Vue from 'vue'
 import L from 'leaflet'
 import _ from 'lodash'
-import { LMap, LTileLayer, LGeoJson } from 'vue2-leaflet'
+import { LMap, LTileLayer, LGeoJson, LPopup } from 'vue2-leaflet'
 import URLSearchParams from 'url-search-params'
 import 'proj4leaflet'
 
@@ -55,7 +57,7 @@ L.Icon.Default.mergeOptions({
 })
 
 export default {
-  components: { BaseLayerControl, LMap, LTileLayer, LGeoJson },
+  components: { BaseLayerControl, LMap, LTileLayer, LGeoJson, LPopup },
   props: {
     items: {
       type: Array,
@@ -90,6 +92,19 @@ export default {
     }
   },
   methods: {
+    onEachFeature (feature, layer) {
+      const parent = this.$refs[layer.id]
+      const Popup = Vue.extend(LPopup)
+      const popup = new Popup()
+      const result = popup.$mount()
+      console.log('result', result)
+      parent.mapObject.bindPopup(result.$el)
+    },
+
+    setStyle (feature, layer) {
+      // set the layer to to style object and use css for styling
+      return {className: layer.style}
+    },
     setLayers () {
       this.items.forEach(item => {
         let obj = {
@@ -149,5 +164,22 @@ export default {
   display: block;
   margin: 0 auto;
   margin-top: 1rem;
+}
+
+.LIWO_Tools_Dreigingsbeelden_Dijkringen {
+  stroke: rgb(34, 34, 34);
+  stroke-opacity: 0.6;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: rgb(208, 214, 220);
+  fill-opacity: 0.3;
+  /* for lakes  */
+  fill-rule: evenodd;
+}
+
+.LIWO_Tools_Dreigingsbeelden_Dijkringen:hover {
+  stroke-opacity: 0.7;
+  fill-opacity: 0.0;
 }
 </style>
