@@ -87,7 +87,4 @@ export default {
   border: none;
   box-shadow: var(--shadow);
 }
-.layer-panel .icon {
-  vertical-align: middle;
-}
 </style>
