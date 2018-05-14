@@ -34,16 +34,17 @@
           :key="`layer-${id}-trans-${i}`"
           :value="1 - (i / 10)"
         >
-          Transparantie {{ i * 10 }}%
+          {{ i * 10 }}% transparantie
         </option>
       </select>
-      <button class="layer-control__info">
+      <button class="layer-control__info" @click="metaIsOpen=true">
         <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 64 64">
           <path fill="none" d="M0 0h64v64H0z"/>
           <path d="M53.9 14.1c-.4-2-2-3.6-4-4-6-1-16-1-17.9-1-2 0-12 0-17.9 1-2 .4-3.6 2-4 4-1 6-1 16-1 17.9s0 12 1 17.9c.4 2 2 3.6 4 4 6 1 16 1 17.9 1 2 0 12 0 17.9-1 2-.4 3.6-2 4-4 1-6 1-16 1-17.9 0-6 0-12-1-17.9zM35 48h-6.6l.6-14v-8h6v22zm-3-26c-2.2 0-3.5-1.3-3.5-3.5 0-2 1.2-3.5 3.5-3.5 2.2 0 3.5 1.2 3.5 3.5 0 2-1.2 3.5-3.5 3.5z"/>
         </svg>
       </button>
-      <layer-meta :metadata="metadata" />
+      <layer-meta v-if="metaIsOpen"
+        :metadata="metadata" @close="metaIsOpen=false" />
     </div>
   </div>
 </template>
@@ -52,21 +53,22 @@
 import LayerMeta from '@/components/LayerMeta'
 
 export default {
+  data () {
+    return { metaIsOpen: false }
+  },
   props: {
-    id: {
-      Type: [String, Number]
-    },
-    title: {
-      Type: String
-    },
-    subtitle: {
-      Type: String
-    },
-    metadata: {
-      Type: Object
-    },
-    active: {
-      Type: Boolean
+    id: [String, Number],
+    title: String,
+    subtitle: String,
+    metadata: Object,
+    active: Boolean
+  },
+  watch: {
+    // Always close meta when switching layers
+    active (isActive) {
+      if (!isActive) {
+        this.metaIsOpen = false
+      }
     }
   },
   components: {
