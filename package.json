@@ -59,6 +59,7 @@
     "> 5%",
     "last 1 version",
     "not ie <= 10",
+    "ie 11",
     "firefox 56"
   ]
 }
