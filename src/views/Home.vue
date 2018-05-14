@@ -7,8 +7,8 @@
         <h1>LIWO</h1>
       </div>
       <div class="landing-header">
-        <p class="lead">Welkom op het Landelijk Informatiesysteem
-          Water en Overstromingen (afkorting "LIWO").  Het LIWO bevat
+        <p class="lead">Het Landelijk Informatiesysteem
+          Water en Overstromingen (LIWO) bevat
           kaartlagen voor professionals van waterschappen,
           Rijkwaterstaat, veiligheidsregio's en partners met vitale en
           kwetsbare infrastructuur (zoals netbeheerders). De
