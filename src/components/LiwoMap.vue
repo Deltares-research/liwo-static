@@ -36,7 +36,6 @@
 <script>
 import 'leaflet/dist/leaflet.css'
 
-import Vue from 'vue'
 import L from 'leaflet'
 import _ from 'lodash'
 import { LMap, LTileLayer, LGeoJson } from 'vue2-leaflet'
@@ -83,11 +82,15 @@ export default {
     }
   },
   mounted () {
-    Vue.set(this, 'layers', this.getLayers())
+    this.setLayers()
+  },
+  watch: {
+    items () {
+      this.setLayers()
+    }
   },
   methods: {
-    getLayers () {
-      let layers = []
+    setLayers () {
       this.items.forEach(item => {
         let obj = {
           properties: {
@@ -106,7 +109,9 @@ export default {
             request: 'getFeature',
             typeName: `${obj.namespace}:${obj.layer}`,
             outputFormat: 'application/json',
-            srsName: 'EPSG:28992',
+            // get this info unprojected
+            // formally geojson does not support CRS
+            srsName: 'EPSG:4326',
             maxFeatures: 2000
           }
           let params = new URLSearchParams(request).toString()
@@ -115,13 +120,12 @@ export default {
             obj.geojson = await fetch(urlWithParams, {mode: 'cors'})
               .then(resp => resp.json())
               .catch(error => console.log('Error:', error, obj))
-            layers.push(obj)
+            this.layers.push(obj)
           } else if (obj.type === 'WMS') {
-            layers.push(obj)
+            this.layers.push(obj)
           }
         })
       })
-      return layers
     },
     createCrs () {
       return new L.Proj.CRS(mapConfig.crsType, mapConfig.proj, {
