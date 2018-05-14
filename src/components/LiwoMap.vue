@@ -50,7 +50,7 @@ export default {
       center: L.latLng(...mapConfig.center),
       attribution: mapConfig.attribution,
       baseLayer: {
-        tms: mapConfig.tms,
+        tms: mapConfig.tileLayers[0].tms,
         tileLayers: mapConfig.tileLayers,
         url: mapConfig.tileLayers[0].url
       }
@@ -65,6 +65,7 @@ export default {
       })
     },
     updateBaseLayer (url) {
+      // TODO: this should change the url and tms
       this.url = url
     }
   }

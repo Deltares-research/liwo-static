@@ -10,28 +10,28 @@ const services = {
   MANUAL_URL: 'https://www.helpdeskwater.nl/onderwerpen/applicaties-modellen/applicaties-per/watermanagement/watermanagement/liwo/'
 }
 
-// TODO: Add comment explaining variable
+// This is the attribution (maps and datasets often require attribution of the source)
 const attribution = '&copy <a href="http://www.pdok.nl">PDOK</a>'
 
-// TODO: Add comment explaining variable
+// The bunding box of the coordinate reference system
 const bounds = [
   [-285401.92, 22598.08],
   [595401.9199999999, 903401.9199999999]
 ]
 
-// TODO: Add comment explaining variable
+// This is the default center of the map
 const center = [52, 5.3]
 
-// TODO: Add comment explaining variable
+// This is the projection of the map
 const crsType = 'EPSG:28992'
 
-// TODO: Add comment explaining variable
+// This is the zoom limit of the map
 const maxZoom = 12
 
-// TODO: Add comment explaining variable
+// The maximum zoom of the map
 const minZoom = 2
 
-// TODO: Add comment explaining variable
+// This is the origin of the projection (Amersfoort)
 const origin = [-285401.92, 22598.08]
 
 // Juiste projectieparameters voor Rijksdriehoekstelsel (EPSG:28992):
@@ -48,21 +48,20 @@ const resolutions = [
 ]
 
 // TODO: Add comment explaining variable
-const tms = true
-
-// TODO: Add comment explaining variable
 const tileLayers = [
   {
     title: 'Achtergrondkaart',
-    url: 'https://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png'
+    url: 'https://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png',
+    tms: true
   },
   {
     title: 'Luchtkaart',
-    url: 'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/tms/1.0.0/2016_ortho25/EPSG:28992/{z}/{x}/{y}.png'
+    url: 'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/tms/1.0.0/2016_ortho25/EPSG:28992/{z}/{x}/{y}.png',
+    tms: true
   }
 ]
 
-// TODO: Add comment explaining variable
+// The default zoom level
 const zoom = 3
 
 export default {
@@ -77,6 +76,5 @@ export default {
   resolutions,
   services,
   tileLayers,
-  tms,
   zoom
 }
