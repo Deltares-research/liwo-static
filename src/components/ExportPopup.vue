@@ -1,8 +1,8 @@
 <template>
   <pop-up class="export-popup" title="Exporteer" @close="$emit('close')">
     <form class="export-popup__content export-popup__form-columns">
-      <label>Exporteer als:</label>
-      <ul class="choice-cards export-popup__radio-group">
+      <label class="export-popup__form-column-item">Exporteer als:</label>
+      <ul class="export-popup__form-column-item choice-cards export-popup__radio-group">
         <li class="choice-cards__item">
           <input type="radio" name="export" v-model="exportType"
             id="export-zip" value="zip"
@@ -24,27 +24,40 @@
           </label>
         </li>
       </ul>
-      <label>Naam<br><small class="help">De naam van het uitvoerbestand</small></label>
+      <label class="export-popup__form-column-item">
+        Naam<br><small class="help">De naam van het uitvoerbestand</small>
+      </label>
       <input type="text" name="name"
-        id="exportName" required  autocomplete="off">
+        id="exportName" required  autocomplete="off"
+        class="export-popup__form-column-item export-popup__textfield">
       <fieldset v-if="exportType === 'print'">
         <div class="export-popup__form-columns">
           <legend>Print opties</legend>
-          <label for="layoutname">Layout:</label>
-          <select name="layoutname" id="layoutname" v-model="layoutName">
+          <label for="layoutname" class="export-popup__form-column-item">
+            Layout:
+          </label>
+          <select name="layoutname" id="layoutname" v-model="layoutName"
+            class="export-popup__form-column-item"
+          >
             <option value="A4 portrait">A4 portrait</option>
           </select>
-          <label>Formaat:</label>
-          <select name="formatname" id="formatname" v-model="formatName">
+          <label class="export-popup__form-column-item">
+            Formaat:
+          </label>
+          <select name="formatname" id="formatname" v-model="formatName"
+            class="export-popup__form-column-item"
+          >
             <option value="gif">gif</option>
             <option value="pdf">pdf</option>
             <option value="png">png</option>
             <option value="tif">tif</option>
             <option value="tiff">tiff</option>
           </select>
-          <label>Achtergrondkaart:</label>
-          <input type="checkbox" name="achtergrond"  v-model="background"
-            id="achtergrond">
+          <label class="export-popup__form-column-item">
+            Achtergrondkaart:
+          </label>
+          <input type="checkbox" name="achtergrond" v-model="background"
+            id="achtergrond" class="export-popup__form-column-item">
         </div>
       </fieldset>
       <footer class="export-popup__footer">
@@ -88,21 +101,22 @@ export default {
     margin: 0 0 1rem 0;
     padding: 0;
   }
-  .export-popup__form-columns > label,
-  .export-popup__form-columns > input,
-  .export-popup__form-columns > select {
+  .export-popup__form-column-item {
     display: block;
-    width: 40%;
+    width: calc(50% - 1rem);
   }
-  .export-popup__radio-group {
+  .export-popup .choice-cards {
     display: flex;
     justify-content: space-between;
-    flex-direction: column;
-    width: 40%;
     text-align: left;
+  }
+  .export-popup .choice-cards__item {
+    width: 100%;
+    flex: 0 1 100%;
   }
   .export-popup .choice-cards__item__label {
     text-align: left;
+    padding: 1rem .5rem;
   }
   .export-popup .choice-cards__item__label .icon {
     margin-top: -0.5em;
