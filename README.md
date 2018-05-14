@@ -4,6 +4,8 @@ Static frontend for LIWO (https://www.basisinformatie-overstromingen.nl/liwo/)
 # Info
 [![Build Status](https://travis-ci.org/Deltares/liwo-static.svg?branch=master)](https://travis-ci.org/Deltares/liwo-static)
 
+[![BCH compliance](https://bettercodehub.com/edge/badge/Deltares/liwo-static?branch=master)](https://bettercodehub.com/)
+
 ## Build Setup
 
 See the [docs](https://github.com/vuejs/vue-cli/blob/dev/docs/README.md) of the build environment for further details.
