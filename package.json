@@ -17,8 +17,7 @@
     "vue": "^2.5.16",
     "vue-router": "^3.0.1",
     "vue2-leaflet": "^1.0.2",
-    "vuex": "^3.0.1",
-    "whatwg-fetch": "^2.0.4"
+    "vuex": "^3.0.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.0-beta.9",
@@ -29,12 +28,9 @@
     "@vue/eslint-config-standard": "^3.0.0-beta.9",
     "@vue/test-utils": "^1.0.0-beta.10",
     "chai": "^4.1.2",
-    "cssnano": "^3.10.0",
     "lint-staged": "^6.0.0",
     "node-sass": "^4.9.0",
-    "postcss-cssnext": "^3.1.0",
     "postcss-custom-properties": "7.0.0",
-    "postcss-import": "^11.1.0",
     "sass-loader": "^7.0.1",
     "vue-template-compiler": "^2.5.13"
   },
@@ -57,10 +53,8 @@
     }
   },
   "browserslist": [
-    "> 5%",
-    "last 1 version",
-    "not ie <= 10",
-    "ie 11",
-    "firefox 56"
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 10"
   ]
 }

@@ -7,8 +7,8 @@
         <h1>LIWO</h1>
       </div>
       <div class="landing-header">
-        <p class="lead">Welkom op het Landelijk Informatiesysteem
-          Water en Overstromingen (afkorting "LIWO").  Het LIWO bevat
+        <p class="lead">Het Landelijk Informatiesysteem
+          Water en Overstromingen (LIWO) bevat
           kaartlagen voor professionals van waterschappen,
           Rijkwaterstaat, veiligheidsregio's en partners met vitale en
           kwetsbare infrastructuur (zoals netbeheerders). De
@@ -28,9 +28,9 @@
         </p>
         <h3>Account aanvragen</h3>
         <p>
-          Behoort u tot de doelgroep en wilt u een account
-          aanvragen? Selecteert u dan "Account aanvragen" onder de
-          optie "Inloggen".
+          Als u tot de doelgroep behoort en een account wilt
+          aanvragen, selecteer dan "Nieuw account aanvragen"
+          onder <a href="https://www.basisinformatie-overstromingen.nl/liwo/#/login">Inloggen</a>.
         </p>
         <p>
           <a @click="showFaq = !showFaq">Vragen en antwoorden</a>
