@@ -19,10 +19,12 @@
           :active="(index === activeIndex)"
           :id="item.id"
           :title="item.title"
+          :subtitle="item.variants[0].title"
+          :metadata="item.variants[0].metadata"
         />
       </li>
     </ul>
-    <button class="layer-panel__export">
+    <button class="layer-panel__export" @click="$emit('open-export')">
       <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
         <path fill="none" d="M0 0h24v24H0z"/>
         <path d="M18 17v2H6v-2H3v4c0 .6.4 1 1 1h16c.6 0 1-.4 1-1v-4h-3z"/>
@@ -84,8 +86,5 @@ export default {
   font-weight: bold;
   border: none;
   box-shadow: var(--shadow);
-}
-.layer-panel .icon {
-  vertical-align: middle;
 }
 </style>
