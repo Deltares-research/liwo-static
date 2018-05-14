@@ -2,7 +2,7 @@
   <div class="pop-up">
     <header class="pop-up__header">
       <h1 class="pop-up__title">
-        <slot name="icon"></slot>
+        <slot name="icon"><!-- Icon to inject before title --></slot>
         {{title}}
       </h1>
       <button @click="$emit('close')" class="pop-up__close icon-close-big panel-close">
@@ -41,18 +41,20 @@ export default {
 .pop-up__content {
   overflow-y: auto;
   flex: 0 1 100%;
+  background-color: var(--white);
 }
 @media screen and (min-width: 640px) {
   .pop-up {
     top: 5vh;
-    left: calc(320px + 1rem);
+    left: calc(25vw);
     min-width: 320px;
     width: calc(50vw - 1rem);
-    height: 80vh;
+    max-height: 80vh;
   }
   .pop-up__content {
-  overflow-y: auto;
-}
+    overflow-y: auto;
+    flex: 0 1 auto;
+  }
 }
 .pop-up__header {
   line-height: 44px;
@@ -61,6 +63,7 @@ export default {
   font-size: 1.2rem;
   color: var(--black);
   display: flex;
+  flex: 0 0 44px;
   justify-content: space-between;
 }
 .pop-up__title {
