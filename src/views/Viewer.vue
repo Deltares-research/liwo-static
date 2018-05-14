@@ -1,11 +1,13 @@
 <template>
   <div class="viewer">
     <liwo-map :layerSet="activeLayerSet" />
-    <layer-panel :items="items" />
+    <layer-panel :items="items" @open-export="showExport = true" />
+    <export-popup v-if="showExport" @close="showExport = false" />
   </div>
 </template>
 
 <script>
+import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
 import LiwoMap from '@/components/LiwoMap.vue'
 
@@ -20,7 +22,8 @@ export default {
       id: 0,
       items: [],
       layerSet: undefined,
-      activeLayerSet: undefined
+      activeLayerSet: undefined,
+      showExport: false
     }
   },
   async mounted () {
@@ -31,6 +34,7 @@ export default {
     this.items = layers
   },
   components: {
+    ExportPopup,
     LayerPanel,
     LiwoMap
   },
