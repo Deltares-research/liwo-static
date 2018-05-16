@@ -10,17 +10,18 @@
     :continuousWorld="continuousWorld"
   >
     <l-tile-layer
-      :options="{ tms }"
-      :url="url"
+      :options="{ tms: baseLayer.tms }"
+      :url="baseLayer.url"
       :minZoom="minZoom"
       :maxZoom="maxZoom"
       :continuousWorld="continuousWorld"
       :attribution="attribution"
     />
     <base-layer-control
-      :tileLayers="tileLayers"
+      :tileLayers="baseLayer.tileLayers"
       @baselayer="updateBaseLayer"
     />
+    <liwo-map-layers :layerSet="layerSet" />
   </l-map>
 </template>
 
@@ -32,11 +33,13 @@ import { LMap, LTileLayer } from 'vue2-leaflet'
 import 'proj4leaflet'
 
 import BaseLayerControl from './BaseLayerControl'
+import LiwoMapLayers from './LiwoMapLayers'
 
 import mapConfig from '../map.config'
 
 export default {
-  components: { BaseLayerControl, LMap, LTileLayer },
+  props: [ 'layerSet' ],
+  components: { BaseLayerControl, LiwoMapLayers, LMap, LTileLayer },
   data () {
     return {
       continuousWorld: true,
@@ -45,10 +48,12 @@ export default {
       maxZoom: mapConfig.maxZoom,
       minZoom: mapConfig.minZoom,
       center: L.latLng(...mapConfig.center),
-      tms: mapConfig.tms,
       attribution: mapConfig.attribution,
-      tileLayers: mapConfig.tileLayers,
-      url: mapConfig.tileLayers[0].url
+      baseLayer: {
+        tms: mapConfig.tileLayers[0].tms,
+        tileLayers: mapConfig.tileLayers,
+        url: mapConfig.tileLayers[0].url
+      }
     }
   },
   methods: {
@@ -60,6 +65,7 @@ export default {
       })
     },
     updateBaseLayer (url) {
+      // TODO: this should change the url and tms
       this.url = url
     }
   }
