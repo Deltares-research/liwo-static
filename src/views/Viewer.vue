@@ -1,7 +1,6 @@
 <template>
   <div class="viewer">
     <liwo-map :mapLayers="mapLayers" />
-    <segmented-buttons :items="variantTitlesForSelectedLayer" />
     <layer-panel :items="layers" @open-export="showExport = true" />
     <export-popup v-if="showExport" @close="showExport = false" />
   </div>
@@ -36,21 +35,48 @@ export default {
   },
   computed: {
     mapLayers () {
-      const variantIndex = 0
       const hiddenLayers = []
-      const mapLayers = this.parsedLayers
-        .filter(({id}) => hiddenLayers.every(hiddenId => hiddenId !== id))
-        .map(layer => layer.variants[variantIndex])
-      return mapLayers
+
+      return this.parsedLayers
+        .filter(({id}) => this.visibleLayerIds.every(visibleId => visibleId === id))
+        .map(layer => {
+          const variantIndex = this.$store.state.visibleVariantIndexByLayerId[this.selectedLayerId]
+          return layer.variants[variantIndex]
+        })
+    },
+    variantTitlesForSelectedLayer () {
+      const selectedLayers = this.layers // Should this be layers or parsedLayers, the latter does not have variant titles
+        .filter(({id}) => this.selectedLayerId)
+      return (selectedLayers && selectedLayers[0])
+        ? selectedLayers[0].variants.map(({title}) => title)
+        : []
+    },
+    visibleLayerIds () {
+      return this.$store.state.visibleLayerIds
+    },
+    selectedLayerId () {
+      return this.$store.state.selectedLayerId
+    }
+  },
+  methods: {
+    setVisibleVariantIdForSelectedlayer (index) {
+
+      this.$store.commit('setVisibleVariantIndexForLayerId', { index, layerId: this.selectedLayerId})
     }
   },
   watch: {
     layers (layers) {
-      this.parsedLayers = layers.map(layer => ({
+      // new layers mean new state init
+      this.$store.state.selectedLayerId = layers[0].id
+      this.parsedLayers = layers.map(layer => {
+        this.$store.state.visibleLayerIds.push(layer.id)
+        this.$store.state.visibleVariantIndexByLayerId[layer.id] = 0
+        return {
           id: layer.id,
           properties: layer,
-        variants: layer.variants.map(variant => ({ ...variant.map }))
-      }))
+          variants: layer.variants.map(variant => ({ ...variant.map }))
+        }
+      })
     }
   },
   components: {

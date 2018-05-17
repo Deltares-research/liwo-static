@@ -11,16 +11,16 @@
     <ul class="layer-panel__list">
       <li
         class="layer-panel__list-item"
-        v-for="(item, index) in items"
-        @click="toggle(index)"
-        :key="item.id"
+        v-for="layer in layersWithVisibleVariant"
+        :key="layer.id"
+        @click="setSelectedLayerId(layer.id)"
       >
         <layer-control
-          :active="(index === activeIndex)"
-          :id="item.id"
-          :title="item.title"
-          :subtitle="item.variants[0].title"
-          :metadata="item.variants[0].metadata"
+          :active="(layer.id === selectedLayerId)"
+          :id="layer.id"
+          :title="layer.title"
+          :subtitle="layer.visibleVariant.title"
+          :metadata="layer.visibleVariant.metadata"
         />
       </li>
     </ul>
@@ -36,12 +36,10 @@
 </template>
 
 <script>
+import store from '@/store'
 import LayerControl from '@/components/LayerControl'
 
 export default {
-  data () {
-    return { activeIndex: 0 }
-  },
   props: {
     items: {
       type: Array,
@@ -50,10 +48,22 @@ export default {
       }
     }
   },
-  methods: {
-    toggle (index) {
-      this.activeIndex = index
+  computed: {
+    layersWithVisibleVariant () {
+      return this.items.map(layer => {
+        const visibleVariantIndex = this.$store.state.visibleVariantIndexByLayerId[layer.id]
+        const visibleVariant = layer.variants[visibleVariantIndex]
+        return {...layer, visibleVariant}
+      })
+    },
+    selectedLayerId () {
+      return this.$store.state.selectedLayerId
     }
+  },
+  methods: {
+    setSelectedLayerId (id) {
+      this.$store.commit('setSelectedLayerId', id)
+    },
   },
   components: {
     LayerControl
