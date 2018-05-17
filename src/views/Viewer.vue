@@ -13,7 +13,7 @@ import LiwoMap from '@/components/LiwoMap.vue'
 
 import '@/lib/leaflet-hack'
 import { loadLayersetById } from '@/lib/load-layersets'
-import fetchJSONLayer from '@/lib/fetch-json-layer'
+import loadGeojson from '../lib/load-geojson';
 
 export default {
   data () {
@@ -66,7 +66,7 @@ export default {
           const variant = layer.variants[0]
 
           return variant.type === 'json'
-            ? { ...variant, geojson: await fetchJSONLayer(variant) }
+            ? { ...variant, geojson: await loadGeojson(variant) }
             : variant
         })
       )
