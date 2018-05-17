@@ -39,11 +39,10 @@ import 'leaflet/dist/leaflet.css'
 
 import Vue from 'vue'
 import L from 'leaflet'
-import _ from 'lodash'
 import { LMap, LTileLayer, LGeoJson, LPopup } from 'vue2-leaflet'
-import URLSearchParams from 'url-search-params'
 import 'proj4leaflet'
 
+import rijksdriehoek from '../lib/rijksdriehoek.js'
 import BaseLayerControl from './BaseLayerControl'
 import LiwoMapLayers from './LiwoMapLayers'
 
@@ -59,16 +58,8 @@ L.Icon.Default.mergeOptions({
 })
 
 export default {
-  components: { BaseLayerControl, LMap, LTileLayer, LGeoJson, LPopup },
-  props: {
-    items: {
-      type: Array,
-      default: () => {
-        return []
-      }
-    }
-  },
-  components: { BaseLayerControl, LiwoMapLayers, LMap, LTileLayer },
+  components: { BaseLayerControl, LMap, LiwoMapLayers, LTileLayer, LGeoJson, LPopup },
+  props: ['layerSet'],
   data () {
     return {
       zoom: mapConfig.zoom,
@@ -80,26 +71,13 @@ export default {
       continuousWorld: true,
       layers: [],
       baseLayer: {
-        tms: mapConfig.tms,
+        tms: mapConfig.tileLayers[0].tms,
         tileLayers: mapConfig.tileLayers,
         url: mapConfig.tileLayers[0].url
       }
     }
   },
   mounted () {
-    this.setLayers()
-  },
-  watch: {
-    items () {
-      this.setLayers()
-      center: L.latLng(...mapConfig.center),
-      attribution: mapConfig.attribution,
-      baseLayer: {
-        tms: mapConfig.tileLayers[0].tms,
-        tileLayers: mapConfig.tileLayers,
-        url: mapConfig.tileLayers[0].url
-      }
-    }
   },
   methods: {
     onEachFeature (feature, layer) {
@@ -114,43 +92,6 @@ export default {
     setStyle (feature, layer) {
       // set the layer to to style object and use css for styling
       return {className: layer.style}
-    },
-    setLayers () {
-      this.items.forEach(item => {
-        let obj = {
-          properties: {
-            ...item
-          }
-        }
-        item.variants.forEach(async variant => {
-          _.assign(obj.properties, variant)
-          _.assign(obj, variant.map)
-          obj.id = obj.properties.id
-          let url = 'https://geodata.basisinformatie-overstromingen.nl/geoserver/ows'
-          let request = {
-            isActive: true,
-            service: 'WFS',
-            version: '1.0.0',
-            request: 'getFeature',
-            typeName: `${obj.namespace}:${obj.layer}`,
-            outputFormat: 'application/json',
-            // get this info unprojected
-            // formally geojson does not support CRS
-            srsName: 'EPSG:4326',
-            maxFeatures: 2000
-          }
-          let params = new URLSearchParams(request).toString()
-          let urlWithParams = url + '?' + params
-          if (obj.type === 'json') {
-            obj.geojson = await fetch(urlWithParams, {mode: 'cors'})
-              .then(resp => resp.json())
-              .catch(error => console.log('Error:', error, obj))
-            this.layers.push(obj)
-          } else if (obj.type === 'WMS') {
-            this.layers.push(obj)
-          }
-        })
-      })
     },
     createCrs () {
       // Create the Coordinate Reference System
