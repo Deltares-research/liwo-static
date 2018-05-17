@@ -1,6 +1,11 @@
 <template>
   <div class="viewer">
     <liwo-map :mapLayers="mapLayers" />
+    <segmented-buttons
+      v-if="variantTitlesForSelectedLayer.length > 1"
+      :items="variantTitlesForSelectedLayer"
+      :activeIndex="variantIndexForSelectedLayer"
+      @click="setVisibleVariantIdForSelectedlayer"/>
     <layer-panel :items="layers" @open-export="showExport = true" />
     <export-popup v-if="showExport" @close="showExport = false" />
   </div>
@@ -32,6 +37,7 @@ export default {
     this.layers = layerSet.layers
     this.title = layerSet.title
     this.id = layerSet.id
+
   },
   computed: {
     mapLayers () {
@@ -56,6 +62,9 @@ export default {
     },
     selectedLayerId () {
       return this.$store.state.selectedLayerId
+    },
+    variantIndexForSelectedLayer() {
+      return this.$store.state.visibleVariantIndexByLayerId[this.selectedLayerId]
     }
   },
   methods: {

@@ -1,11 +1,10 @@
 <template>
   <nav class="segmented-buttons">
     <ul>
-      <li
-        v-for="item in items"
-        :key="item"
-      >
-        <button class="segmented-button">
+      <li v-for="(item, index) in items" :key="item">
+        <button
+          :class="`segmented-button${(index === activeIndex) ? ' segmented-button--active' : ''}`"
+          @click="$emit('click', index)">
           {{ item }}
         </button>
       </li>
@@ -16,7 +15,8 @@
 <script>
 export default {
   props: {
-    items: Array
+    activeIndex: 0,
+    items: Array,
   }
 }
 </script>
@@ -24,12 +24,14 @@ export default {
 <style>
 @import './variables.css';
 
-.segmented-links {
-  margin: 0 auto;
+.segmented-buttons {
+  position: relative;
+  margin: -1rem auto;
   text-align: center;
   display: block;
+  z-index: 1000;
 }
-.segmented-links ul {
+.segmented-buttons ul {
   display: inline-block;
   display: inline-flex;
   height: 100%;
@@ -38,17 +40,18 @@ export default {
   padding: 0;
   margin: 0;
 }
-.segmented-links li {
-  border-left: solid 1px var(--grey);
+.segmented-buttons li {
+  border-left: solid 1px var(--light-gray);
   display: inline-block;
   margin: 0;
 }
 
-.segmented-links li:first-child {
+.segmented-buttons li:first-child {
   border-left: none;
 }
 .segmented-button {
   appearance: none;
+  border: none;
   display: inline;
   padding: .7em 1.1em;
   background: var(--white);
