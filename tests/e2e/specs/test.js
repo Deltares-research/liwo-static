@@ -29,8 +29,6 @@ module.exports = {
       .url(process.env.VUE_DEV_SERVER_URL + '#/viewer/31')
       .waitForElementVisible('#app', 5000)
       .assert.elementPresent('.viewer')
-      .end()
-    browser
       .url(process.env.VUE_DEV_SERVER_URL + '#/viewer/1')
       .waitForElementVisible('#app', 5000)
       .assert.elementPresent('.viewer')
