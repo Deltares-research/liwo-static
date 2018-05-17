@@ -10,10 +10,10 @@
       />
       <l-wms-tile-layer
         v-else
-        layerType="base"
+        layer-type="base"
         format="image/png"
         :key="layer.id"
-        :baseUrl="geoServerURL(layer.namespace)"
+        :base-url="geoServerURL(layer.namespace)"
         :layers="layer.layer"
         :styles="layer.style"
         :transparent="true"
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { LGeoJson, LWMSTileLayer as LWmsTileLayer } from 'vue2-leaflet'
+import { LGeoJson, LWMSTileLayer } from 'vue2-leaflet'
 
 const STATIC_GEOSERVER_URL = 'https://geodata.basisinformatie-overstromingen.nl/geoserver/ows/'
 const DYNAMIC_GEOSERVER_URL = 'http://tl-397.xtr.deltares.nl:8080/geoserver/'
@@ -32,7 +32,8 @@ export default {
   props: [ 'layerSet' ],
   components: {
     LGeoJson,
-    LWmsTileLayer
+    // WMS is always in caps (acronym) and custom-elements in html are lowercase
+    'l-wms-tile-layer': LWMSTileLayer
   },
   methods: {
     tileType (type) {

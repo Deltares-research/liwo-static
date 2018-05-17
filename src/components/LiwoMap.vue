@@ -49,7 +49,7 @@ L.Icon.Default.mergeOptions({
 })
 
 export default {
-  components: { BaseLayerControl, LMap, LiwoMapLayers, LTileLayer, LGeoJson, LPopup },
+  components: { BaseLayerControl, LMap, LiwoMapLayers, LTileLayer, LPopup },
   props: ['layerSet'],
   data () {
     return {

@@ -23,7 +23,7 @@ module.exports = {
       .assert.elementPresent('.maps')
       .end()
   },
-  'maps page': browser => {
+  'views pages': browser => {
     // load a few maps
     browser
       .url(process.env.VUE_DEV_SERVER_URL + '#/viewer/31')
