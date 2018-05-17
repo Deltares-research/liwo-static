@@ -1,15 +1,13 @@
 <template>
-  <nav class="segmented-links">
+  <nav class="segmented-buttons">
     <ul>
       <li
         v-for="item in items"
-        :key="item.to"
+        :key="item"
       >
-        <router-link
-          :to="item.to"
-        >
-          {{ item.name }}
-        </router-link>
+        <button class="segmented-button">
+          {{ item }}
+        </button>
       </li>
     </ul>
   </nav>
@@ -18,12 +16,7 @@
 <script>
 export default {
   props: {
-    items: {
-      type: Array,
-      validator (items) {
-        return items.every(item => (item.name !== undefined && item.to !== undefined))
-      }
-    }
+    items: Array
   }
 }
 </script>
@@ -54,20 +47,21 @@ export default {
 .segmented-links li:first-child {
   border-left: none;
 }
-.segmented-links a {
-  display: block;
+.segmented-button {
+  appearance: none;
+  display: inline;
   padding: .7em 1.1em;
   background: var(--white);
   height: 100%;
   margin: 0;
   position: relative;
 }
-.segmented-links a:hover,
-.segmented-links a.router-link-active {
+.segmented-button:hover,
+.segmented-button.segmented-button--active {
   background: var(--off-white);
 }
 
-.segmented-links a.router-link-active::before {
+.segmented-button.segmented-button--active::before {
   content: "";
   display: block;
   position: absolute;

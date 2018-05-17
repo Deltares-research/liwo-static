@@ -1,7 +1,7 @@
 <template>
   <div class="viewer">
     <liwo-map :mapLayers="mapLayers" />
-    <segmented-links />
+    <segmented-buttons :items="variantTitlesForSelectedLayer" />
     <layer-panel :items="layers" @open-export="showExport = true" />
     <export-popup v-if="showExport" @close="showExport = false" />
   </div>
@@ -11,7 +11,7 @@
 import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
 import LiwoMap from '@/components/LiwoMap'
-import SegmentedLinks from '@/components/SegmentedLinks'
+import SegmentedButtons from '@/components/SegmentedButtons'
 
 import '@/lib/leaflet-hack'
 import { loadLayersetById } from '@/lib/load-layersets'
@@ -57,7 +57,7 @@ export default {
     ExportPopup,
     LayerPanel,
     LiwoMap,
-    SegmentedLinks
+    SegmentedButtons
   }
 }
 </script>
