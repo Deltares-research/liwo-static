@@ -21,7 +21,7 @@
       :tileLayers="baseLayer.tileLayers"
       @baselayer="updateBaseLayer"
     />
-    <liwo-map-layers :layerSet="layerSet" />
+    <liwo-map-layers :mapLayers="mapLayers" />
   </l-map>
 </template>
 
@@ -38,7 +38,9 @@ import LiwoMapLayers from './LiwoMapLayers'
 import mapConfig from '../map.config'
 
 export default {
-  props: [ 'layerSet' ],
+  props: {
+    mapLayers: Array
+  },
   components: { BaseLayerControl, LiwoMapLayers, LMap, LTileLayer },
   data () {
     return {

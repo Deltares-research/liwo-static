@@ -1,7 +1,8 @@
 <template>
   <div class="viewer">
-    <liwo-map :layerSet="activeLayerSet" />
-    <layer-panel :items="items" @open-export="showExport = true" />
+    <liwo-map :mapLayers="mapLayers" />
+    <segmented-links />
+    <layer-panel :items="layers" @open-export="showExport = true" />
     <export-popup v-if="showExport" @close="showExport = false" />
   </div>
 </template>
@@ -9,7 +10,8 @@
 <script>
 import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
-import LiwoMap from '@/components/LiwoMap.vue'
+import LiwoMap from '@/components/LiwoMap'
+import SegmentedLinks from '@/components/SegmentedLinks'
 
 import '@/lib/leaflet-hack'
 import { loadLayersetById } from '@/lib/load-layersets'
@@ -18,62 +20,44 @@ import loadGeojson from '../lib/load-geojson';
 export default {
   data () {
     return {
-      title: '',
+      layers: [],
+      parsedLayers: [],
       id: 0,
       items: [],
-      layerSet: undefined,
-      activeLayerSet: undefined,
-      showExport: false
+      showExport: false,
+      title: ''
     }
   },
   async mounted () {
-    const { title, id, layers } = await loadLayersetById(this.$route.params.id)
-
-    this.title = title
-    this.id = id
-    this.items = layers
+    const layerSet = await loadLayersetById(this.$route.params.id)
+    this.layers = layerSet.layers
+    this.title = layerSet.title
+    this.id = layerSet.id
+  },
+  computed: {
+    mapLayers () {
+      const variantIndex = 0
+      const hiddenLayers = []
+      const mapLayers = this.parsedLayers
+        .filter(({id}) => hiddenLayers.every(hiddenId => hiddenId !== id))
+        .map(layer => layer.variants[variantIndex])
+      return mapLayers
+    }
+  },
+  watch: {
+    layers (layers) {
+      this.parsedLayers = layers.map(layer => ({
+          id: layer.id,
+          properties: layer,
+        variants: layer.variants.map(variant => ({ ...variant.map }))
+      }))
+    }
   },
   components: {
     ExportPopup,
     LayerPanel,
-    LiwoMap
-  },
-  methods: {
-    parseVariant (variant) {
-      if (variant.map.type === 'WMS') {
-        return { ...variant.map }
-      }
-
-      if (variant.map.type === 'json') {
-        return { ...variant.map }
-      }
-    }
-  },
-  watch: {
-    items (layers) {
-      const parsedLayers = layers.map(layer => {
-        return {
-          id: layer.id,
-          properties: layer,
-          variants: layer.variants.map(this.parseVariant)
-        }
-      })
-
-      this.layerSet = parsedLayers
-
-      Promise.all(
-        parsedLayers.map(async (layer) => {
-          const variant = layer.variants[0]
-
-          return variant.type === 'json'
-            ? { ...variant, geojson: await loadGeojson(variant) }
-            : variant
-        })
-      )
-        .then(activeLayers => {
-          this.activeLayerSet = activeLayers
-        })
-    }
+    LiwoMap,
+    SegmentedLinks
   }
 }
 </script>

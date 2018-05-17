@@ -1,7 +1,7 @@
 <template>
   <span>
     <template
-      v-for="layer in layerSet"
+      v-for="layer in mapLayers"
     >
       <l-geo-json
         v-if="layer.type === 'json'"
@@ -29,7 +29,9 @@ const STATIC_GEOSERVER_URL = 'https://geodata.basisinformatie-overstromingen.nl/
 const DYNAMIC_GEOSERVER_URL = 'http://tl-397.xtr.deltares.nl:8080/geoserver/'
 
 export default {
-  props: [ 'layerSet' ],
+  props: {
+    mapLayers: Array
+  },
   components: {
     LGeoJson,
     LWmsTileLayer
