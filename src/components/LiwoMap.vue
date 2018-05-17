@@ -30,7 +30,7 @@ import 'leaflet/dist/leaflet.css'
 
 import Vue from 'vue'
 import L from 'leaflet'
-import { LMap, LTileLayer, LGeoJson, LPopup } from 'vue2-leaflet'
+import { LMap, LTileLayer, LPopup } from 'vue2-leaflet'
 import 'proj4leaflet'
 
 import rijksdriehoek from '../lib/rijksdriehoek.js'
@@ -74,7 +74,6 @@ export default {
       const Popup = Vue.extend(LPopup)
       const popup = new Popup()
       const result = popup.$mount()
-      console.log('result', result)
       parent.mapObject.bindPopup(result.$el)
     },
 
