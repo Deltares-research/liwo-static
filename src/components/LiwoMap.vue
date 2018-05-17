@@ -3,52 +3,63 @@
     id="liwo-map"
     ref="map"
     :zoom="zoom"
-    :maxZoom="maxZoom"
-    :minZoom="minZoom"
+    :max-zoom="maxZoom"
+    :min-zoom="minZoom"
     :center="center"
     :crs="crs"
-    :continuousWorld="continuousWorld"
-  >
+    :continuous-world="continuousWorld"
+    >
     <l-tile-layer
       :options="{ tms: baseLayer.tms }"
       :url="baseLayer.url"
-      :minZoom="minZoom"
-      :maxZoom="maxZoom"
-      :continuousWorld="continuousWorld"
-      :attribution="attribution"
+      :min-zoom="minZoom"
+      :max-zoom="maxZoom"
+      :continuous-world="continuousWorld"
+      :attribution="baseLayer.attribution"
     />
     <base-layer-control
-      :tileLayers="baseLayer.tileLayers"
+      :tile-layers="baseLayer.tileLayers"
       @baselayer="updateBaseLayer"
     />
-    <liwo-map-layers :layerSet="layerSet" />
+    <liwo-map-layers :layer-set="layerSet" />
   </l-map>
 </template>
 
 <script>
 import 'leaflet/dist/leaflet.css'
 
+import Vue from 'vue'
 import L from 'leaflet'
-import { LMap, LTileLayer } from 'vue2-leaflet'
+import { LMap, LTileLayer, LPopup } from 'vue2-leaflet'
 import 'proj4leaflet'
 
+import rijksdriehoek from '../lib/rijksdriehoek.js'
 import BaseLayerControl from './BaseLayerControl'
 import LiwoMapLayers from './LiwoMapLayers'
 
 import mapConfig from '../map.config'
 
+// as discussed in https://github.com/Leaflet/Leaflet/issues/4968
+// replace default icons by requires
+delete L.Icon.Default.prototype._getIconUrl
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+})
+
 export default {
-  props: [ 'layerSet' ],
-  components: { BaseLayerControl, LiwoMapLayers, LMap, LTileLayer },
+  components: { BaseLayerControl, LMap, LiwoMapLayers, LTileLayer, LPopup },
+  props: ['layerSet'],
   data () {
     return {
-      continuousWorld: true,
-      crs: this.createCrs(),
       zoom: mapConfig.zoom,
       maxZoom: mapConfig.maxZoom,
       minZoom: mapConfig.minZoom,
-      center: L.latLng(...mapConfig.center),
       attribution: mapConfig.attribution,
+      center: L.latLng(...mapConfig.center),
+      crs: this.createCrs(),
+      continuousWorld: true,
       baseLayer: {
         tms: mapConfig.tileLayers[0].tms,
         tileLayers: mapConfig.tileLayers,
@@ -57,16 +68,32 @@ export default {
     }
   },
   methods: {
+    onEachFeature (feature, layer) {
+      // TODO: move this to liwo-map-layers
+      const parent = this.$refs[layer.id]
+      const Popup = Vue.extend(LPopup)
+      const popup = new Popup()
+      const result = popup.$mount()
+      parent.mapObject.bindPopup(result.$el)
+    },
+
+    setStyle (feature, layer) {
+      // TODO: move this to liwo-map-layers
+      // set the layer to to style object and use css for styling
+      return {className: layer.style}
+    },
     createCrs () {
-      return new L.Proj.CRS(mapConfig.crsType, mapConfig.proj, {
-        resolutions: mapConfig.resolutions,
-        bounds: L.bounds(mapConfig.bounds),
-        origin: mapConfig.origin
+      // Create the Coordinate Reference System
+      // note that this is explictly created. Sharing this object between layers
+      // gives problems
+      return new L.Proj.CRS(rijksdriehoek.crsType, rijksdriehoek.proj, {
+        resolutions: rijksdriehoek.resolutions,
+        bounds: L.bounds(rijksdriehoek.bounds),
+        origin: rijksdriehoek.origin
       })
     },
     updateBaseLayer (url) {
-      // TODO: this should change the url and tms
-      this.url = url
+      this.baseLayer.url = url
     }
   }
 }
@@ -80,5 +107,22 @@ export default {
   display: block;
   margin: 0 auto;
   margin-top: 1rem;
+}
+
+.LIWO_Tools_Dreigingsbeelden_Dijkringen {
+  stroke: rgb(34, 34, 34);
+  stroke-opacity: 0.6;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: rgb(208, 214, 220);
+  fill-opacity: 0.3;
+  /* for lakes  */
+  fill-rule: evenodd;
+}
+
+.LIWO_Tools_Dreigingsbeelden_Dijkringen:hover {
+  stroke-opacity: 0.7;
+  fill-opacity: 0.0;
 }
 </style>

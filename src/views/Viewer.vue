@@ -1,6 +1,6 @@
 <template>
   <div class="viewer">
-    <liwo-map :layerSet="activeLayerSet" />
+    <liwo-map :layer-set="activeLayerSet"/>
     <layer-panel :items="items" @open-export="showExport = true" />
     <export-popup v-if="showExport" @close="showExport = false" />
   </div>
