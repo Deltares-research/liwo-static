@@ -25,18 +25,7 @@ const minZoom = 2
 // This is the default center of the map
 const center = [52, 5.3]
 
-
-// Resolution of each zoomlevel (pixels per meter)
-const resolutions = [
-  3440.64, 1720.32, 860.16,
-  430.08, 215.04, 107.52,
-  53.76, 26.88, 13.44,
-  6.72, 3.36, 1.68,
-  0.84, 0.42, 0.21,
-  0.105, 0.0575
-]
-
-// TODO: Add comment explaining variable
+// Dutch aerial photography and rendered map (default backgrounds)
 const tileLayers = [
   {
     title: 'Achtergrondkaart',
@@ -52,14 +41,9 @@ const tileLayers = [
 
 export default {
   attribution,
-  bounds,
   center,
-  crsType,
   maxZoom,
   minZoom,
-  origin,
-  proj,
-  resolutions,
   services,
   tileLayers,
   zoom
