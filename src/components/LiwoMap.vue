@@ -9,15 +9,6 @@
     :crs="crs"
     :continuousWorld="continuousWorld"
     >
-    <l-geo-json
-      v-for="layer in layers"
-      v-if="layer.type === 'json'"
-      :options="{style: feature => setStyle(feature, layer), onEachFeature: feature => onEachFeature(feature, layer)}"
-      :geojson="layer.geojson"
-      :key="layer.id"
-      :ref="layer.id"
-      >
-    </l-geo-json>
     <l-tile-layer
       :options="{ tms: baseLayer.tms }"
       :url="baseLayer.url"
