@@ -16,7 +16,7 @@
 export default {
   props: {
     activeIndex: 0,
-    items: Array,
+    items: Array
   }
 }
 </script>

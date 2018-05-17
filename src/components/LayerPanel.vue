@@ -36,7 +36,6 @@
 </template>
 
 <script>
-import store from '@/store'
 import LayerControl from '@/components/LayerControl'
 
 export default {
@@ -63,7 +62,7 @@ export default {
   methods: {
     setSelectedLayerId (id) {
       this.$store.commit('setSelectedLayerId', id)
-    },
+    }
   },
   components: {
     LayerControl
