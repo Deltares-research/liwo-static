@@ -3,25 +3,25 @@
     id="liwo-map"
     ref="map"
     :zoom="zoom"
-    :maxZoom="maxZoom"
-    :minZoom="minZoom"
+    :max-zoom="maxZoom"
+    :min-zoom="minZoom"
     :center="center"
     :crs="crs"
-    :continuousWorld="continuousWorld"
+    :continuous-world="continuousWorld"
     >
     <l-tile-layer
       :options="{ tms: baseLayer.tms }"
       :url="baseLayer.url"
-      :minZoom="minZoom"
-      :maxZoom="maxZoom"
-      :continuousWorld="continuousWorld"
+      :min-zoom="minZoom"
+      :max-zoom="maxZoom"
+      :continuous-world="continuousWorld"
       :attribution="baseLayer.attribution"
     />
     <base-layer-control
-      :tileLayers="baseLayer.tileLayers"
+      :tile-layers="baseLayer.tileLayers"
       @baselayer="updateBaseLayer"
     />
-    <liwo-map-layers :layerSet="layerSet" />
+    <liwo-map-layers :layer-set="layerSet" />
   </l-map>
 </template>
 
@@ -60,7 +60,6 @@ export default {
       center: L.latLng(...mapConfig.center),
       crs: this.createCrs(),
       continuousWorld: true,
-      layers: [],
       baseLayer: {
         tms: mapConfig.tileLayers[0].tms,
         tileLayers: mapConfig.tileLayers,
