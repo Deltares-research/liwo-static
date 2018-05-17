@@ -30,6 +30,7 @@
       :tileLayers="baseLayer.tileLayers"
       @baselayer="updateBaseLayer"
     />
+    <liwo-map-layers :layerSet="layerSet" />
   </l-map>
 </template>
 
@@ -44,6 +45,7 @@ import URLSearchParams from 'url-search-params'
 import 'proj4leaflet'
 
 import BaseLayerControl from './BaseLayerControl'
+import LiwoMapLayers from './LiwoMapLayers'
 
 import mapConfig from '../map.config'
 
@@ -66,6 +68,7 @@ export default {
       }
     }
   },
+  components: { BaseLayerControl, LiwoMapLayers, LMap, LTileLayer },
   data () {
     return {
       zoom: mapConfig.zoom,
@@ -89,6 +92,13 @@ export default {
   watch: {
     items () {
       this.setLayers()
+      center: L.latLng(...mapConfig.center),
+      attribution: mapConfig.attribution,
+      baseLayer: {
+        tms: mapConfig.tileLayers[0].tms,
+        tileLayers: mapConfig.tileLayers,
+        url: mapConfig.tileLayers[0].url
+      }
     }
   },
   methods: {
@@ -143,10 +153,13 @@ export default {
       })
     },
     createCrs () {
-      return new L.Proj.CRS(mapConfig.crsType, mapConfig.proj, {
-        resolutions: mapConfig.resolutions,
-        bounds: L.bounds(mapConfig.bounds),
-        origin: mapConfig.origin
+      // Create the Coordinate Reference System
+      // note that this is explictly created. Sharing this object between layers
+      // gives problems
+      return new L.Proj.CRS(rijksdriehoek.crsType, rijksdriehoek.proj, {
+        resolutions: rijksdriehoek.resolutions,
+        bounds: L.bounds(rijksdriehoek.bounds),
+        origin: rijksdriehoek.origin
       })
     },
     updateBaseLayer (url) {
