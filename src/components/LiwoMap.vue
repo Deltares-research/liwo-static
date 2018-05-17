@@ -67,10 +67,9 @@ export default {
       }
     }
   },
-  mounted () {
-  },
   methods: {
     onEachFeature (feature, layer) {
+      // TODO: move this to liwo-map-layers
       const parent = this.$refs[layer.id]
       const Popup = Vue.extend(LPopup)
       const popup = new Popup()
@@ -80,6 +79,7 @@ export default {
     },
 
     setStyle (feature, layer) {
+      // TODO: move this to liwo-map-layers
       // set the layer to to style object and use css for styling
       return {className: layer.style}
     },
