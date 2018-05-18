@@ -16,6 +16,7 @@
         @click="setSelectedLayerId(layer.id)"
       >
         <layer-control
+          @toggle="toggleLayerVisibilityById"
           :active="(layer.id === selectedLayerId)"
           :id="layer.id"
           :title="layer.title"
@@ -62,6 +63,9 @@ export default {
   methods: {
     setSelectedLayerId (id) {
       this.$store.commit('setSelectedLayerId', id)
+    },
+    toggleLayerVisibilityById (id) {
+      this.$store.commit('toggleLayerById', id)
     }
   },
   components: {

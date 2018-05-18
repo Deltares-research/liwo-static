@@ -31,6 +31,13 @@ export default new Vuex.Store({
     },
     showLayerById (state, id) {
       state.visibleLayerIds = state.visibleLayerIds.concat(id)
+    },
+    toggleLayerById (state, id) {
+      if (state.visibleLayerIds.some(visibleId => id === visibleId)) {
+        this.commit('hideLayerById', id)
+      } else {
+        this.commit('showLayerById', id)
+      }
     }
   },
   actions: {
