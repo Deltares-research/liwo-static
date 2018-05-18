@@ -1,13 +1,28 @@
 <template>
   <div class="viewer">
-    <liwo-map :map-layers="mapLayers" />
+    <liwo-map
+      :map-layers="mapLayers"
+    />
+    <layer-panel
+      :items="layers"
+      @open-export="showExport = true"
+    />
+    <legend-panel
+      v-if="selectedLayerVariant"
+      :caption="'caption'"
+      :layer-name="selectedLayerVariant.layer"
+      :style-name="selectedLayerVariant.style"
+    />
     <segmented-buttons
       v-if="variantTitlesForSelectedLayer.length > 1"
       :items="variantTitlesForSelectedLayer"
       :active-index="variantIndexForSelectedLayer"
-      @click="setVisibleVariantIdForSelectedlayer"/>
-    <layer-panel :items="layers" @open-export="showExport = true" />
-    <export-popup v-if="showExport" @close="showExport = false" />
+      @click="setVisibleVariantIdForSelectedlayer"
+    />
+    <export-popup
+      v-if="showExport"
+      @close="showExport = false"
+    />
   </div>
 </template>
 
@@ -15,6 +30,7 @@
 import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
 import LiwoMap from '@/components/LiwoMap'
+import LegendPanel from '@/components/LegendPanel'
 import SegmentedButtons from '@/components/SegmentedButtons'
 
 import '@/lib/leaflet-hack'
@@ -41,28 +57,38 @@ export default {
   computed: {
     mapLayers () {
       return this.parsedLayers
+        // filter by visibility from state
         .filter(({id}) => this.visibleLayerIds.some(visibleId => visibleId === id))
         .map(layer => {
+          // get index for current variant of selected layer (controllable in LayerPanel)
           const variantIndex = this.$store.state.visibleVariantIndexByLayerId[this.selectedLayerId]
           return layer.variants[variantIndex]
         })
     },
-    variantTitlesForSelectedLayer () {
+    selectedLayer () {
       const selectedLayers = this.parsedLayers
-        .filter(({id}) => this.selectedLayerId)
-
-      return (selectedLayers && selectedLayers[0])
-        ? selectedLayers[0].variants.map(({title}) => title)
-        : []
-    },
-    visibleLayerIds () {
-      return this.$store.state.visibleLayerIds
+        .filter(({id}) => this.selectedLayerId === id)
+      if  (selectedLayers && selectedLayers[0]) {
+        return selectedLayers[0] // should only be one
+      }
     },
     selectedLayerId () {
       return this.$store.state.selectedLayerId
     },
+    selectedLayerVariant () {
+      const variantId = this.variantIndexForSelectedLayer
+      return this.selectedLayer.variants[variantId]
+    },
+    variantTitlesForSelectedLayer () {
+      return (this.selectedLayer)
+        ? this.selectedLayer.variants.map(({title}) => title)
+        : []
+    },
     variantIndexForSelectedLayer () {
       return this.$store.state.visibleVariantIndexByLayerId[this.selectedLayerId]
+    },
+    visibleLayerIds () {
+      return this.$store.state.visibleLayerIds
     }
   },
   methods: {
@@ -95,6 +121,7 @@ export default {
   components: {
     ExportPopup,
     LayerPanel,
+    LegendPanel,
     LiwoMap,
     SegmentedButtons
   }
@@ -102,20 +129,31 @@ export default {
 </script>
 
 <style>
+@import '../components/variables.css';
+
 .viewer {
   position: relative;
 }
 .viewer .layer-panel {
   position: absolute;
   top: 1rem;
-  left: 1rem;
+  left: 2rem;
   z-index: 1000;
+  box-shadow: var(--shadow);
 }
 
 .viewer .segmented-buttons {
   position: relative;
   margin: -1rem auto;
   z-index: 1000;
+}
+
+.viewer .legend-panel {
+  position: absolute;
+  right: 2rem;
+  bottom: 2rem;
+  z-index: 1000;
+  box-shadow: var(--shadow);
 }
 
 </style>
