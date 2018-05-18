@@ -5,8 +5,8 @@
     >
       <l-geo-json
         v-if="layer.type === 'json'"
-        :ref="layer.id"
-        :key="layer.id"
+        :ref="layer.layer"
+        :key="layer.layer"
         :geojson="layer.geojson"
         :options="{ style: (feature) => setStyle(feature, layer) , onEachFeature: onEachFeature  }"
       />
@@ -14,7 +14,8 @@
         v-else
         layer-type="base"
         format="image/png"
-        :key="layer.id"
+        :ref="layer.layer"
+        :key="layer.layer"
         :base-url="geoServerURL(layer.namespace)"
         :layers="layer.layer"
         :styles="layer.style"
@@ -51,10 +52,6 @@ export default {
   props: {
     mapLayers: Array,
     mapRef: Object
-  },
-  components: {
-    LGeoJson,
-    LWmsTileLayer
   },
   methods: {
     geoServerURL (namespace) {
@@ -126,7 +123,17 @@ export default {
         map.addLayer(breach)
       })
     },
-    mapLayers (mapLayers) {
+    mapLayers (mapLayers, oldMapLayers) {
+      const refs = this.$refs
+      const removedLayers = oldMapLayers
+        .filter(oldLayer => mapLayers.every(mapLayer => mapLayer.layer !== oldLayer.layer))
+
+      removedLayers.forEach(layer => {
+        // When used on elements/components with v-for,
+        // the registered reference will be an Array containing DOM nodes or component instances.
+        // https://vuejs.org/v2/api/#ref
+        refs[layer.layer][0].mapObject.remove()
+      })
       Promise.all(mapLayers.map(async (layer) => {
         return (layer.type === 'json')
           ? { ...layer, geojson: await loadGeojson(layer) }
@@ -136,6 +143,10 @@ export default {
           this.expandedMapLayers = layers
         })
     }
+  },
+  components: {
+    LGeoJson,
+    LWmsTileLayer
   }
 }
 </script>

@@ -58,14 +58,15 @@ export default {
         // filter by visibility from state
         .filter(({id}) => this.visibleLayerIds.some(visibleId => visibleId === id))
         .map(layer => {
-          // get index for current variant of selected layer (controllable in LayerPanel)
-          const variantIndex = this.$store.state.visibleVariantIndexByLayerId[this.selectedLayerId]
+          // get index for current variant of layer
+          const variantIndex = this.$store.state.visibleVariantIndexByLayerId[layer.id]
           return layer.variants[variantIndex]
         })
     },
     selectedLayer () {
       const selectedLayers = this.parsedLayers
         .filter(({id}) => this.selectedLayerId === id)
+
       if  (selectedLayers && selectedLayers[0]) {
         return selectedLayers[0] // should only be one
       }
