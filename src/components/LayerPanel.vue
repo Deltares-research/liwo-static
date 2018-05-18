@@ -77,7 +77,6 @@ export default {
   width: 320px;
   height: auto;
   background-color: var(--white);
-  box-shadow: var(--shadow);
 }
 .layer-panel__title,
 .layer-panel__export {

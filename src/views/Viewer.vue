@@ -8,10 +8,10 @@
       @open-export="showExport = true"
     />
     <legend-panel
-      v-if="selectedLayerVariant"
+      v-if="selectedVisibleLayerLegend"
       :caption="'caption'"
-      :layer-name="selectedLayerVariant.layer"
-      :style-name="selectedLayerVariant.style"
+      :layer-name="selectedVisibleLayerLegend.layer"
+      :style-name="selectedVisibleLayerLegend.style"
     />
     <segmented-buttons
       v-if="variantTitlesForSelectedLayer.length > 1"
@@ -75,9 +75,11 @@ export default {
     selectedLayerId () {
       return this.$store.state.selectedLayerId
     },
-    selectedLayerVariant () {
-      const variantId = this.variantIndexForSelectedLayer
-      return this.selectedLayer.variants[variantId]
+    selectedVisibleLayerLegend () {
+      if (this.selectedLayer && this.visibleLayerIds.some(visibleId => visibleId === this.selectedLayerId)) {
+        return this.selectedLayer.legend
+      }
+      return undefined
     },
     variantTitlesForSelectedLayer () {
       return (this.selectedLayer)
@@ -110,6 +112,7 @@ export default {
         return {
           id: layer.id,
           properties: layer,
+          legend: layer.legend,
           variants: layer.variants.map(variant => ({
             ...variant.map,
             title: variant.title

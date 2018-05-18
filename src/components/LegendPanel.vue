@@ -43,6 +43,7 @@ export default {
     color: var(--black);
   }
   .legend-panel__caption {
+    text-align: center;
     margin-bottom: 1rem;
   }
   .legend-panel__legend {
