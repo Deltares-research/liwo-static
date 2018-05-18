@@ -1,10 +1,10 @@
 <template>
   <div class="viewer">
-    <liwo-map :mapLayers="mapLayers" />
+    <liwo-map :map-layers="mapLayers" />
     <segmented-buttons
       v-if="variantTitlesForSelectedLayer.length > 1"
       :items="variantTitlesForSelectedLayer"
-      :activeIndex="variantIndexForSelectedLayer"
+      :active-index="variantIndexForSelectedLayer"
       @click="setVisibleVariantIdForSelectedlayer"/>
     <layer-panel :items="layers" @open-export="showExport = true" />
     <export-popup v-if="showExport" @close="showExport = false" />
@@ -48,8 +48,9 @@ export default {
         })
     },
     variantTitlesForSelectedLayer () {
-      const selectedLayers = this.layers // Should this be layers or parsedLayers, the latter does not have variant titles
+      const selectedLayers = this.parsedLayers
         .filter(({id}) => this.selectedLayerId)
+
       return (selectedLayers && selectedLayers[0])
         ? selectedLayers[0].variants.map(({title}) => title)
         : []
@@ -79,7 +80,10 @@ export default {
         return {
           id: layer.id,
           properties: layer,
-          variants: layer.variants.map(variant => ({ ...variant.map }))
+          variants: layer.variants.map(variant => ({
+            ...variant.map,
+            title: variant.title
+          }))
         }
       })
     }
