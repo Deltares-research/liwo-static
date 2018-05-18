@@ -9,7 +9,8 @@
     />
     <legend-panel
       v-if="selectedVisibleLayerLegend"
-      :caption="'caption'"
+      :caption="selectedVisibleLayerLegend.title"
+      :namespace="selectedVisibleLayerLegend.namespace"
       :layer-name="selectedVisibleLayerLegend.layer"
       :style-name="selectedVisibleLayerLegend.style"
     />
@@ -76,7 +77,10 @@ export default {
     },
     selectedVisibleLayerLegend () {
       if (this.selectedLayer && this.visibleLayerIds.some(visibleId => visibleId === this.selectedLayerId)) {
-        return this.selectedLayer.legend
+        return {
+          ...this.selectedLayer.legend,
+          layerType: this.selectedLayer.variants[0].type
+        }
       }
       return undefined
     },
@@ -111,7 +115,10 @@ export default {
         return {
           id: layer.id,
           properties: layer,
-          legend: layer.legend,
+          legend: {
+            ...layer.legend,
+            namespace: layer.variants[0].map.namespace // namespace should be available to legend
+          },
           variants: layer.variants.map(variant => ({
             ...variant.map,
             title: variant.title
@@ -145,8 +152,9 @@ export default {
 }
 
 .viewer .segmented-buttons {
-  position: relative;
-  margin: -1rem auto;
+  position: absolute;
+  width: 100%;
+  bottom: -1rem;
   z-index: 1000;
 }
 
