@@ -1,7 +1,12 @@
 <template>
   <div class="viewer">
-    <liwo-map :layerSet="activeLayerSet" />
-    <layer-panel :items="items" @open-export="showExport = true" />
+    <liwo-map :map-layers="mapLayers" />
+    <segmented-buttons
+      v-if="variantTitlesForSelectedLayer.length > 1"
+      :items="variantTitlesForSelectedLayer"
+      :active-index="variantIndexForSelectedLayer"
+      @click="setVisibleVariantIdForSelectedlayer"/>
+    <layer-panel :items="layers" @open-export="showExport = true" />
     <export-popup v-if="showExport" @close="showExport = false" />
   </div>
 </template>
@@ -9,71 +14,87 @@
 <script>
 import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
-import LiwoMap from '@/components/LiwoMap.vue'
+import LiwoMap from '@/components/LiwoMap'
+import SegmentedButtons from '@/components/SegmentedButtons'
 
 import '@/lib/leaflet-hack'
 import { loadLayersetById } from '@/lib/load-layersets'
-import fetchJSONLayer from '@/lib/fetch-json-layer'
 
 export default {
   data () {
     return {
-      title: '',
+      layers: [],
+      parsedLayers: [],
       id: 0,
-      items: [],
-      layerSet: undefined,
-      activeLayerSet: undefined,
-      showExport: false
+      showExport: false,
+      title: ''
     }
   },
   async mounted () {
-    const { title, id, layers } = await loadLayersetById(this.$route.params.id)
+    const layerSet = await loadLayersetById(this.$route.params.id)
+    this.layers = layerSet.layers
+    this.title = layerSet.title
+    this.id = layerSet.id
+  },
+  computed: {
+    mapLayers () {
+      return this.parsedLayers
+        .filter(({id}) => this.visibleLayerIds.some(visibleId => visibleId === id))
+        .map(layer => {
+          const variantIndex = this.$store.state.visibleVariantIndexByLayerId[this.selectedLayerId]
+          return layer.variants[variantIndex]
+        })
+    },
+    variantTitlesForSelectedLayer () {
+      const selectedLayers = this.parsedLayers
+        .filter(({id}) => this.selectedLayerId)
 
-    this.title = title
-    this.id = id
-    this.items = layers
+      return (selectedLayers && selectedLayers[0])
+        ? selectedLayers[0].variants.map(({title}) => title)
+        : []
+    },
+    visibleLayerIds () {
+      return this.$store.state.visibleLayerIds
+    },
+    selectedLayerId () {
+      return this.$store.state.selectedLayerId
+    },
+    variantIndexForSelectedLayer () {
+      return this.$store.state.visibleVariantIndexByLayerId[this.selectedLayerId]
+    }
+  },
+  methods: {
+    setVisibleVariantIdForSelectedlayer (index) {
+      this.$store.commit('setVisibleVariantIndexForLayerId', { index, layerId: this.selectedLayerId })
+    }
+  },
+  watch: {
+    layers (layers) {
+      if (layers.length === 0) {
+        return
+      }
+      // new layers mean new state init
+      this.$store.commit('setSelectedLayerId', layers[0].id)
+
+      this.parsedLayers = layers.map(layer => {
+        this.$store.commit('showLayerById', layer.id)
+        this.$store.commit('setVisibleVariantIndexForLayerId', {index: 0, layerId: layer.id})
+        return {
+          id: layer.id,
+          properties: layer,
+          variants: layer.variants.map(variant => ({
+            ...variant.map,
+            title: variant.title
+          }))
+        }
+      })
+    }
   },
   components: {
     ExportPopup,
     LayerPanel,
-    LiwoMap
-  },
-  methods: {
-    parseVariant (variant) {
-      if (variant.map.type === 'WMS') {
-        return { ...variant.map }
-      }
-
-      if (variant.map.type === 'json') {
-        return { ...variant.map }
-      }
-    }
-  },
-  watch: {
-    items (layers) {
-      const parsedLayers = layers.map(layer => {
-        return {
-          id: layer.id,
-          properties: layer,
-          variants: layer.variants.map(this.parseVariant)
-        }
-      })
-
-      this.layerSet = parsedLayers
-
-      Promise.all(
-        parsedLayers.map(async (layer) => {
-          const variant = layer.variants[0]
-
-          return variant.type === 'json'
-            ? { ...variant, geojson: await fetchJSONLayer(variant) }
-            : variant
-        })
-      )
-        .then(activeLayers => {
-          this.activeLayerSet = activeLayers
-        })
-    }
+    LiwoMap,
+    SegmentedButtons
   }
 }
 </script>
@@ -88,4 +109,11 @@ export default {
   left: 1rem;
   z-index: 1000;
 }
+
+.viewer .segmented-buttons {
+  position: relative;
+  margin: -1rem auto;
+  z-index: 1000;
+}
+
 </style>

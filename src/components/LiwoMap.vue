@@ -1,27 +1,27 @@
 <template>
   <l-map
     id="liwo-map"
-    ref="map"
+    ref="liwoMap"
     :zoom="zoom"
-    :maxZoom="maxZoom"
-    :minZoom="minZoom"
+    :max-zoom="maxZoom"
+    :min-zoom="minZoom"
     :center="center"
     :crs="crs"
-    :continuousWorld="continuousWorld"
+    :continuous-world="continuousWorld"
   >
     <l-tile-layer
       :options="{ tms: baseLayer.tms }"
       :url="baseLayer.url"
-      :minZoom="minZoom"
-      :maxZoom="maxZoom"
-      :continuousWorld="continuousWorld"
+      :min-zoom="minZoom"
+      :max-zoom="maxZoom"
+      :continuous-world="continuousWorld"
       :attribution="attribution"
     />
     <base-layer-control
-      :tileLayers="baseLayer.tileLayers"
+      :tile-layers="baseLayer.tileLayers"
       @baselayer="updateBaseLayer"
     />
-    <liwo-map-layers :layerSet="layerSet" />
+    <liwo-map-layers :map-layers="mapLayers" :map-ref="mapRef" />
   </l-map>
 </template>
 
@@ -35,13 +35,18 @@ import 'proj4leaflet'
 import BaseLayerControl from './BaseLayerControl'
 import LiwoMapLayers from './LiwoMapLayers'
 
-import mapConfig from '../map.config'
+import '../lib/leaflet-hack'
+import mapConfig from '../map.config.js'
+import rdConfig from '../lib/rijksdriehoek.config.js'
 
 export default {
-  props: [ 'layerSet' ],
+  props: {
+    mapLayers: Array
+  },
   components: { BaseLayerControl, LiwoMapLayers, LMap, LTileLayer },
   data () {
     return {
+      mapRef: undefined,
       continuousWorld: true,
       crs: this.createCrs(),
       zoom: mapConfig.zoom,
@@ -58,27 +63,28 @@ export default {
   },
   methods: {
     createCrs () {
-      return new L.Proj.CRS(mapConfig.crsType, mapConfig.proj, {
-        resolutions: mapConfig.resolutions,
-        bounds: L.bounds(mapConfig.bounds),
-        origin: mapConfig.origin
+      return new L.Proj.CRS(rdConfig.crsType, rdConfig.proj, {
+        resolutions: rdConfig.resolutions,
+        bounds: L.bounds(rdConfig.bounds),
+        origin: rdConfig.origin
       })
     },
     updateBaseLayer (url) {
-      // TODO: this should change the url and tms
-      this.url = url
+      this.baseLayer.url = url
     }
+  },
+  mounted () {
+    this.mapRef = this.$refs.liwoMap
   }
 }
 </script>
 
 <style>
-
 #liwo-map {
   width: calc(100% - 2rem);
-  height: 400px;
   display: block;
   margin: 0 auto;
   margin-top: 1rem;
+  height: calc(100vh - 20rem);
 }
 </style>
