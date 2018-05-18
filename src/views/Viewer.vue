@@ -74,7 +74,7 @@ export default {
         return
       }
       // new layers mean new state init
-      this.$store.commit('setSelectedLayerId',layers[0].id)
+      this.$store.commit('setSelectedLayerId', layers[0].id)
 
       this.parsedLayers = layers.map(layer => {
         this.$store.commit('showLayerById', layer.id)

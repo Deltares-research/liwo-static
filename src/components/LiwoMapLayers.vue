@@ -25,7 +25,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import { LGeoJson, LWMSTileLayer as LWmsTileLayer } from 'vue2-leaflet'
 
 import BreachTooltip from './BreachTooltip'
@@ -34,9 +33,7 @@ import DikeRingTooltip from './DikeRingTooltip'
 import loadGeojson from '../lib/load-geojson'
 import renderVue from '../lib/render-vue'
 
-
 const MARKER_IDENTIFIER = 'Point'
-const DIKERING_IDENTIFIER = 'MultiPolygon'
 
 const STATIC_GEOSERVER_URL = 'https://geodata.basisinformatie-overstromingen.nl/geoserver/ows/'
 const DYNAMIC_GEOSERVER_URL = 'http://tl-397.xtr.deltares.nl:8080/geoserver/'
@@ -68,21 +65,21 @@ export default {
       const dijkringnr = layer.feature.properties.dijkringnr
       const map = this.mapRef.mapObject
 
-      if ( feature.geometry.type === MARKER_IDENTIFIER && dijkringnr !== this.selectedDikeRing ) {
+      if (feature.geometry.type === MARKER_IDENTIFIER && dijkringnr !== this.selectedDikeRing) {
         this.breaches[dijkringnr]
           ? this.breaches[dijkringnr] = [ ...this.breaches[dijkringnr], layer ]
           : this.breaches[dijkringnr] = [ layer ]
 
-        const tooltip = renderVue(BreachTooltip, { ...layer.feature.properties } )
+        const tooltip = renderVue(BreachTooltip, { ...layer.feature.properties })
         layer.bindTooltip(tooltip)
 
         layer.once('add', () => map.removeLayer(layer))
       }
 
-      if ( feature.geometry.type !== MARKER_IDENTIFIER ) {
-        this.dikeRings[dijkringnr] = layer 
+      if (feature.geometry.type !== MARKER_IDENTIFIER) {
+        this.dikeRings[dijkringnr] = layer
 
-        const tooltip = renderVue(DikeRingTooltip, { ...layer.feature.properties } )
+        const tooltip = renderVue(DikeRingTooltip, { ...layer.feature.properties })
         layer.bindTooltip(tooltip)
 
         layer.on('click', () => {
@@ -103,20 +100,20 @@ export default {
     selectedDikeRing (newDikeRingId, oldDikeRingId) {
       const map = this.mapRef.mapObject
 
-      if(newDikeRingId === oldDikeRingId) {
+      if (newDikeRingId === oldDikeRingId) {
         return
       }
 
-      if(oldDikeRingId) {
+      if (oldDikeRingId) {
         const oldDikeRing = this.dikeRings[oldDikeRingId]
-        const tooltip = renderVue(DikeRingTooltip, { ...oldDikeRing.feature.properties } )
+        const tooltip = renderVue(DikeRingTooltip, { ...oldDikeRing.feature.properties })
 
         oldDikeRing.bindTooltip(tooltip)
         this.breaches[oldDikeRingId].forEach(breach => {
           map.removeLayer(breach)
         })
       }
-      
+
       this.dikeRings[newDikeRingId].unbindTooltip()
       this.breaches[newDikeRingId].forEach(breach => {
         map.addLayer(breach)
