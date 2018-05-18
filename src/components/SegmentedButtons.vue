@@ -25,11 +25,8 @@ export default {
 @import './variables.css';
 
 .segmented-buttons {
-  position: relative;
-  margin: -1rem auto;
   text-align: center;
   display: block;
-  z-index: 1000;
 }
 .segmented-buttons ul {
   display: inline-block;
@@ -55,7 +52,6 @@ export default {
   display: inline;
   padding: .7em 1.1em;
   background: var(--white);
-  height: 100%;
   margin: 0;
   position: relative;
 }

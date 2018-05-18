@@ -103,4 +103,11 @@ export default {
   left: 1rem;
   z-index: 1000;
 }
+
+.viewer .segmented-buttons {
+  position: relative;
+  margin: -1rem auto;
+  z-index: 1000;
+}
+
 </style>
