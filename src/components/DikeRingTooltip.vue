@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>{{ dijkring }}</h2>
+    <h2>{{ title }}</h2>
     <div>
       <h3>Beheerder(s)</h3>
       <ul>
@@ -18,12 +18,12 @@
 <script>
 export default {
   props: {
-    dijkring: String,
-    beheerder: String
+    title: String,
+    admin: String
   },
   computed: {
     adminList () {
-      return this.beheerder.split(';')
+      return this.admin.split(';')
     }
   }
 }

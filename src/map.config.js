@@ -4,6 +4,7 @@ const services = {
   WEBSERVICE_URL: 'https://basisinformatie-overstromingen.nl/liwo.ws/',
   // url for static geoserver [ending with a forward slash]
   STATIC_GEOSERVER_URL: 'https://geodata.basisinformatie-overstromingen.nl/geoserver/ows/',
+  DYNAMIC_GEOSERVER_URL: 'http://tl-397.xtr.deltares.nl:8080/geoserver/',
   ACHTERGRONDKAART: 'https://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png',
   LUCHTFOTOKAART: 'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/tms/1.0.0/2016_ortho25/EPSG:28992/{z}/{x}/{y}.png',
   PDOKLUCHTFOTO: 'http://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wms',
