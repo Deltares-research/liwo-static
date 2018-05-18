@@ -35,7 +35,6 @@ import SegmentedButtons from '@/components/SegmentedButtons'
 
 import '@/lib/leaflet-hack'
 import { loadLayersetById } from '@/lib/load-layersets'
-// import loadGeojson from '../lib/load-geojson'
 
 export default {
   data () {
@@ -43,7 +42,6 @@ export default {
       layers: [],
       parsedLayers: [],
       id: 0,
-      items: [],
       showExport: false,
       title: ''
     }
@@ -104,7 +102,7 @@ export default {
         return
       }
       // new layers mean new state init
-      this.$store.commit('setSelectedLayerId',layers[0].id)
+      this.$store.commit('setSelectedLayerId', layers[0].id)
 
       this.parsedLayers = layers.map(layer => {
         this.$store.commit('showLayerById', layer.id)
