@@ -9,7 +9,7 @@
     />
     <legend-panel
       v-if="selectedVisibleLayerLegend"
-      :caption="'caption'"
+      :caption="selectedVisibleLayerLegend.title"
       :layer-name="selectedVisibleLayerLegend.layer"
       :style-name="selectedVisibleLayerLegend.style"
     />
@@ -74,7 +74,9 @@ export default {
       return this.$store.state.selectedLayerId
     },
     selectedVisibleLayerLegend () {
+
       if (this.selectedLayer && this.visibleLayerIds.some(visibleId => visibleId === this.selectedLayerId)) {
+        if (this.selectedLayer.legend)
         return this.selectedLayer.legend
       }
       return undefined
