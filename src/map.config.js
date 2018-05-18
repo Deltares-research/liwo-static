@@ -9,7 +9,8 @@ const services = {
   LUCHTFOTOKAART: 'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/tms/1.0.0/2016_ortho25/EPSG:28992/{z}/{x}/{y}.png',
   PDOKLUCHTFOTO: 'http://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wms',
   PDOKBRTACHTERGROND: 'http://geodata.nationaalgeoregister.nl/tiles/service/wmts',
-  MANUAL_URL: 'https://www.helpdeskwater.nl/onderwerpen/applicaties-modellen/applicaties-per/watermanagement/watermanagement/liwo/'
+  MANUAL_URL: 'https://www.helpdeskwater.nl/onderwerpen/applicaties-modellen/applicaties-per/watermanagement/watermanagement/liwo/',
+  LEGEND_URL: 'https://geodata.basisinformatie-overstromingen.nl/geoserver/LIWO_Basis/wms'
 }
 // This is the attribution (maps and datasets often require attribution of the source)
 const attribution = '&copy <a href="http://www.pdok.nl">PDOK</a>'
