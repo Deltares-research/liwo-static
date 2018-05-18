@@ -19,7 +19,6 @@ import SegmentedButtons from '@/components/SegmentedButtons'
 
 import '@/lib/leaflet-hack'
 import { loadLayersetById } from '@/lib/load-layersets'
-// import loadGeojson from '../lib/load-geojson'
 
 export default {
   data () {
@@ -27,7 +26,6 @@ export default {
       layers: [],
       parsedLayers: [],
       id: 0,
-      items: [],
       showExport: false,
       title: ''
     }
@@ -41,7 +39,7 @@ export default {
   computed: {
     mapLayers () {
       return this.parsedLayers
-        .filter(({id}) => this.visibleLayerIds.every(visibleId => visibleId === id))
+        // .filter(({id}) => this.visibleLayerIds.every(visibleId => visibleId === id))
         .map(layer => {
           const variantIndex = this.$store.state.visibleVariantIndexByLayerId[this.selectedLayerId]
           return layer.variants[variantIndex]

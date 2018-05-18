@@ -1,7 +1,7 @@
 <template>
   <span>
     <template
-      v-for="layer in mapLayers"
+      v-for="layer in activeMapLayers"
     >
       <l-geo-json
         v-if="layer.type === 'json'"
@@ -31,7 +31,9 @@ import { LGeoJson, LWMSTileLayer as LWmsTileLayer } from 'vue2-leaflet'
 import BreachTooltip from './BreachTooltip'
 import DikeRingTooltip from './DikeRingTooltip'
 
+import loadGeojson from '../lib/load-geojson'
 import renderVue from '../lib/render-vue'
+
 
 const MARKER_IDENTIFIER = 'Point'
 const DIKERING_IDENTIFIER = 'MultiPolygon'
@@ -42,8 +44,9 @@ const DYNAMIC_GEOSERVER_URL = 'http://tl-397.xtr.deltares.nl:8080/geoserver/'
 export default {
   data () {
     return {
-      dijkringen: {},
-      doorbraken: {},
+      activeMapLayers: [],
+      dikeRings: {},
+      breaches: {},
       selectedDikeRing: undefined
     }
   },
@@ -66,9 +69,9 @@ export default {
       const map = this.mapRef.mapObject
 
       if ( feature.geometry.type === MARKER_IDENTIFIER && dijkringnr !== this.selectedDikeRing ) {
-        this.doorbraken[dijkringnr]
-          ? this.doorbraken[dijkringnr] = [ ...this.doorbraken[dijkringnr], layer ]
-          : this.doorbraken[dijkringnr] = [ layer ]
+        this.breaches[dijkringnr]
+          ? this.breaches[dijkringnr] = [ ...this.breaches[dijkringnr], layer ]
+          : this.breaches[dijkringnr] = [ layer ]
 
         const tooltip = renderVue(BreachTooltip, { ...layer.feature.properties } )
         layer.bindTooltip(tooltip)
@@ -77,9 +80,7 @@ export default {
       }
 
       if ( feature.geometry.type !== MARKER_IDENTIFIER ) {
-        this.dijkringen[dijkringnr]
-          ? this.dijkringen[dijkringnr] = [ ...this.dijkringen[dijkringnr], layer ]
-          : this.dijkringen[dijkringnr] = [ layer ]
+        this.dikeRings[dijkringnr] = layer 
 
         const tooltip = renderVue(DikeRingTooltip, { ...layer.feature.properties } )
         layer.bindTooltip(tooltip)
@@ -87,8 +88,8 @@ export default {
         layer.on('click', () => {
           map.flyToBounds(layer.getBounds())
           this.selectedDikeRing = dijkringnr
-          this.doorbraken[dijkringnr].forEach(doorbraak => {
-            map.addLayer(doorbraak)
+          this.breaches[dijkringnr].forEach(breach => {
+            map.addLayer(breach)
           })
         })
       }
@@ -99,22 +100,37 @@ export default {
     }
   },
   watch: {
-    selectedDikeRing (newDikeRing, oldDikeRing) {
+    selectedDikeRing (newDikeRingId, oldDikeRingId) {
       const map = this.mapRef.mapObject
 
-      if(oldDikeRing === newDikeRing) {
+      if(newDikeRingId === oldDikeRingId) {
         return
       }
 
-      if(oldDikeRing) {
-        this.doorbraken[oldDikeRing].forEach(doorbraak => {
-          map.removeLayer(doorbraak)
+      if(oldDikeRingId) {
+        const oldDikeRing = this.dikeRings[oldDikeRingId]
+        const tooltip = renderVue(DikeRingTooltip, { ...oldDikeRing.feature.properties } )
+
+        oldDikeRing.bindTooltip(tooltip)
+        this.breaches[oldDikeRingId].forEach(breach => {
+          map.removeLayer(breach)
         })
       }
       
-      this.doorbraken[newDikeRing].forEach(doorbraak => {
-        map.addLayer(doorbraak)
+      this.dikeRings[newDikeRingId].unbindTooltip()
+      this.breaches[newDikeRingId].forEach(breach => {
+        map.addLayer(breach)
       })
+    },
+    mapLayers (mapLayers) {
+      Promise.all(mapLayers.map(async (layer) => {
+        return (layer.type === 'json')
+          ? { ...layer, geojson: await loadGeojson(layer) }
+          : layer
+      }))
+        .then(layers => {
+          this.activeMapLayers = layers
+        })
     }
   }
 }
