@@ -41,7 +41,7 @@ export default {
   computed: {
     mapLayers () {
       return this.parsedLayers
-        .filter(({id}) => this.visibleLayerIds.every(visibleId => visibleId === id))
+        .filter(({id}) => this.visibleLayerIds.some(visibleId => visibleId === id))
         .map(layer => {
           const variantIndex = this.$store.state.visibleVariantIndexByLayerId[this.selectedLayerId]
           return layer.variants[variantIndex]
@@ -72,11 +72,15 @@ export default {
   },
   watch: {
     layers (layers) {
+      if (layers.length === 0) {
+        return
+      }
       // new layers mean new state init
-      this.$store.state.selectedLayerId = layers[0].id
+      this.$store.commit('setSelectedLayerId',layers[0].id)
+
       this.parsedLayers = layers.map(layer => {
-        this.$store.state.visibleLayerIds.push(layer.id)
-        this.$store.state.visibleVariantIndexByLayerId[layer.id] = 0
+        this.$store.commit('showLayerById', layer.id)
+        this.$store.commit('setVisibleVariantIndexForLayerId', {index: 0, layerId: layer.id})
         return {
           id: layer.id,
           properties: layer,
