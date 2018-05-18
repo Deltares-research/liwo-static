@@ -30,7 +30,7 @@ export default {
   @import './variables.css';
 
   .legend-panel {
-    max-width: 10rem;
+    max-width: 20rem;
     height: auto;
     background-color: var(--white);
   }
