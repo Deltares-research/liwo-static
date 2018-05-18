@@ -85,7 +85,7 @@ export default {
         layer.bindTooltip(tooltip)
 
         layer.on('click', () => {
-          map.flyToBounds(layer.getBounds())
+          map.fitBounds(layer.getBounds())
           this.selectedDikeRing = dijkringnr
           this.breaches[dijkringnr].forEach(breach => {
             map.addLayer(breach)
