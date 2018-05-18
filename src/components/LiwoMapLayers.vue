@@ -1,7 +1,7 @@
 <template>
   <span>
     <template
-      v-for="layer in layerSet"
+      v-for="layer in mapLayers"
     >
       <l-geo-json
         v-if="layer.type === 'json'"
@@ -48,8 +48,8 @@ export default {
     }
   },
   props: {
-    layerSet: Array,
-    mapRef: Object,
+    mapLayers: Array,
+    mapRef: Object
   },
   components: {
     LGeoJson,

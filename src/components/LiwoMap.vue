@@ -21,7 +21,7 @@
       :tile-layers="baseLayer.tileLayers"
       @baselayer="updateBaseLayer"
     />
-    <liwo-map-layers :layer-set="layerSet" :map-ref="mapRef" />
+    <liwo-map-layers :map-layers="mapLayers" :map-ref="mapRef" />
   </l-map>
 </template>
 
@@ -40,7 +40,9 @@ import mapConfig from '../map.config.js'
 import rdConfig from '../lib/rijksdriehoek.config.js'
 
 export default {
-  props: [ 'layerSet' ],
+  props: {
+    mapLayers: Array
+  },
   components: { BaseLayerControl, LiwoMapLayers, LMap, LTileLayer },
   data () {
     return {

@@ -1,15 +1,12 @@
 <template>
-  <nav class="segmented-links">
+  <nav class="segmented-buttons">
     <ul>
-      <li
-        v-for="item in items"
-        :key="item.to"
-      >
-        <router-link
-          :to="item.to"
-        >
-          {{ item.name }}
-        </router-link>
+      <li v-for="(item, index) in items" :key="item">
+        <button
+          :class="`segmented-button${(index === activeIndex) ? ' segmented-button--active' : ''}`"
+          @click="$emit('click', index)">
+          {{ item }}
+        </button>
       </li>
     </ul>
   </nav>
@@ -18,12 +15,8 @@
 <script>
 export default {
   props: {
-    items: {
-      type: Array,
-      validator (items) {
-        return items.every(item => (item.name !== undefined && item.to !== undefined))
-      }
-    }
+    activeIndex: 0,
+    items: Array
   }
 }
 </script>
@@ -31,12 +24,11 @@ export default {
 <style>
 @import './variables.css';
 
-.segmented-links {
-  margin: 0 auto;
+.segmented-buttons {
   text-align: center;
   display: block;
 }
-.segmented-links ul {
+.segmented-buttons ul {
   display: inline-block;
   display: inline-flex;
   height: 100%;
@@ -45,29 +37,30 @@ export default {
   padding: 0;
   margin: 0;
 }
-.segmented-links li {
-  border-left: solid 1px var(--grey);
+.segmented-buttons li {
+  border-left: solid 1px var(--light-gray);
   display: inline-block;
   margin: 0;
 }
 
-.segmented-links li:first-child {
+.segmented-buttons li:first-child {
   border-left: none;
 }
-.segmented-links a {
-  display: block;
+.segmented-button {
+  appearance: none;
+  border: none;
+  display: inline;
   padding: .7em 1.1em;
   background: var(--white);
-  height: 100%;
   margin: 0;
   position: relative;
 }
-.segmented-links a:hover,
-.segmented-links a.router-link-active {
+.segmented-button:hover,
+.segmented-button.segmented-button--active {
   background: var(--off-white);
 }
 
-.segmented-links a.router-link-active::before {
+.segmented-button.segmented-button--active::before {
   content: "";
   display: block;
   position: absolute;
