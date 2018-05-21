@@ -4175,7 +4175,7 @@ ul.roads-list a:hover {
         margin-bottom: 1em;
         height: 72px;
         width: 270px;
-        background: url(../img/logo-mobile-nl.png) right 0 no-repeat;
+        background: url(./img/logo-mobile-nl.png) right 0 no-repeat;
         background-size: 270px 72px
     }
 }
@@ -4185,7 +4185,7 @@ only screen and (max-width:650px) and (-webkit-min-device-pixel-ratio:1.30208333
 only screen and (max-width:650px) and (min-resolution:125dpi),
 only screen and (max-width:650px) and (min-resolution:1.3dppx) {
     .site-header a.logo {
-        background-image: url(../img/logo-mobile-nl@2x.png)
+        background-image: url(./img/logo-mobile-nl@2x.png)
     }
 }
 
@@ -4194,7 +4194,7 @@ only screen and (max-width:650px) and (-webkit-min-device-pixel-ratio:2.10416666
 only screen and (max-width:650px) and (min-resolution:202dpi),
 only screen and (max-width:650px) and (min-resolution:2.1dppx) {
     .site-header a.logo {
-        background-image: url(../img/logo-mobile-nl@4x.png)
+        background-image: url(./img/logo-mobile-nl@4x.png)
     }
 }
 
@@ -4203,7 +4203,7 @@ only screen and (max-width:650px) and (min-resolution:2.1dppx) {
         margin-bottom: 1em;
         height: 72px;
         width: 270px;
-        background: url(../img/logo-nl.png) right top no-repeat;
+        background: url(./img/logo-nl.png) right top no-repeat;
         background-size: 270px 72px;
         -webkit-transform: translateX(50%) translateX(-23px);
         -ms-transform: translateX(50%) translateX(-23px);
@@ -4216,7 +4216,7 @@ only screen and (min-width:651px) and (-webkit-min-device-pixel-ratio:1.30208333
 only screen and (min-width:651px) and (min-resolution:125dpi),
 only screen and (min-width:651px) and (min-resolution:1.3dppx) {
     .site-header a.logo {
-        background-image: url(../img/logo-nl@2x.png)
+        background-image: url(./img/logo-nl@2x.png)
     }
 }
 
@@ -4225,13 +4225,13 @@ only screen and (min-width:651px) and (-webkit-min-device-pixel-ratio:2.10416666
 only screen and (min-width:651px) and (min-resolution:202dpi),
 only screen and (min-width:651px) and (min-resolution:2.1dppx) {
     .site-header a.logo {
-        background-image: url(../img/logo-nl@4x.png)
+        background-image: url(./img/logo-nl@4x.png)
     }
 }
 
 @media only screen and (max-width:650px) {
     .lang-en .site-header a.logo {
-        background-image: url(../img/logo-mobile-en.png)
+        background-image: url(./img/logo-mobile-en.png)
     }
 }
 
@@ -4240,7 +4240,7 @@ only screen and (max-width:650px) and (-webkit-min-device-pixel-ratio:1.30208333
 only screen and (max-width:650px) and (min-resolution:125dpi),
 only screen and (max-width:650px) and (min-resolution:1.3dppx) {
     .lang-en .site-header a.logo {
-        background-image: url(../img/logo-mobile-en@2x.png)
+        background-image: url(./img/logo-mobile-en@2x.png)
     }
 }
 
@@ -4249,13 +4249,13 @@ only screen and (max-width:650px) and (-webkit-min-device-pixel-ratio:2.10416666
 only screen and (max-width:650px) and (min-resolution:202dpi),
 only screen and (max-width:650px) and (min-resolution:2.1dppx) {
     .lang-en .site-header a.logo {
-        background-image: url(../img/logo-mobile-en@4x.png)
+        background-image: url(./img/logo-mobile-en@4x.png)
     }
 }
 
 @media only screen and (min-width:651px) {
     .lang-en .site-header a.logo {
-        background-image: url(../img/logo-en.png)
+        background-image: url(./img/logo-en.png)
     }
 }
 
@@ -4264,7 +4264,7 @@ only screen and (min-width:651px) and (-webkit-min-device-pixel-ratio:1.30208333
 only screen and (min-width:651px) and (min-resolution:125dpi),
 only screen and (min-width:651px) and (min-resolution:1.3dppx) {
     .lang-en .site-header a.logo {
-        background-image: url(../img/logo-en@2x.png)
+        background-image: url(./img/logo-en@2x.png)
     }
 }
 
@@ -4273,7 +4273,7 @@ only screen and (min-width:651px) and (-webkit-min-device-pixel-ratio:2.10416666
 only screen and (min-width:651px) and (min-resolution:202dpi),
 only screen and (min-width:651px) and (min-resolution:2.1dppx) {
     .lang-en .site-header a.logo {
-        background-image: url(../img/logo-en@4x.png)
+        background-image: url(./img/logo-en@4x.png)
     }
 }
 
@@ -5534,7 +5534,7 @@ only screen and (min-width:651px) and (min-resolution:2.1dppx) {
     .site-footer:before {
         margin-left: -250px;
         width: 500px;
-        background: url(../img/footer-logo.png) no-repeat;
+        background: url(./img/footer-logo.png) no-repeat;
         background-size: 500px 24px
     }
 }
@@ -5544,7 +5544,7 @@ only screen and (min-width:651px) and (-webkit-min-device-pixel-ratio:1.30208333
 only screen and (min-width:651px) and (min-resolution:125dpi),
 only screen and (min-width:651px) and (min-resolution:1.3dppx) {
     .site-footer:before {
-        background-image: url(../img/footer-logo@2x.png)
+        background-image: url(./img/footer-logo@2x.png)
     }
 }
 
@@ -5553,7 +5553,7 @@ only screen and (min-width:651px) and (-webkit-min-device-pixel-ratio:2.10416666
 only screen and (min-width:651px) and (min-resolution:202dpi),
 only screen and (min-width:651px) and (min-resolution:2.1dppx) {
     .site-footer:before {
-        background-image: url(../img/footer-logo@4x.png)
+        background-image: url(./img/footer-logo@4x.png)
     }
 }
 
@@ -5620,7 +5620,7 @@ only screen and (min-width:651px) and (min-resolution:2.1dppx) {
 
 @media only screen and (min-width:651px) {
     .lang-en .site-footer:before {
-        background: url(../img/footer-logo-en.png) no-repeat
+        background: url(./img/footer-logo-en.png) no-repeat
     }
     .inpagenav {
         max-width: 240px
@@ -5632,7 +5632,7 @@ only screen and (min-width:651px) and (-webkit-min-device-pixel-ratio:1.30208333
 only screen and (min-width:651px) and (min-resolution:125dpi),
 only screen and (min-width:651px) and (min-resolution:1.3dppx) {
     .lang-en .site-footer:before {
-        background-image: url(../img/footer-logo-en@2x.png)
+        background-image: url(./img/footer-logo-en@2x.png)
     }
 }
 
@@ -5641,7 +5641,7 @@ only screen and (min-width:651px) and (-webkit-min-device-pixel-ratio:2.10416666
 only screen and (min-width:651px) and (min-resolution:202dpi),
 only screen and (min-width:651px) and (min-resolution:2.1dppx) {
     .lang-en .site-footer:before {
-        background-image: url(../img/footer-logo-en@4x.png)
+        background-image: url(./img/footer-logo-en@4x.png)
     }
 }
 
@@ -6084,7 +6084,7 @@ img.knmi-weeralarm.show {
 }
 
 .wall-item:before {
-    background: url(../img/gradient.png) left bottom repeat-x;
+    background: url(./img/gradient.png) left bottom repeat-x;
     background-image: -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(80%, transparent), color-stop(90%, rgba(0, 0, 0, .4)), color-stop(90%, rgba(0, 0, 0, .6)));
     background-image: -webkit-linear-gradient(transparent, transparent 80%, rgba(0, 0, 0, .4) 90%, rgba(0, 0, 0, .6));
     background-image: linear-gradient(transparent, transparent 80%, rgba(0, 0, 0, .4) 90%, rgba(0, 0, 0, .6))
