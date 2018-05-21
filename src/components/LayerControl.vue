@@ -125,11 +125,11 @@ export default {
   border: none;
   background: none;
 }
-.layer-control__vis-checkbox + .layer-control__vis-label {
-  opacity: .5;
+.layer-control__vis-checkbox + .layer-control__vis-label svg {
+  fill: var(--medium-gray);
 }
-.layer-control__vis-checkbox:checked + .layer-control__vis-label {
-  opacity: 1;
+.layer-control__vis-checkbox:checked + .layer-control__vis-label svg {
+  fill: var(--black);
 }
 
 .layer-control--active {
