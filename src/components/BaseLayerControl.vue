@@ -31,7 +31,7 @@ export default {
 .baselayer-control {
   position: absolute;
   z-index: 9999;
-  right: 1rem;
+  right: 4rem;
   top: 1rem;
   background-color: #fff;
   padding: 0 .5rem;
