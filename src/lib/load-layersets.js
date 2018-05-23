@@ -1,18 +1,18 @@
 import _ from 'lodash'
 
+// casing similar to JSON
+import loadGeoJSON from '@/lib/load-geojson'
+
 const apiBase = 'https://basisinformatie-overstromingen.nl/liwo.ws'
 const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
 
-// TODO: where do we need this.
-// function afterTheDash (text) {
-//   // if there is a dash in the text, return the part after the text
-//   let result = text
-//   let parts = text.split(' - ')
-//   if (Array.isArray(parts)) {
-//     result = parts[parts.length - 1]
-//   }
-//   return result
-// }
+function afterTheLastDash (text) {
+  // if there are dashes in the text, return the part after the last dash
+  let result = _.last(
+    _.split(text, ' - ')
+  )
+  return result
+}
 
 // A semantic issue, is it layer set or layerset.
 // layer set is probably more correct but
@@ -36,7 +36,7 @@ function cleanupLayerset (data) {
   // convert a layerset object to a flat list of layers
   data.layerset.layers.map(layersetLayer => {
     let layers = []
-    layersetLayer.variants.map(layersetLayerVariant => {
+    layersetLayer.variants.map(async layersetLayerVariant => {
       // ok now get the relevant information
       // we have two types of layers
       // GeoJSON {geojson, properties}
@@ -45,13 +45,19 @@ function cleanupLayerset (data) {
       // id (should be unique over all layers)
       // data does not have any properties other than layerset
       let layer = {
-        // TODO, this would be a good place to put the geojson or map url
         properties: layersetLayerVariant
       }
+      // pass along the map, which contains info about the layer.
+      layer.geojson = await loadGeoJSON(layer.properties.map)
       layers.push(layer)
     })
+    let layerGroupProperties = _.omit(layersetLayer, ['variants'])
+    // for some reason this id is not named id
+    layerGroupProperties.id = layerGroupProperties.layer_id
+    // use the last name in the - separated list of dashes
+    layerGroupProperties.title = afterTheLastDash(layerGroupProperties.name)
     let layerGroup = {
-      properties: _.omit(layersetLayer, ['variants']),
+      properties: layerGroupProperties,
       layers: layers
     }
     layerGroups.push(layerGroup)

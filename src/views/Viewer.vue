@@ -1,17 +1,17 @@
 <template>
   <div class="viewer">
     <liwo-map
-      :map-layers="layers"
+      :map="map"
     />
     <layer-panel
-      :layers="layers"
+      :layer-groups="map.layerGroups"
       @open-export="showExport = true"
     />
     <legend-panel
-      v-if="selectedLayer"
+      v-if="selectedLayerGroup"
       :caption="'caption'"
-      :layer-name="selectedLayer.name"
-      :style-name="selectedLayer.style"
+      :layer-name="selectedLayerGroup.name"
+      :style-name="selectedLayerGroup.style"
     />
     <segmented-buttons
       v-if="variants.length > 1"
@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import _ from 'lodash'
+
 import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
 import LiwoMap from '@/components/LiwoMap'
@@ -39,59 +41,35 @@ import { loadMapById } from '@/lib/load-layersets'
 export default {
   data () {
     return {
-      mapConfig: [],
-      parsedLayers: [],
-      id: 0,
+      map: {layerGroups: [], properties: {}},
       showExport: false,
       title: ''
     }
   },
   async mounted () {
-    const mapConfig = await loadMapById(this.$route.params.id)
-    this.mapConfig = mapConfig
+    const map = await loadMapById(this.$route.params.id)
+    this.map = map
   },
   computed: {
-    selectedLayer () {
-      const selectedLayers = this.parsedLayers
-        .filter(({ id }) => this.selectedLayerId === id)
-
-      if (selectedLayers && selectedLayers[0]) {
-        return selectedLayers[0] // should only be one
-      }
+    selectedLayerGroup () {
+      return _.first(
+        this.map.layerGroups
+          .filter(({ id }) => this.$store.state.selectedLayerGroupId === id)
+      )
     },
-    selectedLayerId () {
-      return this.$store.state.selectedLayerId
-    },
-    selectedVisibleLayerLegend () {
-      if (this.selectedLayer && this.visibleLayerIds.some(visibleId => visibleId === this.selectedLayerId)) {
-        return this.selectedLayer.legend
-      }
-      return undefined
-    },
-    variantTitlesForSelectedLayer () {
-      return (this.selectedLayer)
-        ? this.selectedLayer.variants.map(({title}) => title)
-        : []
-    },
-    variantIndexForSelectedLayer () {
-      return this.$store.state.visibleVariantIndexByLayerId[this.selectedLayerId]
-    },
-    visibleLayerIds () {
-      return this.$store.state.visibleLayerIds
+    variants () {
+      return []
     }
   },
   methods: {
-    setVisibleVariantIdForSelectedlayer (index) {
-      this.$store.commit('setVisibleVariantIndexForLayerId', { index, layerId: this.selectedLayerId })
-    }
   },
   watch: {
-    layers (layers) {
-      if (layers.length === 0) {
+    map (map) {
+      if (map.layerGroups.length === 0) {
         return
       }
       // new layers mean new state init
-      this.$store.commit('setSelectedLayerId', layers[0].id)
+      this.$store.commit('setSelectedLayerGroupId', _.first(map.layerGroups).id)
     }
   },
   components: {

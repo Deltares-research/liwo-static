@@ -11,19 +11,21 @@
     <ul class="layer-panel__list">
       <li
         class="layer-panel__list-item"
-        v-for="layer in layersWithVisibleVariant"
-        :key="layer.id"
-        @click="setSelectedLayerId(layer.id)"
+        v-for="layerGroup in layerGroups"
+        :key="layerGroup.properties.id"
+        @click="setSelectedLayerGroupId(layerGroup.properties.id)"
+        v-if="layerGroup.layers"
+
       >
         <layer-control
-          @toggle="toggleLayerVisibilityById"
-          @change-opacity="setOpacityByLayerId"
-          :active="(layer.id === selectedLayerId)"
-          :id="layer.id"
-          :title="layer.title"
-          :subtitle="layer.visibleVariant.title"
-          :metadata="layer.visibleVariant.metadata"
-        />
+          :active="isActive(layerGroup)"
+          :metadata="activeLayer(layerGroup).properties.metadata"
+          :id="layerGroup.properties.id"
+          :title="layerGroup.properties.title"
+          :subtitle="activeLayer(layerGroup).properties.title"
+          @toggle="layerGroup.properties.visible != layerGroup.properties.visible"
+          @change-opacity="setOpacity(layerGroup, $event)"
+          />
       </li>
     </ul>
     <button class="layer-panel__export" @click="$emit('open-export')">
@@ -36,40 +38,37 @@
     </button>
   </div>
 </template>
-
 <script>
+import _ from 'lodash'
 import LayerControl from '@/components/LayerControl'
 
 export default {
   props: {
-    items: {
+    layerGroups: {
       type: Array,
-      validator (items) {
-        return items.every(item => (item.title !== undefined && item.id !== undefined))
+      validator (layerGroups) {
+        return layerGroups.every(
+          layerGroup => (
+            // every layer group should have a title and id
+            layerGroup.properties.title !== undefined &&
+              layerGroup.properties.id !== undefined
+          )
+        )
       }
     }
   },
-  computed: {
-    layersWithVisibleVariant () {
-      return this.items.map(layer => {
-        const visibleVariantIndex = this.$store.state.visibleVariantIndexByLayerId[layer.id]
-        const visibleVariant = layer.variants[visibleVariantIndex]
-        return {...layer, visibleVariant}
-      })
-    },
-    selectedLayerId () {
-      return this.$store.state.selectedLayerId
-    }
-  },
   methods: {
-    setOpacityByLayerId ({ opacity, layerId }) {
-      this.$store.commit('setOpacityByLayerId', { opacity, layerId })
+    setOpacity (layerGroup, {opacity}) {
+      layerGroup.properties.opacity = opacity
     },
-    setSelectedLayerId (id) {
-      this.$store.commit('setSelectedLayerId', id)
+    activeLayer (layerGroup) {
+      return _.first(layerGroup.layers)
     },
-    toggleLayerVisibilityById (id) {
-      this.$store.commit('toggleLayerById', id)
+    setSelectedLayerGroupId (id) {
+      this.$store.commit('setSelectedLayerGroupId', id)
+    },
+    isActive (layerGroup) {
+      return layerGroup.id === this.selectedLayerGroupId
     }
   },
   components: {

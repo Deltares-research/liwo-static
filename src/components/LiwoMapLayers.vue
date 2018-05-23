@@ -51,7 +51,7 @@ export default {
     }
   },
   props: {
-    mapLayers: Array,
+    layerGroups: Array,
     mapRef: Object
   },
   methods: {

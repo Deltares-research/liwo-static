@@ -23,7 +23,7 @@
       :tile-layers="baseLayer.tileLayers"
       @baselayer="updateBaseLayer"
     />
-    <liwo-map-layers :map-layers="mapLayers" :map-ref="mapRef" />
+    <liwo-map-layers :layer-groups="map.layerGroups" :map-ref="mapRef" />
   </l-map>
 </template>
 
@@ -44,7 +44,7 @@ import rdConfig from '../lib/rijksdriehoek.config.js'
 export default {
   props: {
     // just pass along, deal with the structure in LiwoMapLayers
-    mapLayers: Array
+    map: Object
   },
   components: { BaseLayerControl, LiwoMapLayers, LMap, LControlZoom, LTileLayer },
   data () {
