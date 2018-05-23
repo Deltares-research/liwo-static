@@ -12,12 +12,13 @@
   "dependencies": {
     "leaflet": "^1.3.1",
     "proj4leaflet": "^1.0.2",
-    "promise-polyfill": "^7.1.2",
+    "promise-polyfill": "7.1.2",
     "url-search-params": "^0.10.0",
     "vue": "^2.5.16",
     "vue-router": "^3.0.1",
     "vue2-leaflet": "^1.0.2",
-    "vuex": "^3.0.1"
+    "vuex": "^3.0.1",
+    "whatwg-fetch": "2.0.4"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.0-beta.9",
@@ -32,6 +33,7 @@
     "lint-staged": "^6.0.0",
     "node-sass": "^4.9.0",
     "postcss-custom-properties": "7.0.0",
+    "postcss-import": "^11.1.0",
     "sass-loader": "^7.0.1",
     "vue-template-compiler": "^2.5.13"
   },
@@ -49,6 +51,7 @@
   },
   "postcss": {
     "plugins": {
+      "postcss-import": {},
       "postcss-custom-properties": {},
       "autoprefixer": {}
     }
