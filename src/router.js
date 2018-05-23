@@ -31,7 +31,7 @@ const router = new Router({
       name: 'viewer',
       component: Viewer,
       meta: {
-        title: 'Layered map viewer'
+        title: 'Kaart'
       }
     },
     {

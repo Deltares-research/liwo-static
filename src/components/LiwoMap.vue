@@ -6,9 +6,11 @@
     :max-zoom="maxZoom"
     :min-zoom="minZoom"
     :center="center"
+    :zoom-control="false"
     :crs="crs"
     :continuous-world="continuousWorld"
-  >
+    >
+    <l-control-zoom></l-control-zoom>
     <l-tile-layer
       :options="{ tms: baseLayer.tms }"
       :url="baseLayer.url"
@@ -29,7 +31,7 @@
 import 'leaflet/dist/leaflet.css'
 
 import L from 'leaflet'
-import { LMap, LTileLayer } from 'vue2-leaflet'
+import { LMap, LTileLayer, LControlZoom } from 'vue2-leaflet'
 import 'proj4leaflet'
 
 import BaseLayerControl from './BaseLayerControl'
@@ -41,9 +43,10 @@ import rdConfig from '../lib/rijksdriehoek.config.js'
 
 export default {
   props: {
+    // just pass along, deal with the structure in LiwoMapLayers
     mapLayers: Array
   },
-  components: { BaseLayerControl, LiwoMapLayers, LMap, LTileLayer },
+  components: { BaseLayerControl, LiwoMapLayers, LMap, LControlZoom, LTileLayer },
   data () {
     return {
       mapRef: undefined,

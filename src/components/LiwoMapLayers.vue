@@ -8,7 +8,7 @@
         :ref="layer.layer"
         :key="layer.layer"
         :geojson="layer.geojson"
-        :options="{ style: (feature) => setStyle(feature, layer) , onEachFeature: onEachFeature  }"
+        :options="{ style: (feature) => setStyle(feature, layer) , onEachFeature: onEachFeature }"
       />
       <l-wms-tile-layer
         v-else
@@ -20,6 +20,7 @@
         :layers="layer.layer"
         :styles="layer.style"
         :transparent="true"
+        :opacity="layer.opacity"
       />
     </template>
   </span>
@@ -124,22 +125,40 @@ export default {
       })
     },
     mapLayers (mapLayers, oldMapLayers) {
-      const refs = this.$refs
-      const removedLayers = oldMapLayers
-        .filter(oldLayer => mapLayers.every(mapLayer => mapLayer.layer !== oldLayer.layer))
+      // this code keeps the maplayers in sync between the mapLayers object (a tree of map layers) with layers that are actually shown on the map
+
+      // if a layer is removed we need to throw away its reference
+      // let's check which layers were removed
+      // TODO: check this, it gives errors on page changes.
+
+      const removedLayers = oldMapLayers.filter(
+        oldLayer => mapLayers.every(
+          mapLayer => mapLayer.layer !== oldLayer.layer
+        )
+      )
 
       removedLayers.forEach(layer => {
         // When used on elements/components with v-for,
         // the registered reference will be an Array containing DOM nodes or component instances.
         // https://vuejs.org/v2/api/#ref
-        refs[layer.layer][0].mapObject.remove()
+        this.$refs[layer.layer][0].mapObject.remove()
       })
-      Promise.all(mapLayers.map(async (layer) => {
-        return (layer.type === 'json')
-          ? { ...layer, geojson: await loadGeojson(layer) }
-          : layer
-      }))
+
+      // If mapLayers is updated we need to update the geojson data
+      // TODO: get rid of this data here, move to loadlayersets
+      Promise.all(
+        // wait for all map layers to be updated
+        mapLayers.map(async (layer) => {
+          let result = layer
+          if (layer.type === 'json') {
+            result.geojson = await loadGeojson(layer)
+          }
+          return result
+        })
+      )
+      // and after all layers are updated set them to the current object
         .then(layers => {
+          // TODO: what is the difference between mapLayers and exapandedMapLayers, get rid of the expandedMapLayers
           this.expandedMapLayers = layers
         })
     }

@@ -77,8 +77,8 @@ export default {
     }
   },
   methods: {
-    changeOpacityForLayer(event) {
-      this.$emit('change-opacity', { opacity: event.target.value, layerId: this.id })
+    changeOpacityForLayer (event) {
+      this.$emit('change-opacity', { opacity: parseFloat(event.target.value), layerId: this.id })
     }
   },
   components: {
