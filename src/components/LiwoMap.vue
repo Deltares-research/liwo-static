@@ -6,9 +6,9 @@
     :max-zoom="maxZoom"
     :min-zoom="minZoom"
     :center="center"
-    :zoom-control="false"
     :crs="crs"
     :continuous-world="continuousWorld"
+    :options="{zoomControl: false}"
     >
     <l-control-zoom></l-control-zoom>
     <l-tile-layer
