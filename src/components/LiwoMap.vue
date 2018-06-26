@@ -8,7 +8,8 @@
     :center="center"
     :crs="crs"
     :continuous-world="continuousWorld"
-  >
+    >
+    <l-control-zoom></l-control-zoom>
     <l-tile-layer
       :options="{ tms: baseLayer.tms }"
       :url="baseLayer.url"
@@ -29,7 +30,7 @@
 import 'leaflet/dist/leaflet.css'
 
 import L from 'leaflet'
-import { LMap, LTileLayer } from 'vue2-leaflet'
+import { LMap, LTileLayer, LControlZoom } from 'vue2-leaflet'
 import 'proj4leaflet'
 
 import BaseLayerControl from './BaseLayerControl'
@@ -43,7 +44,7 @@ export default {
   props: {
     mapLayers: Array
   },
-  components: { BaseLayerControl, LiwoMapLayers, LMap, LTileLayer },
+  components: { BaseLayerControl, LiwoMapLayers, LMap, LTileLayer, LControlZoom },
   data () {
     return {
       mapRef: undefined,
@@ -61,6 +62,11 @@ export default {
       }
     }
   },
+  mounted () {
+    this.mapRef = this.$refs.liwoMap
+    // remove default zoom
+    this.mapRef.mapObject.zoomControl.remove()
+  },
   methods: {
     createCrs () {
       return new L.Proj.CRS(rdConfig.crsType, rdConfig.proj, {
@@ -72,9 +78,6 @@ export default {
     updateBaseLayer (url) {
       this.baseLayer.url = url
     }
-  },
-  mounted () {
-    this.mapRef = this.$refs.liwoMap
   }
 }
 </script>
