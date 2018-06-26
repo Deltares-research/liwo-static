@@ -97,8 +97,9 @@ export default {
 }
 
 .viewer .segmented-buttons {
-  position: relative;
-  margin: -1rem auto;
+  position: absolute;
+  width: 100%;
+  bottom: -1rem;
   z-index: 1000;
 }
 

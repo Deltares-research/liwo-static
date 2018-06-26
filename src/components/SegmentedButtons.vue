@@ -50,6 +50,7 @@ export default {
   appearance: none;
   border: none;
   display: inline;
+  height: 100%;
   padding: .7em 1.1em;
   background: var(--white);
   margin: 0;

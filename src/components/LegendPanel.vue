@@ -14,13 +14,15 @@ import mapConfig from '../map.config'
 export default {
   computed: {
     legendImageSrc () {
-      const { layerName, styleName } = this
-      return `${mapConfig.services.LEGEND_URL}?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=${layerName}&STYLE=${styleName}&HEIGHT=16&WIDTH=84`
+      const { layerName, namespace, styleName } = this
+      const url = mapConfig.services.LEGEND_URL
+      return `${url}/${namespace}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=${layerName}&STYLE=${styleName}&HEIGHT=16&WIDTH=84`
     }
   },
   props: {
     caption: String,
     layerName: String,
+    namespace: String,
     styleName: String
   }
 }
