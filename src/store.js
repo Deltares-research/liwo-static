@@ -5,13 +5,10 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    visibleLayerIds: [],
-    visibleVariantIndexByLayerId: {},
-    opacityByLayerId: {},
-    selectedLayerId: 0
+    selectedLayerGroupId: 0
   },
   mutations: {
-    setSelectedLayerId (state, id) {
+    setSelectedLayerGroupId (state, id) {
       state.selectedLayerId = id
     },
     setVisibleVariantIndexForLayerId (state, {index, layerId}) {

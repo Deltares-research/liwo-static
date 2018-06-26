@@ -13,13 +13,13 @@ const requestOptions = ({ namespace, layer }) => ({
   maxFeatures: 2000
 })
 
-export default function (jsonLayer) {
-  if (jsonLayer.type.toLowerCase() === 'json') {
-    const options = requestOptions(jsonLayer)
+export default function (layer) {
+  if (layer.type.toLowerCase() === 'json') {
+    const options = requestOptions(layer)
     const params = new URLSearchParams(options).toString()
 
     return fetch(`${mapConfig.services.STATIC_GEOSERVER_URL}?${params}`, { mode: 'cors' })
       .then(resp => resp.json())
-      .catch(error => console.log('Error:', error, jsonLayer))
+      .catch(error => console.log('Error:', error, layer))
   }
 }

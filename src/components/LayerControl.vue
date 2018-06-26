@@ -29,11 +29,12 @@
       </div>
     </form>
     <div class="layer-control__options">
-      <select :name="`layer-${id}-trans`">
+      <select :name="`layer-${id}-trans`" @change="changeOpacityForLayer">
         <option
           v-for="i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
           :key="`layer-${id}-trans-${i}`"
           :value="1 - (i / 10)"
+          :selected="(1 - (i / 10) === opacity)"
         >
           {{ i * 10 }}% transparantie
         </option>
@@ -55,10 +56,13 @@ import LayerPopup from '@/components/LayerPopup'
 
 export default {
   data () {
-    return { popupIsOpen: false }
+    return {
+      popupIsOpen: false
+    }
   },
   props: {
     id: [String, Number],
+    opacity: Number,
     title: String,
     subtitle: String,
     metadata: Object,
@@ -70,6 +74,11 @@ export default {
       if (!isActive) {
         this.popupIsOpen = false
       }
+    }
+  },
+  methods: {
+    changeOpacityForLayer (event) {
+      this.$emit('change-opacity', { opacity: parseFloat(event.target.value), layerId: this.id })
     }
   },
   components: {

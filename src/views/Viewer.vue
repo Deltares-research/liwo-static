@@ -1,24 +1,23 @@
 <template>
   <div class="viewer">
     <liwo-map
-      :map-layers="mapLayers"
+      :map="map"
     />
     <layer-panel
-      :items="layers"
+      :layer-groups="map.layerGroups"
       @open-export="showExport = true"
     />
     <legend-panel
-      v-if="selectedVisibleLayerLegend"
-      :caption="selectedVisibleLayerLegend.title"
-      :namespace="selectedVisibleLayerLegend.namespace"
-      :layer-name="selectedVisibleLayerLegend.layer"
-      :style-name="selectedVisibleLayerLegend.style"
+      v-if="selectedLayerGroup"
+      :caption="'caption'"
+      :layer-name="selectedLayerGroup.name"
+      :style-name="selectedLayerGroup.style"
     />
     <segmented-buttons
-      v-if="variantTitlesForSelectedLayer.length > 1"
-      :items="variantTitlesForSelectedLayer"
-      :active-index="variantIndexForSelectedLayer"
-      @click="setVisibleVariantIdForSelectedlayer"
+      v-if="variants.length > 1"
+      :items="variants"
+      :active-index="selectedVariantIndex"
+      @click="selectVariant"
     />
     <export-popup
       v-if="showExport"
@@ -28,6 +27,8 @@
 </template>
 
 <script>
+import _ from 'lodash'
+
 import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
 import LiwoMap from '@/components/LiwoMap'
@@ -35,96 +36,40 @@ import LegendPanel from '@/components/LegendPanel'
 import SegmentedButtons from '@/components/SegmentedButtons'
 
 import '@/lib/leaflet-hack'
-import { loadLayersetById } from '@/lib/load-layersets'
+import { loadMapById } from '@/lib/load-layersets'
 
 export default {
   data () {
     return {
-      layers: [],
-      parsedLayers: [],
-      id: 0,
+      map: {layerGroups: [], properties: {}},
       showExport: false,
       title: ''
     }
   },
   async mounted () {
-    const layerSet = await loadLayersetById(this.$route.params.id)
-    this.layers = layerSet.layers
-    this.title = layerSet.title
-    this.id = layerSet.id
+    const map = await loadMapById(this.$route.params.id)
+    this.map = map
   },
   computed: {
-    mapLayers () {
-      return this.parsedLayers
-        // filter by visibility from state
-        .filter(({ id }) => this.visibleLayerIds.some(visibleId => visibleId === id))
-        .map(layer => {
-          // get index for current variant of layer
-          const variantIndex = this.$store.state.visibleVariantIndexByLayerId[layer.id]
-          return layer.variants[variantIndex]
-        })
+    selectedLayerGroup () {
+      return _.first(
+        this.map.layerGroups
+          .filter(({ id }) => this.$store.state.selectedLayerGroupId === id)
+      )
     },
-    selectedLayer () {
-      const selectedLayers = this.parsedLayers
-        .filter(({ id }) => this.selectedLayerId === id)
-
-      if (selectedLayers && selectedLayers[0]) {
-        return selectedLayers[0] // should only be one
-      }
-    },
-    selectedLayerId () {
-      return this.$store.state.selectedLayerId
-    },
-    selectedVisibleLayerLegend () {
-      if (this.selectedLayer && this.visibleLayerIds.some(visibleId => visibleId === this.selectedLayerId)) {
-        return {
-          ...this.selectedLayer.legend,
-          layerType: this.selectedLayer.variants[0].type
-        }
-      }
-      return undefined
-    },
-    variantTitlesForSelectedLayer () {
-      return (this.selectedLayer)
-        ? this.selectedLayer.variants.map(({title}) => title)
-        : []
-    },
-    variantIndexForSelectedLayer () {
-      return this.$store.state.visibleVariantIndexByLayerId[this.selectedLayerId]
-    },
-    visibleLayerIds () {
-      return this.$store.state.visibleLayerIds
+    variants () {
+      return []
     }
   },
   methods: {
-    setVisibleVariantIdForSelectedlayer (index) {
-      this.$store.commit('setVisibleVariantIndexForLayerId', { index, layerId: this.selectedLayerId })
-    }
   },
   watch: {
-    layers (layers) {
-      if (layers.length === 0) {
+    map (map) {
+      if (map.layerGroups.length === 0) {
         return
       }
       // new layers mean new state init
-      this.$store.commit('setSelectedLayerId', layers[0].id)
-
-      this.parsedLayers = layers.map(layer => {
-        this.$store.commit('showLayerById', layer.id)
-        this.$store.commit('setVisibleVariantIndexForLayerId', {index: 0, layerId: layer.id})
-        return {
-          id: layer.id,
-          properties: layer,
-          legend: {
-            ...layer.legend,
-            namespace: layer.variants[0].map.namespace // namespace should be available to legend
-          },
-          variants: layer.variants.map(variant => ({
-            ...variant.map,
-            title: variant.title
-          }))
-        }
-      })
+      this.$store.commit('setSelectedLayerGroupId', _.first(map.layerGroups).id)
     }
   },
   components: {
