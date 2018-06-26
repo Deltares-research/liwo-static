@@ -62,6 +62,11 @@ export default {
       }
     }
   },
+  mounted () {
+    this.mapRef = this.$refs.liwoMap
+    // remove default zoom
+    this.mapRef.mapObject.zoomControl.remove()
+  },
   methods: {
     createCrs () {
       return new L.Proj.CRS(rdConfig.crsType, rdConfig.proj, {
@@ -73,9 +78,6 @@ export default {
     updateBaseLayer (url) {
       this.baseLayer.url = url
     }
-  },
-  mounted () {
-    this.mapRef = this.$refs.liwoMap
   }
 }
 </script>
