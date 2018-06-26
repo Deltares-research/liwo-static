@@ -49,6 +49,13 @@ function cleanupLayerset (data) {
       }
       // pass along the map, which contains info about the layer.
       layer.geojson = await loadGeoJSON(layer.properties.map)
+      if (_.get(layersetLayerVariant, 'map.type', '') === 'WMS') {
+        // TODO: get map layer
+        layer.layers = _.get(layersetLayerVariant, 'map.layer')
+        // TODO: singular plural
+        layer.styles = _.get(layersetLayerVariant, 'map.style')
+      }
+
       layers.push(layer)
     })
     let layerGroupProperties = _.omit(layersetLayer, ['variants'])
