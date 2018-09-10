@@ -19,7 +19,7 @@
         :base-url="geoServerURL(layer.namespace)"
         :layers="layer.layer"
         :styles="layer.style"
-        :opacity="opacityByLayerId[layer.layerId] ? opacityByLayerId[layer.layerId] : 1"
+        :opacity="opacityByLayerId[layer.layerId] ? Number(opacityByLayerId[layer.layerId]) : 1"
         :transparent="true"
       />
     </template>
