@@ -35,6 +35,7 @@ import 'proj4leaflet'
 
 import BaseLayerControl from './BaseLayerControl'
 import LiwoMapLayers from './LiwoMapLayers'
+import SearchInput from './SearchInput'
 
 import '../lib/leaflet-hack'
 import mapConfig from '../map.config.js'
@@ -44,7 +45,7 @@ export default {
   props: {
     mapLayers: Array
   },
-  components: { BaseLayerControl, LiwoMapLayers, LMap, LTileLayer, LControlZoom },
+  components: { BaseLayerControl, LiwoMapLayers, LMap, LTileLayer, LControlZoom, SearchInput },
   data () {
     return {
       mapRef: undefined,
