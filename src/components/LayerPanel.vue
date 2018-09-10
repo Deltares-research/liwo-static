@@ -17,6 +17,7 @@
       >
         <layer-control
           @toggle="toggleLayerVisibilityById"
+          @change-opacity="setOpacityByLayerId"
           :active="(layer.id === selectedLayerId)"
           :id="layer.id"
           :title="layer.title"
@@ -61,6 +62,9 @@ export default {
     }
   },
   methods: {
+    setOpacityByLayerId ({ opacity, layerId }) {
+      this.$store.commit('setOpacityByLayerId', { opacity, layerId })
+    },
     setSelectedLayerId (id) {
       this.$store.commit('setSelectedLayerId', id)
     },
