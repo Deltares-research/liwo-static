@@ -66,11 +66,10 @@ export default {
   },
   methods: {
     setOpacity ({ target }) {
-      console.log('Opacity event', target.value)
       this.$emit('changeOpacity', {
-        layerId: this.id, 
+        layerId: this.id,
         opacity: target.value
-        })
+      })
     }
   },
   watch: {
