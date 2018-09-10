@@ -1,4 +1,4 @@
-<template>
+4<template>
   <span>
     <template
       v-for="layer in expandedMapLayers"
@@ -19,6 +19,7 @@
         :base-url="geoServerURL(layer.namespace)"
         :layers="layer.layer"
         :styles="layer.style"
+        :opacity="opacityByLayerId[layer.id] ? opacityByLayerId[layer.id] : 1"
         :transparent="true"
       />
     </template>
@@ -26,6 +27,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { LGeoJson, LWMSTileLayer as LWmsTileLayer } from 'vue2-leaflet'
 
 import BreachTooltip from './BreachTooltip'
@@ -52,6 +54,11 @@ export default {
   props: {
     mapLayers: Array,
     mapRef: Object
+  },
+  computed: {
+    ...mapState([
+      'opacityByLayerId'
+    ])
   },
   methods: {
     geoServerURL (namespace) {
