@@ -22,15 +22,14 @@ install:
   - npm install
 jobs:
   include:
-    - stage: build
-      # while the dev server is starting we do the rest of the work
-      script: npm run build
     - stage: test
       # run the following with basurl root
       script: BASE_URL=/ npm run lint
       script: BASE_URL=/ npm run test
       script: BASE_URL=/ npm run e2e
+      script: npm run build
     - stage: release
+      script: npm run build
       script: BASE_URL=/ npm run release
 deploy:
   provider: pages
