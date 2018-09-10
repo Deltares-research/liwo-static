@@ -9,7 +9,6 @@ describe('the lib utlities contains a render vue', () => {
       },
       {}
     )
-    console.log(element)
-    expect(element).to.include('<div></div>')
+    expect(element.outerHTML).to.include('<div>')
   })
 })
