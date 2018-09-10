@@ -16,12 +16,13 @@
         @click="setSelectedLayerId(layer.id)"
       >
         <layer-control
-          @toggle="toggleLayerVisibilityById"
           :active="(layer.id === selectedLayerId)"
           :id="layer.id"
           :title="layer.title"
           :subtitle="layer.visibleVariant.title"
           :metadata="layer.visibleVariant.metadata"
+          @toggle="toggleLayerVisibilityById"
+          @changeOpacity="setLayerOpacity"
         />
       </li>
     </ul>
@@ -63,6 +64,12 @@ export default {
   methods: {
     setSelectedLayerId (id) {
       this.$store.commit('setSelectedLayerId', id)
+    },
+    setLayerOpacity ({ layerId, opacity }) {
+      this.$store.commit('setOpacityByLayerId', {
+        layerId,
+        opacity
+      })
     },
     toggleLayerVisibilityById (id) {
       this.$store.commit('toggleLayerById', id)

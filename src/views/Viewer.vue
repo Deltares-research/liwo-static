@@ -61,7 +61,7 @@ export default {
         .map(layer => {
           // get index for current variant of layer
           const variantIndex = this.$store.state.visibleVariantIndexByLayerId[layer.id]
-          return layer.variants[variantIndex]
+          return { ...layer.variants[variantIndex], layerId: layer.id }
         })
     },
     selectedLayer () {

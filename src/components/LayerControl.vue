@@ -29,11 +29,11 @@
       </div>
     </form>
     <div class="layer-control__options">
-      <select :name="`layer-${id}-trans`">
+      <select :name="`layer-${id}-trans`" @change="setOpacity">
         <option
           v-for="i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
           :key="`layer-${id}-trans-${i}`"
-          :value="1 - (i / 10)"
+          :value="1 - (0.1 * i)"
         >
           {{ i * 10 }}% transparantie
         </option>
@@ -63,6 +63,14 @@ export default {
     subtitle: String,
     metadata: Object,
     active: Boolean
+  },
+  methods: {
+    setOpacity ({ target }) {
+      this.$emit('changeOpacity', {
+        layerId: this.id,
+        opacity: target.value
+      })
+    }
   },
   watch: {
     // Always close meta when switching layers
