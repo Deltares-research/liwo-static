@@ -20,13 +20,18 @@ before_install:
 install:
   - echo 'installing npm packages'
   - npm install
-script:
-  # while the dev server is starting we do the rest of the work
-  - npm run build
-  # run the following with basurl root
-  - BASE_URL=/ npm run lint
-  - BASE_URL=/ npm run test
-  - BASE_URL=/ npm run e2e
+jobs:
+  include:
+    - stage: build
+      # while the dev server is starting we do the rest of the work
+      script: npm run build
+    - stage: test
+      # run the following with basurl root
+      script: BASE_URL=/ npm run lint
+      script: BASE_URL=/ npm run test
+      script: BASE_URL=/ npm run e2e
+    - stage: release
+      script: BASE_URL=/ npm run release
 deploy:
   provider: pages
   skip-cleanup: true
