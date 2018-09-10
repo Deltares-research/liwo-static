@@ -1,8 +1,6 @@
 <script>
 import L from 'leaflet'
 
-import 'leaflet/dist/leaflet.css'
-
 export default {
   render () {
     return ''
@@ -16,30 +14,20 @@ export default {
 
     this.mapRef.mapObject.addLayer(baseLayers[this.tileLayers[0].title])
 
-    L.control.layers(baseLayers).addTo(this.mapRef.mapObject);
+    L.control.layers(baseLayers).addTo(this.mapRef.mapObject)
   }
 }
 </script>
 
 <style>
-.baselayer-control-container {
-  margin-right: 2.5rem;
-}
-.baselayer-control {
-  background-color: #fff;
-}
 
-.baselayer-control__image {
-  vertical-align: middle;
-  margin-right: .5rem;
-}
-
-.baselayer-control__select,
-.baselayer-control__select:active,
-.baselayer-control__select:focus {
-  border: 0;
-  background: transparent;
-  outline: 0;
-  box-shadow: none;
-}
+  /* Leaflet css override */
+  .leaflet-control-layers-toggle {
+      background-position: 0 -208px;
+  }
+  .leaflet-control-layers-toggle {
+    width: 52px;
+    height: 52px;
+    background-size: 52px 520px;
+  }
 </style>

@@ -28,7 +28,8 @@
 </template>
 
 <script>
-import 'leaflet/dist/leaflet.css'
+// import 'leaflet/dist/leaflet.css'
+import 'mapbox.js/theme/style.css'
 
 import L from 'leaflet'
 import { LMap, LTileLayer, LControlZoom } from 'vue2-leaflet'
@@ -85,6 +86,7 @@ export default {
 </script>
 
 <style>
+
 #liwo-map {
   width: calc(100% - 2rem);
   display: block;
