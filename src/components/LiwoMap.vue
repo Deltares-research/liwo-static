@@ -9,7 +9,6 @@
     :crs="crs"
     :continuous-world="continuousWorld"
     >
-    <l-control-zoom></l-control-zoom>
     <l-tile-layer
       :options="{ tms: baseLayer.tms }"
       :url="baseLayer.url"
@@ -18,9 +17,11 @@
       :continuous-world="continuousWorld"
       :attribution="attribution"
     />
+    <search-input :mapRef="mapRef" />
+    <l-control-zoom></l-control-zoom>
     <base-layer-control
       :tile-layers="baseLayer.tileLayers"
-      @baselayer="updateBaseLayer"
+      :mapRef="mapRef"
     />
     <liwo-map-layers :map-layers="mapLayers" :map-ref="mapRef" />
   </l-map>
