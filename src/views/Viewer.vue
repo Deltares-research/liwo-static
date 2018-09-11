@@ -49,6 +49,9 @@ export default {
   },
   async mounted () {
     const layerSet = await loadLayersetById(this.$route.params.id)
+
+    console.log('LAYERSET', layerSet)
+
     this.layers = layerSet.layers
     this.title = layerSet.title
     this.id = layerSet.id

@@ -12,6 +12,10 @@ export function loadLayersetById (id) {
     .then(data => JSON.parse(data.d))
     .then(data => data.layerset)
     // Normalize layerset object
+    .then(layerset => {
+      console.log('LLLL', layerset)
+      return layerset
+    })
     .then(layerset => ({
       ...layerset,
       title: layerset.name || layerset.title,

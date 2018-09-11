@@ -1,4 +1,4 @@
-4<template>
+<template>
   <span>
     <template
       v-for="layer in expandedMapLayers"
