@@ -83,7 +83,7 @@ export default {
       this.baseLayer.url = url
     }
   },
-  components: { BaseLayerControl, LiwoMapLayers, LMap, LTileLayer, LControlZoom },
+  components: { BaseLayerControl, LiwoMapLayers, LMap, LTileLayer, LControlZoom }
 }
 </script>
 

@@ -42,7 +42,6 @@ export default {
     this.mapRef = this.$refs.liwoMap
     // remove default zoom
     // this.mapRef.mapObject.zoomControl.remove()
-
   },
   computed: {
     ...mapState([

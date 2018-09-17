@@ -53,7 +53,7 @@ export default {
   },
   props: {
     mapLayers: Array,
-    mapRef: Object,
+    mapRef: Object
   },
   computed: {
     ...mapState([
@@ -145,7 +145,6 @@ export default {
     //   const removedLayers = oldMapLayers
     //     .filter(oldLayer => mapLayers.every(mapLayer => mapLayer.layer !== oldLayer.layer))
 
-
     //   console.log('REMOVED MAP LAYERS', removedLayers)
     //   console.log('REFS', refs)
 
@@ -166,7 +165,6 @@ export default {
           //   const removedLayers = this.expandedMapLayers
           //     .filter(oldLayer => layers.every(mapLayer => mapLayer.layer !== oldLayer.layer))
 
-
           //   console.log('REMOVED MAP LAYERS', removedLayers)
           //   console.log('REFS', refs)
 
@@ -183,7 +181,6 @@ export default {
             console.log('expandedMapLayers', layers)
             this.expandedMapLayers = layers
           }
-
         })
     }
   },

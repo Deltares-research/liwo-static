@@ -1,5 +1,5 @@
-import L from 'leaflet'
 import 'proj4leaflet'
+import L from 'leaflet'
 
 import 'leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
@@ -19,9 +19,8 @@ const DYNAMIC_GEOSERVER_URL = mapConfig.services.DYNAMIC_GEOSERVER_URL
 //   breachesCluster: L.markerClusterGroup()
 // }
 
-let map = undefined
+let map
 let currentLayers = []
-let breachesCluster = L.markerClusterGroup()
 
 export default {
   bind (el, { value }) {
@@ -37,6 +36,7 @@ export default {
 
     map = L.map(el, { ...config, crs: createCrs() })
     L.tileLayer(tileLayerUrl, tileLayerOptions).addTo(map)
+    map.setZoom(config.zoom)
 
     // Hack to make the map display
     setTimeout(() => { map.invalidateSize() }, 100)
@@ -46,8 +46,6 @@ export default {
     // const { map, currentLayers } = _LeafletState
 
     console.log('MAPLAYERS', mapLayers)
-    breachesCluster = L.markerClusterGroup()
-    map.addLayer(breachesCluster)
 
     if (currentLayers.length) {
       currentLayers.map(layer => {
@@ -83,15 +81,16 @@ function renderLayer (layer) {
     if (layer.layer === BREACHES_LAYER_ID) {
       geojson = renderBreachGeoJson(layer)
 
-      console.log(geojson instanceof L.LayerGroup)
-
       const markers = L.markerClusterGroup()
+      let layers = geojson.getLayers()
+      console.log('layers', layers)
       markers.addLayer(geojson)
+
       map.addLayer(markers)
-      map.fitBounds(markers.getBounds())
+      map.fitBounds(geojson.getBounds())
     } else {
-      // geojson = renderGeoJson(layer, map)
-      // map.addLayer(geojson)
+      geojson = renderGeoJson(layer, map)
+      map.addLayer(geojson)
     }
 
     currentLayers.push(geojson)
