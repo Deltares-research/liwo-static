@@ -2,6 +2,7 @@
 const services = {
   // url for webservice calls [ending with a forward slash]
   WEBSERVICE_URL: 'https://basisinformatie-overstromingen.nl/liwo.ws/',
+  // WEBSERVICE_URL: 'http://tw-160.xtr.deltares.nl/liwo.ws/',
   // url for static geoserver [ending with a forward slash]
   STATIC_GEOSERVER_URL: 'https://geodata.basisinformatie-overstromingen.nl/geoserver/ows/',
   DYNAMIC_GEOSERVER_URL: 'http://tl-397.xtr.deltares.nl:8080/geoserver/',

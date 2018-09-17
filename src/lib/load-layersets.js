@@ -1,4 +1,6 @@
-const apiBase = 'https://basisinformatie-overstromingen.nl/liwo.ws'
+import mapConfig from '../map.config.js'
+
+const apiBase = mapConfig.services.WEBSERVICE_URL
 const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
 
 export function loadLayersetById (id) {
@@ -12,10 +14,6 @@ export function loadLayersetById (id) {
     .then(data => JSON.parse(data.d))
     .then(data => data.layerset)
     // Normalize layerset object
-    .then(layerset => {
-      console.log('LLLL', layerset)
-      return layerset
-    })
     .then(layerset => ({
       ...layerset,
       title: layerset.name || layerset.title,
@@ -30,7 +28,10 @@ export function loadLayersetById (id) {
         }
       })
     }))
-    .catch(() => ([]))
+    .catch((error) => {
+      console.error(`Error fetching the layersets: ${error}`)
+      return []
+    })
 }
 
 export function loadLayersets () {

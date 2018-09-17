@@ -4,11 +4,11 @@
       v-for="layer in expandedMapLayers"
     >
       <l-geo-json
-        v-if="layer.type === 'json'"
+        v-if="layer.type === 'json' && layer.geojson"
         :ref="layer.layer"
         :key="layer.layer"
         :geojson="layer.geojson"
-        :options="{ style: (feature) => setStyle(feature, layer) , onEachFeature: onEachFeature  }"
+        :options="{ style: (feature) => setStyle(feature, layer) , onEachFeature: onEachFeature }"
       />
       <l-wms-tile-layer
         v-else
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import { LGeoJson, LWMSTileLayer as LWmsTileLayer } from 'vue2-leaflet'
 
 import BreachTooltip from './BreachTooltip'
@@ -53,11 +53,14 @@ export default {
   },
   props: {
     mapLayers: Array,
-    mapRef: Object
+    mapRef: Object,
   },
   computed: {
     ...mapState([
       'opacityByLayerId'
+    ]),
+    ...mapGetters([
+      'parsedLayerSet'
     ])
   },
   methods: {
@@ -130,24 +133,57 @@ export default {
         map.addLayer(breach)
       })
     },
-    mapLayers (mapLayers, oldMapLayers) {
-      const refs = this.$refs
-      const removedLayers = oldMapLayers
-        .filter(oldLayer => mapLayers.every(mapLayer => mapLayer.layer !== oldLayer.layer))
+    // expandedMapLayers (mapLayers, oldMapLayers) {
+    //   if (!oldMapLayers) {
+    //     return
+    //   }
 
-      removedLayers.forEach(layer => {
-        // When used on elements/components with v-for,
-        // the registered reference will be an Array containing DOM nodes or component instances.
-        // https://vuejs.org/v2/api/#ref
-        refs[layer.layer][0].mapObject.remove()
-      })
-      Promise.all(mapLayers.map(async (layer) => {
-        return (layer.type === 'json')
-          ? { ...layer, geojson: await loadGeojson(layer) }
-          : layer
-      }))
+    //   console.log('MAP LAYERS', mapLayers)
+    //   console.log('OLD MAP LAYERS', oldMapLayers)
+
+    //   const refs = this.$refs
+    //   const removedLayers = oldMapLayers
+    //     .filter(oldLayer => mapLayers.every(mapLayer => mapLayer.layer !== oldLayer.layer))
+
+
+    //   console.log('REMOVED MAP LAYERS', removedLayers)
+    //   console.log('REFS', refs)
+
+    //   removedLayers.forEach(layer => {
+    //     // When used on elements/components with v-for,
+    //     // the registered reference will be an Array containing DOM nodes or component instances.
+    //     // https://vuejs.org/v2/api/#ref
+    //     console.log('MAPOBJECT', refs[layer.layer][0].mapObject, refs[layer.layer][0].mapObject.remove)
+    //     refs[layer.layer][0].mapObject.remove()
+    //   })
+
+    // },
+    parsedLayerSet (parsedLayerSet) {
+      parsedLayerSet
         .then(layers => {
-          this.expandedMapLayers = layers
+          // if (this.expandedMapLayers) {
+          //   const refs = this.$refs
+          //   const removedLayers = this.expandedMapLayers
+          //     .filter(oldLayer => layers.every(mapLayer => mapLayer.layer !== oldLayer.layer))
+
+
+          //   console.log('REMOVED MAP LAYERS', removedLayers)
+          //   console.log('REFS', refs)
+
+          //   removedLayers.forEach(layer => {
+          //     // When used on elements/components with v-for,
+          //     // the registered reference will be an Array containing DOM nodes or component instances.
+          //     // https://vuejs.org/v2/api/#ref
+          //     console.log('MAPOBJECT',  refs[layer.layer][0])
+          //     refs[layer.layer][0].mapObject.remove()
+          //   })
+          // }
+          console.log('bla')
+          if (layers.length) {
+            console.log('expandedMapLayers', layers)
+            this.expandedMapLayers = layers
+          }
+
         })
     }
   },

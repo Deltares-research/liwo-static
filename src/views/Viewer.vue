@@ -1,7 +1,8 @@
 <template>
   <div class="viewer">
-    <liwo-map
-      :map-layers="mapLayers"
+    <liwo-map-dir
+      :map-layers="activeLayerSet"
+      :parsed-layers="normalizedLayers[id]"
     />
     <layer-panel
       :items="layers"
@@ -28,9 +29,11 @@
 </template>
 
 <script>
+import { mapGetters, mapState } from 'vuex'
+
 import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
-import LiwoMap from '@/components/LiwoMap'
+import LiwoMapDir from '@/components/LiwoMapDir'
 import LegendPanel from '@/components/LegendPanel'
 import SegmentedButtons from '@/components/SegmentedButtons'
 
@@ -48,35 +51,40 @@ export default {
     }
   },
   async mounted () {
-    const layerSet = await loadLayersetById(this.$route.params.id)
+    const mapId = Number(this.$route.params.id)
 
-    console.log('LAYERSET', layerSet)
+    this.$store.commit('setMapId', mapId)
+    this.$store.dispatch('loadLayerSetsById', mapId)
+
+    const layerSet = await loadLayersetById(mapId)
 
     this.layers = layerSet.layers
     this.title = layerSet.title
     this.id = layerSet.id
   },
   computed: {
-    mapLayers () {
-      return this.parsedLayers
-        // filter by visibility from state
-        .filter(({ id }) => this.visibleLayerIds.some(visibleId => visibleId === id))
-        .map(layer => {
-          // get index for current variant of layer
-          const variantIndex = this.$store.state.visibleVariantIndexByLayerId[layer.id]
-          return { ...layer.variants[variantIndex], layerId: layer.id }
-        })
-    },
+    ...mapState({
+      variantIndexForSelectedLayer: (state) => state.visibleVariantIndexByLayerId[this.selectedLayerId]
+    }),
+    ...mapState([
+      'selectedLayerId',
+      'visibleLayerIds'
+    ]),
+    ...mapGetters([
+      'activeLayerSet',
+      'normalizedLayers'
+    ]),
     selectedLayer () {
-      const selectedLayers = this.parsedLayers
+      if (!this.normalizedLayers || !this.normalizedLayers[this.id]) {
+        return
+      }
+
+      const selectedLayers = this.normalizedLayers[this.id]
         .filter(({ id }) => this.selectedLayerId === id)
 
       if (selectedLayers && selectedLayers[0]) {
         return selectedLayers[0] // should only be one
       }
-    },
-    selectedLayerId () {
-      return this.$store.state.selectedLayerId
     },
     selectedVisibleLayerLegend () {
       if (this.selectedLayer && this.visibleLayerIds.some(visibleId => visibleId === this.selectedLayerId)) {
@@ -91,12 +99,6 @@ export default {
       return (this.selectedLayer)
         ? this.selectedLayer.variants.map(({title}) => title)
         : []
-    },
-    variantIndexForSelectedLayer () {
-      return this.$store.state.visibleVariantIndexByLayerId[this.selectedLayerId]
-    },
-    visibleLayerIds () {
-      return this.$store.state.visibleLayerIds
     }
   },
   methods: {
@@ -112,21 +114,9 @@ export default {
       // new layers mean new state init
       this.$store.commit('setSelectedLayerId', layers[0].id)
 
-      this.parsedLayers = layers.map(layer => {
+      layers.forEach(layer => {
         this.$store.commit('showLayerById', layer.id)
         this.$store.commit('setVisibleVariantIndexForLayerId', {index: 0, layerId: layer.id})
-        return {
-          id: layer.id,
-          properties: layer,
-          legend: {
-            ...layer.legend,
-            namespace: layer.variants[0].map.namespace // namespace should be available to legend
-          },
-          variants: layer.variants.map(variant => ({
-            ...variant.map,
-            title: variant.title
-          }))
-        }
       })
     }
   },
@@ -134,7 +124,7 @@ export default {
     ExportPopup,
     LayerPanel,
     LegendPanel,
-    LiwoMap,
+    LiwoMapDir,
     SegmentedButtons
   }
 }
