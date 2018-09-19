@@ -22,6 +22,7 @@
     />
     <export-popup
       v-if="showExport"
+      :map-layers="mapLayers"
       @close="showExport = false"
     />
   </div>

@@ -1,4 +1,6 @@
-const apiBase = 'https://basisinformatie-overstromingen.nl/liwo.ws'
+import mapConfig from '../map.config'
+
+const apiBase = mapConfig.services.WEBSERVICE_URL
 const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
 
 export function loadLayersetById (id) {
