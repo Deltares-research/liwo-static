@@ -1,11 +1,10 @@
 <template>
   <div class="viewer">
     <liwo-map-dir
-      :map-layers="activeLayerSet"
-      :parsed-layers="normalizedLayers[id]"
+      :layers="activeLayerSet"
     />
     <layer-panel
-      :items="layers"
+      :layers="selectedBreaches.length ? [] : activeLayerSet"
       @open-export="showExport = true"
     />
     <legend-panel
@@ -37,7 +36,6 @@ import LiwoMapDir from '@/components/LiwoMapDir'
 import LegendPanel from '@/components/LegendPanel'
 import SegmentedButtons from '@/components/SegmentedButtons'
 
-import '@/lib/leaflet-hack'
 import { loadLayersetById } from '@/lib/load-layersets'
 
 export default {
@@ -68,18 +66,19 @@ export default {
     }),
     ...mapState([
       'selectedLayerId',
-      'visibleLayerIds'
+      'visibleLayerIds',
+      'selectedBreaches'
     ]),
     ...mapGetters([
       'activeLayerSet',
-      'normalizedLayers'
+      'currentLayerSet'
     ]),
     selectedLayer () {
-      if (!this.normalizedLayers || !this.normalizedLayers[this.id]) {
+      if (!this.currentLayerSet ) {
         return
       }
 
-      const selectedLayers = this.normalizedLayers[this.id]
+      const selectedLayers = this.currentLayerSet.layers
         .filter(({ id }) => this.selectedLayerId === id)
 
       if (selectedLayers && selectedLayers[0]) {

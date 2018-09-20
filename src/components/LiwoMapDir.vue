@@ -2,17 +2,17 @@
   <div
     ref="liwoMap"
     class="liwo-map"
-    v-leaflet="{ config: initialConfig, mapLayers: expandedMapLayers }"
+    v-leaflet="{
+      callbacks: { breachCallBack },
+      config: initialConfig,
+      mapLayers: Object.freeze(expandedMapLayers)
+    }"
   ></div>
 </template>
 
 <script>
-import 'leaflet/dist/leaflet.css'
-import 'leaflet.markercluster/dist/MarkerCluster.css'
-
 import { mapState, mapGetters } from 'vuex'
 
-import '../lib/leaflet-hack'
 import mapConfig from '../map.config.js'
 import rdConfig from '../lib/rijksdriehoek.config.js'
 
@@ -45,13 +45,19 @@ export default {
   },
   computed: {
     ...mapState([
-      'opacityByLayerId'
+      'opacityByLayerId',
+      'selectedBreaches',
     ]),
     ...mapGetters([
       'parsedLayerSet'
     ])
   },
   methods: {
+    breachCallBack ({ target }) {
+      const { id, naam } = target.feature.properties
+      this.$store.commit('setSelectedBreach', id)
+      this.$store.dispatch('loadBreach', { id, breachName: naam })
+    },
     createCrs () {
       return new L.Proj.CRS(rdConfig.crsType, rdConfig.proj, {
         resolutions: rdConfig.resolutions,
@@ -62,10 +68,14 @@ export default {
   },
   watch: {
     parsedLayerSet (parsedLayerSet) {
+      if (!parsedLayerSet) {
+        return []
+      }
+
       parsedLayerSet
         .then(layers => {
           if (layers.length) {
-            this.expandedMapLayers = Object.freeze(layers)
+            this.expandedMapLayers = layers
           }
         })
     }

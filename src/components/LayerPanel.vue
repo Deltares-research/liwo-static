@@ -8,24 +8,13 @@
       </svg>
       Kaartlagen
     </h3>
-    <ul class="layer-panel__list">
-      <li
-        class="layer-panel__list-item"
-        v-for="layer in layersWithVisibleVariant"
-        :key="layer.id"
-        @click="setSelectedLayerId(layer.id)"
-      >
-        <layer-control
-          :active="(layer.id === selectedLayerId)"
-          :id="layer.id"
-          :title="layer.title"
-          :subtitle="layer.visibleVariant.title"
-          :metadata="layer.visibleVariant.metadata"
-          @toggle="toggleLayerVisibilityById"
-          @changeOpacity="setLayerOpacity"
-        />
-      </li>
-    </ul>
+
+    <layer-panel-item
+      v-for="layer in layers"
+      :key="layer"
+      :layers="layer"
+      :title="layer.layerSetTitle"
+    />
     <button class="layer-panel__export" @click="$emit('open-export')">
       <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
         <path fill="none" d="M0 0h24v24H0z"/>
@@ -38,24 +27,24 @@
 </template>
 
 <script>
+import BreachControl from '@/components/BreachControl'
 import LayerControl from '@/components/LayerControl'
+import LayerPanelItem from '@/components/LayerPanelItem'
+
 
 export default {
   props: {
-    items: {
+    layers: {
       type: Array,
-      validator (items) {
-        return items.every(item => (item.title !== undefined && item.id !== undefined))
-      }
+      default: () => []
     }
   },
   computed: {
-    layersWithVisibleVariant () {
-      return this.items.map(layer => {
-        const visibleVariantIndex = this.$store.state.visibleVariantIndexByLayerId[layer.id]
-        const visibleVariant = layer.variants[visibleVariantIndex]
-        return {...layer, visibleVariant}
-      })
+    layerSetTitle () {
+      if (this.layers && this.layers.layerSetTitle) {
+        return this.layers.layerSetTitle
+      }
+      return undefined
     },
     selectedLayerId () {
       return this.$store.state.selectedLayerId
@@ -76,7 +65,9 @@ export default {
     }
   },
   components: {
-    LayerControl
+    BreachControl,
+    LayerControl,
+    LayerPanelItem
   }
 }
 </script>

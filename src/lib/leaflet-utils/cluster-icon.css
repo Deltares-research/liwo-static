@@ -1,0 +1,16 @@
+.cluster-icon {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  font-size: 16px;
+  border-radius: 50%;
+}
+
+.cluster-icon__primary {
+  background-color: yellow;
+}
+
+.cluster-icon__rain {
+  background-color: green;
+}
