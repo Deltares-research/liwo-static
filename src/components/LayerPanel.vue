@@ -10,10 +10,10 @@
     </h3>
 
     <layer-panel-item
-      v-for="layer in layers"
-      :key="layer"
-      :layers="layer"
-      :title="layer.layerSetTitle"
+      v-for="layerSet in layerSets"
+      :key="layerSet.layerSetTitle"
+      :layers="layerSet.layers"
+      :title="layerSet.layerSetTitle"
     />
     <button class="layer-panel__export" @click="$emit('open-export')">
       <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
@@ -34,21 +34,10 @@ import LayerPanelItem from '@/components/LayerPanelItem'
 
 export default {
   props: {
-    layers: {
+    layerSets: {
       type: Array,
       default: () => []
-    }
-  },
-  computed: {
-    layerSetTitle () {
-      if (this.layers && this.layers.layerSetTitle) {
-        return this.layers.layerSetTitle
-      }
-      return undefined
     },
-    selectedLayerId () {
-      return this.$store.state.selectedLayerId
-    }
   },
   methods: {
     setSelectedLayerId (id) {
@@ -79,6 +68,8 @@ export default {
   width: 320px;
   height: auto;
   background-color: var(--white);
+  max-height: calc(100vh - 23rem);
+  overflow-y: auto;
 }
 .layer-panel__title,
 .layer-panel__export {

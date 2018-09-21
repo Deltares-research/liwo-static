@@ -5,20 +5,29 @@ import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 
 import mapConfig from '../../map.config.js'
-import { redIcon } from './markers'
+import { redIcon, blackIcon, greenIcon } from './markers'
 
 import './cluster-icon.css'
 
-const BREACHES_LAYER_ID = 'geo_doorbraaklocaties_primair'
+const BREACH_PRIMARY = 'geo_doorbraaklocaties_primair'
+const BREACH_REGIONAL = 'geo_doorbraaklocaties_regionaal'
+const BREACH_OUTSIDE_DIKE = 'geo_scenariolocaties_buitendijks'
+const BREACH_FLOODING = 'geo_scenariolocaties_wateroverlast'
+const BREACHES_IDS = [
+  BREACH_PRIMARY,
+  BREACH_REGIONAL,
+  BREACH_OUTSIDE_DIKE,
+  BREACH_FLOODING
+]
 const DEFAULT_ICON = new L.Icon.Default()
 const DYNAMIC_GEOSERVER_URL = mapConfig.services.DYNAMIC_GEOSERVER_URL
 const STATIC_GEOSERVER_URL = mapConfig.services.STATIC_GEOSERVER_URL
 
 export default function renderLayer (layer, { breachCallBack }) {
   if (layer.type === 'json' && layer.geojson) {
-    if (layer.layer === BREACHES_LAYER_ID) {
+    if (layerIsBreach(layer)) {
       const markers = L.markerClusterGroup({
-        iconCreateFunction: clusterIconFunction(layer.breachType || 'primary')
+        iconCreateFunction: clusterIconFunction(layer.layer || 'BREACH_PRIMARY')
       })
       markers.addLayer(renderBreachGeoJson(layer, breachCallBack))
       return markers
@@ -38,7 +47,7 @@ export function renderGeoJson ({ geojson, style }) {
   })
 }
 
-export function renderBreachGeoJson ({ geojson }, callback) {
+export function renderBreachGeoJson ({ geojson, layer: layerId }, callback) {
   return L.geoJson(geojson, {
     onEachFeature: (_, layer) => {
       const { naam, dijkringnr } = layer.feature.properties
@@ -47,9 +56,10 @@ export function renderBreachGeoJson ({ geojson }, callback) {
       layer.on('mouseover', (event) => { event.target.openTooltip() })
       layer.on('mouseout', (event) => { event.target.closeTooltip() })
 
+      layer.feature.properties.layerType = layerId
       layer.feature.properties.selected
         ? layer.setIcon(redIcon)
-        : layer.setIcon(DEFAULT_ICON)
+        : layer.setIcon(getBreachIcon(layerId))
     }
   })
 }
@@ -71,10 +81,10 @@ function geoServerURL (namespace) {
 }
 
 function breachClickHandler (event, callback) {
-  const selected = event.target.feature.properties.selected
+  const { selected, layerType } = event.target.feature.properties
 
   selected
-    ? event.target.setIcon(DEFAULT_ICON)
+    ? event.target.setIcon(getBreachIcon(layerType))
     : event.target.setIcon(redIcon)
 
   event.target.feature.properties.selected = !selected
@@ -91,7 +101,26 @@ function clusterIconFunction (type) {
     return new L.DivIcon({
       html: '<div><span>' + childCount + '</span></div>',
       className: `cluster-icon cluster-icon__${type}`,
-      iconSize: new L.Point(40, 40)
+      iconSize: new L.Point(45, 45)
     })
   }
+}
+
+function getBreachIcon (type) {
+  switch (type) {
+    case BREACH_PRIMARY:
+      return DEFAULT_ICON
+    case BREACH_REGIONAL:
+      return greenIcon
+    case BREACH_OUTSIDE_DIKE:
+      return blackIcon
+    case BREACH_FLOODING:
+      return blackIcon
+    default:
+      return DEFAULT_ICON
+  }
+}
+
+function layerIsBreach ({ layer }) {
+  return BREACHES_IDS.indexOf(layer) !== -1
 }

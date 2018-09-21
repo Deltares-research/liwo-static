@@ -17,16 +17,20 @@ export default new Vuex.Store({
     breachLayersById: [],
     layerSetsById: {},
     mapId: 0,
+    mapTitle: undefined,
     visibleLayerIds: [],
     visibleVariantIndexByLayerId: {},
     opacityByLayerId: {},
     selectedLayerId: 0,
     selectedBreaches: [],
-    selectedLayerSet: 0
+    selectedLayerSetIndex: 0
   },
   mutations: {
     addBreachLayer (state, { id, breachLayer, breachName }) {
-      state.breachLayersById = { ...state.breachLayersById, [ id ]: { layers: breachLayer, layerSetTitle: breachName } }
+      state.breachLayersById = {
+        ...state.breachLayersById,
+        [ id ]: { layers: breachLayer, layerSetTitle: breachName }
+      }
     },
     setLayerPanelView (state, view) {
       state.layerPanelView = view
@@ -52,6 +56,9 @@ export default new Vuex.Store({
 
       state.selectedBreaches = updatedBreaches
     },
+    setMapTitle (state, title) {
+      state.mapTitle = title
+    },
     setSelectedLayerId (state, id) {
       state.selectedLayerId = id
     },
@@ -66,6 +73,9 @@ export default new Vuex.Store({
         ...state.opacityByLayerId,
         [layerId]: opacity
       }
+    },
+    resetVisibleLayers (state) {
+      state.visibleLayerIds = []
     },
     hideLayerById (state, id) {
       state.visibleLayerIds = state.visibleLayerIds.filter(layerId => layerId !== id)
@@ -90,15 +100,17 @@ export default new Vuex.Store({
       const layerSet = normalizeLayers(layersetById.layers)
 
       state.commit('setLayerSetById', { id, layerSet })
+      state.commit('setMapTitle', layersetById.title)
     },
-    async loadBreach ({ commit, state }, { id, breachName }) {
-      if (Object.keys(state.breachLayersById).indexOf(String(id)) !== -1) {
-        return
-      }
-      const breach = await loadBreach(id)
-      const breachLayer = normalizeLayers(breach.layers)
+    async addBreach ({ commit, state }, { id, breachName }) {
+      if (Object.keys(state.breachLayersById).indexOf(String(id)) === -1) {
+        const breach = await loadBreach(id)
+        const breachLayer = normalizeLayers(breach.layers)
 
-      commit('addBreachLayer', { id, breachLayer, breachName })
+        commit('addBreachLayer', { id, breachLayer, breachName })
+      }
+
+      commit('setSelectedBreach', id)
     }
   },
   getters: {
@@ -116,9 +128,9 @@ export default new Vuex.Store({
     },
     currentLayerSet (state, { mapLayers, breachLayers, layerPanelView }) {
       if (layerPanelView === LAYERPANEL_VIEW_MAPLAYERS) {
-        return mapLayers[state.selectedLayerSet]
+        return mapLayers[state.selectedLayerSetIndex]
       } else if (layerPanelView === LAYERPANEL_VIEW_BREACHES) {
-        return breachLayers[state.selectedLayerSet]
+        return breachLayers[state.selectedLayerSetIndex]
       }
     },
     layerPanelView ({ selectedBreaches }) {
@@ -126,8 +138,16 @@ export default new Vuex.Store({
         ? LAYERPANEL_VIEW_BREACHES
         : LAYERPANEL_VIEW_MAPLAYERS
     },
-    panelLayerSet (state, { currentLayerSet }) {
-      return currentLayerSet
+    panelLayerSets (state, { mapLayers, breachLayers, layerPanelView }) {
+      let layers
+
+      if (layerPanelView === LAYERPANEL_VIEW_MAPLAYERS) {
+        layers = mapLayers
+      } else if (layerPanelView === LAYERPANEL_VIEW_BREACHES) {
+        layers = breachLayers
+      }
+
+      return layers
     },
     activeLayerSet ({ visibleLayerIds, visibleVariantIndexByLayerId }, { currentLayerSet }) {
       if (!currentLayerSet) {

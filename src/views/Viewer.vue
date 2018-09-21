@@ -4,7 +4,7 @@
       :layers="activeLayerSet"
     />
     <layer-panel
-      :layers="selectedBreaches.length ? [] : activeLayerSet"
+      :layerSets="panelLayerSets"
       @open-export="showExport = true"
     />
     <legend-panel
@@ -71,7 +71,8 @@ export default {
     ]),
     ...mapGetters([
       'activeLayerSet',
-      'currentLayerSet'
+      'currentLayerSet',
+      'panelLayerSets'
     ]),
     selectedLayer () {
       if (!this.currentLayerSet ) {

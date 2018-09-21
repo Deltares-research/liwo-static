@@ -4,13 +4,15 @@
       class="layerpanel-item__title"
       v-if="title"
     >
-      { title }
+      {{ title }}
     </h3>
     <layer-control-list :layers="layers" />
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 import LayerControlList from './LayerControlList'
 
 export default {
@@ -24,6 +26,9 @@ export default {
       required: false
     }
   },
+  computed: {
+
+  },
   components: {
     LayerControlList
   }
@@ -31,5 +36,16 @@ export default {
 </script>
 
 <style>
+  .layerpanel-item {
+    background-color: var(--yellow);
+    border-top: 2px solid var(--light-gray);
+  }
 
+  .layerpanel-item__title {
+    padding: 4px;
+    line-height: 44px;
+    font-size: 1.2em;
+    color: var(--black);
+    margin-bottom: 0;
+  }
 </style>

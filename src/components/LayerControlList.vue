@@ -3,14 +3,14 @@
       <li
         class="layer-control-list__item"
         v-for="layer in layers"
-        :key="layer.layerId"
-        @click="setSelectedLayerId(layer.layerId)"
+        :key="layer.id"
+        @click="setSelectedLayerId(layer.id)"
       >
         <layer-control
-          :active="(layer.layerId === selectedLayerId)"
-          :id="layer.layerId"
-          :title="layer.layerTitle"
-          :subtitle="layer.title"
+          :active="(layer.id === selectedLayerId)"
+          :id="layer.id"
+          :title="layer.properties.title || layer.properties.name"
+          :subtitle="layer.properties.title || layer.legend.title"
           :metadata="layer.metadata"
           @toggle="toggleLayerVisibilityById"
           @changeOpacity="setLayerOpacity"
@@ -55,5 +55,11 @@ export default {
 </script>
 
 <style>
+  .layer-control-list {
+    background-color: white;
+  }
 
+  .layer-control-list__item {
+    border-bottom: 1px solid var(--light-gray)
+  }
 </style>

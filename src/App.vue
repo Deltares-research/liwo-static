@@ -1,8 +1,7 @@
 <template>
   <div class="site-outer-wrapper">
     <div class="site-container" id="app">
-      <app-header />
-      <!-- main content goes here, based on router view -->
+      <app-header :pageTitle="mapTitle" />
       <div id="content" role="main">
         <!-- main content goes here, based on router view -->
         <router-view/>
@@ -19,9 +18,16 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 import AppHeader from '../src/components/AppHeader.vue'
 
 export default {
+  computed: {
+    ...mapState([
+      'mapTitle'
+    ])
+  },
   components: {
     AppHeader
   }

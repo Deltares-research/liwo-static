@@ -91,7 +91,6 @@ export default {
 
 .layer-control {
   background-color: var(--white);
-  border-bottom: 2px solid var(--light-gray);
 }
 
 .layer-control__identifiers {

@@ -26,6 +26,7 @@ export default {
     this.initialConfig = {
       continuousWorld: true,
       crs: this.createCrs(),
+      zoomControl: false,
       zoom: mapConfig.zoom,
       maxZoom: mapConfig.maxZoom,
       minZoom: mapConfig.minZoom,
@@ -55,8 +56,18 @@ export default {
   methods: {
     breachCallBack ({ target }) {
       const { id, naam } = target.feature.properties
-      this.$store.commit('setSelectedBreach', id)
-      this.$store.dispatch('loadBreach', { id, breachName: naam })
+
+      if (this.selectedBreaches.length === 0) {
+        this.$store.commit('resetVisibleLayers')
+      }
+
+      if (this.selectedBreaches[0] === id) {
+
+      }
+
+
+      this.$store.commit('toggleLayerById', id)
+      this.$store.dispatch('addBreach', { id, breachName: naam })
     },
     createCrs () {
       return new L.Proj.CRS(rdConfig.crsType, rdConfig.proj, {
@@ -98,14 +109,8 @@ export default {
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
-  fill: rgb(208, 214, 220);
-  fill-opacity: 0.3;
+  fill-opacity: 0;
   /* for lakes  */
   fill-rule: evenodd;
-}
-
-.LIWO_Tools_Dreigingsbeelden_Dijkringen:hover {
-  stroke-opacity: 0.7;
-  fill-opacity: 0.0;
 }
 </style>

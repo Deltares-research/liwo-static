@@ -18,10 +18,22 @@
           <li><router-link :to="{name: 'about'}">Over LIWO</router-link></li>
         </ul>
       </nav>
-    <h1 class="app-header__page-title container">{{ this.$route.meta.title }}</h1>
+    <h1 class="app-header__page-title container">{{ this.pageTitle || this.$route.meta.title }}</h1>
   </div>
   </header>
 </template>
+
+<script>
+export default {
+  props: {
+    pageTitle: {
+      type: String,
+      required: false
+    }
+  }
+}
+</script>
+
 
 <style>
   @import './variables.css';
