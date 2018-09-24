@@ -40,6 +40,15 @@ npm run build
 
 # deploy to surge (for comparisons)
 surge dist liwo-test.surge.sh
+
+# create a release
+npm run release
+
+# create a sig review file after a release
+./sig-deploy.sh
+# follow the instruction to upload the file
+
+
 ```
 ## API
 
@@ -48,3 +57,6 @@ The api that is used to get map information can be found at [swagger](https://ap
 ## Deployment
 
 Deployment is done through travis based on the gh-pages branch. See the [test server](http://deltares.github.io/liwo-static)
+
+## Sig review
+Create a release with `npm run release` and then run `./sig-deploy.sh` to download the latest zip file to the format liwo-static-yyyymmdd.zip. Upload that file to sig.
