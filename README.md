@@ -44,7 +44,7 @@ surge dist liwo-test.surge.sh
 # create a release
 npm run release
 
-# create a sig review file after a release
+# create a sig review file after a release (requires jq and wget)
 ./sig-deploy.sh
 # follow the instruction to upload the file
 
