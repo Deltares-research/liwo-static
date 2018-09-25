@@ -3,10 +3,11 @@
     <h3
       class="layerpanel-item__title"
       v-if="title"
+      @click="setActiveLayer"
     >
       {{ title }}
     </h3>
-    <layer-control-list :layers="layers" />
+    <layer-control-list :layers="layers" :visible="layerControlListIsVisible" />
   </div>
 </template>
 
@@ -24,10 +25,28 @@ export default {
     title: {
       type: String,
       required: false
+    },
+    layerId: {
+      type: Number,
+      required: false
     }
   },
   computed: {
+    ...mapState([
+      'activeLayerSetId'
+    ]),
+    layerControlListIsVisible () {
+      if (!this.activeLayerSetId || !this.layerId) {
+        return true
+      }
 
+      return Number(this.activeLayerSetId) === Number(this.layerId)
+    }
+  },
+  methods: {
+    setActiveLayer () {
+      this.$store.commit('setActiveLayerSetId', this.layerId)
+    }
   },
   components: {
     LayerControlList

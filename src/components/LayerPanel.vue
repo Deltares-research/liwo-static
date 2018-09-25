@@ -1,6 +1,6 @@
 <template>
   <div class="layer-panel">
-    <h3 class="layer-panel__title">
+    <h3 class="layer-panel__title" @click="resetToMapLayers">
       <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 64 64">
         <path fill="none" d="M0 0h64v64H0z"/>
         <path d="M55 33L32 49 9 33l-4 2v2l26 19a2 2 0 0 0 2 0l26-19v-2l-4-2z"/>
@@ -13,6 +13,7 @@
       v-for="layerSet in layerSets"
       :key="layerSet.layerSetTitle"
       :layers="layerSet.layers"
+      :layerId="layerSet.id"
       :title="layerSet.layerSetTitle"
     />
     <button class="layer-panel__export" @click="$emit('open-export')">
@@ -43,14 +44,11 @@ export default {
     setSelectedLayerId (id) {
       this.$store.commit('setSelectedLayerId', id)
     },
-    setLayerOpacity ({ layerId, opacity }) {
-      this.$store.commit('setOpacityByLayerId', {
-        layerId,
-        opacity
-      })
-    },
     toggleLayerVisibilityById (id) {
       this.$store.commit('toggleLayerById', id)
+    },
+    resetToMapLayers () {
+      this.$store.commit('resetToMapLayers')
     }
   },
   components: {
@@ -62,30 +60,34 @@ export default {
 </script>
 
 <style>
-@import './variables.css';
+  @import './variables.css';
 
-.layer-panel {
-  width: 320px;
-  height: auto;
-  background-color: var(--white);
-  max-height: calc(100vh - 23rem);
-  overflow-y: auto;
-}
-.layer-panel__title,
-.layer-panel__export {
-  background-color: var(--yellow);
-  line-height: 44px;
-  font-size: 1.2em;
-  padding: 4px;
-  color: var(--black);
-  margin-bottom: 0;
-}
-.layer-panel__export {
-  width: 100%;
-  background-color: var(--white);
-  text-align: left;
-  font-weight: bold;
-  border: none;
-  box-shadow: var(--shadow);
-}
+  .layer-panel {
+    width: 320px;
+    height: auto;
+    background-color: var(--white);
+    max-height: calc(100vh - 23rem);
+    overflow-y: auto;
+  }
+  .layer-panel__title,
+  .layer-panel__export {
+    background-color: var(--yellow);
+    line-height: 44px;
+    font-size: 1.2em;
+    padding: 4px;
+    color: var(--black);
+    margin-bottom: 0;
+  }
+  .layer-panel__export {
+    width: 100%;
+    background-color: var(--white);
+    text-align: left;
+    font-weight: bold;
+    border: none;
+    box-shadow: var(--shadow);
+  }
+
+  .layer-panel__back-button {
+    float: right;
+  }
 </style>

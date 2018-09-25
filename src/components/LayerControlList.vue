@@ -1,5 +1,5 @@
 <template>
-  <ul class="layer-control-list">
+  <ul class="layer-control-list" :class="{ 'layer-control-list--active': visible }">
       <li
         class="layer-control-list__item"
         v-for="layer in layers"
@@ -12,8 +12,11 @@
           :title="layer.properties.title || layer.properties.name"
           :subtitle="layer.properties.title || layer.legend.title"
           :metadata="layer.metadata"
+          :variants="layer.variants || []"
+          :layerType="layer.legend.layer"
           @toggle="toggleLayerVisibilityById"
           @changeOpacity="setLayerOpacity"
+          @selectVariant="setVisibleVariant"
         />
       </li>
     </ul>
@@ -27,6 +30,10 @@ export default {
     layers: {
       type: Array,
       default: []
+    },
+    visible: {
+      type: Boolean,
+      default: true
     }
   },
   computed: {
@@ -46,6 +53,9 @@ export default {
     },
     toggleLayerVisibilityById (id) {
       this.$store.commit('toggleLayerById', id)
+    },
+    setVisibleVariant ({ layerId, variantIndex }) {
+      this.$store.commit('setVisibleVariantIndexForLayerId', { layerId, index: variantIndex })
     }
   },
   components: {
@@ -57,6 +67,12 @@ export default {
 <style>
   .layer-control-list {
     background-color: white;
+    height: 0;
+    overflow: hidden;
+  }
+
+  .layer-control-list--active {
+    height: auto;
   }
 
   .layer-control-list__item {

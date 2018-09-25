@@ -5,16 +5,20 @@ import loadBreach from './lib/load-breach'
 import { loadLayersetById } from './lib/load-layersets'
 import loadGeojson from './lib/load-geojson'
 import { normalizeLayers } from './lib/layer-parser'
+import { probabilityConfig } from './lib/probability-filter'
 
 Vue.use(Vuex)
 
-const BREACHES_LAYER_ID = 'geo_doorbraaklocaties_primair'
+const BREACHES_PRIMARY_LAYER_ID = 'geo_doorbraaklocaties_primair'
+const BREACHES_REGIONAL_LAYER_ID = 'geo_doorbraaklocaties_regionaal'
 const LAYERPANEL_VIEW_MAPLAYERS = 'maplayers_view'
 const LAYERPANEL_VIEW_BREACHES = 'breaches_view'
 
 export default new Vuex.Store({
   state: {
+    activeLayerSetId: undefined,
     breachLayersById: [],
+    breachProbabilityFilterIndex: 0,
     layerSetsById: {},
     mapId: 0,
     mapTitle: undefined,
@@ -22,14 +26,17 @@ export default new Vuex.Store({
     visibleVariantIndexByLayerId: {},
     opacityByLayerId: {},
     selectedLayerId: 0,
+    selectedMapLayerId: 0,
     selectedBreaches: [],
-    selectedLayerSetIndex: 0
+    selectedLayerSetIndex: 0,
+    visibleBreachLayers: {},
+    visibleBreachLayerVariants: {}
   },
   mutations: {
-    addBreachLayer (state, { id, breachLayer, breachName }) {
+    addBreachLayer (state, { id, breachLayers, breachName }) {
       state.breachLayersById = {
         ...state.breachLayersById,
-        [ id ]: { layers: breachLayer, layerSetTitle: breachName }
+        [ id ]: { layers: breachLayers, layerSetTitle: breachName, id }
       }
     },
     setLayerPanelView (state, view) {
@@ -44,17 +51,32 @@ export default new Vuex.Store({
     setMapId (state, id) {
       state.mapId = id
     },
-    setSelectedBreach (state, id) {
-      const index = state.selectedBreaches.indexOf(id)
-      const updatedBreaches = [ ...state.selectedBreaches ]
+    toggleSelectedBreach (state, id) {
+      const breachLayerIds = state.breachLayersById[id].layers.map(layer => layer.id)
 
-      if (index === -1) {
-        updatedBreaches.push(id)
+      if (state.selectedBreaches.indexOf(id) === -1) {
+        state.selectedBreaches = state.selectedBreaches.concat(id)
+        state.visibleLayerIds = state.visibleLayerIds.concat(breachLayerIds)
+        state.activeLayerSetId = id
       } else {
-        updatedBreaches.splice(index, 1)
+        state.selectedBreaches = state.selectedBreaches.filter(breachId => breachId !== id)
+        state.visibleLayerIds = state.visibleLayerIds.filter(layerId => breachLayerIds.indexOf(layerId) === -1)
+        state.activeLayerSetId = state.selectedBreaches[0]
+      }
+    },
+    hideBreaches (state, breaches) {
+      if (typeof breaches === 'number' || typeof breaches === 'string') {
+        breaches = [ breaches ]
       }
 
-      state.selectedBreaches = updatedBreaches
+      state.visibleLayerIds = state.visibleLayerIds.filter(layerId => breaches.indexOf(layerId) === -1)
+    },
+    showBreaches (state, breaches) {
+      if (typeof breaches === 'number' || typeof breaches === 'string') {
+        breaches = [ breaches ]
+      }
+
+      state.visibleLayerIds = state.visibleLayerIds.concat(breaches)
     },
     setMapTitle (state, title) {
       state.mapTitle = title
@@ -74,11 +96,31 @@ export default new Vuex.Store({
         [layerId]: opacity
       }
     },
+    setVisibleBreachLayers (state, { breach, layers }) {
+      state.visibleBreachLayers = {
+        ...state.visibleBreachLayers,
+        [ breach ]: layers
+      }
+    },
+    setVisibleBreachLayerVariants (state, { variants }) {
+      state.visibleVariantIndexByLayerId = {
+        ...state.visibleVariantIndexByLayerId,
+        ...variants
+      }
+    },
     resetVisibleLayers (state) {
       state.visibleLayerIds = []
     },
+    resetToMapLayers (state) {
+      const selectedBreaches = state.selectedBreaches
+      state.visibleLayerIds = state.visibleLayerIds.filter((layerId) => selectedBreaches.indexOf(layerId) === -1)
+      state.selectedBreaches = []
+    },
     hideLayerById (state, id) {
       state.visibleLayerIds = state.visibleLayerIds.filter(layerId => layerId !== id)
+    },
+    hideLayersById (state, layerIds) {
+      state.visibleLayerIds = state.visibleLayerIds.filter(layerId => layerIds.some(layerId))
     },
     showLayerById (state, id) {
       state.visibleLayerIds = state.visibleLayerIds.concat(id)
@@ -89,6 +131,13 @@ export default new Vuex.Store({
       } else {
         this.commit('showLayerById', id)
       }
+    },
+    setActiveLayerSetId (state, id) {
+      state.activeLayerSetId = id
+    },
+    setProbabilityFilterIndex (state, index) {
+      state.breachProbabilityFilterIndex = index
+      this.commit('resetToMapLayers')
     }
   },
   actions: {
@@ -96,21 +145,28 @@ export default new Vuex.Store({
       if (state.layerSetsById && state.layerSetsById[id]) {
         return
       }
+
       const layersetById = await loadLayersetById(id)
       const layerSet = normalizeLayers(layersetById.layers)
 
       state.commit('setLayerSetById', { id, layerSet })
       state.commit('setMapTitle', layersetById.title)
     },
-    async addBreach ({ commit, state }, { id, breachName }) {
+    async addBreach ({ commit, state }, { id, breachName, layerType }) {
       if (Object.keys(state.breachLayersById).indexOf(String(id)) === -1) {
-        const breach = await loadBreach(id)
-        const breachLayer = normalizeLayers(breach.layers)
+        const breach = await loadBreach(id, layerType)
+        const breachLayers = normalizeLayers(breach.layers)
+        const visibleBreachLayers = breachLayers.map((layer) => layer.id)
 
-        commit('addBreachLayer', { id, breachLayer, breachName })
+        commit('addBreachLayer', { id, breachLayers, breachName })
+        commit('setVisibleBreachLayers', { breach: id, layers: visibleBreachLayers })
+        commit('setVisibleBreachLayerVariants', {
+          breach: id,
+          variants: breachLayers.reduce((variants, layer) => ({ ...variants, [ layer.id ]: 0 }), {})
+        })
       }
 
-      commit('setSelectedBreach', id)
+      commit('toggleSelectedBreach', id)
     }
   },
   getters: {
@@ -122,9 +178,43 @@ export default new Vuex.Store({
       return [{ layers: layerSetsById[mapId] || [] }]
     },
     breachLayers ({ breachLayersById, selectedBreaches }) {
-      return Object.keys(breachLayersById)
-        .filter((id) => selectedBreaches.some(breachId => breachId === Number(id)))
+      return selectedBreaches
         .map(breachId => breachLayersById[breachId])
+    },
+    currentBreachesLayerSet ({ breachLayersById, selectedBreaches, visibleLayerIds, visibleVariantIndexByLayerId }) {
+      const layers = selectedBreaches
+        .map(breachId => breachLayersById[breachId])
+        .map(({ layers }) => layers)
+        .map((layers) => layers.filter(layer => visibleLayerIds.indexOf(layer.id) !== -1))
+        .reduce((variants, layers) => {
+          return [
+            ...variants,
+            ...layers.map(layer => ({
+              ...layer.variants[ visibleVariantIndexByLayerId[layer.id] || 0 ],
+              layerId: layer.id
+            }))
+          ]
+        }, [])
+
+      return layers
+    },
+    currentMapLayerSet (state, { mapLayers }) {
+      const layers = mapLayers[state.selectedMapLayerId]
+
+      if (!layers) {
+        return []
+      }
+
+      return layers.layers
+        .filter(({ id }) => state.visibleLayerIds.some(visibleId => visibleId === id))
+        .map(layer => {
+          const variantIndex = state.visibleVariantIndexByLayerId[layer.id]
+          return {
+            ...layer.variants[variantIndex],
+            layerId: layer.id,
+            layerTitle: layer.properties.title
+          }
+        })
     },
     currentLayerSet (state, { mapLayers, breachLayers, layerPanelView }) {
       if (layerPanelView === LAYERPANEL_VIEW_MAPLAYERS) {
@@ -138,28 +228,25 @@ export default new Vuex.Store({
         ? LAYERPANEL_VIEW_BREACHES
         : LAYERPANEL_VIEW_MAPLAYERS
     },
-    panelLayerSets (state, { mapLayers, breachLayers, layerPanelView }) {
-      let layers
+    panelLayerSets (_, { mapLayers, breachLayers, layerPanelView }) {
+      if (layerPanelView === LAYERPANEL_VIEW_MAPLAYERS) {
+        return mapLayers
+      } else if (layerPanelView === LAYERPANEL_VIEW_BREACHES) {
+        return breachLayers
+      }
+    },
+    activeLayerSet ({ opacityByLayerId }, { currentMapLayerSet, currentBreachesLayerSet, layerPanelView }) {
+      const currentMapLayerSetWithOpacity = currentMapLayerSet
+        .map(layer => ({ ...layer, opacity: opacityByLayerId[layer.layerId] || 1 }))
 
       if (layerPanelView === LAYERPANEL_VIEW_MAPLAYERS) {
-        layers = mapLayers
+        return currentMapLayerSetWithOpacity
       } else if (layerPanelView === LAYERPANEL_VIEW_BREACHES) {
-        layers = breachLayers
+        return [
+          ...currentMapLayerSetWithOpacity,
+          ...currentBreachesLayerSet.map(layer => ({ ...layer, opacity: opacityByLayerId[layer.layerId] || 1 }))
+        ]
       }
-
-      return layers
-    },
-    activeLayerSet ({ visibleLayerIds, visibleVariantIndexByLayerId }, { currentLayerSet }) {
-      if (!currentLayerSet) {
-        return []
-      }
-
-      return currentLayerSet.layers
-        .filter(({ id }) => visibleLayerIds.some(visibleId => visibleId === id))
-        .map(layer => {
-          const variantIndex = visibleVariantIndexByLayerId[layer.id]
-          return { ...layer.variants[variantIndex], layerId: layer.id, layerTitle: layer.properties.title }
-        })
     },
     parsedLayerSet (state, { activeLayerSet }) {
       if (!activeLayerSet) {
@@ -171,10 +258,17 @@ export default new Vuex.Store({
           if (layer.type === 'json') {
             const geojson = await loadGeojson(layer)
 
-            if (layer.layer === BREACHES_LAYER_ID) {
-              geojson.features.forEach(feature => {
-                feature.properties.selected = state.selectedBreaches.indexOf(feature.properties.id) !== -1
-              })
+            if (layer.layer === BREACHES_PRIMARY_LAYER_ID || layer.layer === BREACHES_REGIONAL_LAYER_ID) {
+              const filterIndex = state.breachProbabilityFilterIndex
+              const probabilityFilter = probabilityConfig[filterIndex]
+
+              geojson.features = geojson.features
+                .filter(feature => (filterIndex === 0 || feature.properties[probabilityFilter.identifier] > 0))
+
+              geojson.features
+                .forEach(feature => {
+                  feature.properties.selected = state.selectedBreaches.indexOf(feature.properties.id) !== -1
+                })
             }
 
             return { ...layer, geojson }

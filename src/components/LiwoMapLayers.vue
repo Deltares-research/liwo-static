@@ -133,52 +133,10 @@ export default {
         map.addLayer(breach)
       })
     },
-    // expandedMapLayers (mapLayers, oldMapLayers) {
-    //   if (!oldMapLayers) {
-    //     return
-    //   }
-
-    //   console.log('MAP LAYERS', mapLayers)
-    //   console.log('OLD MAP LAYERS', oldMapLayers)
-
-    //   const refs = this.$refs
-    //   const removedLayers = oldMapLayers
-    //     .filter(oldLayer => mapLayers.every(mapLayer => mapLayer.layer !== oldLayer.layer))
-
-    //   console.log('REMOVED MAP LAYERS', removedLayers)
-    //   console.log('REFS', refs)
-
-    //   removedLayers.forEach(layer => {
-    //     // When used on elements/components with v-for,
-    //     // the registered reference will be an Array containing DOM nodes or component instances.
-    //     // https://vuejs.org/v2/api/#ref
-    //     console.log('MAPOBJECT', refs[layer.layer][0].mapObject, refs[layer.layer][0].mapObject.remove)
-    //     refs[layer.layer][0].mapObject.remove()
-    //   })
-
-    // },
     parsedLayerSet (parsedLayerSet) {
       parsedLayerSet
         .then(layers => {
-          // if (this.expandedMapLayers) {
-          //   const refs = this.$refs
-          //   const removedLayers = this.expandedMapLayers
-          //     .filter(oldLayer => layers.every(mapLayer => mapLayer.layer !== oldLayer.layer))
-
-          //   console.log('REMOVED MAP LAYERS', removedLayers)
-          //   console.log('REFS', refs)
-
-          //   removedLayers.forEach(layer => {
-          //     // When used on elements/components with v-for,
-          //     // the registered reference will be an Array containing DOM nodes or component instances.
-          //     // https://vuejs.org/v2/api/#ref
-          //     console.log('MAPOBJECT',  refs[layer.layer][0])
-          //     refs[layer.layer][0].mapObject.remove()
-          //   })
-          // }
-          console.log('bla')
           if (layers.length) {
-            console.log('expandedMapLayers', layers)
             this.expandedMapLayers = layers
           }
         })

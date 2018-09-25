@@ -14,12 +14,6 @@
       :layer-name="selectedVisibleLayerLegend.layer"
       :style-name="selectedVisibleLayerLegend.style"
     />
-    <segmented-buttons
-      v-if="variantTitlesForSelectedLayer.length > 1"
-      :items="variantTitlesForSelectedLayer"
-      :active-index="variantIndexForSelectedLayer"
-      @click="setVisibleVariantIdForSelectedlayer"
-    />
     <export-popup
       v-if="showExport"
       @close="showExport = false"
@@ -34,7 +28,6 @@ import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
 import LiwoMapDir from '@/components/LiwoMapDir'
 import LegendPanel from '@/components/LegendPanel'
-import SegmentedButtons from '@/components/SegmentedButtons'
 
 import { loadLayersetById } from '@/lib/load-layersets'
 
@@ -125,7 +118,6 @@ export default {
     LayerPanel,
     LegendPanel,
     LiwoMapDir,
-    SegmentedButtons
   }
 }
 </script>

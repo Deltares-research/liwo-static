@@ -17,16 +17,18 @@ export default {
     const { mapLayers, callbacks } = value
     console.log('MAPLAYERS', mapLayers)
 
+    const newCurrentLayers = mapLayers
+      .map(layer => layerFactory(layer, callbacks))
+      .map(layer => {
+        map.addLayer(layer)
+        return layer
+      })
+
     if (currentLayers.length) {
       currentLayers.forEach(layer => map.removeLayer(layer))
       currentLayers = []
     }
 
-    mapLayers
-      .map(layer => layerFactory(layer, callbacks))
-      .forEach(layer => {
-        map.addLayer(layer)
-        currentLayers.push(layer)
-      })
+    currentLayers = newCurrentLayers
   }
 }

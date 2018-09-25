@@ -47,15 +47,17 @@ export function renderGeoJson ({ geojson, style }) {
   })
 }
 
-export function renderBreachGeoJson ({ geojson, layer: layerId }, callback) {
+export function renderBreachGeoJson ({ geojson, layer: layerId, opacity }, callback) {
   return L.geoJson(geojson, {
     onEachFeature: (_, layer) => {
       const { naam, dijkringnr } = layer.feature.properties
+
       layer.bindTooltip(`(${dijkringnr}) ${naam}`)
       layer.on('click', (event) => breachClickHandler(event, callback))
       layer.on('mouseover', (event) => { event.target.openTooltip() })
       layer.on('mouseout', (event) => { event.target.closeTooltip() })
 
+      layer.setOpacity(opacity)
       layer.feature.properties.layerType = layerId
       layer.feature.properties.selected
         ? layer.setIcon(redIcon)
@@ -64,13 +66,14 @@ export function renderBreachGeoJson ({ geojson, layer: layerId }, callback) {
   })
 }
 
-export function renderWms ({ namespace, layer, attribution, style }) {
+export function renderWms ({ namespace, layer, attribution, style, opacity }) {
   return L.tileLayer.wms(geoServerURL(namespace), {
     layers: layer,
     format: 'image/png',
     transparent: true,
     attribution,
-    styles: style
+    styles: style,
+    opacity
   })
 }
 

@@ -55,19 +55,9 @@ export default {
   },
   methods: {
     breachCallBack ({ target }) {
-      const { id, naam } = target.feature.properties
+      const { id, naam: breachName, layerType } = target.feature.properties
 
-      if (this.selectedBreaches.length === 0) {
-        this.$store.commit('resetVisibleLayers')
-      }
-
-      if (this.selectedBreaches[0] === id) {
-
-      }
-
-
-      this.$store.commit('toggleLayerById', id)
-      this.$store.dispatch('addBreach', { id, breachName: naam })
+      this.$store.dispatch('addBreach', { id, breachName, layerType })
     },
     createCrs () {
       return new L.Proj.CRS(rdConfig.crsType, rdConfig.proj, {
