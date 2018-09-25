@@ -22,14 +22,18 @@
       :tile-layers="baseLayer.tileLayers"
       @baselayer="updateBaseLayer"
     />
-    <liwo-map-layers :map-layers="mapLayers" :map-ref="mapRef" />
+    <liwo-map-layers
+      :map-layers="mapLayers"
+      :parsed-layers="parsedLayers"
+      :map-ref="mapRef"
+    />
   </l-map>
 </template>
 
 <script>
 import 'leaflet/dist/leaflet.css'
 
-import L from 'leaflet'
+// import L from 'leaflet'
 import { LMap, LTileLayer, LControlZoom } from 'vue2-leaflet'
 import 'proj4leaflet'
 
@@ -42,9 +46,9 @@ import rdConfig from '../lib/rijksdriehoek.config.js'
 
 export default {
   props: {
-    mapLayers: Array
+    mapLayers: Array,
+    parsedLayers: Array
   },
-  components: { BaseLayerControl, LiwoMapLayers, LMap, LTileLayer, LControlZoom },
   data () {
     return {
       mapRef: undefined,
@@ -78,7 +82,8 @@ export default {
     updateBaseLayer (url) {
       this.baseLayer.url = url
     }
-  }
+  },
+  components: { BaseLayerControl, LiwoMapLayers, LMap, LTileLayer, LControlZoom }
 }
 </script>
 

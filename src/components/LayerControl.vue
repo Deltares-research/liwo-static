@@ -28,30 +28,40 @@
         </p>
       </div>
     </form>
+    <div v-if="isBreachControlLayer" class="layer-control__options">
+      <layer-control-select
+        name="probability-filter"
+        :options="probabilityFilterOptions"
+        :selected="breachProbabilityFilterIndex"
+        @change="setProbabilityFilter"
+      />
+    </div>
+    <div v-if="variantsOptions.length" class="layer-control__options">
+      <layer-control-select name="layer-variant" :options="variantsOptions" @change="setLayerVariant" />
+    </div>
     <div class="layer-control__options">
-      <select :name="`layer-${id}-trans`" @change="setOpacity">
-        <option
-          v-for="i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
-          :key="`layer-${id}-trans-${i}`"
-          :value="1 - (0.1 * i)"
-        >
-          {{ i * 10 }}% transparantie
-        </option>
-      </select>
-      <button class="layer-control__info" @click="popupIsOpen=true">
+      <layer-control-select :name="`layer-${id}-trans`" :options="transparancyOptions" @change="setOpacity" />
+      <button v-if="metadata" class="layer-control__info" @click="popupIsOpen=true">
         <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 64 64">
           <path fill="none" d="M0 0h64v64H0z"/>
           <path d="M53.9 14.1c-.4-2-2-3.6-4-4-6-1-16-1-17.9-1-2 0-12 0-17.9 1-2 .4-3.6 2-4 4-1 6-1 16-1 17.9s0 12 1 17.9c.4 2 2 3.6 4 4 6 1 16 1 17.9 1 2 0 12 0 17.9-1 2-.4 3.6-2 4-4 1-6 1-16 1-17.9 0-6 0-12-1-17.9zM35 48h-6.6l.6-14v-8h6v22zm-3-26c-2.2 0-3.5-1.3-3.5-3.5 0-2 1.2-3.5 3.5-3.5 2.2 0 3.5 1.2 3.5 3.5 0 2-1.2 3.5-3.5 3.5z"/>
         </svg>
       </button>
       <layer-popup v-if="popupIsOpen"
-        :metadata="metadata" @close="popupIsOpen=false" />
+        :metadata="metadata"
+        @close="popupIsOpen=false"
+      />
     </div>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 import LayerPopup from '@/components/LayerPopup'
+import LayerControlSelect from '@/components/LayerControlSelect'
+
+import { probabilityTitles } from '@/lib/probability-filter'
 
 export default {
   data () {
@@ -62,7 +72,42 @@ export default {
     title: String,
     subtitle: String,
     metadata: Object,
-    active: Boolean
+    active: Boolean,
+    variants: Array,
+    layerType: String
+  },
+  computed: {
+    ...mapState([ 'breachProbabilityFilterIndex' ]),
+    transparancyOptions () {
+      return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((index) => ({
+        value: 1 - (0.1 * index),
+        title: `${index * 10}% transparantie`
+      }))
+    },
+    probabilityFilterOptions () {
+      return probabilityTitles.map((title, index) => ({
+        value: index,
+        title
+      }))
+    },
+    variantsOptions () {
+      const variantsLength = this.variants.length
+      if (!variantsLength || variantsLength === 1) {
+        return []
+      }
+
+      return this.variants.map((variant, index) => ({
+        value: Number(index),
+        title: variant.title
+      }))
+    },
+    isBreachControlLayer () {
+      if (typeof this.layerType !== 'string') {
+        return false
+      }
+
+      return this.layerType.startsWith('geo_doorbraaklocaties')
+    }
   },
   methods: {
     setOpacity ({ target }) {
@@ -70,6 +115,15 @@ export default {
         layerId: this.id,
         opacity: target.value
       })
+    },
+    setLayerVariant ({ target }) {
+      this.$emit('selectVariant', {
+        layerId: this.id,
+        variantIndex: Number(target.value)
+      })
+    },
+    setProbabilityFilter ({ target }) {
+      this.$store.commit('setProbabilityFilterIndex', Number(target.value))
     }
   },
   watch: {
@@ -81,6 +135,7 @@ export default {
     }
   },
   components: {
+    LayerControlSelect,
     LayerPopup
   }
 }
@@ -91,7 +146,6 @@ export default {
 
 .layer-control {
   background-color: var(--white);
-  border-bottom: 2px solid var(--light-gray);
 }
 
 .layer-control__identifiers {

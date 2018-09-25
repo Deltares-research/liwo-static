@@ -1,14 +1,14 @@
-4<template>
+<template>
   <span>
     <template
       v-for="layer in expandedMapLayers"
     >
       <l-geo-json
-        v-if="layer.type === 'json'"
+        v-if="layer.type === 'json' && layer.geojson"
         :ref="layer.layer"
         :key="layer.layer"
         :geojson="layer.geojson"
-        :options="{ style: (feature) => setStyle(feature, layer) , onEachFeature: onEachFeature  }"
+        :options="{ style: (feature) => setStyle(feature, layer) , onEachFeature: onEachFeature }"
       />
       <l-wms-tile-layer
         v-else
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import { LGeoJson, LWMSTileLayer as LWmsTileLayer } from 'vue2-leaflet'
 
 import BreachTooltip from './BreachTooltip'
@@ -58,6 +58,9 @@ export default {
   computed: {
     ...mapState([
       'opacityByLayerId'
+    ]),
+    ...mapGetters([
+      'parsedLayerSet'
     ])
   },
   methods: {
@@ -130,24 +133,12 @@ export default {
         map.addLayer(breach)
       })
     },
-    mapLayers (mapLayers, oldMapLayers) {
-      const refs = this.$refs
-      const removedLayers = oldMapLayers
-        .filter(oldLayer => mapLayers.every(mapLayer => mapLayer.layer !== oldLayer.layer))
-
-      removedLayers.forEach(layer => {
-        // When used on elements/components with v-for,
-        // the registered reference will be an Array containing DOM nodes or component instances.
-        // https://vuejs.org/v2/api/#ref
-        refs[layer.layer][0].mapObject.remove()
-      })
-      Promise.all(mapLayers.map(async (layer) => {
-        return (layer.type === 'json')
-          ? { ...layer, geojson: await loadGeojson(layer) }
-          : layer
-      }))
+    parsedLayerSet (parsedLayerSet) {
+      parsedLayerSet
         .then(layers => {
-          this.expandedMapLayers = layers
+          if (layers.length) {
+            this.expandedMapLayers = layers
+          }
         })
     }
   },
