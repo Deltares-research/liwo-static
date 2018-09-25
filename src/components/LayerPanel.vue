@@ -28,7 +28,6 @@
 </template>
 
 <script>
-import BreachControl from '@/components/BreachControl'
 import LayerControl from '@/components/LayerControl'
 import LayerPanelItem from '@/components/LayerPanelItem'
 
@@ -52,7 +51,6 @@ export default {
     }
   },
   components: {
-    BreachControl,
     LayerControl,
     LayerPanelItem
   }
