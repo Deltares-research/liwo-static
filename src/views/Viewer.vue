@@ -1,6 +1,6 @@
 <template>
   <div class="viewer">
-    <liwo-map-dir
+    <liwo-map
       :layers="activeLayerSet"
     />
     <layer-panel
@@ -26,7 +26,7 @@ import { mapGetters, mapState } from 'vuex'
 
 import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
-import LiwoMapDir from '@/components/LiwoMapDir'
+import LiwoMap from '@/components/LiwoMap'
 import LegendPanel from '@/components/LegendPanel'
 
 import { loadLayersetById } from '@/lib/load-layersets'
@@ -117,7 +117,7 @@ export default {
     ExportPopup,
     LayerPanel,
     LegendPanel,
-    LiwoMapDir,
+    LiwoMap,
   }
 }
 </script>
