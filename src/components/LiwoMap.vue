@@ -5,7 +5,7 @@
     v-leaflet="{
       callbacks: { breachCallBack },
       config: initialConfig,
-      mapLayers: Object.freeze(expandedMapLayers)
+      mapLayers: [ ...expandedMapLayers ].reverse()
     }"
   ></div>
 </template>
@@ -74,7 +74,7 @@ export default {
       }
 
       parsedLayerSet
-        .then(layers => this.expandedMapLayers = layers)
+        .then(layers => this.expandedMapLayers = Object.freeze(layers))
     }
   }
 }
