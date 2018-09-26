@@ -117,8 +117,13 @@
   </div>
 </template>
 <script>
+const PAGE_TITLE = 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
+
 export default {
-  name: 'home'
+  name: 'home',
+  mounted () {
+    this.$store.commit('setPageTitle', PAGE_TITLE)
+  },
 }
 </script>
 <style>
