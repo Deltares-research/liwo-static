@@ -14,6 +14,7 @@
           :metadata="layer.metadata"
           :variants="layer.variants || []"
           :layerType="layer.legend.layer"
+          :visible="layerIsVisible(layer.id)"
           @toggle="toggleLayerVisibilityById"
           @changeOpacity="setLayerOpacity"
           @selectVariant="setVisibleVariant"
@@ -23,6 +24,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 import LayerControl from './LayerControl'
 
 export default {
@@ -37,11 +40,15 @@ export default {
     }
   },
   computed: {
-    selectedLayerId () {
-      return this.$store.state.selectedLayerId
-    }
+    ...mapState([
+      'selectedLayerId',
+      'visibleLayerIds'
+    ]),
   },
   methods: {
+    layerIsVisible (id) {
+      return this.visibleLayerIds.indexOf(id) !== -1
+    },
     setSelectedLayerId (id) {
       this.$store.commit('setSelectedLayerId', id)
     },

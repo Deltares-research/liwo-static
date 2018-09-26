@@ -6,7 +6,7 @@
         :name="`layer-${id}-vis`"
         :id="`layer-${id}-vis`"
         value="zichtbaar"
-        checked
+        :checked="visible"
       >
       <label
         @click="$emit('toggle', id)"
@@ -74,7 +74,8 @@ export default {
     metadata: Object,
     active: Boolean,
     variants: Array,
-    layerType: String
+    layerType: String,
+    visible: Boolean
   },
   computed: {
     ...mapState([ 'breachProbabilityFilterIndex' ]),
