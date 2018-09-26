@@ -16,7 +16,7 @@
     />
     <export-popup
       v-if="showExport"
-      :map-layers="mapLayers"
+      :map-layers="activeLayerSet"
       @close="showExport = false"
     />
   </div>
@@ -35,24 +35,16 @@ import { loadLayersetById } from '@/lib/load-layersets'
 export default {
   data () {
     return {
-      layers: [],
       parsedLayers: [],
       id: 0,
       showExport: false,
-      title: ''
     }
   },
   async mounted () {
     const mapId = Number(this.$route.params.id)
 
     this.$store.commit('setMapId', mapId)
-    this.$store.dispatch('loadLayerSetsById', mapId)
-
-    const layerSet = await loadLayersetById(mapId)
-
-    this.layers = layerSet.layers
-    this.title = layerSet.title
-    this.id = layerSet.id
+    this.$store.dispatch('loadLayerSetsById', { id: mapId, initializeMap: true })
   },
   computed: {
     ...mapState({
@@ -98,20 +90,6 @@ export default {
   methods: {
     setVisibleVariantIdForSelectedlayer (index) {
       this.$store.commit('setVisibleVariantIndexForLayerId', { index, layerId: this.selectedLayerId })
-    }
-  },
-  watch: {
-    layers (layers) {
-      if (layers.length === 0) {
-        return
-      }
-      // new layers mean new state init
-      this.$store.commit('setSelectedLayerId', layers[0].id)
-
-      layers.forEach(layer => {
-        this.$store.commit('showLayerById', layer.id)
-        this.$store.commit('setVisibleVariantIndexForLayerId', {index: 0, layerId: layer.id})
-      })
     }
   },
   components: {

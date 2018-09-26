@@ -56,7 +56,7 @@ export default new Vuex.Store({
 
       if (state.selectedBreaches.indexOf(id) === -1) {
         state.selectedBreaches = state.selectedBreaches.concat(id)
-        state.visibleLayerIds = state.visibleLayerIds.concat(breachLayerIds)
+        state.visibleLayerIds = state.visibleLayerIds.concat(breachLayerIds[0])
         state.activeLayerSetId = id
       } else {
         state.selectedBreaches = state.selectedBreaches.filter(breachId => breachId !== id)
@@ -111,6 +111,13 @@ export default new Vuex.Store({
     resetVisibleLayers (state) {
       state.visibleLayerIds = []
     },
+    initToMapLayers (state, mapId) {
+      const currentLayerSet = state.layerSetsById[mapId]
+      state.visibleLayerIds = currentLayerSet.map(layer => layer.id)
+      state.selectedBreaches = []
+      state.visibleVariantIndexByLayerId = currentLayerSet
+        .reduce((visibleVariants, { id }) => ({ ...visibleVariants, [ id ]: 0 }), {})
+    },
     resetToMapLayers (state) {
       const selectedBreaches = state.selectedBreaches
       state.visibleLayerIds = state.visibleLayerIds.filter((layerId) => selectedBreaches.indexOf(layerId) === -1)
@@ -141,7 +148,7 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    async loadLayerSetsById (state, id) {
+    async loadLayerSetsById (state, { id, initializeMap }) {
       if (state.layerSetsById && state.layerSetsById[id]) {
         return
       }
@@ -151,6 +158,9 @@ export default new Vuex.Store({
 
       state.commit('setLayerSetById', { id, layerSet })
       state.commit('setMapTitle', layersetById.title)
+      if (initializeMap) {
+        state.commit('initToMapLayers', id)
+      }
     },
     async addBreach ({ commit, state }, { id, breachName, layerType }) {
       if (Object.keys(state.breachLayersById).indexOf(String(id)) === -1) {
