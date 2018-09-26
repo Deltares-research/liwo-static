@@ -4,42 +4,39 @@ import 'leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 
-import mapConfig from '../../map.config.js'
+import {
+  BREACH_PRIMARY,
+  BREACH_REGIONAL,
+  BREACH_OUTSIDE_DIKE,
+  BREACH_FLOODING,
+  BREACHES_IDS
+} from '@/lib/liwo-identifiers'
+import mapConfig from '@/map.config'
 import { redIcon, blackIcon, greenIcon } from './markers'
 
 import './cluster-icon.css'
 
-const BREACH_PRIMARY = 'geo_doorbraaklocaties_primair'
-const BREACH_REGIONAL = 'geo_doorbraaklocaties_regionaal'
-const BREACH_OUTSIDE_DIKE = 'geo_scenariolocaties_buitendijks'
-const BREACH_FLOODING = 'geo_scenariolocaties_wateroverlast'
-const BREACHES_IDS = [
-  BREACH_PRIMARY,
-  BREACH_REGIONAL,
-  BREACH_OUTSIDE_DIKE,
-  BREACH_FLOODING
-]
 const DEFAULT_ICON = new L.Icon.Default()
 const DYNAMIC_GEOSERVER_URL = mapConfig.services.DYNAMIC_GEOSERVER_URL
 const STATIC_GEOSERVER_URL = mapConfig.services.STATIC_GEOSERVER_URL
 
-export default function renderLayer (layer, { breachCallBack }) {
+export default function createLayer (layer, { breachCallBack }) {
   if (layer.type === 'json' && layer.geojson) {
     if (layerIsBreach(layer)) {
       const markers = L.markerClusterGroup({
         iconCreateFunction: clusterIconFunction(layer.layer || 'BREACH_PRIMARY')
       })
-      markers.addLayer(renderBreachGeoJson(layer, breachCallBack))
+      markers.addLayer(createBreachGeoJson(layer, breachCallBack))
       return markers
     } else {
-      return renderGeoJson(layer)
+      return createGeoJson(layer)
     }
   } else {
-    return renderWms(layer)
+    return createWms(layer)
   }
 }
 
-export function renderGeoJson ({ geojson, style }) {
+export function createGeoJson ({ geojson, style }) {
   return L.geoJson(geojson, {
     style: () => {
       return { className: style }
@@ -47,7 +44,7 @@ export function renderGeoJson ({ geojson, style }) {
   })
 }
 
-export function renderBreachGeoJson ({ geojson, layer: layerId, opacity }, callback) {
+export function createBreachGeoJson ({ geojson, layer: layerId, opacity }, callback) {
   return L.geoJson(geojson, {
     onEachFeature: (_, layer) => {
       const { naam, dijkringnr } = layer.feature.properties
@@ -66,7 +63,7 @@ export function renderBreachGeoJson ({ geojson, layer: layerId, opacity }, callb
   })
 }
 
-export function renderWms ({ namespace, layer, attribution, style, opacity }) {
+export function createWms ({ namespace, layer, attribution, style, opacity }) {
   return L.tileLayer.wms(geoServerURL(namespace), {
     layers: layer,
     format: 'image/png',

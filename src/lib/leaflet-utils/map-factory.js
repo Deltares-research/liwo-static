@@ -2,9 +2,9 @@ import L from 'leaflet'
 import 'proj4leaflet'
 import 'mapbox.js'
 
-import '../leaflet-hack'
-import rdConfig from '../rijksdriehoek.config.js'
-import mapConfig from '../../map.config.js'
+import '@/lib/leaflet-hack'
+import rdConfig from '@/lib/rijksdriehoek.config'
+import mapConfig from '@/map.config'
 
 import 'mapbox.js/theme/style.css'
 

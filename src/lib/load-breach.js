@@ -1,11 +1,9 @@
+import { BREACH_PRIMARY, BREACH_REGIONAL } from '@/lib/liwo-identifiers'
 import mapConfig from '../map.config'
 
 const BREACHES_BASE_URL = mapConfig.services.WEBSERVICE_URL
 const BREACHES_API_URL_PRIMARY = `${BREACHES_BASE_URL}Tools/FloodImage.asmx/GetScenariosPerBreach`
 const BREACHES_API_URL_REGIONAL = `${BREACHES_BASE_URL}Tools/FloodImage.asmx/GetScenariosPerBreachRegional`
-
-const BREACH_TYPE_PRIMARY = 'geo_doorbraaklocaties_primair'
-const BREACH_TYPE_REGIONAL = 'geo_doorbraaklocaties_regionaal'
 
 const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
 const breachLayers = [
@@ -17,9 +15,9 @@ const breachLayers = [
 ]
 
 export default function (breachId, layerType) {
-  if (layerType === BREACH_TYPE_REGIONAL) {
-    return loadRegionalBreachLayer(breachId, `${BREACH_TYPE_REGIONAL}.${breachId}`)
-  } else if (layerType === BREACH_TYPE_PRIMARY) {
+  if (layerType === BREACH_REGIONAL) {
+    return loadRegionalBreachLayer(breachId, `${BREACH_REGIONAL}.${breachId}`)
+  } else if (layerType === BREACH_PRIMARY) {
     return Promise.all(breachLayers.map(layerName => loadBreachLayer(breachId, layerName)))
       .then(layers => {
         return {
@@ -31,7 +29,7 @@ export default function (breachId, layerType) {
   }
 }
 
-function loadBreachLayer (breachid, layername, layertype) {
+function loadBreachLayer (breachid, layername) {
   return fetch(BREACHES_API_URL_PRIMARY, {
     method: 'POST',
     mode: 'cors',
