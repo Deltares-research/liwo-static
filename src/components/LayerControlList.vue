@@ -1,26 +1,26 @@
 <template>
   <ul class="layer-control-list" :class="{ 'layer-control-list--active': visible }">
-      <li
-        class="layer-control-list__item"
-        v-for="layer in layers"
-        :key="layer.id"
-        @click="setSelectedLayerId(layer.id)"
-      >
-        <layer-control
-          :active="(layer.id === selectedLayerId)"
-          :id="layer.id"
-          :title="layer.properties.title || layer.properties.name"
-          :subtitle="layer.properties.title || layer.legend.title"
-          :metadata="layer.metadata"
-          :variants="layer.variants || []"
-          :layerType="layer.legend.layer"
-          :visible="layerIsVisible(layer.id)"
-          @toggle="toggleLayerVisibilityById"
-          @changeOpacity="setLayerOpacity"
-          @selectVariant="setVisibleVariant"
-        />
-      </li>
-    </ul>
+    <li
+      class="layer-control-list__item"
+      v-for="layer in layers"
+      :key="layer.id"
+      @click="setSelectedLayerId(layer.id)"
+    >
+      <layer-control
+        :active="(layer.id === selectedLayerId)"
+        :id="layer.id"
+        :title="layer.properties.title || layer.properties.name"
+        :subtitle="layer.properties.title || layer.legend.title"
+        :metadata="layer.metadata"
+        :variants="layer.variants || []"
+        :layerType="layer.legend.layer"
+        :visible="layerIsVisible(layer.id)"
+        @toggle="toggleLayerVisibilityById"
+        @changeOpacity="setLayerOpacity"
+        @selectVariant="setVisibleVariant"
+      />
+    </li>
+  </ul>
 </template>
 
 <script>
