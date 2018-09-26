@@ -21,7 +21,7 @@ export default new Vuex.Store({
     breachProbabilityFilterIndex: 0,
     layerSetsById: {},
     mapId: 0,
-    mapTitle: undefined,
+    pageTitle: undefined,
     visibleLayerIds: [],
     visibleVariantIndexByLayerId: {},
     opacityByLayerId: {},
@@ -78,8 +78,8 @@ export default new Vuex.Store({
 
       state.visibleLayerIds = state.visibleLayerIds.concat(breaches)
     },
-    setMapTitle (state, title) {
-      state.mapTitle = title
+    setPageTitle (state, title) {
+      state.pageTitle = title
     },
     setSelectedLayerId (state, id) {
       state.selectedLayerId = id
@@ -157,7 +157,7 @@ export default new Vuex.Store({
       const layerSet = normalizeLayers(layersetById.layers)
 
       state.commit('setLayerSetById', { id, layerSet })
-      state.commit('setMapTitle', layersetById.title)
+      state.commit('setPageTitle', layersetById.title)
       if (initializeMap) {
         state.commit('initToMapLayers', id)
       }
