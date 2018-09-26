@@ -7,10 +7,10 @@
       <a href="/" class="logo"><img src="https://staticresources.rijkswaterstaat.nl/assets/img/logo.png?v=2.19.2" width="270" height="72" alt="Rijkswaterstaat Ministerie van Infrastructuur en Waterstaat." class="accessibility"></a>
   </div>
   <div id="menu" class="app-header__menu">
-    <div class="app-header__top-menu container">
+    <!-- <div class="app-header__top-menu container">
         <div class="app-header__app-title"><strong>LIWO</strong><em> open</em></div>
         <div class="app-header__login"><span>(Guest)</span>&nbsp;<a href="/liwo/#/login">Inloggen</a> </div>
-    </div>
+    </div> -->
       <nav role="navigation" class="app-header__nav">
         <ul class="container">
           <li><router-link :to="{name: 'home'}" exact>Home</router-link></li>
