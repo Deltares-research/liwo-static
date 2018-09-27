@@ -32,7 +32,7 @@ export default {
   props: {
     layers: {
       type: Array,
-      default: []
+      default: () => []
     },
     visible: {
       type: Boolean,
@@ -43,7 +43,7 @@ export default {
     ...mapState([
       'selectedLayerId',
       'visibleLayerIds'
-    ]),
+    ])
   },
   methods: {
     layerIsVisible (id) {

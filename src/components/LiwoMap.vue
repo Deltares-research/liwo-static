@@ -4,7 +4,7 @@
     class="liwo-map"
     v-leaflet="{
       callbacks: { breachCallBack },
-      config: initialConfig,
+      config: mapConfig,
       mapLayers: [ ...expandedMapLayers ].reverse()
     }"
   ></div>
@@ -13,8 +13,7 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 
-import mapConfig from '../map.config.js'
-import rdConfig from '../lib/rijksdriehoek.config.js'
+import createMapConfig from '@/lib/leaflet-utils/mapconfig-factory'
 
 export default {
   data () {
@@ -22,49 +21,26 @@ export default {
       expandedMapLayers: undefined
     }
   },
-  created () {
-    this.initialConfig = {
-      continuousWorld: true,
-      crs: this.createCrs(),
-      zoomControl: false,
-      zoom: mapConfig.zoom,
-      maxZoom: mapConfig.maxZoom,
-      minZoom: mapConfig.minZoom,
-      center: L.latLng(...mapConfig.center),
-      attribution: mapConfig.attribution,
-      baseLayer: {
-        tms: mapConfig.tileLayers[0].tms,
-        tileLayers: mapConfig.tileLayers,
-        url: mapConfig.tileLayers[0].url
-      }
-    }
-  },
-  mounted () {
-    this.mapRef = this.$refs.liwoMap
-    // remove default zoom
-    // this.mapRef.mapObject.zoomControl.remove()
-  },
   computed: {
     ...mapState([
       'opacityByLayerId',
-      'selectedBreaches',
+      'selectedBreaches'
     ]),
     ...mapGetters([
       'parsedLayerSet'
     ])
+  },
+  created () {
+    this.mapConfig = createMapConfig()
+  },
+  mounted () {
+    this.mapRef = this.$refs.liwoMap
   },
   methods: {
     breachCallBack ({ target }) {
       const { id, naam: breachName, layerType } = target.feature.properties
 
       this.$store.dispatch('addBreach', { id, breachName, layerType })
-    },
-    createCrs () {
-      return new L.Proj.CRS(rdConfig.crsType, rdConfig.proj, {
-        resolutions: rdConfig.resolutions,
-        bounds: L.bounds(rdConfig.bounds),
-        origin: rdConfig.origin
-      })
     }
   },
   watch: {
@@ -81,22 +57,22 @@ export default {
 </script>
 
 <style>
-.liwo-map {
-  width: calc(100% - 2rem);
-  display: block;
-  margin: 0 auto;
-  margin-top: 1rem;
-  height: calc(100vh - 20rem);
-}
+  .liwo-map {
+    width: calc(100% - 2rem);
+    display: block;
+    margin: 0 auto;
+    margin-top: 1rem;
+    height: calc(100vh - 20rem);
+  }
 
-.LIWO_Tools_Dreigingsbeelden_Dijkringen {
-  stroke: rgb(34, 34, 34);
-  stroke-opacity: 0.6;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill-opacity: 0;
-  /* for lakes  */
-  fill-rule: evenodd;
-}
+  .LIWO_Tools_Dreigingsbeelden_Dijkringen {
+    stroke: rgb(34, 34, 34);
+    stroke-opacity: 0.6;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill-opacity: 0;
+    /* for lakes  */
+    fill-rule: evenodd;
+  }
 </style>

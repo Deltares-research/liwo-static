@@ -29,8 +29,7 @@ export default new Vuex.Store({
     selectedMapLayerId: 0,
     selectedBreaches: [],
     selectedLayerSetIndex: 0,
-    visibleBreachLayers: {},
-    visibleBreachLayerVariants: {}
+    visibleBreachLayers: {}
   },
   mutations: {
     addBreachLayer (state, { id, breachLayers, breachName }) {
@@ -38,9 +37,6 @@ export default new Vuex.Store({
         ...state.breachLayersById,
         [ id ]: { layers: breachLayers, layerSetTitle: breachName, id }
       }
-    },
-    setLayerPanelView (state, view) {
-      state.layerPanelView = view
     },
     setLayerSetById (state, { id, layerSet }) {
       state.layerSetsById = {
@@ -57,26 +53,13 @@ export default new Vuex.Store({
       if (state.selectedBreaches.indexOf(id) === -1) {
         state.selectedBreaches = state.selectedBreaches.concat(id)
         state.visibleLayerIds = state.visibleLayerIds.concat(breachLayerIds[0])
+        state.opacityByLayerId = { ...state.opacityByLayerId, [ state.opacityByLayerId[id] ]: 1 }
         state.activeLayerSetId = id
       } else {
         state.selectedBreaches = state.selectedBreaches.filter(breachId => breachId !== id)
         state.visibleLayerIds = state.visibleLayerIds.filter(layerId => breachLayerIds.indexOf(layerId) === -1)
         state.activeLayerSetId = state.selectedBreaches[0]
       }
-    },
-    hideBreaches (state, breaches) {
-      if (typeof breaches === 'number' || typeof breaches === 'string') {
-        breaches = [ breaches ]
-      }
-
-      state.visibleLayerIds = state.visibleLayerIds.filter(layerId => breaches.indexOf(layerId) === -1)
-    },
-    showBreaches (state, breaches) {
-      if (typeof breaches === 'number' || typeof breaches === 'string') {
-        breaches = [ breaches ]
-      }
-
-      state.visibleLayerIds = state.visibleLayerIds.concat(breaches)
     },
     setPageTitle (state, title) {
       state.pageTitle = title
@@ -102,12 +85,6 @@ export default new Vuex.Store({
         [ breach ]: layers
       }
     },
-    setVisibleBreachLayerVariants (state, { variants }) {
-      state.visibleVariantIndexByLayerId = {
-        ...state.visibleVariantIndexByLayerId,
-        ...variants
-      }
-    },
     resetVisibleLayers (state) {
       state.visibleLayerIds = []
     },
@@ -115,6 +92,7 @@ export default new Vuex.Store({
       const currentLayerSet = state.layerSetsById[mapId]
       state.visibleLayerIds = currentLayerSet.map(layer => layer.id)
       state.selectedBreaches = []
+      state.opacityByLayerId = {}
       state.visibleVariantIndexByLayerId = currentLayerSet
         .reduce((visibleVariants, { id }) => ({ ...visibleVariants, [ id ]: 0 }), {})
     },
@@ -122,12 +100,18 @@ export default new Vuex.Store({
       const selectedBreaches = state.selectedBreaches
       state.visibleLayerIds = state.visibleLayerIds.filter((layerId) => selectedBreaches.indexOf(layerId) === -1)
       state.selectedBreaches = []
+      state.opacityByLayerId = {}
     },
     hideLayerById (state, id) {
       state.visibleLayerIds = state.visibleLayerIds.filter(layerId => layerId !== id)
+      state.opacityByLayerId = { ...state.opacityByLayerId, [ id ]: 1 }
     },
     hideLayersById (state, layerIds) {
       state.visibleLayerIds = state.visibleLayerIds.filter(layerId => layerIds.some(layerId))
+      state.opacityByLayerId = {
+        ...state.opacityByLayerId,
+        ...layerIds.reduce((opacities, id) => ({ ...opacities, [ id ]: 1 }), {})
+      }
     },
     showLayerById (state, id) {
       state.visibleLayerIds = state.visibleLayerIds.concat(id)
@@ -170,10 +154,6 @@ export default new Vuex.Store({
 
         commit('addBreachLayer', { id, breachLayers, breachName })
         commit('setVisibleBreachLayers', { breach: id, layers: visibleBreachLayers })
-        commit('setVisibleBreachLayerVariants', {
-          breach: id,
-          variants: breachLayers.reduce((variants, layer) => ({ ...variants, [ layer.id ]: 0 }), {})
-        })
       }
 
       commit('toggleSelectedBreach', id)
@@ -225,13 +205,6 @@ export default new Vuex.Store({
             layerTitle: layer.properties.title
           }
         })
-    },
-    currentLayerSet (state, { mapLayers, breachLayers, layerPanelView }) {
-      if (layerPanelView === LAYERPANEL_VIEW_MAPLAYERS) {
-        return mapLayers[state.selectedLayerSetIndex]
-      } else if (layerPanelView === LAYERPANEL_VIEW_BREACHES) {
-        return breachLayers[state.selectedLayerSetIndex]
-      }
     },
     layerPanelView ({ selectedBreaches }) {
       return selectedBreaches && selectedBreaches.length

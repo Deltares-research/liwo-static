@@ -123,7 +123,7 @@ export default {
   name: 'home',
   mounted () {
     this.$store.commit('setPageTitle', PAGE_TITLE)
-  },
+  }
 }
 </script>
 <style>

@@ -31,13 +31,12 @@
 import LayerControl from '@/components/LayerControl'
 import LayerPanelItem from '@/components/LayerPanelItem'
 
-
 export default {
   props: {
     layerSets: {
       type: Array,
       default: () => []
-    },
+    }
   },
   methods: {
     setSelectedLayerId (id) {

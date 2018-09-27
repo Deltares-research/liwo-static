@@ -35,42 +35,42 @@ export default {
 </script>
 
 <style lang="scss">
-@import './styles/rws.css';
-@import './styles/rws-embedded.css';
-@import './styles/liwo.css';
+  @import './styles/rws.css';
+  @import './styles/rws-embedded.css';
+  @import './styles/liwo.css';
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
 
-html {
-  box-sizing: border-box;
-}
+  html {
+    box-sizing: border-box;
+  }
 
-*, *:before, *:after {
-  box-sizing: inherit;
-}
+  *, *:before, *:after {
+    box-sizing: inherit;
+  }
 
-ul,
-ul > li {
-  margin: 0;
-  padding: 0;
-}
+  ul,
+  ul > li {
+    margin: 0;
+    padding: 0;
+  }
 
-ul > li::before {
-  content: none;
-  float: none;
-  margin-left: 0;
-}
+  ul > li::before {
+    content: none;
+    float: none;
+    margin-left: 0;
+  }
 
-.icon {
-  vertical-align: middle;
-}
+  .icon {
+    vertical-align: middle;
+  }
 </style>

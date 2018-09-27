@@ -8,11 +8,11 @@
       @open-export="showExport = true"
     />
     <legend-panel
-      v-if="selectedVisibleLayerLegend"
-      :caption="selectedVisibleLayerLegend.title"
-      :namespace="selectedVisibleLayerLegend.namespace"
-      :layer-name="selectedVisibleLayerLegend.layer"
-      :style-name="selectedVisibleLayerLegend.style"
+      v-if="visibleLayerLegend"
+      :caption="visibleLayerLegend.title"
+      :namespace="visibleLayerLegend.namespace"
+      :layer-name="visibleLayerLegend.layer"
+      :style-name="visibleLayerLegend.style"
     />
     <export-popup
       v-if="showExport"
@@ -32,6 +32,8 @@ import LegendPanel from '@/components/LegendPanel'
 
 import { loadLayersetById } from '@/lib/load-layersets'
 
+const PAGE_TITLE = 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
+
 export default {
   data () {
     return {
@@ -45,6 +47,7 @@ export default {
 
     this.$store.commit('setMapId', mapId)
     this.$store.dispatch('loadLayerSetsById', { id: mapId, initializeMap: true })
+    this.$store.commit('setPageTitle', PAGE_TITLE)
   },
   computed: {
     ...mapState({
@@ -53,38 +56,35 @@ export default {
     ...mapState([
       'selectedLayerId',
       'visibleLayerIds',
-      'selectedBreaches'
     ]),
     ...mapGetters([
       'activeLayerSet',
-      'currentLayerSet',
       'panelLayerSets'
     ]),
     selectedLayer () {
-      if (!this.currentLayerSet ) {
+      if (!this.panelLayerSets) {
         return
       }
 
-      const selectedLayers = this.currentLayerSet.layers
+      const selectedLayers = this.panelLayerSets
+        .map((layerSet) => layerSet.layers)
+        .reduce((allLayers, layers) => [ ...allLayers, ...layers ] , [])
         .filter(({ id }) => this.selectedLayerId === id)
 
       if (selectedLayers && selectedLayers[0]) {
-        return selectedLayers[0] // should only be one
+        // should only be one
+        return selectedLayers[0]
       }
     },
-    selectedVisibleLayerLegend () {
-      if (this.selectedLayer && this.visibleLayerIds.some(visibleId => visibleId === this.selectedLayerId)) {
-        return {
-          ...this.selectedLayer.legend,
-          layerType: this.selectedLayer.variants[0].type
-        }
+    visibleLayerLegend () {
+      if (!this.selectedLayer) {
+        return undefined
       }
-      return undefined
-    },
-    variantTitlesForSelectedLayer () {
-      return (this.selectedLayer)
-        ? this.selectedLayer.variants.map(({title}) => title)
-        : []
+
+      return {
+        ...this.selectedLayer.legend,
+        layerType: this.selectedLayer.variants[0].type
+      }
     }
   },
   methods: {
@@ -102,32 +102,31 @@ export default {
 </script>
 
 <style>
-@import '../components/variables.css';
+  @import '../components/variables.css';
 
-.viewer {
-  position: relative;
-}
-.viewer .layer-panel {
-  position: absolute;
-  top: 1rem;
-  left: 2rem;
-  z-index: 1000;
-  box-shadow: var(--shadow);
-}
+  .viewer {
+    position: relative;
+  }
+  .viewer .layer-panel {
+    position: absolute;
+    top: 1rem;
+    left: 2rem;
+    z-index: 1000;
+    box-shadow: var(--shadow);
+  }
 
-.viewer .segmented-buttons {
-  position: absolute;
-  width: 100%;
-  bottom: -1rem;
-  z-index: 1000;
-}
+  .viewer .segmented-buttons {
+    position: absolute;
+    width: 100%;
+    bottom: -1rem;
+    z-index: 1000;
+  }
 
-.viewer .legend-panel {
-  position: absolute;
-  right: 2rem;
-  bottom: 2rem;
-  z-index: 1000;
-  box-shadow: var(--shadow);
-}
-
+  .viewer .legend-panel {
+    position: absolute;
+    right: 2rem;
+    bottom: 2rem;
+    z-index: 1000;
+    box-shadow: var(--shadow);
+  }
 </style>

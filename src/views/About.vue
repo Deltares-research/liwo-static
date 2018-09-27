@@ -75,6 +75,6 @@ export default {
   name: 'about',
   mounted () {
     this.$store.commit('setPageTitle', PAGE_TITLE)
-  },
+  }
 }
 </script>

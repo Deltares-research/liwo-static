@@ -63,6 +63,8 @@ import LayerControlSelect from '@/components/LayerControlSelect'
 
 import { probabilityTitles } from '@/lib/probability-filter'
 
+import { BREACH_PREFIX } from '@/lib/liwo-identifiers'
+
 export default {
   data () {
     return { popupIsOpen: false }
@@ -107,7 +109,7 @@ export default {
         return false
       }
 
-      return this.layerType.startsWith('geo_doorbraaklocaties')
+      return this.layerType.startsWith(BREACH_PREFIX)
     }
   },
   methods: {
@@ -143,63 +145,63 @@ export default {
 </script>
 
 <style>
-@import './variables.css';
+  @import './variables.css';
 
-.layer-control {
-  background-color: var(--white);
-}
+  .layer-control {
+    background-color: var(--white);
+  }
 
-.layer-control__identifiers {
-  display: inline-block;
-}
+  .layer-control__identifiers {
+    display: inline-block;
+  }
 
-.layer-control__title,
-.layer-control__subtitle {
-  margin: 0;
-  padding: 0;
-}
+  .layer-control__title,
+  .layer-control__subtitle {
+    margin: 0;
+    padding: 0;
+  }
 
-.layer-control__subtitle {
-  color: var(--medium-gray);
-  font-size: 0.7em;
-  line-height: 0.9em;
-}
+  .layer-control__subtitle {
+    color: var(--medium-gray);
+    font-size: 0.7em;
+    line-height: 0.9em;
+  }
 
-.layer-control__main,
-.layer-control__options {
-  position: relative;
-  display: block;
-  padding: .5rem .5rem .25rem 2.5rem;
-  min-height: 3rem;
-}
-.layer-control__vis-label>.icon {
-  position: absolute;
-  left: .5rem;
-}
-.layer-control__options {
-  display: none;
-  border-top: 1px solid var(--white);
-  padding-top: .25rem;
-  justify-content: space-between;
-}
-.layer-control__info {
-  padding: 0;
-  margin: 0;
-  border: none;
-  background: none;
-}
-.layer-control__vis-checkbox + .layer-control__vis-label svg {
-  fill: var(--medium-gray);
-}
-.layer-control__vis-checkbox:checked + .layer-control__vis-label svg {
-  fill: var(--black);
-}
+  .layer-control__main,
+  .layer-control__options {
+    position: relative;
+    display: block;
+    padding: .5rem .5rem .25rem 2.5rem;
+    min-height: 3rem;
+  }
+  .layer-control__vis-label>.icon {
+    position: absolute;
+    left: .5rem;
+  }
+  .layer-control__options {
+    display: none;
+    border-top: 1px solid var(--white);
+    padding-top: .25rem;
+    justify-content: space-between;
+  }
+  .layer-control__info {
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: none;
+  }
+  .layer-control__vis-checkbox + .layer-control__vis-label svg {
+    fill: var(--medium-gray);
+  }
+  .layer-control__vis-checkbox:checked + .layer-control__vis-label svg {
+    fill: var(--black);
+  }
 
-.layer-control--active {
-  background-color: var(--light-yellow);
-}
-.layer-control--active .layer-control__options {
-  display: block;
-  display: flex;
-}
+  .layer-control--active {
+    background-color: var(--light-yellow);
+  }
+  .layer-control--active .layer-control__options {
+    display: block;
+    display: flex;
+  }
 </style>

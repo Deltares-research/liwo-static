@@ -19,7 +19,7 @@
 import LayersetList from '@/components/LayersetList'
 import { loadLayersets } from '@/lib/load-layersets'
 
-const PAGE_TITLE = 'Kaarten overzicht'
+const PAGE_TITLE = 'Kaarten'
 
 export default {
   name: 'maps',
