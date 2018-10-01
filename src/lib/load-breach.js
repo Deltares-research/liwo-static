@@ -21,9 +21,11 @@ export default function (breachId, layerType) {
     return Promise.all(breachLayers.map(layerName => loadBreachLayer(breachId, layerName)))
       .then(layers => {
         return {
-          layers: layers.reduce((breachLayers, layer) => {
-            return [ ...breachLayers, ...layer.layers ]
-          }, [])
+          layers: layers
+            .filter(layer => layer !== undefined)
+            .reduce((breachLayers, layer) => {
+              return [ ...breachLayers, ...layer.layers ]
+            }, [])
         }
       })
   }
@@ -42,7 +44,7 @@ function loadBreachLayer (breachid, layername) {
     .then(res => res.json())
     .then(data => JSON.parse(data.d))
     .then(data => ({ ...data[0].layerset[0] }))
-    .catch()
+    .catch(() => undefined)
 }
 
 function loadRegionalBreachLayer (breachid, gid) {
