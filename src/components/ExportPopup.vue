@@ -87,7 +87,8 @@ import exportImage from '@/lib/export-map-image'
 
 export default {
   props: {
-    mapLayers: Array
+    mapLayers: Array,
+    mapObject: Object
   },
   data () {
     return {
@@ -103,33 +104,24 @@ export default {
   components: { PopUp },
   methods: {
     exportMap: function () {
-      // when form validates export map
-      if (this.exportName && this.exportType) return true
-      this.formErrors = []
       if (!this.exportType) this.formErrors.push('Kies export type')
-      if (!this.exportNaam) this.formErrors.push('Export naam is verplicht')
-      console.log(this.formErrors)
-      if (this.formErrors && this.formErrors.length === 0) { this.exporting = true }
-      console.log(this.exporting)
+      if (!this.exportName) this.formErrors.push('Export naam is verplicht')
 
-      // we need to know which layers are loaded
-      const layers = this.mapLayers.map(function (mapLayer) {
-        return mapLayer.layer
-      })
-      // export the zip
+      if (this.formErrors && this.formErrors.length === 0) { this.exporting = true }
+
       if (this.exportType === 'zip') {
-        console.log('export zip')
-        exportZip({ name: this.exportName, layers })
+        exportZip({ name: this.exportName, layers: this.mapLayers })
       }
-      // export an image
       if (this.exportType === 'print') {
-        console.log('export img')
+        const { x, y } = this.mapObject.project(this.mapObject.getCenter())
         exportImage({
-          layers,
+          layers: this.mapLayers,
           outputFormat: this.formatName,
           outputFilename: this.exportName,
           title: this.exportName,
-          description: this.exportName
+          description: this.exportName,
+          center: [ x, y ],
+          scale: 80000
         })
       }
     }

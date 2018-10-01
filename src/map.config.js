@@ -13,7 +13,8 @@ const services = {
   PDOKLUCHTFOTO: 'http://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wms',
   PDOKBRTACHTERGROND: 'http://geodata.nationaalgeoregister.nl/tiles/service/wmts',
   MANUAL_URL: 'https://www.helpdeskwater.nl/onderwerpen/applicaties-modellen/applicaties-per/watermanagement/watermanagement/liwo/',
-  LEGEND_URL: 'https://geodata.basisinformatie-overstromingen.nl/geoserver'
+  LEGEND_URL: 'https://geodata.basisinformatie-overstromingen.nl/geoserver',
+  PRINT_GEO_SERVER: 'https://profgeodata.static.basisinformatie-overstromingen.nl'
 }
 // This is the attribution (maps and datasets often require attribution of the source)
 const attribution = '&copy <a href="http://www.pdok.nl">PDOK</a>'

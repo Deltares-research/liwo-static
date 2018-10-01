@@ -6,8 +6,9 @@ let currentLayers = []
 
 export default {
   bind (el, { value }) {
-    const { config } = value
+    let { config, callbacks } = value
     map = mapFactory(el, config)
+    callbacks.initMapObject(map)
   },
   update (_, { value, oldValue }) {
     if (value === oldValue) {

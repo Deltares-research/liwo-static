@@ -2,6 +2,7 @@
   <div class="viewer">
     <liwo-map
       :layers="activeLayerSet"
+      @initMap="setMapObject"
     />
     <layer-panel
       :layerSets="panelLayerSets"
@@ -16,6 +17,7 @@
     />
     <export-popup
       v-if="showExport"
+      :map-object="mapObject"
       :map-layers="activeLayerSet"
       @close="showExport = false"
     />
@@ -39,7 +41,7 @@ export default {
     return {
       parsedLayers: [],
       id: 0,
-      showExport: false,
+      showExport: false
     }
   },
   async mounted () {
@@ -90,6 +92,11 @@ export default {
   methods: {
     setVisibleVariantIdForSelectedlayer (index) {
       this.$store.commit('setVisibleVariantIndexForLayerId', { index, layerId: this.selectedLayerId })
+    },
+    setMapObject (mapObject) {
+      this.mapObject = mapObject
+      console.log('CRS', mapObject.options.crs.scale())
+
     }
   },
   components: {

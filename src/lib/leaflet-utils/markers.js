@@ -1,4 +1,4 @@
-import L from 'leaflet'
+import L from '@/lib/leaflet-utils/leaf'
 
 import blackIconUrl from '../../img/markers/marker-icon-black.png'
 import blackRetinaIconUrl from '../../img/markers/marker-icon-2x-black.png'

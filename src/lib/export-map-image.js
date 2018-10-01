@@ -1,3 +1,5 @@
+import delay from 'delay'
+
 import mapConfig from '../map.config'
 import rdConfig from './rijksdriehoek.config.js'
 
@@ -5,17 +7,12 @@ const printGeoServerURI = mapConfig.services.PRINT_GEO_SERVER
 const DEFAULT_DPI = 300
 
 export default function requestImage (options) {
-  const body = requestBody(options)
-  const formData = new FormData()
-
-  for (let key in body) {
-    formData.append(key, body[key])
-  }
+  const body = JSON.stringify(requestBody(options))
 
   return fetch(`${printGeoServerURI}/print/print/liwo/report.${options.outputFormat}`, {
     method: 'POST',
     mode: 'cors',
-    body: formData
+    body
   })
     .then(response => response.json())
     .then(downloadRefs => statusPolling(`${printGeoServerURI}/${downloadRefs.statusURL}`))
@@ -28,6 +25,7 @@ export default function requestImage (options) {
       let windowUrl = window.URL || window.webkitURL
       let blobject = new Blob([blob], { type: `image/${options.outputFormat}` })
       let url = windowUrl.createObjectURL(blobject)
+
       anchor.setAttribute('href', url)
       anchor.setAttribute('download', `${name}.${options.outputFormat}`)
       anchor.click()
@@ -42,55 +40,66 @@ export function requestBody (options) {
     outputFormat: options.outputFormat,
     outputFilename: options.outputFilename,
     attributes: {
-      title: options.title,
+      title: 'LIWO',
       description: options.description,
       legend: {
         name: 'Legenda',
         classes: formatLegend(options)
+      },
+      map: {
+        center: options.center,
+        dpi: DEFAULT_DPI,
+        layers: formatMapLayers(options),
+        projection: rdConfig.crsType,
+        rotation: 0,
+        scale: 80000
       }
-    },
-    map: {
-      longitudeFirst: false,
-      center: mapConfig.center,
-      dpi: DEFAULT_DPI,
-      layers: formatMapLayers(options),
-      projection: rdConfig.crsType,
-      rotation: 0,
-      scale: 2430000
     }
   }
 }
 
 function formatLegend ({ layers }) {
-  return [
-    {
-      name: 'Samengestelde kaarten - Maximale overstromingsdiepte Nederland - Nederland',
-      icons: [
-        'http://localhost:8080/geoserver/wms?version=1.3.0&TRANSPARENT=TRUE&SERVICE=WMS&REQUEST=GetLegendGraphic&FORMAT=image/png&LAYER=LIWO_MEGO:geo_maximale_waterdiepte_nederland&STYLE=LIWO_Basis_Waterdiepte'
-      ]
-    }
-  ]
+  return layers.map(legendItem)
+}
+
+function legendItem ({ layer, style, layerTitle }) {
+  return {
+    name: layerTitle || 'Onbekende legenda',
+    icons: [
+      `http://localhost:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=${layer}&STYLE=${style}`
+    ]
+  }
 }
 
 function formatMapLayers ({ layers }) {
-  return [
-    {
-      baseURL: 'http://localhost:8080/geoserver/wms',
-      customParams: {
-        transparent: true
-      },
+  return layers
+    .filter(layer => layer.type !== 'json')
+    .map(mapLayerItem)
+    .concat({
+      baseURL: 'http://geodata.nationaalgeoregister.nl/tiles/service/wmts',
+      layer: 'brtachtergrondkaart',
+      dimensionParams: {},
+      dimensions: null,
       imageFormat: 'image/png',
-      layers: [
-        'LIWO_MEGO:geo_maximale_waterdiepte_nederland'
-      ],
+      matrixSet: 'EPSG:28992',
       opacity: 1,
-      serverType: 'geoserver',
-      styles: [
-        'LIWO_Basis_Waterdiepte'
-      ],
-      type: 'WMS'
-    }
-  ]
+      requestEncoding: 'KVP',
+      type: 'WMTS',
+      version: '1.0.0',
+      matrices
+    })
+}
+
+function mapLayerItem ({ layer, style, type, namespace }) {
+  return {
+    baseURL: `http://localhost:8080/geoserver/wms`,
+    imageFormat: 'image/png',
+    layers: [ `${namespace}:${layer}` ],
+    opacity: 1,
+    serverType: 'geoserver',
+    styles: [ style ],
+    type
+  }
 }
 
 async function statusPolling (url) {
@@ -98,6 +107,7 @@ async function statusPolling (url) {
   let isDone = false
 
   while (!isDone) {
+    await delay(800)
     const response = await statusPromise
     const { done } = await response.json()
 
@@ -107,3 +117,246 @@ async function statusPolling (url) {
 
   return statusPromise
 }
+
+const matrices = [
+  {
+    identifier: 'EPSG:28992:0',
+    matrixSize: [
+      1,
+      1
+    ],
+    scaleDenominator: 12288000,
+    tileSize: [
+      256,
+      256
+    ],
+    topLeftCorner: [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    identifier: 'EPSG:28992:1',
+    matrixSize: [
+      2,
+      2
+    ],
+    scaleDenominator: 6144000,
+    tileSize: [
+      256,
+      256
+    ],
+    topLeftCorner: [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    identifier: 'EPSG:28992:2',
+    matrixSize: [
+      4,
+      4
+    ],
+    scaleDenominator: 3072000,
+    tileSize: [
+      256,
+      256
+    ],
+    topLeftCorner: [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    identifier: 'EPSG:28992:3',
+    matrixSize: [
+      8,
+      8
+    ],
+    scaleDenominator: 1536000,
+    tileSize: [
+      256,
+      256
+    ],
+    topLeftCorner: [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    identifier: 'EPSG:28992:4',
+    matrixSize: [
+      16,
+      16
+    ],
+    scaleDenominator: 768000,
+    tileSize: [
+      256,
+      256
+    ],
+    topLeftCorner: [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    identifier: 'EPSG:28992:5',
+    matrixSize: [
+      32,
+      32
+    ],
+    scaleDenominator: 384000,
+    tileSize: [
+      256,
+      256
+    ],
+    topLeftCorner: [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    identifier: 'EPSG:28992:6',
+    matrixSize: [
+      64,
+      64
+    ],
+    scaleDenominator: 192000,
+    tileSize: [
+      256,
+      256
+    ],
+    topLeftCorner: [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    identifier: 'EPSG:28992:7',
+    matrixSize: [
+      128,
+      128
+    ],
+    scaleDenominator: 96000,
+    tileSize: [
+      256,
+      256
+    ],
+    topLeftCorner: [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    identifier: 'EPSG:28992:8',
+    matrixSize: [
+      256,
+      256
+    ],
+    scaleDenominator: 48000,
+    tileSize: [
+      256,
+      256
+    ],
+    topLeftCorner: [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    identifier: 'EPSG:28992:9',
+    matrixSize: [
+      512,
+      512
+    ],
+    scaleDenominator: 24000,
+    tileSize: [
+      256,
+      256
+    ],
+    topLeftCorner: [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    identifier: 'EPSG:28992:10',
+    matrixSize: [
+      1024,
+      1024
+    ],
+    scaleDenominator: 12000,
+    tileSize: [
+      256,
+      256
+    ],
+    topLeftCorner: [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    identifier: 'EPSG:28992:11',
+    matrixSize: [
+      2048,
+      2048
+    ],
+    scaleDenominator: 6000,
+    tileSize: [
+      256,
+      256
+    ],
+    topLeftCorner: [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    identifier: 'EPSG:28992:12',
+    matrixSize: [
+      4096,
+      4096
+    ],
+    scaleDenominator: 3000,
+    tileSize: [
+      256,
+      256
+    ],
+    topLeftCorner: [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    identifier: 'EPSG:28992:13',
+    matrixSize: [
+      8192,
+      8192
+    ],
+    scaleDenominator: 1500,
+    tileSize: [
+      256,
+      256
+    ],
+    topLeftCorner: [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    identifier: 'EPSG:28992:14',
+    matrixSize: [
+      16384,
+      16384
+    ],
+    scaleDenominator: 750,
+    tileSize: [
+      256,
+      256
+    ],
+    topLeftCorner: [
+      -285401.92,
+      903401.92
+    ]
+  }
+]
