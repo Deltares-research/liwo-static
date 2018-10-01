@@ -80,7 +80,10 @@ export default {
     visible: Boolean
   },
   computed: {
-    ...mapState([ 'breachProbabilityFilterIndex' ]),
+    ...mapState([
+      'breachProbabilityFilterIndex',
+      'visibleLayerIds'
+    ]),
     transparancyOptions () {
       return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((index) => ({
         value: 1 - (0.1 * index),
@@ -127,6 +130,14 @@ export default {
     },
     setProbabilityFilter ({ target }) {
       this.$store.commit('setProbabilityFilterIndex', Number(target.value))
+    },
+    toggleLayer(event, id) {
+      event.stopPropagation()
+      console.log('EVENT AND ID', event, id)
+      if (this.visibleLayerIds.indexOf(id) !== -1) {
+        console.log('Stop propagation')
+      }
+      this.$emit('toggle', id)
     }
   },
   watch: {
