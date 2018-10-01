@@ -35,7 +35,7 @@ export function loadLayersetById (id) {
 }
 
 export function loadLayersets () {
-  const body = JSON.stringify({ username: '', password: '', mode: '' })
+  const body = JSON.stringify({ username: 'marko@voorhoede.nl', password: 'DikkeDoei123', mode: '' })
   return fetch(`${apiBase}/Authentication.asmx/Login`, {
     method: 'POST',
     mode: 'cors',

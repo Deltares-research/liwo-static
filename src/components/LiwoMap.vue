@@ -3,9 +3,9 @@
     ref="liwoMap"
     class="liwo-map"
     v-leaflet="{
-      callbacks: { breachCallBack },
+      callbacks: { breachCallBack, initMapObject },
       config: mapConfig,
-      mapLayers: [ ...expandedMapLayers ].reverse()
+      mapLayers: [ ...expandedMapLayers ].reverse(),
     }"
   ></div>
 </template>
@@ -18,7 +18,7 @@ import createMapConfig from '@/lib/leaflet-utils/mapconfig-factory'
 export default {
   data () {
     return {
-      expandedMapLayers: undefined
+      expandedMapLayers: undefined,
     }
   },
   computed: {
@@ -41,6 +41,9 @@ export default {
       const { id, naam: breachName, layerType } = target.feature.properties
 
       this.$store.dispatch('addBreach', { id, breachName, layerType })
+    },
+    initMapObject (mapObject) {
+      this.$emit('initMap', mapObject)
     }
   },
   watch: {
@@ -50,7 +53,7 @@ export default {
       }
 
       parsedLayerSet
-        .then(layers => this.expandedMapLayers = Object.freeze(layers))
+        .then((layers) => this.expandedMapLayers = Object.freeze(layers))
     }
   }
 }

@@ -1,4 +1,4 @@
-import L from 'leaflet'
+import L from '@/lib/leaflet-utils/leaf'
 
 import mapConfig from '../../map.config'
 import rdConfig from '@/lib/rijksdriehoek.config.js'

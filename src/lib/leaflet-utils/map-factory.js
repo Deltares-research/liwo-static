@@ -1,12 +1,8 @@
-import L from 'leaflet'
-import 'proj4leaflet'
-import 'mapbox.js'
+import L from '@/lib/leaflet-utils/leaf'
 
 import '@/lib/leaflet-hack'
 import rdConfig from '@/lib/rijksdriehoek.config'
 import mapConfig from '@/map.config'
-
-import 'mapbox.js/theme/style.css'
 
 const MAPBOX_ACCES_TOKEN = 'pk.eyJ1Ijoic2lnZ3lmIiwiYSI6ImNqbHcwcHFjNjBsdGIza3F1dW5iZjhhY2EifQ.zZkkozZlSRtmB9VgpR9HiQ'
 const INITIAL_BASELAYER = mapConfig.tileLayers[0].title

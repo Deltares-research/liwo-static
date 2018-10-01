@@ -1,4 +1,4 @@
-import L from 'leaflet'
+import L from '@/lib/leaflet-utils/leaf'
 
 import 'leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.css'

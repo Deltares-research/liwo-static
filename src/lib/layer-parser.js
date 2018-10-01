@@ -8,6 +8,7 @@ export function normalizeLayer (layer) {
     },
     variants: layer.variants.map(variant => ({
       ...variant.map,
+      metadata: variant.metadata,
       title: variant.title
     }))
   }
