@@ -4,7 +4,6 @@
       class="layer-control-list__item"
       v-for="layer in layers"
       :key="layer.id"
-      @click="() => setSelectedLayerId(layer.id)"
     >
       <layer-control
         :active="(layer.id === selectedLayerId)"
@@ -18,6 +17,7 @@
         @toggle="toggleLayerVisibilityById"
         @changeOpacity="setLayerOpacity"
         @selectVariant="setVisibleVariant"
+        @selectActiveLayer="setSelectedLayerId"
       />
     </li>
   </ul>

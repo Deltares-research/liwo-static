@@ -1,5 +1,6 @@
 <template>
-  <div :class="`layer-control${(active) ? ' layer-control--active' : ''}`">
+  <div :class="`layer-control${(active) ? ' layer-control--active' : ''}`"
+    @click="selectLayer">
     <form class="layer-control__main">
       <input type="checkbox"
         class="sr-only layer-control__vis-checkbox"
@@ -9,7 +10,7 @@
         :checked="visible"
       >
       <label
-        @click="$emit('toggle', id)"
+        @click.prevent="(event) => toggleLayer(event, id)"
         class="layer-control__vis-label"
         :for="`layer-${id}-vis`"
       >
@@ -131,13 +132,14 @@ export default {
     setProbabilityFilter ({ target }) {
       this.$store.commit('setProbabilityFilterIndex', Number(target.value))
     },
-    toggleLayer(event, id) {
-      event.stopPropagation()
-      console.log('EVENT AND ID', event, id)
-      if (this.visibleLayerIds.indexOf(id) !== -1) {
-        console.log('Stop propagation')
-      }
+    selectLayer () {
+      this.$emit('selectActiveLayer', this.id)
+    },
+    toggleLayer (event, id) {
       this.$emit('toggle', id)
+      if (this.visible) {
+        event.stopPropagation()
+      }
     }
   },
   watch: {
