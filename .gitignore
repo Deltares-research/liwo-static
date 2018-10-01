@@ -1,8 +1,11 @@
 .DS_Store
 node_modules
 dist/
-
 tests/e2e/reports/
+
+# sig review files
+*.zip
+
 selenium-debug.log
 
 # local env files
