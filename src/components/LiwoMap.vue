@@ -1,93 +1,78 @@
 <template>
-  <l-map
-    id="liwo-map"
+  <div
     ref="liwoMap"
-    :zoom="zoom"
-    :max-zoom="maxZoom"
-    :min-zoom="minZoom"
-    :center="center"
-    :crs="crs"
-    :continuous-world="continuousWorld"
-    >
-    <l-control-zoom></l-control-zoom>
-    <l-tile-layer
-      :options="{ tms: baseLayer.tms }"
-      :url="baseLayer.url"
-      :min-zoom="minZoom"
-      :max-zoom="maxZoom"
-      :continuous-world="continuousWorld"
-      :attribution="attribution"
-    />
-    <base-layer-control
-      :tile-layers="baseLayer.tileLayers"
-      @baselayer="updateBaseLayer"
-    />
-    <liwo-map-layers :map-layers="mapLayers" :map-ref="mapRef" />
-  </l-map>
+    class="liwo-map"
+    v-leaflet="{
+      callbacks: { breachCallBack },
+      config: mapConfig,
+      mapLayers: [ ...expandedMapLayers ].reverse()
+    }"
+  ></div>
 </template>
 
 <script>
-import 'leaflet/dist/leaflet.css'
+import { mapState, mapGetters } from 'vuex'
 
-import L from 'leaflet'
-import { LMap, LTileLayer, LControlZoom } from 'vue2-leaflet'
-import 'proj4leaflet'
-
-import BaseLayerControl from './BaseLayerControl'
-import LiwoMapLayers from './LiwoMapLayers'
-
-import '../lib/leaflet-hack'
-import mapConfig from '../map.config.js'
-import rdConfig from '../lib/rijksdriehoek.config.js'
+import createMapConfig from '@/lib/leaflet-utils/mapconfig-factory'
 
 export default {
-  props: {
-    mapLayers: Array
-  },
-  components: { BaseLayerControl, LiwoMapLayers, LMap, LTileLayer, LControlZoom },
   data () {
     return {
-      mapRef: undefined,
-      continuousWorld: true,
-      crs: this.createCrs(),
-      zoom: mapConfig.zoom,
-      maxZoom: mapConfig.maxZoom,
-      minZoom: mapConfig.minZoom,
-      center: L.latLng(...mapConfig.center),
-      attribution: mapConfig.attribution,
-      baseLayer: {
-        tms: mapConfig.tileLayers[0].tms,
-        tileLayers: mapConfig.tileLayers,
-        url: mapConfig.tileLayers[0].url
-      }
+      expandedMapLayers: undefined
     }
+  },
+  computed: {
+    ...mapState([
+      'opacityByLayerId',
+      'selectedBreaches'
+    ]),
+    ...mapGetters([
+      'parsedLayerSet'
+    ])
+  },
+  created () {
+    this.mapConfig = createMapConfig()
   },
   mounted () {
     this.mapRef = this.$refs.liwoMap
-    // remove default zoom
-    this.mapRef.mapObject.zoomControl.remove()
   },
   methods: {
-    createCrs () {
-      return new L.Proj.CRS(rdConfig.crsType, rdConfig.proj, {
-        resolutions: rdConfig.resolutions,
-        bounds: L.bounds(rdConfig.bounds),
-        origin: rdConfig.origin
-      })
-    },
-    updateBaseLayer (url) {
-      this.baseLayer.url = url
+    breachCallBack ({ target }) {
+      const { id, naam: breachName, layerType } = target.feature.properties
+
+      this.$store.dispatch('addBreach', { id, breachName, layerType })
+    }
+  },
+  watch: {
+    parsedLayerSet (parsedLayerSet) {
+      if (!parsedLayerSet) {
+        return []
+      }
+
+      parsedLayerSet
+        .then(layers => this.expandedMapLayers = Object.freeze(layers))
     }
   }
 }
 </script>
 
 <style>
-#liwo-map {
-  width: calc(100% - 2rem);
-  display: block;
-  margin: 0 auto;
-  margin-top: 1rem;
-  height: calc(100vh - 20rem);
-}
+  .liwo-map {
+    width: calc(100% - 2rem);
+    display: block;
+    margin: 0 auto;
+    margin-top: 1rem;
+    height: calc(100vh - 20rem);
+  }
+
+  .LIWO_Tools_Dreigingsbeelden_Dijkringen {
+    stroke: rgb(34, 34, 34);
+    stroke-opacity: 0.6;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill-opacity: 0;
+    /* for lakes  */
+    fill-rule: evenodd;
+  }
 </style>

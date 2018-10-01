@@ -1,0 +1,27 @@
+.cluster-icon {
+  width: 45px;
+  height: 45px;
+  line-height: 39px;
+  text-align: center;
+  font-size: 16px;
+  border-radius: 50%;
+  color: white;
+  border: 1px solid;
+  border: 3px solid rgb(255, 255, 255, .3);
+}
+
+.cluster-icon__geo_doorbraaklocaties_primair {
+  background-color: rgb(33, 123, 201);
+}
+
+.cluster-icon__geo_doorbraaklocaties_regionaal {
+  background-color: rgb(33, 170, 30);
+}
+
+.cluster-icon__geo_scenariolocaties_buitendijks {
+  background-color: black;
+}
+
+.cluster-icon__geo_scenariolocaties_wateroverlast {
+  background-color: black;
+}

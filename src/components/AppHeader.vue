@@ -9,7 +9,7 @@
   <div id="menu" class="app-header__menu">
     <div class="app-header__top-menu container">
         <div class="app-header__app-title"><strong>LIWO</strong><em> open</em></div>
-        <div class="app-header__login"><span>(Guest)</span>&nbsp;<a href="https://www.basisinformatie-overstromingen.nl/liwo/#/login">Inloggen</a> </div>
+        <!-- <div class="app-header__login"><span>(Guest)</span>&nbsp;<a href="/liwo/#/login">Inloggen</a> </div> -->
     </div>
       <nav role="navigation" class="app-header__nav">
         <ul class="container">
@@ -18,10 +18,21 @@
           <li><router-link :to="{name: 'about'}">Over LIWO</router-link></li>
         </ul>
       </nav>
-    <h1 class="app-header__page-title container">{{ this.$route.meta.title }}</h1>
+    <h1 class="app-header__page-title container">{{ this.pageTitle || this.$route.meta.title }}</h1>
   </div>
   </header>
 </template>
+
+<script>
+export default {
+  props: {
+    pageTitle: {
+      type: String,
+      required: false
+    }
+  }
+}
+</script>
 
 <style>
   @import './variables.css';

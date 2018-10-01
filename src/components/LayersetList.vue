@@ -32,6 +32,7 @@ export default {
 <style>
   .layerset-list__list {
     margin-left: 1em;
+    margin-bottom: 1rem;
   }
   .layerset-list__list-item::before {
     content: "›";

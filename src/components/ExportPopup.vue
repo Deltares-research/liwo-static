@@ -1,6 +1,15 @@
 <template>
   <pop-up class="export-popup" title="Exporteer" @close="$emit('close')">
     <form class="export-popup__content export-popup__form-columns">
+      <fieldset class="export-popup__notification export-popup__notification--error" v-if="formErrors.length">
+        <b>Graag de volgende velden aanvullen:</b>
+        <ul>
+          <li v-for="(error, index) in formErrors" :key="index">{{ error }}</li>
+        </ul>
+      </fieldset>
+      <fieldset class="export-popup__notification export-popup__notification--loading" v-if="exporting">
+        <b>Uw export wordt gegenereerd.</b>
+      </fieldset>
       <label class="export-popup__form-column-item">Exporteer als:</label>
       <ul class="export-popup__form-column-item choice-cards export-popup__radio-group">
         <li class="choice-cards__item">
@@ -25,32 +34,34 @@
         </li>
       </ul>
       <label class="export-popup__form-column-item">
-        Naam<br><small class="help">De naam van het uitvoerbestand</small>
+        Naam:<br><small class="help">De naam van het uitvoerbestand</small>
       </label>
       <input type="text" name="name"
-        id="exportName" required  autocomplete="off"
+        id="export-name" autocomplete="off" v-model="exportName"
         class="export-popup__form-column-item export-popup__textfield">
       <fieldset v-if="exportType === 'print'">
         <div class="export-popup__form-columns">
           <legend>Print opties</legend>
+          <!--
           <label for="layoutname" class="export-popup__form-column-item">
             Layout:
           </label>
           <select name="layoutname" id="layoutname" v-model="layoutName"
             class="export-popup__form-column-item"
           >
+            <option value="A4 portrait">A4 landscape</option>
             <option value="A4 portrait">A4 portrait</option>
-          </select>
+          </select> -->
           <label class="export-popup__form-column-item">
             Formaat:
           </label>
-          <select name="formatname" id="formatname" v-model="formatName"
+          <select name="formatname" id="format-name" v-model="formatName"
             class="export-popup__form-column-item"
           >
             <option value="gif">gif</option>
             <option value="pdf">pdf</option>
             <option value="png">png</option>
-            <option value="tif">tif</option>
+            <option value="tiff">tif</option>
             <option value="tiff">tiff</option>
           </select>
           <label class="export-popup__form-column-item">
@@ -61,8 +72,8 @@
         </div>
       </fieldset>
       <footer class="export-popup__footer">
-        <button class="btn primary" type="submit">Exporteer</button>
-        <button  class="btn secondary" type="reset" @click="$emit('close')">Annuleer</button>
+        <button class="btn primary" @click.prevent="exportMap">Exporteer</button>
+        <button class="btn secondary" type="reset" @click="$emit('close')">Annuleer</button>
       </footer>
     </form>
   </pop-up>
@@ -71,9 +82,17 @@
 <script>
 import PopUp from '@/components/PopUp'
 
+import exportZip from '@/lib/export-map-zip'
+import exportImage from '@/lib/export-map-image'
+
 export default {
+  props: {
+    mapLayers: Array
+  },
   data () {
     return {
+      formErrors: [],
+      exporting: false, // starts false and after form validates becomes true
       exportType: undefined,
       exportName: '',
       layoutName: 'A4 portrait',
@@ -81,7 +100,40 @@ export default {
       background: true
     }
   },
-  components: { PopUp }
+  components: { PopUp },
+  methods: {
+    exportMap: function () {
+      // when form validates export map
+      if (this.exportName && this.exportType) return true
+      this.formErrors = []
+      if (!this.exportType) this.formErrors.push('Kies export type')
+      if (!this.exportNaam) this.formErrors.push('Export naam is verplicht')
+      console.log(this.formErrors)
+      if (this.formErrors && this.formErrors.length === 0) { this.exporting = true }
+      console.log(this.exporting)
+
+      // we need to know which layers are loaded
+      const layers = this.mapLayers.map(function (mapLayer) {
+        return mapLayer.layer
+      })
+      // export the zip
+      if (this.exportType === 'zip') {
+        console.log('export zip')
+        exportZip({ name: this.exportName, layers })
+      }
+      // export an image
+      if (this.exportType === 'print') {
+        console.log('export img')
+        exportImage({
+          layers,
+          outputFormat: this.formatName,
+          outputFilename: this.exportName,
+          title: this.exportName,
+          description: this.exportName
+        })
+      }
+    }
+  }
 }
 </script>
 
@@ -113,16 +165,36 @@ export default {
   .export-popup .choice-cards__item {
     width: 100%;
     flex: 0 1 100%;
+    margin-bottom: 10px;
   }
   .export-popup .choice-cards__item__label {
     text-align: left;
-    padding: 1rem .5rem;
+    margin: 0;
+    padding: 8px 16px;
   }
-  .export-popup .choice-cards__item__label .icon {
-    margin-top: -0.5em;
-    margin-bottom: -.25em;
+  .export-popup .choice-cards__item__radio:checked+.choice-cards__item__label:after {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border-radius: 3px;
+  }
+  .export-popup .btn:focus {
+    text-decoration: none;
   }
   .export-popup__footer button {
-    margin-right: 4px;
+    margin-right: 10px;
+  }
+  .export-popup__notification {
+    color: #ffffff;
+    background: gray;
+    padding: 10px;
+    border-radius: 3px;
+  }
+  .export-popup__notification--error {
+    background:red;
+  }
+  .export-popup__notification--loading {
+    background: #0b71ab;
   }
 </style>

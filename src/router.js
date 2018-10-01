@@ -15,7 +15,7 @@ const router = new Router({
       name: 'home',
       component: Home,
       meta: {
-        title: 'Home pagina'
+        title: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
       }
     },
     {
@@ -23,7 +23,7 @@ const router = new Router({
       name: 'maps',
       component: Maps,
       meta: {
-        title: 'Kaarten overzicht'
+        title: 'LIWO - Kaarten'
       }
     },
     {
@@ -31,7 +31,7 @@ const router = new Router({
       name: 'viewer',
       component: Viewer,
       meta: {
-        title: 'Layered map viewer'
+        title: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
       }
     },
     {
@@ -39,7 +39,7 @@ const router = new Router({
       name: 'about',
       component: About,
       meta: {
-        title: 'Over LIWO'
+        title: 'LIWO - Over LIWO'
       }
     },
     {
@@ -47,7 +47,7 @@ const router = new Router({
       name: 'contact',
       component: Contact,
       meta: {
-        title: 'Contact informatie'
+        title: 'LIWO - Contact'
       }
     }
   ]

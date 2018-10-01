@@ -19,7 +19,21 @@
 </template>
 
 <script>
+const PAGE_TITLE = 'Contact'
+
 export default {
-  name: 'contact'
+  name: 'contact',
+  mounted () {
+    this.$store.commit('setPageTitle', PAGE_TITLE)
+  }
 }
 </script>
+
+<style>
+.about {
+  padding: 1rem;
+  max-width: 1200px;
+  width: calc(100% - 2rem);
+  margin: 0 auto;
+}
+</style>

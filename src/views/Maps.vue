@@ -19,6 +19,8 @@
 import LayersetList from '@/components/LayersetList'
 import { loadLayersets } from '@/lib/load-layersets'
 
+const PAGE_TITLE = 'Kaarten'
+
 export default {
   name: 'maps',
   data () {
@@ -27,6 +29,9 @@ export default {
   beforeCreate: async function () {
     const layersets = await loadLayersets()
     this.layersets = layersets
+  },
+  mounted () {
+    this.$store.commit('setPageTitle', PAGE_TITLE)
   },
   components: { LayersetList }
 }

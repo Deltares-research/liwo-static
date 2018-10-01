@@ -43,25 +43,25 @@ export default {
 </script>
 
 <style>
-@import './variables.css';
+  @import './variables.css';
 
-.layer-meta {
-  box-shadow: var(--shadow);
-}
+  .layer-meta {
+    box-shadow: var(--shadow);
+  }
 
-.layer-meta__table {
-  width: 100%;
-  height: 100%;
-  background-color: var(--white);
-  border: 0;
-  margin:0;
-}
-.layer-meta__table tr:nth-child(even) {
-  background-color: var(--lighter-gray);
-}
-.layer-meta__table th,
-.layer-meta__table td {
-  vertical-align: top;
-  background: none;
-}
+  .layer-meta__table {
+    width: 100%;
+    height: 100%;
+    background-color: var(--white);
+    border: 0;
+    margin:0;
+  }
+  .layer-meta__table tr:nth-child(even) {
+    background-color: var(--lighter-gray);
+  }
+  .layer-meta__table th,
+  .layer-meta__table td {
+    vertical-align: top;
+    background: none;
+  }
 </style>
