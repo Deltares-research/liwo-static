@@ -10,7 +10,7 @@
         :id="layer.id"
         :title="layer.properties.title || layer.properties.name"
         :subtitle="layer.properties.title || layer.legend.title"
-        :metadata="layer.metadata"
+        :metadata="layerMetaData(layer)"
         :variants="layer.variants || []"
         :layerType="layer.legend.layer"
         :visible="layerIsVisible(layer.id)"
@@ -42,10 +42,17 @@ export default {
   computed: {
     ...mapState([
       'selectedLayerId',
-      'visibleLayerIds'
+      'visibleLayerIds',
+      'visibleVariantIndexByLayerId'
     ])
   },
   methods: {
+    layerMetaData ({ id, variants }) {
+      const index = this.visibleVariantIndexByLayerId[id]
+      return typeof index !== 'undefined'
+        ? variants[index].metadata
+        : undefined
+    },
     layerIsVisible (id) {
       return this.visibleLayerIds.indexOf(id) !== -1
     },
