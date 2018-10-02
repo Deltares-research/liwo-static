@@ -4,7 +4,6 @@
       class="layer-control-list__item"
       v-for="layer in layers"
       :key="layer.id"
-      @click="setSelectedLayerId(layer.id)"
     >
       <layer-control
         :active="(layer.id === selectedLayerId)"
@@ -18,6 +17,7 @@
         @toggle="toggleLayerVisibilityById"
         @changeOpacity="setLayerOpacity"
         @selectVariant="setVisibleVariant"
+        @selectActiveLayer="setSelectedLayerId"
       />
     </li>
   </ul>
@@ -50,9 +50,8 @@ export default {
       return this.visibleLayerIds.indexOf(id) !== -1
     },
     setSelectedLayerId (id) {
-      if (this.visibleLayerIds.indexOf(id) !== -1) {
-        this.$store.commit('setSelectedLayerId', id)
-      }
+      console.log('HERE')
+      this.$store.commit('setSelectedLayerId', id)
     },
     setLayerOpacity ({ layerId, opacity }) {
       this.$store.commit('setOpacityByLayerId', {
