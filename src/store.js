@@ -59,7 +59,7 @@ export default new Vuex.Store({
       } else {
         state.selectedBreaches = state.selectedBreaches.filter(breachId => breachId !== id)
         state.visibleLayerIds = state.visibleLayerIds.filter(layerId => breachLayerIds.indexOf(layerId) === -1)
-        state.visibleVariantIndexByLayerId = { ...state.visibleVariantIndexByLayerId, [ id ]: 0 }
+        state.visibleVariantIndexByLayerId = { ...state.visibleVariantIndexByLayerId, ...breachLayerIds.reduce((visibleVariants, id) => ({ ...visibleVariants, [ id ]: 0 }), {}) }
         state.activeLayerSetId = state.selectedBreaches[0]
       }
     },
@@ -95,6 +95,7 @@ export default new Vuex.Store({
       state.visibleLayerIds = currentLayerSet.map(layer => layer.id)
       state.selectedBreaches = []
       state.opacityByLayerId = {}
+      state.selectedLayerId = state.visibleLayerIds[0]
       state.visibleVariantIndexByLayerId = currentLayerSet
         .reduce((visibleVariants, { id }) => ({ ...visibleVariants, [ id ]: 0 }), {})
     },
@@ -103,6 +104,7 @@ export default new Vuex.Store({
       state.visibleLayerIds = state.visibleLayerIds.filter((layerId) => selectedBreaches.indexOf(layerId) === -1)
       state.selectedBreaches = []
       state.opacityByLayerId = {}
+      state.selectedLayerId = state.visibleLayerIds[0]
     },
     hideLayerById (state, id) {
       state.visibleLayerIds = state.visibleLayerIds.filter(layerId => layerId !== id)
