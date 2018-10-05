@@ -1,5 +1,6 @@
 import delay from 'delay'
 
+import L from './leaflet-utils/leaf'
 import mapConfig from '../map.config'
 import rdConfig from './rijksdriehoek.config.js'
 
@@ -52,7 +53,7 @@ export function requestBody (options) {
         layers: formatMapLayers(options),
         projection: rdConfig.crsType,
         rotation: 0,
-        scale: 80000
+        scale: getScale(options.map)
       }
     }
   }
@@ -71,11 +72,9 @@ function legendItem ({ layer, style, layerTitle }) {
   }
 }
 
-function formatMapLayers ({ layers }) {
-  return layers
-    .filter(layer => layer.type !== 'json')
-    .map(mapLayerItem)
-    .concat({
+function formatMapLayers ({ layers, background }) {
+  const baseLayer = background
+    ? [{
       baseURL: 'http://geodata.nationaalgeoregister.nl/tiles/service/wmts',
       layer: 'brtachtergrondkaart',
       dimensionParams: {},
@@ -87,7 +86,14 @@ function formatMapLayers ({ layers }) {
       type: 'WMTS',
       version: '1.0.0',
       matrices
-    })
+    }]
+    : []
+
+  const resultLayers = layers
+    .filter(layer => layer.type !== 'json')
+    .map(mapLayerItem)
+
+  return [ ...resultLayers, ...baseLayer ]
 }
 
 function mapLayerItem ({ layer, style, type, namespace }) {
@@ -96,6 +102,9 @@ function mapLayerItem ({ layer, style, type, namespace }) {
     imageFormat: 'image/png',
     layers: [ `${namespace}:${layer}` ],
     opacity: 1,
+    customParams: {
+      transparent: true
+    },
     serverType: 'geoserver',
     styles: [ style ],
     type
@@ -116,6 +125,27 @@ async function statusPolling (url) {
   }
 
   return statusPromise
+}
+
+function getScale(map) {
+  var center = map.getCenter()
+
+  var DOTS_PER_INCH = 72
+  var INCHES_PER_METER = 1.0 / 0.02540005080010160020
+  var INCHES_PER_KM = INCHES_PER_METER * 1000.0
+  var sw = map.getBounds().getSouthWest()
+  var ne = map.getBounds().getNorthEast()
+  var halflat = (sw.lat + ne.lat) / 2.0
+  var midLeft = new L.LatLng(halflat, sw.lng)
+  var midRight = new L.LatLng(halflat, ne.lng)
+  var mwidth = midLeft.distanceTo(midRight)
+  var pxwidth = map.getSize().x
+  var kmperpx = mwidth / pxwidth / 1000.0
+  var scale = (kmperpx || 0.000001) * INCHES_PER_KM * DOTS_PER_INCH
+  scale *= 2.0 // no idea why but it&#039;s doubled
+  scale = 10000 * Math.round(scale / 10000.0) // round to the nearest 1,000 so we can fit MapFish print&#039;s finite set of scales
+
+  return scale
 }
 
 const matrices = [
