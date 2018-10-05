@@ -51,7 +51,7 @@ export default {
       const index = this.visibleVariantIndexByLayerId[id]
       return typeof index !== 'undefined'
         ? variants[index].metadata
-        : undefined
+        : variants[0].metadata
     },
     layerIsVisible (id) {
       return this.visibleLayerIds.indexOf(id) !== -1
