@@ -61,6 +61,8 @@ export default {
     margin: 0 auto;
     border-radius: 4px;
     border: 2px solid rgba(0,0,0,0.2);
+    max-height: calc(100vh - 14rem);
+    overflow: auto;
   }
   .pop-up__content {
     overflow-y: auto;
