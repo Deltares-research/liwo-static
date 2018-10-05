@@ -1,6 +1,6 @@
 export function normalizeLayer (layer) {
   return {
-    id: layer.id || layer.legend.layer,
+    id: layer.legend.layer || layer.id,
     properties: layer,
     legend: {
       ...layer.legend,
