@@ -18,6 +18,7 @@ export default function (el, config) {
   map.addControl(geoCoderControl(map))
   map.addControl(L.control.zoom({ position: 'topright' }))
   map.addControl(L.control.layers(baseLayers))
+
   // Hack to make the map display
   setTimeout(() => { map.invalidateSize() }, 100)
 

@@ -114,7 +114,7 @@ export default {
         exportZip({ name: this.exportName, layers })
       }
       if (this.exportType === 'print') {
-        const { x, y } = this.mapObject.project(this.mapObject.getCenter())
+        const { x, y } = this.mapObject.options.crs.project(this.mapObject.getCenter())
         exportImage({
           layers: this.mapLayers,
           outputFormat: this.formatName,
@@ -122,7 +122,11 @@ export default {
           title: this.exportName,
           description: this.exportName,
           center: [ x, y ],
-          scale: 80000
+          map: this.mapObject,
+          scale: this.mapObject.options.crs.scale(this.mapObject.getZoom())  * 1000000000,
+          zoom: Number(this.mapObject.getZoom()),
+          latLng: this.mapObject.getCenter(),
+          background: this.background
         })
       }
     }
