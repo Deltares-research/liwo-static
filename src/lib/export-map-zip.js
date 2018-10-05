@@ -4,7 +4,7 @@ const apiBase = mapConfig.services.WEBSERVICE_URL
 const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
 
 export default function ({ layers, name }) {
-  const body = JSON.stringify({ layers: layers.join(' '), name })
+  const body = JSON.stringify({ layers, name })
   return fetch(`${apiBase}/Maps.asmx/DownloadZipFileDataLayers`, {
     method: 'POST',
     mode: 'cors',
