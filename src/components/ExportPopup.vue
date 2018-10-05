@@ -110,7 +110,8 @@ export default {
       if (this.formErrors && this.formErrors.length === 0) { this.exporting = true }
 
       if (this.exportType === 'zip') {
-        exportZip({ name: this.exportName, layers: this.mapLayers })
+        const layers = this.mapLayers.map(layer => layer.layer).join()
+        exportZip({ name: this.exportName, layers })
       }
       if (this.exportType === 'print') {
         const { x, y } = this.mapObject.project(this.mapObject.getCenter())
