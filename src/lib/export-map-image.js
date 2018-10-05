@@ -28,7 +28,7 @@ export default function requestImage (options) {
       let url = windowUrl.createObjectURL(blobject)
 
       anchor.setAttribute('href', url)
-      anchor.setAttribute('download', `${name}.${options.outputFormat}`)
+      anchor.setAttribute('download', `${options.outputFilename}.${options.outputFormat}`)
       anchor.click()
       windowUrl.revokeObjectURL(url)
     })
