@@ -1,26 +1,30 @@
 const webpack = require('webpack')
 
 module.exports = {
+  // transpileDependencies: [ 'delay' ],
   baseUrl: process.env.BASE_URL || '/',
   configureWebpack: {
+    module: {
+      rules: [
+        {
+          test: /\.m?js$/,
+          use: {
+            loader: 'babel-loader'
+          }
+        }
+      ]
+    },
     plugins: [
       new webpack.ProvidePlugin({
         L: 'leaflet'
       })
     ],
-    // entry: {
-    //   vendor: [
-    //     'promise-polyfill',
-    //     'whatwg-fetch',
-    //     'url-search-params',
-    //     'vue',
-    //     'vuex',
-    //     // 'leaflet',
-    //     // 'leaflet.markercluster',
-    //     // 'mapbox.js',
-    //     // 'proj4',
-    //     // 'proj4leaflet'
-    //   ]
-    // }
+    entry: {
+      vendor: [
+        '@babel/polyfill',
+        'unfetch/polyfill',
+        'url-search-params-polyfill'
+      ]
+    }
   }
 }

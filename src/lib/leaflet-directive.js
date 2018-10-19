@@ -16,7 +16,6 @@ export default {
     }
 
     const { mapLayers, callbacks } = value
-    console.log('MAPLAYERS', mapLayers)
 
     const newCurrentLayers = mapLayers
       .map(layer => layerFactory(layer, callbacks))

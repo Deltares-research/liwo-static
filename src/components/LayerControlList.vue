@@ -57,7 +57,6 @@ export default {
       return this.visibleLayerIds.indexOf(id) !== -1
     },
     setSelectedLayerId (id) {
-      console.log('HERE')
       this.$store.commit('setSelectedLayerId', id)
     },
     setLayerOpacity ({ layerId, opacity }) {
