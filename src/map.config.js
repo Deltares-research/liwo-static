@@ -1,19 +1,19 @@
 // eslint-disable-next-line
 const services = {
   // url for webservice calls [ending with a forward slash]
-  WEBSERVICE_URL: 'http://tw-160.xtr.deltares.nl/liwo.ws/',
-  // WEBSERVICE_URL: 'https://basisinformatie-overstromingen.nl/liwo.ws/',
+  // WEBSERVICE_URL: 'http://tw-160.xtr.deltares.nl/liwo.ws/',
+  WEBSERVICE_URL: 'https://basisinformatie-overstromingen.nl/liwo.ws/',
   // url for static geoserver [ending with a forward slash]
   STATIC_GEOSERVER_URL: 'http://tl-396.xtr.deltares.nl:8080/geoserver/ows/',
   // STATIC_GEOSERVER_URL: 'https://profgeodata.static.basisinformatie-overstromingen.nl/geoserver/ows/',
-  DYNAMIC_GEOSERVER_URL: 'http://tl-397.xtr.deltares.nl:8080/geoserver/LIWO_Operationeel/wms/',
+  DYNAMIC_GEOSERVER_URL: 'http://tl-397.xtr.deltares.nl:8080/geoserver/ows/',
   // DYNAMIC_GEOSERVER_URL: 'https://profgeodata.dynamic.basisinformatie-overstromingen.nl/geoserver/LIWO_Operationeel/wms/',
   ACHTERGRONDKAART: 'https://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png',
   LUCHTFOTOKAART: 'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/tms/1.0.0/2016_ortho25/EPSG:28992/{z}/{x}/{y}.png',
   PDOKLUCHTFOTO: 'http://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wms',
   PDOKBRTACHTERGROND: 'http://geodata.nationaalgeoregister.nl/tiles/service/wmts',
   MANUAL_URL: 'https://www.helpdeskwater.nl/onderwerpen/applicaties-modellen/applicaties-per/watermanagement/watermanagement/liwo/',
-  LEGEND_URL: 'https://geodata.basisinformatie-overstromingen.nl/geoserver',
+  LEGEND_URL: 'http://tl-396.xtr.deltares.nl:8080/geoserver/',
   PRINT_GEO_SERVER: 'https://profgeodata.static.basisinformatie-overstromingen.nl'
 }
 // This is the attribution (maps and datasets often require attribution of the source)

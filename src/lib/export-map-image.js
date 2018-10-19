@@ -1,5 +1,6 @@
 import delay from 'delay'
 
+import downloadBlob from './download-blob'
 import L from './leaflet-utils/leaf'
 import mapConfig from '../map.config'
 import rdConfig from './rijksdriehoek.config.js'
@@ -22,15 +23,11 @@ export default function requestImage (options) {
     .then(downloadRefs => fetch(`${printGeoServerURI}${downloadRefs.downloadURL.substring(1)}`))
     .then(res => res.blob())
     .then((blob) => {
-      let anchor = document.createElement('a')
-      let windowUrl = window.URL || window.webkitURL
-      let blobject = new Blob([blob], { type: `image/${options.outputFormat}` })
-      let url = windowUrl.createObjectURL(blobject)
-
-      anchor.setAttribute('href', url)
-      anchor.setAttribute('download', `${options.outputFilename}.${options.outputFormat}`)
-      anchor.click()
-      windowUrl.revokeObjectURL(url)
+      downloadBlob({
+        blob,
+        filename: `${options.outputFilename}.${options.outputFormat}`,
+        type: `image/${options.outputFormat}`
+      })
     })
     .catch(error => console.log('ERROR', error))
 }
