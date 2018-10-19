@@ -127,9 +127,7 @@ async function statusPolling (url) {
   return statusPromise
 }
 
-function getScale(map) {
-  var center = map.getCenter()
-
+function getScale (map) {
   var DOTS_PER_INCH = 72
   var INCHES_PER_METER = 1.0 / 0.02540005080010160020
   var INCHES_PER_KM = INCHES_PER_METER * 1000.0
