@@ -1,4 +1,5 @@
 const webpack = require('webpack')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
   // transpileDependencies: [ 'delay' ],
@@ -17,8 +18,14 @@ module.exports = {
     plugins: [
       new webpack.ProvidePlugin({
         L: 'leaflet'
-      })
+      }),
+      new CopyWebpackPlugin([
+        { from: 'src/webconfig.js', to: 'webconfig.js' }
+      ])
     ],
+    externals: {
+      './webconfig': 'webconfig'
+    },
     entry: {
       vendor: [
         '@babel/polyfill',
