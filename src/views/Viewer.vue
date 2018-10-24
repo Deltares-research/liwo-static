@@ -32,8 +32,6 @@ import LayerPanel from '@/components/LayerPanel'
 import LiwoMap from '@/components/LiwoMap'
 import LegendPanel from '@/components/LegendPanel'
 
-import { loadLayersetById } from '@/lib/load-layersets'
-
 const PAGE_TITLE = 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
 
 export default {
@@ -57,7 +55,7 @@ export default {
     }),
     ...mapState([
       'selectedLayerId',
-      'visibleLayerIds',
+      'visibleLayerIds'
     ]),
     ...mapGetters([
       'activeLayerSet',
@@ -70,7 +68,7 @@ export default {
 
       const selectedLayers = this.panelLayerSets
         .map((layerSet) => layerSet.layers)
-        .reduce((allLayers, layers) => [ ...allLayers, ...layers ] , [])
+        .reduce((allLayers, layers) => [ ...allLayers, ...layers ], [])
         .filter(({ id }) => this.selectedLayerId === id)
 
       if (selectedLayers && selectedLayers[0]) {
@@ -96,14 +94,13 @@ export default {
     setMapObject (mapObject) {
       this.mapObject = mapObject
       console.log('CRS', mapObject.options.crs.scale())
-
     }
   },
   components: {
     ExportPopup,
     LayerPanel,
     LegendPanel,
-    LiwoMap,
+    LiwoMap
   }
 }
 </script>
