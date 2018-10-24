@@ -1,21 +1,51 @@
 // eslint-disable-next-line
+
+// These variable names are global and should be defined by loading webconfig.js
+const globals = [
+  'WEBSERVICE_URL',
+  'STATIC_GEOSERVER_URL',
+  'DYNAMIC_GEOSERVER_URL',
+  'ACHTERGRONDKAART',
+  'LUCHTFOTOKAART',
+  'PDOKLUCHTFOTO',
+  'PDOKBRTACHTERGROND',
+  'MANUAL_URL',
+  'STATIC_GEOSERVER_URL',
+  'PRINT_GEOSERVER_URL'
+]
+
+globals.forEach(
+  function (v) {
+    console.assert(
+      // variable should be set by webconfig.js
+      window.hasOwnProperty(v),
+      // error message if assert fails
+      'Make sure variable',
+      v,
+      'is defined in the webconfig.js and that this file is properly loaded'
+    )
+  }
+)
+
 const services = {
   // url for webservice calls [ending with a forward slash]
-  // WEBSERVICE_URL: 'http://tw-160.xtr.deltares.nl/liwo.ws/',
-  WEBSERVICE_URL: 'https://basisinformatie-overstromingen.nl/liwo.ws/',
+  // We use the || shortcut here because we don't expect any falsy values
+  // TODO: consider removing this as a configuration all together
   // url for static geoserver [ending with a forward slash]
-  STATIC_GEOSERVER_URL: 'http://tl-396.xtr.deltares.nl:8080/geoserver/ows/',
-  // STATIC_GEOSERVER_URL: 'https://profgeodata.static.basisinformatie-overstromingen.nl/geoserver/ows/',
-  DYNAMIC_GEOSERVER_URL: 'http://tl-397.xtr.deltares.nl:8080/geoserver/ows/',
-  // DYNAMIC_GEOSERVER_URL: 'https://profgeodata.dynamic.basisinformatie-overstromingen.nl/geoserver/LIWO_Operationeel/wms/',
-  ACHTERGRONDKAART: 'https://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png',
-  LUCHTFOTOKAART: 'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/tms/1.0.0/2016_ortho25/EPSG:28992/{z}/{x}/{y}.png',
-  PDOKLUCHTFOTO: 'http://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wms',
-  PDOKBRTACHTERGROND: 'http://geodata.nationaalgeoregister.nl/tiles/service/wmts',
-  MANUAL_URL: 'https://www.helpdeskwater.nl/onderwerpen/applicaties-modellen/applicaties-per/watermanagement/watermanagement/liwo/',
-  LEGEND_URL: 'http://tl-396.xtr.deltares.nl:8080/geoserver/',
-  PRINT_GEO_SERVER: 'https://profgeodata.static.basisinformatie-overstromingen.nl'
+  WEBSERVICE_URL: window.WEBSERVICE_URL,
+  STATIC_GEOSERVER_URL: window.STATIC_GEOSERVER_URL,
+  DYNAMIC_GEOSERVER_URL: window.DYNAMIC_GEOSERVER_URL,
+  ACHTERGRONDKAART: window.ACHTERGRONDKAART,
+  LUCHTFOTOKAART: window.LUCHTFOTOKAART,
+  PDOKLUCHTFOTO: window.PDOKLUCHTFOTO,
+  PDOKBRTACHTERGROND: window.PDOKBRTACHTERGROND,
+  MANUAL_URL: window.MANUAL_URL,
+  // TODO: consistent names
+  LEGEND_URL: window.STATIC_GEOSERVER_URL,
+  // TODO: consistent names
+  PRINT_GEO_SERVER: window.PRINT_GEOSERVER_URL
 }
+
 // This is the attribution (maps and datasets often require attribution of the source)
 const attribution = '&copy <a href="http://www.pdok.nl">PDOK</a>'
 
