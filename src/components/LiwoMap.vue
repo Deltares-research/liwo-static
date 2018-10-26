@@ -18,7 +18,7 @@ import createMapConfig from '@/lib/leaflet-utils/mapconfig-factory'
 export default {
   data () {
     return {
-      expandedMapLayers: undefined,
+      expandedMapLayers: undefined
     }
   },
   computed: {
@@ -53,7 +53,10 @@ export default {
       }
 
       parsedLayerSet
-        .then((layers) => this.expandedMapLayers = Object.freeze(layers))
+        .then(
+          (layers) => {
+            this.expandedMapLayers = Object.freeze(layers)
+          })
     }
   }
 }

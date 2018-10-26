@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
     "@babel/plugin-transform-arrow-functions": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
     "@vue/babel-preset-app": "^3.0.5",
@@ -43,6 +44,7 @@
     "@vue/test-utils": "^1.0.0-beta.10",
     "caniuse-db": "^1.0.30000840",
     "chai": "^4.1.2",
+    "copy-webpack-plugin": "^4.5.4",
     "lint-staged": "^6.0.0",
     "node-sass": "^4.9.0",
     "postcss-custom-properties": "7.0.0",

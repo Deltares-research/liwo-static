@@ -123,7 +123,7 @@ export default {
           description: this.exportName,
           center: [ x, y ],
           map: this.mapObject,
-          scale: this.mapObject.options.crs.scale(this.mapObject.getZoom())  * 1000000000,
+          scale: this.mapObject.options.crs.scale(this.mapObject.getZoom()) * 1000000000,
           zoom: Number(this.mapObject.getZoom()),
           latLng: this.mapObject.getCenter(),
           background: this.background

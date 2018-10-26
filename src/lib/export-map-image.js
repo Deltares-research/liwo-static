@@ -11,7 +11,7 @@ const DEFAULT_DPI = 300
 export default function requestImage (options) {
   const body = JSON.stringify(requestBody(options))
 
-  return fetch(`${printGeoServerURI}/print/print/liwo/report.${options.outputFormat}`, {
+  return fetch(`${printGeoServerURI}/print/liwo/report.${options.outputFormat}`, {
     method: 'POST',
     mode: 'cors',
     body
