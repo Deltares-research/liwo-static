@@ -4,7 +4,7 @@
 // NOTE: This file will be overwritten automatically by a puppet script in the deployment process, DO NOT EDIT BY HAND, DO NOT MINIFY
 
 // url's for webservice calls [ending with a forward slash]
-var WEBSERVICE_URL = 'https://basisinformatie-overstromingen.nl/liwo.ws/'
+var WEBSERVICE_URL = 'http://tw-160.xtr.deltares.nl/liwo.ws/'
 var STATIC_GEOSERVER_URL = 'http://tl-396.xtr.deltares.nl:8080/geoserver/ows/'
 var DYNAMIC_GEOSERVER_URL = 'http://tl-397.xtr.deltares.nl:8080/geoserver/ows/'
 
