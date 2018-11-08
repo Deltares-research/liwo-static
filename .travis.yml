@@ -31,6 +31,9 @@ jobs:
     - stage: release
       script: npm run build
       script: BASE_URL=/ npm run release
+    - stage: liwo-subfolder-release
+      script: npm run build
+      script: BASE_URL=/liwo npm run release
 deploy:
   provider: pages
   skip-cleanup: true
