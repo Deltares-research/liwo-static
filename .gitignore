@@ -1,6 +1,7 @@
 .DS_Store
 node_modules
 dist/
+backend-dist*/
 tests/e2e/reports/
 
 # sig review files
