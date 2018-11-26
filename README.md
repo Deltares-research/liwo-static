@@ -30,7 +30,7 @@ npm audit
 npm outdated
 
 # build using a different url
-BASE_URL=/liwo-static npm run build
+BASE_URL=/liwo npm run build
 
 # deploy to github (note that travis does this automatically)
 gh-pages -d dist
