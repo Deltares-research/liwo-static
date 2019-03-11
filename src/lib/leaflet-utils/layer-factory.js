@@ -24,7 +24,9 @@ export default function createLayer (layer, { breachCallBack }) {
   if (layer.type === 'json' && layer.geojson) {
     if (layerIsBreach(layer)) {
       const markers = L.markerClusterGroup({
-        iconCreateFunction: clusterIconFunction(layer.layer || 'BREACH_PRIMARY')
+        iconCreateFunction: clusterIconFunction(layer.layer || 'BREACH_PRIMARY'),
+        disableClusteringAtZoom: 8,
+        maxClusterRadius: 70
       })
       markers.addLayer(createBreachGeoJson(layer, breachCallBack))
       return markers
