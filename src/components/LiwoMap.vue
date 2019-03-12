@@ -67,7 +67,6 @@ export default {
     width: calc(100% - 2rem);
     display: block;
     margin: 0 auto;
-    margin-top: 1rem;
     height: calc(100vh - 20rem);
   }
 

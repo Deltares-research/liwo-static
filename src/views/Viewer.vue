@@ -1,26 +1,33 @@
 <template>
-  <div class="viewer">
-    <liwo-map
-      :layers="activeLayerSet"
-      @initMap="setMapObject"
+  <div class="viewer" :class="{'viewer--has-notificaton': currentNotification}">
+    <notification-bar
+      v-if="currentNotification"
+      :type="currentNotification.type"
+      :message="currentNotification.message"
     />
-    <layer-panel
-      :layerSets="panelLayerSets"
-      @open-export="showExport = true"
-    />
-    <legend-panel
-      v-if="visibleLayerLegend"
-      :caption="visibleLayerLegend.title"
-      :namespace="visibleLayerLegend.namespace"
-      :layer-name="visibleLayerLegend.layer"
-      :style-name="visibleLayerLegend.style"
-    />
-    <export-popup
-      v-if="showExport"
-      :map-object="mapObject"
-      :map-layers="activeLayerSet"
-      @close="showExport = false"
-    />
+    <div class="viewer__map-wrapper">
+      <liwo-map
+        :layers="activeLayerSet"
+        @initMap="setMapObject"
+      />
+      <layer-panel
+        :layerSets="panelLayerSets"
+        @open-export="showExport = true"
+      />
+      <legend-panel
+        v-if="visibleLayerLegend"
+        :caption="visibleLayerLegend.title"
+        :namespace="visibleLayerLegend.namespace"
+        :layer-name="visibleLayerLegend.layer"
+        :style-name="visibleLayerLegend.style"
+      />
+      <export-popup
+        v-if="showExport"
+        :map-object="mapObject"
+        :map-layers="activeLayerSet"
+        @close="showExport = false"
+      />
+    </div>
   </div>
 </template>
 
@@ -31,6 +38,7 @@ import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
 import LiwoMap from '@/components/LiwoMap'
 import LegendPanel from '@/components/LegendPanel'
+import NotificationBar from '@/components/NotificationBar.vue'
 
 const PAGE_TITLE = 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
 
@@ -59,7 +67,8 @@ export default {
     ]),
     ...mapGetters([
       'activeLayerSet',
-      'panelLayerSets'
+      'panelLayerSets',
+      'currentNotification'
     ]),
     selectedLayer () {
       if (!this.panelLayerSets) {
@@ -100,7 +109,8 @@ export default {
     ExportPopup,
     LayerPanel,
     LegendPanel,
-    LiwoMap
+    LiwoMap,
+    NotificationBar
   }
 }
 </script>
@@ -110,7 +120,18 @@ export default {
 
   .viewer {
     position: relative;
+    padding-top: 1rem;
   }
+
+  .viewer__map-wrapper {
+    position: relative;
+  }
+
+  .viewer .notification-bar {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+
   .viewer .layer-panel {
     position: absolute;
     top: 1rem;

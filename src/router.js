@@ -5,6 +5,7 @@ import Contact from './views/Contact'
 import Home from './views/Home'
 import Maps from './views/Maps'
 import Viewer from './views/Viewer.vue'
+import store from './store'
 
 Vue.use(Router)
 
@@ -56,6 +57,12 @@ const router = new Router({
 // change title for blind people
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title
+  next()
+})
+
+// clear any notifications
+router.beforeEach((to, from, next) => {
+  store.dispatch('removeAllNotifications')
   next()
 })
 

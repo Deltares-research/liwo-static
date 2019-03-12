@@ -6,6 +6,7 @@ import { loadLayersetById } from './lib/load-layersets'
 import loadGeojson from './lib/load-geojson'
 import { normalizeLayers } from './lib/layer-parser'
 import { probabilityConfig } from './lib/probability-filter'
+import stringToHash from './lib/string-to-hash'
 
 Vue.use(Vuex)
 
@@ -29,7 +30,8 @@ export default new Vuex.Store({
     selectedMapLayerId: 0,
     selectedBreaches: [],
     selectedLayerSetIndex: 0,
-    visibleBreachLayers: {}
+    visibleBreachLayers: {},
+    notifications: []
   },
   mutations: {
     addBreachLayer (state, { id, breachLayers, breachName }) {
@@ -134,6 +136,28 @@ export default new Vuex.Store({
     setProbabilityFilterIndex (state, index) {
       state.breachProbabilityFilterIndex = index
       this.commit('resetToMapLayers')
+    },
+    addNotification (state, { message, type }) {
+      const id = stringToHash(`${message}-${type}`)
+      const notification = state.notifications.reduce((foundItem, currentItem) => {
+        return currentItem.id === id
+          ? state.notifications.indexOf(currentItem)
+          : foundItem
+      }, undefined)
+      if (!notification) {
+        state.notifications.push({message, type, id})
+      }
+    },
+    removeNotification (state, id) {
+      const notification = state.notifications.reduce((foundItem, currentItem) => {
+        return currentItem.id === id
+          ? currentItem
+          : foundItem
+      }, undefined)
+      const index = state.notifications.indexOf(notification)
+      if (index !== -1) {
+        state.notifications.splice(index, 1)
+      }
     }
   },
   actions: {
@@ -162,6 +186,13 @@ export default new Vuex.Store({
       }
 
       commit('toggleSelectedBreach', id)
+    },
+    removeAllNotifications ({commit, state}) {
+      if (state.notifications.length) {
+        state.notifications
+          .map(notification => notification.id)
+          .forEach(id => commit('removeNotification', id))
+      }
     }
   },
   getters: {
@@ -265,6 +296,11 @@ export default new Vuex.Store({
           return layer
         })
       )
+    },
+    currentNotification (state) {
+      const notifications = state.notifications
+      const total = notifications.length
+      return total ? notifications[total - 1] : null
     }
   }
 })
