@@ -1,11 +1,11 @@
 import geoServerUrl from './geoserver-url'
 
-export default function getFeatureInfo ({ ne, sw, x, y, width, height, layer }) {
+export default function getFeatureInfo ({ bounds, x, y, width, height, layer }) {
   const bbox = [
-    sw.lng,
-    sw.lat,
-    ne.lng,
-    ne.lat
+    bounds._southWest.lng,
+    bounds._southWest.lat,
+    bounds._northEast.lng,
+    bounds._northEast.lat,
   ].join()
 
   const url = geoServerUrl({

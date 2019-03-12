@@ -46,7 +46,7 @@
     "chai": "^4.1.2",
     "copy-webpack-plugin": "^4.5.4",
     "lint-staged": "^6.0.0",
-    "node-sass": "^4.9.0",
+    "node-sass": "^4.11.0",
     "postcss-custom-properties": "7.0.0",
     "postcss-import": "^11.1.0",
     "sass-loader": "^7.0.1",
