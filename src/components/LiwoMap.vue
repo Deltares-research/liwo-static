@@ -52,7 +52,7 @@ export default {
         showLayerInfoPopup({
           map: mapObject,
           activeLayer: this.activeLayerSet[0],
-          layerUnits: this.layerUnits,
+          unit: this.layerUnits[this.activeLayerSet[0].layerId],
           position: event.containerPoint,
           latlng: event.latlng
         })

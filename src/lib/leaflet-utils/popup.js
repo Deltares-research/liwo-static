@@ -1,10 +1,8 @@
 import L from '@/lib/leaflet-utils/leaf'
 import getFeatureInfo from '@/lib/get-feature-info'
 
-export function showLayerInfoPopup ({ map, activeLayer, layerUnits, position, latlng }) {
+export function showLayerInfoPopup ({ map, activeLayer, unit, position, latlng }) {
   const bounds = map.getBounds()
-  const { layer, layerId } = activeLayer
-  const unit = layerUnits[layerId]
 
   getFeatureInfo({
     bounds,
@@ -12,7 +10,7 @@ export function showLayerInfoPopup ({ map, activeLayer, layerUnits, position, la
     y: position.y,
     width: map._size.x,
     height: map._size.y,
-    layer
+    layer: activeLayer.layer
   })
     .then(data => {
       let value
