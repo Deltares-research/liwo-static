@@ -2,8 +2,8 @@ import { BREACH_PRIMARY, BREACH_REGIONAL } from '@/lib/liwo-identifiers'
 import mapConfig from '../map.config'
 
 const BREACHES_BASE_URL = mapConfig.services.WEBSERVICE_URL
-const BREACHES_API_URL_PRIMARY = `${BREACHES_BASE_URL}Tools/FloodImage.asmx/GetScenariosPerBreach`
-const BREACHES_API_URL_REGIONAL = `${BREACHES_BASE_URL}Tools/FloodImage.asmx/GetScenariosPerBreachRegional`
+const BREACHES_API_URL_PRIMARY = `${BREACHES_BASE_URL}/Tools/FloodImage.asmx/GetScenariosPerBreach`
+const BREACHES_API_URL_REGIONAL = `${BREACHES_BASE_URL}/Tools/FloodImage.asmx/GetScenariosPerBreachRegional`
 
 const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
 const breachLayers = [
