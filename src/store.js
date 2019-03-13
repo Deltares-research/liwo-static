@@ -52,14 +52,14 @@ export default new Vuex.Store({
       const breachLayerIds = state.breachLayersById[id].layers.map(layer => layer.id)
 
       if (state.selectedBreaches.indexOf(id) === -1) {
-        state.selectedBreaches = state.selectedBreaches.concat(id)
+        state.selectedBreaches = [id]
         state.visibleLayerIds = state.visibleLayerIds.concat(breachLayerIds[0])
         state.visibleVariantIndexByLayerId = { ...state.visibleVariantIndexByLayerId, [ breachLayerIds[0] ]: 0 }
         state.opacityByLayerId = { ...state.opacityByLayerId, [ state.opacityByLayerId[id] ]: 1 }
         state.activeLayerSetId = id
         state.selectedLayerId = breachLayerIds[0]
       } else {
-        state.selectedBreaches = state.selectedBreaches.filter(breachId => breachId !== id)
+        state.selectedBreaches = []
         state.visibleLayerIds = state.visibleLayerIds.filter(layerId => breachLayerIds.indexOf(layerId) === -1)
         state.visibleVariantIndexByLayerId = { ...state.visibleVariantIndexByLayerId, ...breachLayerIds.reduce((visibleVariants, id) => ({ ...visibleVariants, [ id ]: 0 }), {}) }
         state.activeLayerSetId = state.selectedBreaches[0]
