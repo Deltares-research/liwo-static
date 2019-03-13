@@ -19,7 +19,7 @@ export default function ({
     request,
     width,
     height,
-    ...rest,
+    ...rest
   }, { encode, sort: false })
 
   return `${url || mapConfig.services.STATIC_GEOSERVER_URL}?${params}`

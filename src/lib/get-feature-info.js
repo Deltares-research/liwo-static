@@ -5,7 +5,7 @@ export default function getFeatureInfo ({ bounds, x, y, width, height, layer }) 
     bounds._southWest.lng,
     bounds._southWest.lat,
     bounds._northEast.lng,
-    bounds._northEast.lat,
+    bounds._northEast.lat
   ].join()
 
   const url = geoServerUrl({
