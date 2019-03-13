@@ -3,7 +3,7 @@
     :class="{[`notification-bar--${type}`]:true}">
     <div class="container">
       <img class="notification-bar__icon" :src="`/icons/baseline-${type}-24px.svg`" />
-      <span class="notification-bar__message">{{ message }}</span>
+      <p class="notification-bar__message">{{ message }}</p>
     </div>
   </aside>
 </template>
@@ -11,9 +11,10 @@
 <style>
 .notification-bar .container{
   padding: 1rem 1rem;
-  width: calc(100% - 2rem);
-  max-width: 1200px;
   margin: auto;
+
+  display: flex;
+  align-items: top;
 }
 
 .notification-bar--error {
@@ -34,6 +35,11 @@
 
 .notification-bar__message {
   padding-left: 0.5rem;
+  margin-bottom: 0;
+}
+
+.notification-bar__icon {
+  align-self: flex-start;
 }
 </style>
 

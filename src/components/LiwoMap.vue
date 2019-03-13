@@ -14,6 +14,7 @@
 import { mapState, mapGetters } from 'vuex'
 
 import createMapConfig from '@/lib/leaflet-utils/mapconfig-factory'
+import buildBreachNotifications from '@/lib/build-breach-notifications'
 
 export default {
   data () {
@@ -57,6 +58,10 @@ export default {
           (layers) => {
             this.expandedMapLayers = Object.freeze(layers)
           })
+
+      parsedLayerSet
+        .then(buildBreachNotifications)
+        .then(result => this.$store.commit('setBreachNotifications', result))
     }
   }
 }

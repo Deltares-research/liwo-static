@@ -140,6 +140,9 @@ export default new Vuex.Store({
     },
     setLayerSetNotifications (state, layerSetNotifications) {
       Vue.set(state, 'notifications', layerSetNotifications)
+    },
+    setBreachNotifications (state, breachNotifications) {
+      state.notifications = Object.assign(state.notifications, breachNotifications)
     }
   },
   actions: {
@@ -279,8 +282,9 @@ export default new Vuex.Store({
       const visibleLayerIds = state.visibleLayerIds
       const visibleVariantIndexByLayerId = state.visibleVariantIndexByLayerId
       const selectedLayerId = state.selectedLayerId
-
+      const selectedBreaches = state.selectedBreaches
       const notificationMap = state.notifications[mapId]
+      const notificationBreach = state.notifications.breach
       const notificationLayers = (notificationMap && notificationMap.layers) || []
       const visibleNotificationLayers = notificationLayers.filter(layer => visibleLayerIds.indexOf(layer.id) !== -1)
 
@@ -294,14 +298,18 @@ export default new Vuex.Store({
         })
         .filter(value => value)
 
+      const breachNotifications = notificationBreach && selectedBreaches
+        .map(breachId => notificationBreach[breachId].notification)
+
       const notificationForSelectedLayer = notificationForLayers.length && notificationForLayers[0]
       const notificationForMap = notificationMap && notificationMap.notification
 
-      const message = notificationForSelectedLayer || notificationForMap
-      const notification = message && { message, type: 'info', id: `${stringToHash(message)}` }
-      return message
-        ? [ notification ]
-        : []
+      let notifications = []
+      notifications = notificationForMap ? [notificationForMap] : notifications
+      notifications = notificationForSelectedLayer ? [notificationForSelectedLayer] : notifications
+      notifications = breachNotifications && breachNotifications.length ? [...breachNotifications] : notifications
+
+      return notifications.map(message => ({message, type: 'warning', id: `${stringToHash(message)}`}))
     }
   }
 })

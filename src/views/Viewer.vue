@@ -5,12 +5,15 @@
         :layers="activeLayerSet"
         @initMap="setMapObject"
       />
-      <notification-bar
-        v-for="{type, message, id} in currentNotifications"
-        :key="id"
-        :type="type"
-        :message="message"
-      />
+      <ul class="viewer__notifications" v-if="currentNotifications.length">
+        <li class="viewer__notification" v-for="{type, message, id} in currentNotifications"
+            :key="id">
+          <notification-bar
+            :type="type"
+            :message="message"
+          />
+        </li>
+      </ul>
       <layer-panel
         :layerSets="panelLayerSets"
         @open-export="showExport = true"
@@ -128,15 +131,19 @@ export default {
     position: relative;
   }
 
-  .viewer .notification-bar {
+  .viewer__notifications {
     position: absolute;
     top: 1rem;
     z-index: 1000;
     left: 368px;
-    box-shadow: var(--shadow);
 
     /* 100px: 5 * 20px margin, 320px LayerPanel width, 44px map controls width */
     width: calc(100% - 100px - 320px - 44px);
+  }
+
+  .viewer__notification {
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow);
   }
 
   .viewer .layer-panel {
