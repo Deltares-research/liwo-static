@@ -43,7 +43,7 @@ export default {
 
     mapLayersToDelete
       .map(layer => leafletLayers.find(
-        leafletLayer => (leafletLayer.layerId || leafletLayer.options.layers) === layer.layerId
+        leafletLayer => (leafletLayer.layerId || leafletLayer.options.layers) === layer.layer
       ))
       .forEach(leafletLayer => layerGroup.removeLayer(leafletLayer))
 
