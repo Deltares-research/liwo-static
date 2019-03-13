@@ -1,15 +1,15 @@
 <template>
   <div class="viewer" :class="{'viewer--has-notificaton': currentNotifications.length}">
-    <notification-bar
-      v-for="{type, message, id} in currentNotifications"
-      :key="id"
-      :type="type"
-      :message="message"
-    />
     <div class="viewer__map-wrapper">
       <liwo-map
         :layers="activeLayerSet"
         @initMap="setMapObject"
+      />
+      <notification-bar
+        v-for="{type, message, id} in currentNotifications"
+        :key="id"
+        :type="type"
+        :message="message"
       />
       <layer-panel
         :layerSets="panelLayerSets"
@@ -129,8 +129,14 @@ export default {
   }
 
   .viewer .notification-bar {
-    margin-left: 1rem;
-    margin-right: 1rem;
+    position: absolute;
+    top: 1rem;
+    z-index: 1000;
+    left: 368px;
+    box-shadow: var(--shadow);
+
+    /* 100px: 5 * 20px margin, 320px LayerPanel width, 44px map controls width */
+    width: calc(100% - 100px - 320px - 44px);
   }
 
   .viewer .layer-panel {
