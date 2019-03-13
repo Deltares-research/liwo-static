@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import loadBreach from './lib/load-breach'
-import { loadLayersetById } from './lib/load-layersets'
+import { loadLayersetById, extractUnit } from './lib/load-layersets'
 import loadGeojson from './lib/load-geojson'
 import { normalizeLayers } from './lib/layer-parser'
 import { probabilityConfig } from './lib/probability-filter'
@@ -32,7 +32,8 @@ export default new Vuex.Store({
     selectedBreaches: [],
     selectedLayerSetIndex: 0,
     visibleBreachLayers: {},
-    notifications: []
+    notifications: [],
+    layerUnits: undefined
   },
   mutations: {
     addBreachLayer (state, { id, breachLayers, breachName }) {
@@ -143,6 +144,9 @@ export default new Vuex.Store({
     },
     setBreachNotifications (state, breachNotifications) {
       state.notifications = Object.assign(state.notifications, breachNotifications)
+    },
+    setLayerUnits (state, layerUnits) {
+      state.layerUnits = layerUnits
     }
   },
   actions: {
@@ -154,10 +158,16 @@ export default new Vuex.Store({
       const layersetById = await loadLayersetById(id)
       const layerSet = normalizeLayers(layersetById.layers)
       const notifications = buildLayersetNotifications(layersetById)
+      const layerUnits = layersetById.layers.reduce((acc, layer) => {
+        acc[layer.legend.layer] = extractUnit(layer.legend.title)
+        return acc
+      }, {})
 
       state.commit('setLayerSetById', { id, layerSet })
       state.commit('setPageTitle', layersetById.title)
+      state.commit('setLayerUnits', layerUnits)
       state.commit('setLayerSetNotifications', notifications)
+
       if (initializeMap) {
         state.commit('initToMapLayers', id)
       }

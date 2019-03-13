@@ -3,10 +3,6 @@
     <div>
       <section class="section">
         <h2 data-class="section-head">Tips voor sitebezoek</h2>
-        <p>
-          De informatie op deze website is ondergebracht in 'Kaarten'
-          en 'Gereedschappen'.
-        </p>
         <p>Het kopje 'Kaarten' is voor iedereen
       toegankelijk en bevat kaartlagen voor professionals van
       veiligheidsregio's, waterschappen en Rijkwaterstaat, die nodig
