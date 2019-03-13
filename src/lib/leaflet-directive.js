@@ -39,18 +39,13 @@ export default {
 
     mapLayersToAdd
       .map(layer => layerFactory(layer, callbacks))
-      .forEach(layer => {
-        layerGroup.addLayer(layer)
-      })
+      .forEach(layer => layerGroup.addLayer(layer))
 
     mapLayersToDelete
-      .forEach(layer => {
-        const leafletLayer = leafletLayers.find(
-          leafletLayer => (leafletLayer.layerId || leafletLayer.options.layers) === layer.layerId
-        )
-
-        layerGroup.removeLayer(leafletLayer)
-      })
+      .map(layer => leafletLayers.find(
+        leafletLayer => (leafletLayer.layerId || leafletLayer.options.layers) === layer.layerId
+      ))
+      .forEach(leafletLayer => layerGroup.removeLayer(leafletLayer))
 
     leafletLayers = layerGroup.getLayers()
     currentMapLayers = mapLayers
