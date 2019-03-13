@@ -1,9 +1,10 @@
 <template>
-  <div class="viewer" :class="{'viewer--has-notificaton': currentNotification}">
+  <div class="viewer" :class="{'viewer--has-notificaton': currentNotifications.length}">
     <notification-bar
-      v-if="currentNotification"
-      :type="currentNotification.type"
-      :message="currentNotification.message"
+      v-for="{type, message, id} in currentNotifications"
+      :key="id"
+      :type="type"
+      :message="message"
     />
     <div class="viewer__map-wrapper">
       <liwo-map
@@ -68,7 +69,7 @@ export default {
     ...mapGetters([
       'activeLayerSet',
       'panelLayerSets',
-      'currentNotification'
+      'currentNotifications'
     ]),
     selectedLayer () {
       if (!this.panelLayerSets) {

@@ -6,6 +6,7 @@ import { loadLayersetById } from './lib/load-layersets'
 import loadGeojson from './lib/load-geojson'
 import { normalizeLayers } from './lib/layer-parser'
 import { probabilityConfig } from './lib/probability-filter'
+import buildLayersetNotifications from './lib/build-layerset-notifications'
 import stringToHash from './lib/string-to-hash'
 
 Vue.use(Vuex)
@@ -137,27 +138,8 @@ export default new Vuex.Store({
       state.breachProbabilityFilterIndex = index
       this.commit('resetToMapLayers')
     },
-    addNotification (state, { message, type }) {
-      const id = stringToHash(`${message}-${type}`)
-      const notification = state.notifications.reduce((foundItem, currentItem) => {
-        return currentItem.id === id
-          ? state.notifications.indexOf(currentItem)
-          : foundItem
-      }, undefined)
-      if (!notification) {
-        state.notifications.push({message, type, id})
-      }
-    },
-    removeNotification (state, id) {
-      const notification = state.notifications.reduce((foundItem, currentItem) => {
-        return currentItem.id === id
-          ? currentItem
-          : foundItem
-      }, undefined)
-      const index = state.notifications.indexOf(notification)
-      if (index !== -1) {
-        state.notifications.splice(index, 1)
-      }
+    setLayerSetNotifications (state, layerSetNotifications) {
+      Vue.set(state, 'notifications', layerSetNotifications)
     }
   },
   actions: {
@@ -168,9 +150,11 @@ export default new Vuex.Store({
 
       const layersetById = await loadLayersetById(id)
       const layerSet = normalizeLayers(layersetById.layers)
+      const notifications = buildLayersetNotifications(layersetById)
 
       state.commit('setLayerSetById', { id, layerSet })
       state.commit('setPageTitle', layersetById.title)
+      state.commit('setLayerSetNotifications', notifications)
       if (initializeMap) {
         state.commit('initToMapLayers', id)
       }
@@ -186,13 +170,6 @@ export default new Vuex.Store({
       }
 
       commit('toggleSelectedBreach', id)
-    },
-    removeAllNotifications ({commit, state}) {
-      if (state.notifications.length) {
-        state.notifications
-          .map(notification => notification.id)
-          .forEach(id => commit('removeNotification', id))
-      }
     }
   },
   getters: {
@@ -297,10 +274,34 @@ export default new Vuex.Store({
         })
       )
     },
-    currentNotification (state) {
-      const notifications = state.notifications
-      const total = notifications.length
-      return total ? notifications[total - 1] : null
+    currentNotifications (state) {
+      const mapId = state.mapId
+      const visibleLayerIds = state.visibleLayerIds
+      const visibleVariantIndexByLayerId = state.visibleVariantIndexByLayerId
+      const selectedLayerId = state.selectedLayerId
+
+      const notificationMap = state.notifications[mapId]
+      const notificationLayers = (notificationMap && notificationMap.layers) || []
+      const visibleNotificationLayers = notificationLayers.filter(layer => visibleLayerIds.indexOf(layer.id) !== -1)
+
+      const notificationForLayers = visibleNotificationLayers
+        .filter(layer => layer.id === selectedLayerId)
+        .map(layer => {
+          const variantsIndex = visibleVariantIndexByLayerId[layer.id]
+          const variantsNotification = layer.variants[variantsIndex].notification
+          const layerNotification = layer.notification
+          return variantsNotification || layerNotification
+        })
+        .filter(value => value)
+
+      const notificationForSelectedLayer = notificationForLayers.length && notificationForLayers[0]
+      const notificationForMap = notificationMap && notificationMap.notification
+
+      const message = notificationForSelectedLayer || notificationForMap
+      const notification = message && { message, type: 'info', id: `${stringToHash(message)}` }
+      return message
+        ? [ notification ]
+        : []
     }
   }
 })

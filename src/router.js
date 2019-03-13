@@ -60,10 +60,4 @@ router.beforeEach((to, from, next) => {
   next()
 })
 
-// clear any notifications
-router.beforeEach((to, from, next) => {
-  store.dispatch('removeAllNotifications')
-  next()
-})
-
 export default router
