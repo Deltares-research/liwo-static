@@ -25,7 +25,8 @@ export default function createLayer (layer, { breachCallBack }) {
     if (layerIsBreach(layer)) {
       const layerGroup = L.layerGroup()
       const clusterGroup = L.markerClusterGroup({
-        iconCreateFunction: clusterIconFunction(layer.layer || 'BREACH_PRIMARY')
+        iconCreateFunction: clusterIconFunction(layer.layer || 'BREACH_PRIMARY'),
+         maxClusterRadius: 40
       })
 
       clusterGroup.addLayer(createBreachGeoJson(layer, breachCallBack, clusterGroup, layerGroup))
