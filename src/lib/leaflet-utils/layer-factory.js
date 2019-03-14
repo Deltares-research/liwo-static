@@ -89,9 +89,13 @@ function geoServerURL (namespace) {
 }
 
 function breachClickHandler (event, callback) {
-  const { selected } = event.target.feature.properties
+  const { selected, layerType } = event.target.feature.properties
 
   event.target.feature.properties.selected = !selected
+
+  selected
+    ? event.target.setIcon(getBreachIcon(layerType))
+    : event.target.setIcon(redIcon)
 
   if (callback) {
     callback(event)
