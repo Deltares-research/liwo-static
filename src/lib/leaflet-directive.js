@@ -3,8 +3,6 @@ import mapFactory from './leaflet-utils/map-factory'
 import L from '@/lib/leaflet-utils/leaf'
 
 let map
-let currentMapLayers = []
-let leafletLayers = []
 let layerGroup
 
 export default {
@@ -21,41 +19,11 @@ export default {
 
     const { mapLayers, callbacks } = value
 
-    const mapLayersToDelete = currentMapLayers.reduce((layersToDelete, layer) => {
-      const matchedLayer = mapLayers.find(l => (l.layerId === layer.layerId))
-      const hasGeojson = layer.geojson
+    layerGroup.clearLayers()
 
-      // alsways repaint if layer has geojson
-      if (!matchedLayer || hasGeojson) {
-        layersToDelete.push(layer)
-      }
-      return layersToDelete
-    }, [])
-
-    const mapLayersToAdd = mapLayers.reduce((layersToAdd, layer) => {
-      const matchedLayer = currentMapLayers.find(l => (l.layerId === layer.layerId))
-      const hasGeojson = layer.geojson
-
-      // alsways repaint if layer has geojson
-      if (!matchedLayer || hasGeojson) {
-        layersToAdd.push(layer)
-      }
-
-      return layersToAdd
-    }, [])
-
-    mapLayersToAdd
+    mapLayers
       .filter(layer => !layer.hide)
       .map(layer => layerFactory(layer, callbacks))
       .forEach(layer => layerGroup.addLayer(layer))
-
-    mapLayersToDelete
-      .map(layer => leafletLayers.find(
-        leafletLayer => (leafletLayer.layerId || leafletLayer.options.layers) === layer.layer
-      ))
-      .forEach(leafletLayer => leafletLayer && layerGroup.removeLayer(leafletLayer))
-
-    leafletLayers = layerGroup.getLayers()
-    currentMapLayers = mapLayers
   }
 }

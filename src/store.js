@@ -221,7 +221,9 @@ export default new Vuex.Store({
           }
         })
         .map(layer => {
-          if (!state.visibleLayerIds.some(visibleId => visibleId === layer.layerId)) {
+          const isActiveLayer = state.visibleLayerIds.some(visibleId => visibleId === layer.layerId)
+
+          if (!isActiveLayer) {
             layer.hide = true
           }
 
@@ -279,10 +281,12 @@ export default new Vuex.Store({
         })
       )
 
+
       let selectedLayer = {}
 
+      // seperate selected markers into its own layer
       if (state.activeLayerSetId) {
-        layers = layers.map(layer => {
+        layers.map(layer => {
           if (layer.type === 'json') {
             const activeFeature = layer.geojson.features.find(
               feature => feature.properties.id === state.activeLayerSetId
