@@ -281,15 +281,14 @@ export default new Vuex.Store({
         })
       )
 
-
-      let selectedLayer = {}
+      let selectedLayers = []
 
       // seperate selected markers into its own layer
       if (state.activeLayerSetId) {
         layers.map(layer => {
           if (layer.type === 'json') {
             const activeFeature = layer.geojson.features.find(
-              feature => feature.properties.id === state.activeLayerSetId
+              feature => state.selectedBreaches.find(id => id === feature.properties.id)
             )
 
             if (activeFeature) {
@@ -301,7 +300,7 @@ export default new Vuex.Store({
 
               layer.geojson.totalFeatures = layer.geojson.features.length
 
-              selectedLayer = {
+              selectedLayers.push({
                 ...layer,
                 hide: false,
                 namespace: layer.namespace,
@@ -313,14 +312,14 @@ export default new Vuex.Store({
                   totalFeatures: 1,
                   features: [activeFeature]
                 }
-              }
+              })
             }
           }
 
           return layer
         })
 
-        return [...layers, selectedLayer]
+        return [...layers, ...selectedLayers]
       } else {
         return layers
       }
