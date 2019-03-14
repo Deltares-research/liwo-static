@@ -24,12 +24,13 @@ export default function createLayer (layer, { breachCallBack }) {
   if (layer.type === 'json' && layer.geojson) {
     if (layerIsBreach(layer)) {
       const layerGroup = L.layerGroup()
+
       const clusterGroup = L.markerClusterGroup({
         iconCreateFunction: clusterIconFunction(layer.layer || 'BREACH_PRIMARY'),
         maxClusterRadius: 40
       })
 
-      clusterGroup.addLayer(createBreachGeoJson(layer, breachCallBack, clusterGroup, layerGroup))
+      clusterGroup.addLayer(createBreachGeoJson(layer, breachCallBack))
 
       layerGroup.addLayer(clusterGroup)
 
@@ -52,7 +53,7 @@ export function createGeoJson ({ geojson, style }) {
   })
 }
 
-export function createBreachGeoJson ({ geojson, layer: layerId, opacity }, callback, clusterGroup, layerGroup) {
+export function createBreachGeoJson ({ geojson, layer: layerId, opacity }, callback) {
   return L.geoJson(geojson, {
     onEachFeature: (_, layer) => {
       const { naam } = layer.feature.properties
@@ -62,13 +63,6 @@ export function createBreachGeoJson ({ geojson, layer: layerId, opacity }, callb
       layer.on('mouseover', (event) => { event.target.openTooltip() })
       layer.on('mouseout', (event) => { event.target.closeTooltip() })
 
-      console.log(layerId)
-
-      if (layer.feature.properties.test) {
-        console.log('ja hallo!')
-      }
-
-      layer.setOpacity(opacity)
       layer.feature.properties.layerType = layerId
       layer.feature.properties.selected
         ? layer.setIcon(redIcon)

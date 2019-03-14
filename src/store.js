@@ -138,7 +138,7 @@ export default new Vuex.Store({
     },
     setLayerUnits (state, layerUnits) {
       state.layerUnits = layerUnits
-    },
+    }
   },
   actions: {
     async loadLayerSetsById (state, { id, initializeMap }) {
@@ -307,9 +307,6 @@ export default new Vuex.Store({
 
           return layer
         })
-
-        console.log([...layers, selectedLayer])
-
 
         return [...layers, selectedLayer]
       } else {
