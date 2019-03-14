@@ -6,6 +6,7 @@ import { loadLayersetById, extractUnit } from './lib/load-layersets'
 import loadGeojson from './lib/load-geojson'
 import { normalizeLayers } from './lib/layer-parser'
 import { probabilityConfig } from './lib/probability-filter'
+import { BREACH_SELECTED } from './lib/liwo-identifiers'
 
 Vue.use(Vuex)
 
@@ -300,9 +301,9 @@ export default new Vuex.Store({
                 ...layer,
                 hide: false,
                 namespace: layer.namespace,
-                layer: 'selected_marker',
-                layerId: 'selected_marker',
-                layerTitle: 'Geselecteerde marker',
+                layer: BREACH_SELECTED,
+                layerId: BREACH_SELECTED,
+                layerTitle: 'Geselecteerde locatie',
                 geojson: {
                   ...layer.geojson,
                   totalFeatures: 1,
