@@ -138,7 +138,7 @@ export default new Vuex.Store({
     },
     setLayerUnits (state, layerUnits) {
       state.layerUnits = layerUnits
-    }
+    },
   },
   actions: {
     async loadLayerSetsById (state, { id, initializeMap }) {
@@ -246,12 +246,12 @@ export default new Vuex.Store({
         ]
       }
     },
-    parsedLayerSet (state, { activeLayerSet }) {
+    async parsedLayerSet (state, { activeLayerSet }) {
       if (!activeLayerSet) {
         return Promise.resolve([])
       }
 
-      return Promise.all(
+      let layers = await Promise.all(
         activeLayerSet.map(async (layer) => {
           if (layer.type === 'json') {
             const geojson = await loadGeojson(layer)
@@ -275,6 +275,50 @@ export default new Vuex.Store({
           return layer
         })
       )
+
+      let selectedLayer = {}
+
+      if (state.activeLayerSetId) {
+        layers = layers.map(layer => {
+          if (layer.type === 'json') {
+            const activeFeature = layer.geojson.features.find(
+              feature => feature.properties.id === state.activeLayerSetId
+            )
+
+            if (activeFeature) {
+              activeFeature.properties.selected = true
+
+              layer.geojson.features = layer.geojson.features.filter(
+                feature => feature.properties.id !== state.activeLayerSetId
+              )
+
+              layer.geojson.totalFeatures = layer.geojson.features.length
+
+              selectedLayer = {
+                ...layer,
+                namespace: layer.namespace,
+                layer: 'selected_marker',
+                layerId: 'selected_marker',
+                layerTitle: 'Geselecteerde marker',
+                geojson: {
+                  ...layer.geojson,
+                  totalFeatures: 1,
+                  features: [activeFeature]
+                }
+              }
+            }
+          }
+
+          return layer
+        })
+
+        console.log([...layers, selectedLayer])
+
+
+        return [...layers, selectedLayer]
+      } else {
+        return layers
+      }
     }
   }
 })

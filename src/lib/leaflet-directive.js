@@ -22,7 +22,11 @@ export default {
     const { mapLayers, callbacks } = value
 
     const mapLayersToDelete = currentMapLayers.reduce((layersToDelete, layer) => {
-      if (!mapLayers.find(l => (l.layerId === layer.layerId))) {
+      const matchedLayer = mapLayers.find(l => (l.layerId === layer.layerId))
+
+      if (!matchedLayer) {
+        layersToDelete.push(layer)
+      } else if (matchedLayer.geojson && matchedLayer.geojson.totalFeatures !== layer.geojson.totalFeatures) {
         layersToDelete.push(layer)
       }
 
@@ -30,7 +34,11 @@ export default {
     }, [])
 
     const mapLayersToAdd = mapLayers.reduce((layersToAdd, layer) => {
-      if (!currentMapLayers.find(l => (l.layerId === layer.layerId))) {
+      const matchedLayer = currentMapLayers.find(l => (l.layerId === layer.layerId))
+
+      if (!matchedLayer) {
+        layersToAdd.push(layer)
+      } else if (matchedLayer.geojson && matchedLayer.geojson.totalFeatures !== layer.geojson.totalFeatures) {
         layersToAdd.push(layer)
       }
 

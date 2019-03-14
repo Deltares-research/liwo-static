@@ -26,7 +26,7 @@ export default function createLayer (layer, { breachCallBack }) {
       const layerGroup = L.layerGroup()
       const clusterGroup = L.markerClusterGroup({
         iconCreateFunction: clusterIconFunction(layer.layer || 'BREACH_PRIMARY'),
-         maxClusterRadius: 40
+        maxClusterRadius: 40
       })
 
       clusterGroup.addLayer(createBreachGeoJson(layer, breachCallBack, clusterGroup, layerGroup))
@@ -58,20 +58,15 @@ export function createBreachGeoJson ({ geojson, layer: layerId, opacity }, callb
       const { naam } = layer.feature.properties
 
       layer.bindTooltip(`${naam}`)
-      layer.on('click', (event) => {
-        if (clusterGroup.hasLayer(event.target)) {
-          event.target.setZIndexOffset(100)
-          clusterGroup.removeLayer(event.target)
-          layerGroup.addLayer(event.target)
-        } else {
-          event.target.setZIndexOffset(0)
-          layerGroup.removeLayer(event.target)
-          clusterGroup.addLayer(event.target)
-        }
-        breachClickHandler(event, callback)
-      })
+      layer.on('click', (event) => breachClickHandler(event, callback))
       layer.on('mouseover', (event) => { event.target.openTooltip() })
       layer.on('mouseout', (event) => { event.target.closeTooltip() })
+
+      console.log(layerId)
+
+      if (layer.feature.properties.test) {
+        console.log('ja hallo!')
+      }
 
       layer.setOpacity(opacity)
       layer.feature.properties.layerType = layerId
@@ -100,11 +95,7 @@ function geoServerURL (namespace) {
 }
 
 function breachClickHandler (event, callback) {
-  const { selected, layerType } = event.target.feature.properties
-
-  selected
-    ? event.target.setIcon(getBreachIcon(layerType))
-    : event.target.setIcon(redIcon)
+  const { selected } = event.target.feature.properties
 
   event.target.feature.properties.selected = !selected
 
