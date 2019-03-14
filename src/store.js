@@ -294,18 +294,20 @@ export default new Vuex.Store({
             if (activeFeature) {
               activeFeature.properties.selected = true
 
+              // remove feature from its current layer
               layer.geojson.features = layer.geojson.features.filter(
                 feature => feature.properties.id !== state.activeLayerSetId
               )
 
               layer.geojson.totalFeatures = layer.geojson.features.length
 
+              // create layer for selected feature
               selectedLayers.push({
                 ...layer,
                 hide: false,
                 namespace: layer.namespace,
-                layer: BREACH_SELECTED,
-                layerId: BREACH_SELECTED,
+                layer: BREACH_SELECTED + activeFeature.properties.selected,
+                layerId: BREACH_SELECTED + activeFeature.properties.selected,
                 layerTitle: 'Geselecteerde locatie',
                 geojson: {
                   ...layer.geojson,
