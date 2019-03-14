@@ -4,7 +4,7 @@ import Vuex from 'vuex'
 import loadBreach from './lib/load-breach'
 import { loadLayersetById, extractUnit } from './lib/load-layersets'
 import loadGeojson from './lib/load-geojson'
-import { normalizeLayers } from './lib/layer-parser'
+import { normalizeLayers, normalizeLayer } from './lib/layer-parser'
 import { probabilityConfig } from './lib/probability-filter'
 
 Vue.use(Vuex)
@@ -30,7 +30,8 @@ export default new Vuex.Store({
     selectedBreaches: [],
     selectedLayerSetIndex: 0,
     visibleBreachLayers: {},
-    layerUnits: undefined
+    layerUnits: undefined,
+    combinedScenario: undefined
   },
   mutations: {
     addBreachLayer (state, { id, breachLayers, breachName }) {
@@ -138,6 +139,12 @@ export default new Vuex.Store({
     },
     setLayerUnits (state, layerUnits) {
       state.layerUnits = layerUnits
+    },
+    setCombinedScenario (state, options) {
+      state.combinedScenario = options
+    },
+    clearCombinedScenario (state, url) {
+      state.combinedScenario = undefined
     }
   },
   actions: {
@@ -172,6 +179,25 @@ export default new Vuex.Store({
       }
 
       commit('toggleSelectedBreach', id)
+    },
+    async loadCombinedScenario ({commit, state}, { liwoIds, band }) {
+      const requestOptions = {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ liwo_ids: liwoIds, band, reducer: 'max' })
+      }
+      const response = await fetch('https://hydro-engine.appspot.com/get_liwo_scenarios', requestOptions)
+        .then(text => text.json())
+
+      // const normalizedLayer = normalizeLayer({
+      //   id: `combined-${liwoIds}`,
+      //   variants: [{map: {namespace: 'Combined'}}],
+      //   legend: {layer: undefined},
+      //   ...response
+      // })
+
+      commit('setCombinedScenario', response)
     }
   },
   getters: {

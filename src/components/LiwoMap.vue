@@ -6,6 +6,7 @@
       callbacks: { breachCallBack, initMapObject },
       config: mapConfig,
       mapLayers: [ ...expandedMapLayers ].reverse(),
+      combinedScenario: combinedScenario
     }"
   ></div>
 </template>
@@ -26,7 +27,8 @@ export default {
     ...mapState([
       'opacityByLayerId',
       'selectedBreaches',
-      'layerUnits'
+      'layerUnits',
+      'combinedScenario'
     ]),
     ...mapGetters([
       'parsedLayerSet',

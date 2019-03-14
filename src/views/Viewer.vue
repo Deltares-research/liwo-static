@@ -43,10 +43,19 @@ export default {
     }
   },
   async mounted () {
+    const {id: _mapId, layerIds, band} = this.$route.params
     const mapId = Number(this.$route.params.id)
+    const liwoIds = layerIds ? layerIds.split(',').map(id => parseInt(id, 10)) : undefined
 
-    this.$store.commit('setMapId', mapId)
-    this.$store.dispatch('loadLayerSetsById', { id: mapId, initializeMap: true })
+    if (mapId) {
+      this.$store.commit('setMapId', mapId)
+      this.$store.dispatch('loadLayerSetsById', { id: mapId, initializeMap: true })
+    }
+
+    if (liwoIds && band) {
+      this.$store.dispatch('loadCombinedScenario', { band, liwoIds })
+    }
+
     this.$store.commit('setPageTitle', PAGE_TITLE)
   },
   computed: {
