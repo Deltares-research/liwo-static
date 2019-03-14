@@ -5,7 +5,7 @@ export default function buildNotifications (layers) {
       .map(layer => layer.geojson.features
         .map(feature => ({
           id: feature.properties.id,
-          notification: feature.properties.cascade,
+          notification: feature.properties.notification,
           layerId: feature.id.replace(/(.+)(\.\d+)/, '$1')
         }))
         .filter(item => item.notification)

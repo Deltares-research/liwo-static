@@ -5,7 +5,6 @@ import Contact from './views/Contact'
 import Home from './views/Home'
 import Maps from './views/Maps'
 import Viewer from './views/Viewer.vue'
-import store from './store'
 
 Vue.use(Router)
 
