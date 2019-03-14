@@ -45,6 +45,7 @@ export default {
     }, [])
 
     mapLayersToAdd
+      .filter(layer => !layer.hide)
       .map(layer => layerFactory(layer, callbacks))
       .forEach(layer => layerGroup.addLayer(layer))
 
@@ -52,7 +53,7 @@ export default {
       .map(layer => leafletLayers.find(
         leafletLayer => (leafletLayer.layerId || leafletLayer.options.layers) === layer.layer
       ))
-      .forEach(leafletLayer => layerGroup.removeLayer(leafletLayer))
+      .forEach(leafletLayer => leafletLayer && layerGroup.removeLayer(leafletLayer))
 
     leafletLayers = layerGroup.getLayers()
     currentMapLayers = mapLayers

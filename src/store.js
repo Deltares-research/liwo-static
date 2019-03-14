@@ -211,7 +211,6 @@ export default new Vuex.Store({
       }
 
       return layers.layers
-        .filter(({ id }) => state.visibleLayerIds.some(visibleId => visibleId === id))
         .map(layer => {
           const variantIndex = state.visibleVariantIndexByLayerId[layer.id]
           return {
@@ -219,6 +218,13 @@ export default new Vuex.Store({
             layerId: layer.id,
             layerTitle: layer.properties.title
           }
+        })
+        .map(layer => {
+          if (!state.visibleLayerIds.some(visibleId => visibleId === layer.layerId)) {
+            layer.hide = true
+          }
+
+          return layer
         })
     },
     layerPanelView ({ selectedBreaches }) {
@@ -292,6 +298,7 @@ export default new Vuex.Store({
 
               selectedLayer = {
                 ...layer,
+                hide: false,
                 namespace: layer.namespace,
                 layer: 'selected_marker',
                 layerId: 'selected_marker',
