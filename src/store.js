@@ -226,12 +226,8 @@ export default new Vuex.Store({
         ? LAYERPANEL_VIEW_BREACHES
         : LAYERPANEL_VIEW_MAPLAYERS
     },
-    panelLayerSets (_, { mapLayers, breachLayers, layerPanelView }) {
-      if (layerPanelView === LAYERPANEL_VIEW_MAPLAYERS) {
-        return mapLayers
-      } else if (layerPanelView === LAYERPANEL_VIEW_BREACHES) {
-        return breachLayers
-      }
+    panelLayerSets (_, { mapLayers, breachLayers }) {
+      return [...mapLayers, ...breachLayers]
     },
     activeLayerSet ({ opacityByLayerId }, { currentMapLayerSet, currentBreachesLayerSet, layerPanelView }) {
       const currentMapLayerSetWithOpacity = currentMapLayerSet
