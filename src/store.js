@@ -306,8 +306,8 @@ export default new Vuex.Store({
                 ...layer,
                 hide: false,
                 namespace: layer.namespace,
-                layer: BREACH_SELECTED + activeFeature.properties.selected,
-                layerId: BREACH_SELECTED + activeFeature.properties.selected,
+                layer: BREACH_SELECTED,
+                layerId: BREACH_SELECTED,
                 layerTitle: 'Geselecteerde locatie',
                 geojson: {
                   ...layer.geojson,
