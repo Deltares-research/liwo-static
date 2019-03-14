@@ -17,6 +17,7 @@ const LAYERPANEL_VIEW_BREACHES = 'breaches_view'
 
 export default new Vuex.Store({
   state: {
+    viewerType: undefined,
     activeLayerSetId: undefined,
     breachLayersById: [],
     breachProbabilityFilterIndex: 0,
@@ -139,6 +140,9 @@ export default new Vuex.Store({
     },
     setLayerUnits (state, layerUnits) {
       state.layerUnits = layerUnits
+    },
+    setViewerType (state, type) {
+      state.viewerType = type
     }
   },
   actions: {
