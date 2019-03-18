@@ -1,5 +1,9 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import get from 'lodash/fp/get'
+import pipe from 'lodash/fp/pipe'
+import first from 'lodash/fp/first'
+import includes from 'lodash/fp/includes'
 
 import loadBreach from './lib/load-breach'
 import { loadLayersetById, extractUnit } from './lib/load-layersets'
@@ -10,6 +14,13 @@ import buildLayersetNotifications from './lib/build-layerset-notifications'
 import stringToHash from './lib/string-to-hash'
 
 Vue.use(Vuex)
+
+const getId = get('id')
+const isTruthy = val => !!val
+const includedIn = includes.convert({rearg: false})
+const getByIndexFrom = arr => index => arr && arr[index]
+const idSameAs = value => pipe([getId, id => id === value])
+const idIncludedIn = collection => pipe([getId, includedIn(collection)])
 
 const BREACHES_PRIMARY_LAYER_ID = 'geo_doorbraaklocaties_primair'
 const BREACHES_REGIONAL_LAYER_ID = 'geo_doorbraaklocaties_regionaal'
@@ -289,27 +300,30 @@ export default new Vuex.Store({
     },
     currentNotifications (state) {
       const { mapId, visibleLayerIds, visibleVariantIndexByLayerId, selectedLayerId, selectedBreaches } = state
+      const getNotificationFrom = get('notification')
+      const getNotificaion = getNotificationFrom
 
       const notificationBreach = state.notifications.breach
       const notificationMap = state.notifications[mapId]
-      const notificationLayers = (notificationMap && notificationMap.layers) || []
-      const visibleNotificationLayers = notificationLayers.filter(layer => visibleLayerIds.indexOf(layer.id) !== -1)
+      const notificationLayers = get('layers', notificationMap) || []
+      const visibleNotificationLayers = notificationLayers.filter(idIncludedIn(visibleLayerIds))
 
       const notificationForLayers = visibleNotificationLayers
-        .filter(layer => layer.id === selectedLayerId)
-        .map(layer => {
-          const variantsIndex = visibleVariantIndexByLayerId[layer.id]
-          const variantsNotification = layer.variants[variantsIndex].notification
-          const layerNotification = layer.notification
-          return variantsNotification || layerNotification
+        .filter(idSameAs(selectedLayerId))
+        .map(({id, variants, notification: layerNotification}) => {
+          const variantsIndex = visibleVariantIndexByLayerId[id]
+          const currentVariant = variants[variantsIndex]
+          return getNotificationFrom(currentVariant) || layerNotification
         })
-        .filter(value => value)
+        .filter(isTruthy)
 
-      const breachNotifications = notificationBreach && selectedBreaches
-        .map(breachId => notificationBreach[breachId].notification)
+      const breachNotifications = selectedBreaches
+        .map(getByIndexFrom(notificationBreach))
+        .map(getNotificaion)
+        .filter(isTruthy)
 
-      const notificationForSelectedLayer = notificationForLayers.length && notificationForLayers[0]
-      const notificationForMap = notificationMap && notificationMap.notification
+      const notificationForSelectedLayer = first(notificationForLayers)
+      const notificationForMap = getNotificationFrom(notificationMap)
 
       let notifications = []
       notifications = notificationForMap ? [notificationForMap] : notifications
