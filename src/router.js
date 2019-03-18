@@ -1,4 +1,5 @@
-import _ from 'lodash'
+import toNumber from 'lodash/toNumber'
+import includes from 'lodash/includes'
 import Vue from 'vue'
 import Router from 'vue-router'
 import About from './views/About'
@@ -40,9 +41,9 @@ const router = new Router({
       },
       beforeEnter: (to, from, next) => {
         // number or NaN
-        let id = _.toNumber(_.get(to, 'params.id'))
+        let id = toNumber(_.get(to, 'params.id'))
         // don't show non-public maps, not secret, just not that relevant for the public
-        if (_.includes(nonPublicViews, id)) {
+        if (includes(nonPublicViews, id)) {
           next('/')
         } else {
           next()
