@@ -316,7 +316,7 @@ export default new Vuex.Store({
       notifications = notificationForSelectedLayer ? [notificationForSelectedLayer] : notifications
       notifications = breachNotifications && breachNotifications.length ? [...breachNotifications] : notifications
 
-      return notifications.map(message => ({message, type: 'warning', id: `${stringToHash(message)}`}))
+      return notifications.map(message => ({message, type: 'warning', id: stringToHash(message)}))
     }
   }
 })
