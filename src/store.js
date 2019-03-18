@@ -30,7 +30,7 @@ export default new Vuex.Store({
     selectedBreaches: [],
     selectedLayerSetIndex: 0,
     visibleBreachLayers: {},
-    layerUnits: undefined
+    layerUnits: {}
   },
   mutations: {
     addBreachLayer (state, { id, breachLayers, breachName }) {
@@ -137,7 +137,7 @@ export default new Vuex.Store({
       this.commit('resetToMapLayers')
     },
     setLayerUnits (state, layerUnits) {
-      state.layerUnits = layerUnits
+      state.layerUnits = {...state.layerUnits, ...layerUnits}
     }
   },
   actions: {
@@ -148,6 +148,7 @@ export default new Vuex.Store({
 
       const layersetById = await loadLayersetById(id)
       const layerSet = normalizeLayers(layersetById.layers)
+
       const layerUnits = layersetById.layers.reduce((acc, layer) => {
         acc[layer.legend.layer] = extractUnit(layer.legend.title)
         return acc
@@ -165,10 +166,17 @@ export default new Vuex.Store({
       if (Object.keys(state.breachLayersById).indexOf(String(id)) === -1) {
         const breach = await loadBreach(id, layerType)
         const breachLayers = normalizeLayers(breach.layers)
+
+        const layerUnits = breachLayers.reduce((acc, layer) => {
+          acc[layer.legend.layer] = extractUnit(layer.legend.title)
+          return acc
+        }, [])
+
         const visibleBreachLayers = breachLayers.map((layer) => layer.id)
 
         commit('addBreachLayer', { id, breachLayers, breachName })
         commit('setVisibleBreachLayers', { breach: id, layers: visibleBreachLayers })
+        commit('setLayerUnits', layerUnits)
       }
 
       commit('toggleSelectedBreach', id)

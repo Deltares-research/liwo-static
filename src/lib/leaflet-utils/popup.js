@@ -10,13 +10,17 @@ export function showLayerInfoPopup ({ map, activeLayer, unit, position, latlng }
     y: position.y,
     width: map._size.x,
     height: map._size.y,
-    layer: activeLayer.layer
+    layer: activeLayer
   })
     .then(data => {
       let value
 
       if (data && data.properties && data.properties.GRAY_INDEX && data.properties.GRAY_INDEX > -999.00) {
         value = data.properties.GRAY_INDEX.toFixed(2)
+      }
+
+      if (data.properties && data.properties[activeLayer]) {
+        value = data.properties[activeLayer]
       }
 
       if (value) {
