@@ -35,6 +35,7 @@ function loadBreachLayer (breachid, layername) {
   return fetch(BREACHES_API_URL_PRIMARY, {
     method: 'POST',
     mode: 'cors',
+    credentials: 'omit',
     headers,
     body: JSON.stringify({
       breachid,
@@ -46,6 +47,8 @@ function loadBreachLayer (breachid, layername) {
     .then(data => ({ ...data[0].layerset[0] }))
     .catch(() => undefined)
 }
+
+fetch("http://tw-160.xtr.deltares.nl/liwo.ws/Tools/FloodImage.asmx/GetScenariosPerBreach", {"credentials":"omit","headers":{"content-type":"application/json"},"referrer":"http://example.com/","referrerPolicy":"no-referrer-when-downgrade","body":"{\"breachid\":66,\"layername\":\"waterdiepte\"}","method":"POST","mode":"cors"});
 
 function loadRegionalBreachLayer (breachid, gid) {
   return fetch(BREACHES_API_URL_REGIONAL, {

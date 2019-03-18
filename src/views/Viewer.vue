@@ -7,6 +7,7 @@
     <layer-panel
       :layerSets="panelLayerSets"
       @open-export="showExport = true"
+      @open-combine="showCombine = true"
     />
     <legend-panel
       v-if="visibleLayerLegend"
@@ -21,6 +22,10 @@
       :map-layers="activeLayerSet"
       @close="showExport = false"
     />
+    <combine-popup
+      v-if="showCombine"
+      @close="showCombine = false"
+    />
   </div>
 </template>
 
@@ -31,6 +36,7 @@ import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
 import LiwoMap from '@/components/LiwoMap'
 import LegendPanel from '@/components/LegendPanel'
+import CombinePopup from '../components/CombinePopup'
 
 const PAGE_TITLE = 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
 
@@ -39,7 +45,8 @@ export default {
     return {
       parsedLayers: [],
       id: 0,
-      showExport: false
+      showExport: false,
+      showCombine: false
     }
   },
   async mounted () {
@@ -98,6 +105,7 @@ export default {
     }
   },
   components: {
+    CombinePopup,
     ExportPopup,
     LayerPanel,
     LegendPanel,

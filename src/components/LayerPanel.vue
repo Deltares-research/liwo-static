@@ -24,14 +24,12 @@
         class="layer-panel__actions"
       >
         <template v-if="viewerType === 'combine'">
-          <button class="layer-panel__action">
-            Comineer
-          </button>
-          <button class="layer-panel__action">
-            Importeren
-          </button>
-          <button class="layer-panel__action">
-            Exporteren
+          <button
+            v-if="selectedBreaches.length"
+            class="layer-panel__action"
+            @click="$emit('open-combine')"
+          >
+            Combineer
           </button>
         </template>
 
@@ -66,7 +64,8 @@ export default {
   },
   computed: {
     ...mapState([
-      'viewerType'
+      'viewerType',
+      'selectedBreaches'
     ])
   },
   methods: {
