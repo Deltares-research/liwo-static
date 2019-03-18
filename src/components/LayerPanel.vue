@@ -13,7 +13,7 @@
       <div class="layer-panel__body">
         <layer-panel-item
           v-for="layerSet in layerSets"
-          :key="layerSet.layerSetTitle"
+          :key="layerSet.id"
           :layers="layerSet.layers"
           :layerId="layerSet.id"
           :title="layerSet.layerSetTitle"

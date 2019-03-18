@@ -299,7 +299,7 @@ export default new Vuex.Store({
             )
 
             if (activeFeatures.length) {
-              selectedLayers = activeFeatures.map(activeFeature => {
+              selectedLayers = [...selectedLayers, ...activeFeatures.map(activeFeature => {
                 activeFeature.properties.selected = true
 
                 // remove feature from its current layer
@@ -323,7 +323,7 @@ export default new Vuex.Store({
                     features: [activeFeature]
                   }
                 }
-              })
+              })]
             }
           }
 
