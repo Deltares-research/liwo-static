@@ -26,16 +26,6 @@
           Voor uitleg over het gebruik en de gebruikershandleiding kunt u terecht op de <a href="https://www.helpdeskwater.nl/onderwerpen/applicaties-modellen/applicaties-per/watermanagement/watermanagement/liwo/">Helpdesk Water</a>. Hier vindt u ook
           contactgegevens voor het aanvragen van LIWO-opleidingen.
         </p>
-
-        <p>
-          Het juist vertalen van beschikbare kaartlagen naar
-          bruikbare informatie voor de voorbereiding op
-          overstromingen vereist specialistische kennis. Deze kennis
-          is beschikbaar bij waterbeheerders. Het wordt daarom
-          aanbevolen om deze kennis te betrekken, zowel bij
-          ruimtelijke adaptatie en de voorbereiding op
-          overstromingen als in hoogwatersituaties.
-        </p>
       </section>
     </div>
   </div>

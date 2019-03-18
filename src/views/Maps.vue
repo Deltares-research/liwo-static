@@ -4,8 +4,7 @@
       <p>
         Dit informatiesysteem bevat kaartlagen voor professionals, die nodig zijn voor de voorbereiding op wateroverlast en
         overstromingen in Nederland. De ruimtelijke informatie is ondergebracht onder het kopje 'Kaarten' en is voor iedereen
-        toegankelijk. Het bevat kaartlagen voor professionals, die nodig zijn voor de voorbereiding op wateroverlast en
-        overstromingen in Nederland. Het gaat hierbij om crisisbeheersing (preparatie en respons) maar het is ook bruikbaar
+        toegankelijk. Het gaat hierbij om crisisbeheersing (preparatie en respons) maar het is ook bruikbaar
         voor ruimtelijke adaptatie. Kaarten worden vanuit het LIWO ook beschikbaar gesteld aan andere systemen voor het
         verhogen van het waterbewustzijn en de versterking van zelfredzaamheid.
       </p>

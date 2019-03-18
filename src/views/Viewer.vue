@@ -165,7 +165,9 @@ export default {
     position: absolute;
     right: 2rem;
     bottom: 2rem;
-    z-index: 1000;
+    z-index: 500;
     box-shadow: var(--shadow);
+    max-height: calc(100% - 220px); /* height of leaflet controlls */
+    overflow-y: auto;
   }
 </style>

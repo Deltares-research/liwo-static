@@ -12,6 +12,7 @@ import { normalizeLayers } from './lib/layer-parser'
 import { probabilityConfig } from './lib/probability-filter'
 import buildLayersetNotifications from './lib/build-layerset-notifications'
 import stringToHash from './lib/string-to-hash'
+import { BREACH_SELECTED } from './lib/liwo-identifiers'
 
 Vue.use(Vuex)
 
@@ -66,14 +67,14 @@ export default new Vuex.Store({
       const breachLayerIds = state.breachLayersById[id].layers.map(layer => layer.id)
 
       if (state.selectedBreaches.indexOf(id) === -1) {
-        state.selectedBreaches = state.selectedBreaches.concat(id)
+        state.selectedBreaches = [id]
         state.visibleLayerIds = state.visibleLayerIds.concat(breachLayerIds[0])
         state.visibleVariantIndexByLayerId = { ...state.visibleVariantIndexByLayerId, [ breachLayerIds[0] ]: 0 }
         state.opacityByLayerId = { ...state.opacityByLayerId, [ state.opacityByLayerId[id] ]: 1 }
         state.activeLayerSetId = id
         state.selectedLayerId = breachLayerIds[0]
       } else {
-        state.selectedBreaches = state.selectedBreaches.filter(breachId => breachId !== id)
+        state.selectedBreaches = []
         state.visibleLayerIds = state.visibleLayerIds.filter(layerId => breachLayerIds.indexOf(layerId) === -1)
         state.visibleVariantIndexByLayerId = { ...state.visibleVariantIndexByLayerId, ...breachLayerIds.reduce((visibleVariants, id) => ({ ...visibleVariants, [ id ]: 0 }), {}) }
         state.activeLayerSetId = state.selectedBreaches[0]
@@ -233,7 +234,6 @@ export default new Vuex.Store({
       }
 
       return layers.layers
-        .filter(({ id }) => state.visibleLayerIds.some(visibleId => visibleId === id))
         .map(layer => {
           const variantIndex = state.visibleVariantIndexByLayerId[layer.id]
           return {
@@ -242,18 +242,23 @@ export default new Vuex.Store({
             layerTitle: layer.properties.title
           }
         })
+        .map(layer => {
+          const isActiveLayer = state.visibleLayerIds.some(visibleId => visibleId === layer.layerId)
+
+          if (!isActiveLayer) {
+            layer.hide = true
+          }
+
+          return layer
+        })
     },
     layerPanelView ({ selectedBreaches }) {
       return selectedBreaches && selectedBreaches.length
         ? LAYERPANEL_VIEW_BREACHES
         : LAYERPANEL_VIEW_MAPLAYERS
     },
-    panelLayerSets (_, { mapLayers, breachLayers, layerPanelView }) {
-      if (layerPanelView === LAYERPANEL_VIEW_MAPLAYERS) {
-        return mapLayers
-      } else if (layerPanelView === LAYERPANEL_VIEW_BREACHES) {
-        return breachLayers
-      }
+    panelLayerSets (_, { mapLayers, breachLayers }) {
+      return [...mapLayers, ...breachLayers]
     },
     activeLayerSet ({ opacityByLayerId }, { currentMapLayerSet, currentBreachesLayerSet, layerPanelView }) {
       const currentMapLayerSetWithOpacity = currentMapLayerSet
@@ -268,12 +273,12 @@ export default new Vuex.Store({
         ]
       }
     },
-    parsedLayerSet (state, { activeLayerSet }) {
+    async parsedLayerSet (state, { activeLayerSet }) {
       if (!activeLayerSet) {
         return Promise.resolve([])
       }
 
-      return Promise.all(
+      let layers = await Promise.all(
         activeLayerSet.map(async (layer) => {
           if (layer.type === 'json') {
             const geojson = await loadGeojson(layer)
@@ -297,6 +302,51 @@ export default new Vuex.Store({
           return layer
         })
       )
+
+      let selectedLayers = []
+
+      // seperate selected markers into its own layer
+      if (state.activeLayerSetId) {
+        layers.map(layer => {
+          if (layer.type === 'json') {
+            const activeFeature = layer.geojson.features.find(
+              feature => state.selectedBreaches.find(id => id === feature.properties.id)
+            )
+
+            if (activeFeature) {
+              activeFeature.properties.selected = true
+
+              // remove feature from its current layer
+              layer.geojson.features = layer.geojson.features.filter(
+                feature => feature.properties.id !== state.activeLayerSetId
+              )
+
+              layer.geojson.totalFeatures = layer.geojson.features.length
+
+              // create layer for selected feature
+              selectedLayers.push({
+                ...layer,
+                hide: false,
+                namespace: layer.namespace,
+                layer: BREACH_SELECTED,
+                layerId: BREACH_SELECTED,
+                layerTitle: 'Geselecteerde locatie',
+                geojson: {
+                  ...layer.geojson,
+                  totalFeatures: 1,
+                  features: [activeFeature]
+                }
+              })
+            }
+          }
+
+          return layer
+        })
+
+        return [...layers, ...selectedLayers]
+      } else {
+        return layers
+      }
     },
     currentNotifications (state) {
       const { mapId, visibleLayerIds, visibleVariantIndexByLayerId, selectedLayerId, selectedBreaches } = state
