@@ -4,7 +4,7 @@
       <app-header :pageTitle="pageTitle || 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'" />
       <div id="content" role="main">
         <!-- main content goes here, based on router view -->
-        <router-view/>
+        <router-view :key="$route.fullPath"/>
       </div>
 
       <footer class="site-footer noindex">

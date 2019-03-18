@@ -52,7 +52,7 @@ export default {
   async mounted () {
     const mapId = Number(this.$route.params.id)
 
-    this.$store.commit('setViewerType', this.$route.query.viewertype)
+    this.$store.commit('setViewerType', this.$route.name === 'combine' ? 'combine' : this.$route.query.viewertype)
     this.$store.commit('setMapId', mapId)
     this.$store.dispatch('loadLayerSetsById', { id: mapId, initializeMap: true })
     this.$store.commit('setPageTitle', PAGE_TITLE)
