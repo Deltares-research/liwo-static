@@ -15,7 +15,7 @@ function mapLayers (layers) {
 export default function buildLayersetNotifications (foo) {
   const {id, notification, layers: _layers} = foo
   const layers = mapLayers(_layers)
-  // const list = [{ id, notification, layers }]
+
   const layerSetById = {
     [id]: {
       notification,

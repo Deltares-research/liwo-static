@@ -288,13 +288,10 @@ export default new Vuex.Store({
       )
     },
     currentNotifications (state) {
-      const mapId = state.mapId
-      const visibleLayerIds = state.visibleLayerIds
-      const visibleVariantIndexByLayerId = state.visibleVariantIndexByLayerId
-      const selectedLayerId = state.selectedLayerId
-      const selectedBreaches = state.selectedBreaches
-      const notificationMap = state.notifications[mapId]
+      const { mapId, visibleLayerIds, visibleVariantIndexByLayerId, selectedLayerId, selectedBreaches } = state
+
       const notificationBreach = state.notifications.breach
+      const notificationMap = state.notifications[mapId]
       const notificationLayers = (notificationMap && notificationMap.layers) || []
       const visibleNotificationLayers = notificationLayers.filter(layer => visibleLayerIds.indexOf(layer.id) !== -1)
 
