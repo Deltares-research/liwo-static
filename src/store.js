@@ -1,14 +1,27 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import get from 'lodash/fp/get'
+import pipe from 'lodash/fp/pipe'
+import first from 'lodash/fp/first'
+import includes from 'lodash/fp/includes'
 
 import loadBreach from './lib/load-breach'
 import { loadLayersetById, extractUnit } from './lib/load-layersets'
 import loadGeojson from './lib/load-geojson'
 import { normalizeLayers } from './lib/layer-parser'
 import { probabilityConfig } from './lib/probability-filter'
+import buildLayersetNotifications from './lib/build-layerset-notifications'
+import stringToHash from './lib/string-to-hash'
 import { BREACH_SELECTED } from './lib/liwo-identifiers'
 
 Vue.use(Vuex)
+
+const getId = get('id')
+const isTruthy = val => !!val
+const includedIn = includes.convert({rearg: false})
+const getByIndexFrom = arr => index => arr && arr[index]
+const idSameAs = value => pipe([getId, id => id === value])
+const idIncludedIn = collection => pipe([getId, includedIn(collection)])
 
 const BREACHES_PRIMARY_LAYER_ID = 'geo_doorbraaklocaties_primair'
 const BREACHES_REGIONAL_LAYER_ID = 'geo_doorbraaklocaties_regionaal'
@@ -31,6 +44,7 @@ export default new Vuex.Store({
     selectedBreaches: [],
     selectedLayerSetIndex: 0,
     visibleBreachLayers: {},
+    notifications: [],
     layerUnits: undefined
   },
   mutations: {
@@ -137,6 +151,12 @@ export default new Vuex.Store({
       state.breachProbabilityFilterIndex = index
       this.commit('resetToMapLayers')
     },
+    setLayerSetNotifications (state, layerSetNotifications) {
+      Vue.set(state, 'notifications', layerSetNotifications)
+    },
+    setBreachNotifications (state, breachNotifications) {
+      state.notifications = Object.assign(state.notifications, breachNotifications)
+    },
     setLayerUnits (state, layerUnits) {
       state.layerUnits = layerUnits
     }
@@ -149,6 +169,7 @@ export default new Vuex.Store({
 
       const layersetById = await loadLayersetById(id)
       const layerSet = normalizeLayers(layersetById.layers)
+      const notifications = buildLayersetNotifications(layersetById)
       const layerUnits = layersetById.layers.reduce((acc, layer) => {
         acc[layer.legend.layer] = extractUnit(layer.legend.title)
         return acc
@@ -157,6 +178,7 @@ export default new Vuex.Store({
       state.commit('setLayerSetById', { id, layerSet })
       state.commit('setPageTitle', layersetById.title)
       state.commit('setLayerUnits', layerUnits)
+      state.commit('setLayerSetNotifications', notifications)
 
       if (initializeMap) {
         state.commit('initToMapLayers', id)
@@ -325,6 +347,40 @@ export default new Vuex.Store({
       } else {
         return layers
       }
+    },
+    currentNotifications (state) {
+      const { mapId, visibleLayerIds, visibleVariantIndexByLayerId, selectedLayerId, selectedBreaches } = state
+      const getNotificationFrom = get('notification')
+      const getNotificaion = getNotificationFrom
+
+      const notificationBreach = state.notifications.breach
+      const notificationMap = state.notifications[mapId]
+      const notificationLayers = get('layers', notificationMap) || []
+      const visibleNotificationLayers = notificationLayers.filter(idIncludedIn(visibleLayerIds))
+
+      const notificationForLayers = visibleNotificationLayers
+        .filter(idSameAs(selectedLayerId))
+        .map(({id, variants, notification: layerNotification}) => {
+          const variantsIndex = visibleVariantIndexByLayerId[id]
+          const currentVariant = variants[variantsIndex]
+          return getNotificationFrom(currentVariant) || layerNotification
+        })
+        .filter(isTruthy)
+
+      const breachNotifications = selectedBreaches
+        .map(getByIndexFrom(notificationBreach))
+        .map(getNotificaion)
+        .filter(isTruthy)
+
+      const notificationForSelectedLayer = first(notificationForLayers)
+      const notificationForMap = getNotificationFrom(notificationMap)
+
+      let notifications = []
+      notifications = notificationForMap ? [notificationForMap] : notifications
+      notifications = notificationForSelectedLayer ? [notificationForSelectedLayer] : notifications
+      notifications = breachNotifications && breachNotifications.length ? [...breachNotifications] : notifications
+
+      return notifications.map(message => ({message, type: 'warning', id: stringToHash(message)}))
     }
   }
 })
