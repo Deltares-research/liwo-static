@@ -40,7 +40,7 @@ const router = new Router({
       component: Viewer,
       meta: {
         title: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
-      },
+      }
     },
     {
       path: '/about',

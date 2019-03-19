@@ -1,5 +1,7 @@
 // eslint-disable-next-line
 
+import { EPSG_28992, EPSG_3857 } from './lib/leaflet-utils/projections'
+
 // These variable names are global and should be defined by loading webconfig.js
 const globals = [
   'WEBSERVICE_URL',
@@ -50,13 +52,22 @@ const services = {
 const attribution = '&copy <a href="http://www.pdok.nl">PDOK</a>'
 
 // The default zoom level
-const zoom = 3
+const zoom = {
+  [EPSG_28992]: 3,
+  [EPSG_3857]: 8
+}
 
 // This is the zoom limit of the map
-const maxZoom = 12
+const maxZoom = {
+  [EPSG_28992]: 12,
+  [EPSG_3857]: 20
+}
 
 // The maximum zoom of the map
-const minZoom = 2
+const minZoom = {
+  [EPSG_28992]: 2,
+  [EPSG_3857]: 7
+}
 
 // This is the default center of the map
 const center = [52.0, 5.3]
@@ -65,18 +76,36 @@ const center = [52.0, 5.3]
 const tileLayers = [
   {
     title: 'Topografische Kaart',
-    url: 'https://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png',
-    tms: true
+    [EPSG_28992]: {
+      url: 'https://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png',
+      tms: true
+    },
+    [EPSG_3857]: {
+      url: 'https://geodata.nationaalgeoregister.nl/tiles/service/wmts/brtachtergrondkaart/EPSG:3857/{z}/{x}/{y}.png',
+      tms: true
+    }
   },
   {
     title: 'Satelietbeeld',
-    url: 'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/tms/1.0.0/2016_ortho25/EPSG:28992/{z}/{x}/{y}.png',
-    tms: true
+    [EPSG_28992]: {
+      url: 'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/tms/1.0.0/2016_ortho25/EPSG:28992/{z}/{x}/{y}.png',
+      tms: true
+    },
+    [EPSG_3857]: {
+      url: 'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/Actueel_ortho25/EPSG:3857/{z}/{x}/{y}.png',
+      tms: true
+    }
   },
   {
     title: 'Geen Achtergrondkaart',
-    url: '',
-    tms: true
+    [EPSG_28992]: {
+      url: '',
+      tms: true
+    },
+    [EPSG_3857]: {
+      url: '',
+      tms: true
+    }
   }
 ]
 

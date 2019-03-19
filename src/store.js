@@ -4,6 +4,7 @@ import Vuex from 'vuex'
 import loadBreach from './lib/load-breach'
 import { loadLayersetById, extractUnit } from './lib/load-layersets'
 import loadGeojson from './lib/load-geojson'
+import loadCombinedScenario from './lib/load-combined-scenario'
 import { normalizeLayers } from './lib/layer-parser'
 import { probabilityConfig } from './lib/probability-filter'
 import { BREACH_SELECTED } from './lib/liwo-identifiers'
@@ -32,7 +33,8 @@ export default new Vuex.Store({
     selectedBreaches: [],
     selectedLayerSetIndex: 0,
     visibleBreachLayers: {},
-    layerUnits: undefined
+    layerUnits: undefined,
+    combinedScenario: undefined
   },
   mutations: {
     addBreachLayer (state, { id, breachLayers, breachName }) {
@@ -146,6 +148,12 @@ export default new Vuex.Store({
     },
     setViewerType (state, type) {
       state.viewerType = type
+    },
+    setCombinedScenario (state, options) {
+      state.combinedScenario = options
+    },
+    clearCombinedScenario (state, url) {
+      state.combinedScenario = undefined
     }
   },
   actions: {
@@ -180,6 +188,10 @@ export default new Vuex.Store({
       }
 
       commit('toggleSelectedBreach', id)
+    },
+    async loadCombinedScenario ({commit, state}, { liwoIds, band }) {
+      const combinedScenario = await loadCombinedScenario({ liwoIds, band })
+      commit('setCombinedScenario', combinedScenario)
     }
   },
   getters: {

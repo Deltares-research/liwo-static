@@ -2,6 +2,7 @@
   <div class="viewer">
     <liwo-map
       :layers="activeLayerSet"
+      :projection="projection"
       @initMap="setMapObject"
     />
     <layer-panel
@@ -41,6 +42,7 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex'
+import isNumber from 'lodash/fp/isNumber'
 
 import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
@@ -50,7 +52,13 @@ import CombinePopup from '@/components/CombinePopup'
 import ExportCombinePopup from '@/components/ExportCombinePopUp'
 import ImportCombinePopup from '@/components/ImportCombinePopUp'
 
+import { EPSG_28992, EPSG_3857 } from '@/lib/leaflet-utils/projections'
+import { isTruthy, includedIn, notEmpty } from '../lib/utils'
+
 const PAGE_TITLE = 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
+const bands = ['waterdepth']
+
+const includedInBands = includedIn(bands)
 
 export default {
   components: {
@@ -69,15 +77,27 @@ export default {
       showExport: false,
       showCombine: false,
       showExportCombine: false,
-      showImportCombine: false
+      showImportCombine: false,
+      showExport: false,
+      liwoIds: [],
+      band: null,
+      projection: this.$route.name === 'combine'
+        ? EPSG_3857
+        : EPSG_28992
     }
   },
   async mounted () {
-    const mapId = Number(this.$route.params.id)
+    const {id: _mapId, layerIds, band} = this.$route.params
+    const mapId = Number(_mapId)
+    this.liwoIds = layerIds ? layerIds.split(',').map(id => parseInt(id, 10)) : []
+    this.band = band
+
+    if (mapId) {
+      this.$store.commit('setMapId', mapId)
+      this.$store.dispatch('loadLayerSetsById', { id: mapId, initializeMap: true })
+    }
 
     this.$store.commit('setViewerType', this.$route.name)
-    this.$store.commit('setMapId', mapId)
-    this.$store.dispatch('loadLayerSetsById', { id: mapId, initializeMap: true })
     this.$store.commit('setPageTitle', PAGE_TITLE)
   },
   computed: {
@@ -93,6 +113,17 @@ export default {
       'activeLayerSet',
       'panelLayerSets'
     ]),
+    validLiwoIds () {
+      return notEmpty(this.liwoIds) && this.liwoIds
+        .map(isNumber)
+        .every(isTruthy)
+    },
+    validBand () {
+      return includedInBands(this.band)
+    },
+    combinedSenarioCanBeLoaded () {
+      return this.validLiwoIds && this.validBand
+    },
     selectedLayer () {
       if (!this.panelLayerSets) {
         return
@@ -119,6 +150,13 @@ export default {
       }
     }
   },
+  watch: {
+    combinedSenarioCanBeLoaded (boolean) {
+      if (boolean) {
+        this.loadCombinedScenarios()
+      }
+    }
+  },
   methods: {
     setVisibleVariantIdForSelectedlayer (index) {
       this.$store.commit('setVisibleVariantIndexForLayerId', { index, layerId: this.selectedLayerId })
@@ -126,6 +164,9 @@ export default {
     setMapObject (mapObject) {
       this.mapObject = mapObject
       console.log('CRS', mapObject.options.crs.scale())
+    },
+    loadCombinedScenarios () {
+      this.$store.dispatch('loadCombinedScenario', { band: this.band, liwoIds: this.liwoIds })
     }
   }
 }

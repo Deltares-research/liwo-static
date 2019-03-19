@@ -1,19 +1,23 @@
 import L from '@/lib/leaflet-utils/leaf'
 
 import '@/lib/leaflet-hack'
-import rdConfig from '@/lib/rijksdriehoek.config'
 import mapConfig from '@/map.config'
+import { EPSG_3857 } from '../../lib/leaflet-utils/projections'
+import createCrs from '../../lib/leaflet-utils/create-crs'
 
 const INITIAL_BASELAYER = mapConfig.tileLayers[0].title
 
 export default function (el, config) {
   const tileLayerOptions = baseLayerOptions(config)
   const baseLayers = createBaseLayers(tileLayerOptions)
-  const map = L.map(el, { ...config, crs: createCrs(), layers: [ baseLayers[INITIAL_BASELAYER] ] })
+  const map = L.map(el, {
+    ...config,
+    crs: createCrs(config.projection),
+    layers: [ baseLayers[INITIAL_BASELAYER] ]
+  })
 
   // When we change the baselayer we want it to be in the back
   map.on('baselayerchange', (e) => e.layer.bringToBack())
-
   // map.addLayer(baseLayers[INITIAL_BASELAYER])
   map.setZoom(config.zoom || mapConfig.zoom)
 
@@ -27,31 +31,21 @@ export default function (el, config) {
   return map
 }
 
-function createCrs () {
-  return new L.Proj.CRS(
-    rdConfig.crsType,
-    rdConfig.proj,
-    {
-      resolutions: rdConfig.resolutions,
-      bounds: L.bounds(rdConfig.bounds),
-      origin: rdConfig.origin
-    }
-  )
-}
-
 function createBaseLayers (options) {
   return mapConfig.tileLayers.reduce((baseLayers, layer) => ({
-    ...baseLayers, [ layer.title ]: L.tileLayer(layer.url, options)
+    ...baseLayers, [ layer.title ]: L.tileLayer(layer[options.projection].url, options)
   }), {})
 }
 
 function baseLayerOptions (config) {
+  const tms = config.baseLayer.tms || mapConfig.baseLayer[config.projection].tms
   return {
     attribution: config.attribution || mapConfig.attribution,
-    maxZoom: config.maxZoom || mapConfig.maxZoom,
-    minZoom: config.minZoom || mapConfig.minZoom,
-    tms: config.baseLayer.tms || mapConfig.baseLayer.tms,
-    continuousWorld: config.continuousWorld || mapConfig.continuousWorld
+    maxZoom: config.maxZoom || mapConfig.maxZoom[config.projection],
+    minZoom: config.minZoom || mapConfig.minZoom[config.projection],
+    tms: config.projection === EPSG_3857 ? undefined : tms,
+    continuousWorld: config.continuousWorld || mapConfig.continuousWorld,
+    projection: config.projection
   }
 }
 

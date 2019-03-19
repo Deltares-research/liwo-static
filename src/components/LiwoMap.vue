@@ -15,8 +15,15 @@ import { mapState, mapGetters } from 'vuex'
 
 import createMapConfig from '@/lib/leaflet-utils/mapconfig-factory'
 import { showLayerInfoPopup } from '@/lib/leaflet-utils/popup'
+import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
 
 export default {
+  props: {
+    projection: {
+      type: String,
+      default: EPSG_28992
+    }
+  },
   data () {
     return {
       expandedMapLayers: undefined
@@ -26,7 +33,8 @@ export default {
     ...mapState([
       'opacityByLayerId',
       'selectedBreaches',
-      'layerUnits'
+      'layerUnits',
+      'combinedScenario'
     ]),
     ...mapGetters([
       'parsedLayerSet',
@@ -34,7 +42,9 @@ export default {
     ])
   },
   created () {
-    this.mapConfig = createMapConfig()
+    this.mapConfig = createMapConfig({
+      projection: this.projection
+    })
   },
   mounted () {
     this.mapRef = this.$refs.liwoMap
@@ -68,8 +78,14 @@ export default {
       parsedLayerSet
         .then(
           (layers) => {
-            this.expandedMapLayers = Object.freeze(layers)
+            const combinedScenarioArr = this.combinedScenario ? [this.combinedScenario] : []
+            const allLayers = [...layers, ...combinedScenarioArr]
+            this.expandedMapLayers = Object.freeze(allLayers)
           })
+    },
+    combinedScenario (combinedScenario) {
+      if (!combinedScenario) return
+      this.expandedMapLayers = Object.freeze([...this.expandedMapLayers, combinedScenario])
     }
   }
 }
