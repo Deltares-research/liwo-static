@@ -55,6 +55,8 @@ import ImportCombinePopup from '@/components/ImportCombinePopUp'
 import { EPSG_28992, EPSG_3857 } from '@/lib/leaflet-utils/projections'
 import { isTruthy, includedIn, notEmpty } from '../lib/utils'
 
+const COMBINE = 'combine'
+const COMBINED = 'combined'
 const PAGE_TITLE = 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
 const bands = ['waterdepth']
 
@@ -81,26 +83,23 @@ export default {
       showExport: false,
       liwoIds: [],
       band: null,
-      projection: this.$route.name === 'combine'
+      projection: this.$route.name === COMBINED
         ? EPSG_3857
         : EPSG_28992
     }
   },
   async mounted () {
     const {id: _mapId, layerIds, band} = this.$route.params
-    const mapId = Number(_mapId)
+    const routeName = this.$route.name
+    let mapId = null
+
     this.liwoIds = layerIds ? layerIds.split(',').map(id => parseInt(id, 10)) : []
     this.band = band
 
-    if (mapId) {
-      this.$store.commit('setMapId', mapId)
-      this.$store.dispatch('loadLayerSetsById', { id: mapId, initializeMap: true })
-    }
-
-    this.$store.commit('setViewerType', this.$route.name)
+    this.$store.commit('setViewerType', routeName)
     this.$store.commit('setPageTitle', PAGE_TITLE)
 
-    if (this.viewerType === 'combine') {
+    if (this.viewerType === COMBINE) {
       // watch selected variants and update route
       this.$store.watch(
         (state, getters) => getters.selectedVariants,
@@ -109,7 +108,7 @@ export default {
             const { id, band } = this.$route.params
 
             this.$router.replace({
-              name: 'combine',
+              name: COMBINE,
               params: {
                 id,
                 layerIds: ids.join(','),
@@ -119,6 +118,16 @@ export default {
           }
         }
       )
+      mapId = 33
+    } else if (this.viewerType === COMBINED) {
+      mapId = 34
+    } else {
+      mapId = Number(_mapId)
+    }
+
+    if (mapId) {
+      this.$store.commit('setMapId', mapId)
+      this.$store.dispatch('loadLayerSetsById', { id: mapId, initializeMap: true })
     }
   },
   computed: {
@@ -169,7 +178,7 @@ export default {
         ...this.selectedLayer.legend,
         layerType: this.selectedLayer.variants[0].type
       }
-    }
+    },
   },
   watch: {
     combinedSenarioCanBeLoaded (boolean) {

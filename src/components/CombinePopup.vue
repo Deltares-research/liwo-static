@@ -9,10 +9,12 @@
 
         <footer class="control-group combine-popup__footer">
           <div class="controls">
-            <router-link
-              :to="path"
+            <a
+              :href="`/#${path}`"
               class="btn primary"
-            >Combineren</router-link>
+              target="_blank"
+              rel="noopener"
+            >Combineren</a>
             <button
               type="button"
               class="btn secondary"

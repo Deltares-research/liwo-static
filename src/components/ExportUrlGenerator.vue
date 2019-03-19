@@ -50,7 +50,7 @@ export default {
       const { id } = this.$route.params
       const commaSeperatedIds = this.selectedVariants.join(',')
 
-      return `/combine/${id}/${commaSeperatedIds}/${this.selected}`
+      return `/combined/${commaSeperatedIds}/${this.selected}`
     }
   },
   mounted () {
