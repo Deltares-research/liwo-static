@@ -22,6 +22,8 @@
           <div class="controls">
             <button
               class="btn primary"
+              type="button"
+              @click="onSubmit"
             >
               Importeren
             </button>
@@ -51,6 +53,18 @@ export default {
   data () {
     return {
       url: ''
+    }
+  },
+  methods: {
+    onSubmit () {
+      const url = new URL(this.url)
+      const path = url.hash ? url.hash.split('#')[1] : url.path
+      const parsedUrl = this.$router.match(path)
+
+      if (parsedUrl.params.layerIds) {
+        const layerIds = parsedUrl.params.layerIds.split(',')
+        this.$store.dispatch('setActiveLayersFromVariantIds', layerIds)
+      }
     }
   }
 }
