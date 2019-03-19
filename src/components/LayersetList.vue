@@ -6,13 +6,15 @@
         v-for="item in items"
         :key="item.id"
       >
-        <router-link :to="{ name: 'viewer', params: {id: item.id} }">{{ item.name }}</router-link>
+        <router-link :to="{ name: getName(item.id), params: {id: item.id} }">{{ item.name }}</router-link>
       </li>
     </ul>
   </section>
 </template>
 
 <script>
+import { getRouteNameByLayerSet } from '@/lib/layer-set-route-mapping'
+
 export default {
   props: {
     title: {
@@ -24,6 +26,11 @@ export default {
       validator (items) {
         return items.every(item => (item.name !== undefined && item.id !== undefined))
       }
+    }
+  },
+  methods: {
+    getName (id) {
+      return getRouteNameByLayerSet(id)
     }
   }
 }

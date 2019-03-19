@@ -65,6 +65,7 @@ import ImportCombinePopup from '@/components/ImportCombinePopUp'
 import NotificationBar from '@/components/NotificationBar.vue'
 
 import { EPSG_28992, EPSG_3857 } from '@/lib/leaflet-utils/projections'
+import { getFirstLayerSetForRoute } from '../lib/layer-set-route-mapping'
 import { isTruthy, includedIn, notEmpty, notNaN } from '../lib/utils'
 
 const COMBINE = 'combine'
@@ -103,7 +104,7 @@ export default {
   async mounted () {
     const {id: _mapId, layerIds, band} = this.$route.params
     const routeName = this.$route.name
-    let mapId = null
+    const mapId = Number(getFirstLayerSetForRoute(this.$route.name, _mapId))
 
     this.liwoIds = layerIds ? layerIds.split(',').map(id => parseInt(id, 10)) : []
     this.band = band
@@ -130,11 +131,6 @@ export default {
           }
         }
       )
-      mapId = 33
-    } else if (this.viewerType === COMBINED) {
-      mapId = 34
-    } else {
-      mapId = Number(_mapId)
     }
 
     if (mapId) {
