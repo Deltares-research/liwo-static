@@ -27,20 +27,27 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex'
+import isNumber from 'lodash/fp/isNumber'
 
 import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
 import LiwoMap from '@/components/LiwoMap'
 import LegendPanel from '@/components/LegendPanel'
 import { EPSG_28992, EPSG_3857 } from '@/lib/leaflet-utils/projections'
+import { isTruthy, includedIn, notEmpty } from '../lib/utils'
 
 const PAGE_TITLE = 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
+const bands = ['waterdepth']
+
+const includedInBands = includedIn(bands)
 
 export default {
   data () {
     return {
       parsedLayers: [],
       id: 0,
+      liwoIds: [],
+      band: null,
       showExport: false,
       projection: this.$route.name === 'combined'
         ? EPSG_3857
@@ -50,15 +57,12 @@ export default {
   async mounted () {
     const {id: _mapId, layerIds, band} = this.$route.params
     const mapId = Number(_mapId)
-    const liwoIds = layerIds ? layerIds.split(',').map(id => parseInt(id, 10)) : undefined
+    this.liwoIds = layerIds ? layerIds.split(',').map(id => parseInt(id, 10)) : []
+    this.band = band
 
     if (mapId) {
       this.$store.commit('setMapId', mapId)
       this.$store.dispatch('loadLayerSetsById', { id: mapId, initializeMap: true })
-    }
-
-    if (liwoIds && band) {
-      this.$store.dispatch('loadCombinedScenario', { band, liwoIds })
     }
 
     this.$store.commit('setPageTitle', PAGE_TITLE)
@@ -75,6 +79,17 @@ export default {
       'activeLayerSet',
       'panelLayerSets'
     ]),
+    validLiwoIds () {
+      return notEmpty(this.liwoIds) && this.liwoIds
+        .map(isNumber)
+        .every(isTruthy)
+    },
+    validBand () {
+      return includedInBands(this.band)
+    },
+    combinedSenarioCanBeLoaded () {
+      return this.validLiwoIds && this.validBand
+    },
     selectedLayer () {
       if (!this.panelLayerSets) {
         return
@@ -98,6 +113,13 @@ export default {
       return {
         ...this.selectedLayer.legend,
         layerType: this.selectedLayer.variants[0].type
+      }
+    }
+  },
+  watch: {
+    combinedSenarioCanBeLoaded (boolean) {
+      if (boolean) {
+        this.$store.dispatch('loadCombinedScenario', { band: this.band, liwoIds: this.liwoIds })
       }
     }
   },

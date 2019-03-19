@@ -35,7 +35,7 @@ const router = new Router({
       }
     },
     {
-      path: '/combined/:id/:band?/:layerIds?',
+      path: '/combined/:id/:layerIds?/:band?',
       name: 'combined',
       component: Viewer,
       meta: {
