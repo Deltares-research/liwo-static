@@ -182,15 +182,15 @@ export default new Vuex.Store({
       commit('toggleSelectedBreach', id)
     },
     async setActiveLayersFromVariantIds ({ commit, getters }, ids) {
-      await Promise.all(ids.map(id =>
-        // TODO: add url with the right endpoint
-        fetch('url' + id)
-          .then(res => res.json())
-          .then(data => data.id)
-      ))
-        .then(ids => {
-          ids.forEach(id => commit('toggleSelectedBreach', id))
-        })
+      // await Promise.all(ids.map(id =>
+      //   // TODO: add url with the right endpoint
+      //   fetch('url' + id)
+      //     .then(res => res.json())
+      //     .then(data => data.id)
+      // ))
+      //   .then(ids => {
+      //     ids.forEach(id => commit('toggleSelectedBreach', id))
+      //   })
     }
   },
   getters: {
