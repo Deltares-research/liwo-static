@@ -1,18 +1,31 @@
 <template>
   <pop-up
-    title="Selectie combineren"
+    title="Selectie exporteren"
     @close="$emit('close')"
   >
     <form class="combine-popup__form">
       <fieldset>
         <export-url-generator v-model="path"/>
 
+        <div class="control-group">
+          <label class="control-label" for="url">URL</label>
+          <div class="controls">
+            <input
+              class="block"
+              id="url"
+              type="text"
+              name="url"
+              :value="url"
+              ref="urlTextField"
+              readonly
+              @focus="selectUrl"
+              @click="selectUrl"
+            >
+          </div>
+        </div>
+
         <footer class="control-group combine-popup__footer">
           <div class="controls">
-            <router-link
-              :to="path"
-              class="btn primary"
-            >Combineren</router-link>
             <button
               type="button"
               class="btn secondary"
@@ -23,7 +36,7 @@
           </div>
         </footer>
       </fieldset>
-    </form>
+  </form>
   </pop-up>
 </template>
 
@@ -39,6 +52,16 @@ export default {
   data () {
     return {
       path: ''
+    }
+  },
+  computed: {
+    url () {
+      return `${location.origin}${this.path}`
+    }
+  },
+  methods: {
+    selectUrl () {
+      this.$refs.urlTextField.select()
     }
   }
 }

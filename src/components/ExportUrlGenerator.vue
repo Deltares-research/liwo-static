@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import PopUp from './PopUp'
 
 export default {
@@ -39,17 +39,29 @@ export default {
   },
   watch: {
     selected () {
-      console.log('change')
       this.$emit('input', this.path)
     }
   },
   computed: {
     ...mapState([
-      'selectedBreaches'
+      'selectedBreaches',
+      'visibleVariantIndexByLayerId'
+    ]),
+    ...mapGetters([
+      'panelLayerSets'
     ]),
     path () {
       const { id } = this.$route.params
-      const commaSeperatedIds = this.selectedBreaches.length ? this.selectedBreaches.join(',') : ''
+      const variantIds = this.panelLayerSets.reduce((acc, layerSet) => {
+        const isSelected = this.selectedBreaches.includes(layerSet.id)
+
+        if (isSelected) {
+          const layer = layerSet.layers[0]
+          const selectedIndex = this.visibleVariantIndexByLayerId[layer.id]
+          const selectedVariant = layer.variants[selectedIndex]
+        }
+      })
+      const commaSeperatedIds = 'variantids' || variantIds.join(',')
 
       return `/combine/${id}/${this.selected}/${commaSeperatedIds}`
     }

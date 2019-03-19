@@ -1,18 +1,30 @@
 <template>
   <pop-up
-    title="Selectie combineren"
+    title="Selectie importeren"
     @close="$emit('close')"
   >
     <form class="combine-popup__form">
       <fieldset>
-        <export-url-generator v-model="path"/>
+        <div class="control-group">
+          <label class="control-label" for="url">URL</label>
+          <div class="controls">
+            <input
+              class="block"
+              id="url"
+              type="text"
+              name="url"
+              v-model="url"
+            >
+          </div>
+        </div>
 
         <footer class="control-group combine-popup__footer">
           <div class="controls">
-            <router-link
-              :to="path"
+            <button
               class="btn primary"
-            >Combineren</router-link>
+            >
+              Importeren
+            </button>
             <button
               type="button"
               class="btn secondary"
@@ -38,7 +50,7 @@ export default {
   },
   data () {
     return {
-      path: ''
+      url: ''
     }
   }
 }

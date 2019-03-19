@@ -8,6 +8,8 @@
       :layerSets="panelLayerSets"
       @open-export="showExport = true"
       @open-combine="showCombine = true"
+      @open-export-combine="showExportCombine = true"
+      @open-import-combine="showImportCombine = true"
     />
     <legend-panel
       v-if="visibleLayerLegend"
@@ -26,6 +28,14 @@
       v-if="showCombine"
       @close="showCombine = false"
     />
+    <export-combine-popup
+      v-if="showExportCombine"
+      @close="showExportCombine = false"
+    />
+    <import-combine-popup
+      v-if="showImportCombine"
+      @close="showImportCombine = false"
+    />
   </div>
 </template>
 
@@ -36,17 +46,30 @@ import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
 import LiwoMap from '@/components/LiwoMap'
 import LegendPanel from '@/components/LegendPanel'
-import CombinePopup from '../components/CombinePopup'
+import CombinePopup from '@/components/CombinePopup'
+import ExportCombinePopup from '@/components/ExportCombinePopUp'
+import ImportCombinePopup from '@/components/ImportCombinePopUp'
 
 const PAGE_TITLE = 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
 
 export default {
+  components: {
+    CombinePopup,
+    ExportCombinePopup,
+    ImportCombinePopup,
+    ExportPopup,
+    LayerPanel,
+    LegendPanel,
+    LiwoMap
+  },
   data () {
     return {
       parsedLayers: [],
       id: 0,
       showExport: false,
-      showCombine: false
+      showCombine: false,
+      showExportCombine: false,
+      showImportCombine: false
     }
   },
   async mounted () {
@@ -103,13 +126,6 @@ export default {
       this.mapObject = mapObject
       console.log('CRS', mapObject.options.crs.scale())
     }
-  },
-  components: {
-    CombinePopup,
-    ExportPopup,
-    LayerPanel,
-    LegendPanel,
-    LiwoMap
   }
 }
 </script>

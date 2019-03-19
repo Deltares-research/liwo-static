@@ -271,7 +271,7 @@ export default new Vuex.Store({
             if (layer.layer === BREACHES_PRIMARY_LAYER_ID || layer.layer === BREACHES_REGIONAL_LAYER_ID) {
               const filterIndex = state.breachProbabilityFilterIndex
               const probabilityFilter = probabilityConfig[filterIndex]
-
+              
               geojson.features = geojson.features
                 .filter(feature => (filterIndex === 0 || feature.properties[probabilityFilter.identifier] > 0))
 
