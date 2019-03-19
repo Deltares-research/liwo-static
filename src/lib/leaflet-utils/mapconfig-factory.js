@@ -1,30 +1,23 @@
 import L from '@/lib/leaflet-utils/leaf'
 
 import mapConfig from '../../map.config'
-import rdConfig from '@/lib/rijksdriehoek.config.js'
+import createCrs from '../leaflet-utils/create-crs'
 
-export default function createMapConfig () {
+export default function createMapConfig ({projection}) {
   return {
+    projection,
     continuousWorld: true,
-    crs: createCrs(),
+    crs: createCrs(projection),
     zoomControl: false,
-    zoom: mapConfig.zoom,
-    maxZoom: mapConfig.maxZoom,
-    minZoom: mapConfig.minZoom,
+    zoom: mapConfig.zoom[projection],
+    maxZoom: mapConfig.maxZoom[projection],
+    minZoom: mapConfig.minZoom[projection],
     center: L.latLng(...mapConfig.center),
     attribution: mapConfig.attribution,
     baseLayer: {
-      tms: mapConfig.tileLayers[0].tms,
+      tms: mapConfig.tileLayers[0][projection].tms,
       tileLayers: mapConfig.tileLayers,
-      url: mapConfig.tileLayers[0].url
+      url: mapConfig.tileLayers[0][projection].url
     }
   }
-}
-
-export function createCrs () {
-  return new L.Proj.CRS(rdConfig.crsType, rdConfig.proj, {
-    resolutions: rdConfig.resolutions,
-    bounds: L.bounds(rdConfig.bounds),
-    origin: rdConfig.origin
-  })
 }

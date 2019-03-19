@@ -4,7 +4,7 @@ import Vuex from 'vuex'
 import loadBreach from './lib/load-breach'
 import { loadLayersetById, extractUnit } from './lib/load-layersets'
 import loadGeojson from './lib/load-geojson'
-import { normalizeLayers, normalizeLayer } from './lib/layer-parser'
+import { normalizeLayers } from './lib/layer-parser'
 import { probabilityConfig } from './lib/probability-filter'
 
 Vue.use(Vuex)

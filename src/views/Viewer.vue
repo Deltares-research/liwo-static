@@ -2,6 +2,7 @@
   <div class="viewer">
     <liwo-map
       :layers="activeLayerSet"
+      :projection="projection"
       @initMap="setMapObject"
     />
     <layer-panel
@@ -31,6 +32,7 @@ import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
 import LiwoMap from '@/components/LiwoMap'
 import LegendPanel from '@/components/LegendPanel'
+import { EPSG_28992, EPSG_3857 } from '@/lib/leaflet-utils/projections'
 
 const PAGE_TITLE = 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
 
@@ -39,12 +41,15 @@ export default {
     return {
       parsedLayers: [],
       id: 0,
-      showExport: false
+      showExport: false,
+      projection: this.$route.name === 'combined'
+        ? EPSG_3857
+        : EPSG_28992
     }
   },
   async mounted () {
     const {id: _mapId, layerIds, band} = this.$route.params
-    const mapId = Number(this.$route.params.id)
+    const mapId = Number(_mapId)
     const liwoIds = layerIds ? layerIds.split(',').map(id => parseInt(id, 10)) : undefined
 
     if (mapId) {
