@@ -119,7 +119,7 @@ export default {
   watch: {
     combinedSenarioCanBeLoaded (boolean) {
       if (boolean) {
-        this.$store.dispatch('loadCombinedScenario', { band: this.band, liwoIds: this.liwoIds })
+        this.loadCombinedScenarios()
       }
     }
   },
@@ -130,6 +130,9 @@ export default {
     setMapObject (mapObject) {
       this.mapObject = mapObject
       console.log('CRS', mapObject.options.crs.scale())
+    },
+    loadCombinedScenarios () {
+      this.$store.dispatch('loadCombinedScenario', { band: this.band, liwoIds: this.liwoIds })
     }
   },
   components: {
