@@ -32,17 +32,17 @@
             Selectie combineren
           </button>
           <button
+            class="layer-panel__action"
+            @click="$emit('open-import-combine')"
+          >
+            Selectie importeren
+          </button>
+          <button
             v-if="selectedBreaches.length"
             class="layer-panel__action"
             @click="$emit('open-export-combine')"
           >
             Selectie exporteren
-          </button>
-          <button
-            class="layer-panel__action"
-            @click="$emit('open-import-combine')"
-          >
-            Selectie importeren
           </button>
         </template>
 
