@@ -54,8 +54,6 @@
 <script>
 import { mapGetters, mapState } from 'vuex'
 import isNumber from 'lodash/fp/isNumber'
-import isNaN from 'lodash/fp/isNaN'
-import negate from 'lodash/fp/negate'
 
 import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
@@ -84,7 +82,8 @@ export default {
     ExportPopup,
     LayerPanel,
     LegendPanel,
-    LiwoMap
+    LiwoMap,
+    NotificationBar
   },
   data () {
     return {
@@ -94,7 +93,6 @@ export default {
       showCombine: false,
       showExportCombine: false,
       showImportCombine: false,
-      showExport: false,
       liwoIds: [],
       band: null,
       projection: this.$route.name === COMBINED
@@ -193,7 +191,7 @@ export default {
         ...this.selectedLayer.legend,
         layerType: this.selectedLayer.variants[0].type
       }
-    },
+    }
   },
   watch: {
     combinedSenarioCanBeLoaded (boolean) {
@@ -226,16 +224,6 @@ export default {
     loadCombinedScenarios () {
       this.$store.dispatch('loadCombinedScenario', { band: this.band, liwoIds: this.liwoIds })
     }
-  },
-  components: {
-    ExportPopup,
-    LayerPanel,
-    LegendPanel,
-    LiwoMap,
-    NotificationBar,
-    ImportCombinePopup,
-    ExportCombinePopup,
-    CombinePopup
   }
 }
 </script>

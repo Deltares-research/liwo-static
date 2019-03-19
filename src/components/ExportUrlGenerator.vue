@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import PopUp from './PopUp'
 
 export default {
@@ -47,7 +47,6 @@ export default {
       'selectedVariants'
     ]),
     path () {
-      const { id } = this.$route.params
       const commaSeperatedIds = this.selectedVariants.join(',')
 
       return `/combined/${commaSeperatedIds}/${this.selected}`
