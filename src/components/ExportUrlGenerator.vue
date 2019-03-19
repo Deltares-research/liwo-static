@@ -23,6 +23,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import PopUp from './PopUp'
+import availableBands from '@/lib/available-bands'
 
 export default {
   components: {
@@ -31,10 +32,7 @@ export default {
   data () {
     return {
       selected: null,
-      options: [{
-        name: 'Waterdiepte',
-        id: 'waterdepth'
-      }]
+      options: availableBands
     }
   },
   watch: {

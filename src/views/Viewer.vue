@@ -66,12 +66,13 @@ import NotificationBar from '@/components/NotificationBar.vue'
 
 import { EPSG_28992, EPSG_3857 } from '@/lib/leaflet-utils/projections'
 import { getFirstLayerSetForRoute } from '../lib/layer-set-route-mapping'
-import { isTruthy, includedIn, notEmpty, notNaN } from '../lib/utils'
+import { isTruthy, includedIn, notEmpty, notNaN, getId } from '../lib/utils'
+import availableBands from '../lib/available-bands'
 
 const COMBINE = 'combine'
 const COMBINED = 'combined'
 const PAGE_TITLE = 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
-const bands = ['waterdepth']
+const bands = availableBands.map(getId)
 
 const includedInBands = includedIn(bands)
 
