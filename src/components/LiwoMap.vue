@@ -14,6 +14,7 @@
 import { mapState, mapGetters } from 'vuex'
 
 import createMapConfig from '@/lib/leaflet-utils/mapconfig-factory'
+import buildBreachNotifications from '@/lib/build-breach-notifications'
 import { showLayerInfoPopup } from '@/lib/leaflet-utils/popup'
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
 
@@ -82,6 +83,10 @@ export default {
             const allLayers = [...layers, ...combinedScenarioArr]
             this.expandedMapLayers = Object.freeze(allLayers)
           })
+
+      parsedLayerSet
+        .then(buildBreachNotifications)
+        .then(result => this.$store.commit('setBreachNotifications', result))
     },
     combinedScenario (combinedScenario) {
       if (!combinedScenario) return
@@ -96,7 +101,6 @@ export default {
     width: calc(100% - 2rem);
     display: block;
     margin: 0 auto;
-    margin-top: 1rem;
     height: calc(100vh - 20rem);
   }
 

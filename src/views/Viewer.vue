@@ -1,42 +1,53 @@
 <template>
-  <div class="viewer">
-    <liwo-map
-      :layers="activeLayerSet"
-      :projection="projection"
-      @initMap="setMapObject"
-    />
-    <layer-panel
-      :layerSets="panelLayerSets"
-      @open-export="showExport = true"
-      @open-combine="showCombine = true"
-      @open-export-combine="showExportCombine = true"
-      @open-import-combine="showImportCombine = true"
-    />
-    <legend-panel
-      v-if="visibleLayerLegend"
-      :caption="visibleLayerLegend.title"
-      :namespace="visibleLayerLegend.namespace"
-      :layer-name="visibleLayerLegend.layer"
-      :style-name="visibleLayerLegend.style"
-    />
-    <export-popup
-      v-if="showExport"
-      :map-object="mapObject"
-      :map-layers="activeLayerSet"
-      @close="showExport = false"
-    />
-    <combine-popup
-      v-if="showCombine"
-      @close="showCombine = false"
-    />
-    <export-combine-popup
-      v-if="showExportCombine"
-      @close="showExportCombine = false"
-    />
-    <import-combine-popup
-      v-if="showImportCombine"
-      @close="showImportCombine = false"
-    />
+  <div class="viewer" :class="{'viewer--has-notificaton': currentNotifications.length}">
+    <div class="viewer__map-wrapper">
+      <liwo-map
+        :layers="activeLayerSet"
+        :projection="projection"
+        @initMap="setMapObject"
+      />
+      <ul class="viewer__notifications" v-if="currentNotifications.length">
+        <li class="viewer__notification" v-for="{type, message, id} in currentNotifications"
+            :key="id">
+          <notification-bar
+            :type="type"
+            :message="message"
+          />
+        </li>
+      </ul>
+      <layer-panel
+        :layerSets="panelLayerSets"
+        @open-export="showExport = true"
+        @open-combine="showCombine = true"
+        @open-export-combine="showExportCombine = true"
+        @open-import-combine="showImportCombine = true"
+      />
+      <legend-panel
+        v-if="visibleLayerLegend"
+        :caption="visibleLayerLegend.title"
+        :namespace="visibleLayerLegend.namespace"
+        :layer-name="visibleLayerLegend.layer"
+        :style-name="visibleLayerLegend.style"
+      />
+      <export-popup
+        v-if="showExport"
+        :map-object="mapObject"
+        :map-layers="activeLayerSet"
+        @close="showExport = false"
+      />
+      <combine-popup
+        v-if="showCombine"
+        @close="showCombine = false"
+      />
+      <export-combine-popup
+        v-if="showExportCombine"
+        @close="showExportCombine = false"
+      />
+      <import-combine-popup
+        v-if="showImportCombine"
+        @close="showImportCombine = false"
+      />
+    </div>
   </div>
 </template>
 
@@ -51,6 +62,7 @@ import LegendPanel from '@/components/LegendPanel'
 import CombinePopup from '@/components/CombinePopup'
 import ExportCombinePopup from '@/components/ExportCombinePopUp'
 import ImportCombinePopup from '@/components/ImportCombinePopUp'
+import NotificationBar from '@/components/NotificationBar.vue'
 
 import { EPSG_28992, EPSG_3857 } from '@/lib/leaflet-utils/projections'
 import { isTruthy, includedIn, notEmpty } from '../lib/utils'
@@ -141,7 +153,8 @@ export default {
     ]),
     ...mapGetters([
       'activeLayerSet',
-      'panelLayerSets'
+      'panelLayerSets',
+      'currentNotifications'
     ]),
     validLiwoIds () {
       return notEmpty(this.liwoIds) && this.liwoIds
@@ -198,6 +211,13 @@ export default {
     loadCombinedScenarios () {
       this.$store.dispatch('loadCombinedScenario', { band: this.band, liwoIds: this.liwoIds })
     }
+  },
+  components: {
+    ExportPopup,
+    LayerPanel,
+    LegendPanel,
+    LiwoMap,
+    NotificationBar
   }
 }
 </script>
@@ -207,7 +227,28 @@ export default {
 
   .viewer {
     position: relative;
+    padding-top: 1rem;
   }
+
+  .viewer__map-wrapper {
+    position: relative;
+  }
+
+  .viewer__notifications {
+    position: absolute;
+    top: 1rem;
+    z-index: 1000;
+    left: 368px;
+
+    /* 100px: 5 * 20px margin, 320px LayerPanel width, 44px map controls width */
+    width: calc(100% - 100px - 320px - 44px);
+  }
+
+  .viewer__notification {
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow);
+  }
+
   .viewer .layer-panel {
     position: absolute;
     top: 1rem;
