@@ -32,7 +32,7 @@ export default {
     ]),
     ...mapGetters([
       'parsedLayerSet',
-      'activeLayerSet',
+      'activeLayerSet'
     ])
   },
   created () {

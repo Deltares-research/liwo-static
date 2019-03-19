@@ -45,7 +45,7 @@ export default new Vuex.Store({
     selectedLayerSetIndex: 0,
     visibleBreachLayers: {},
     layerUnits: {},
-    notifications: [],
+    notifications: []
   },
   mutations: {
     addBreachLayer (state, { id, breachLayers, breachName }) {
