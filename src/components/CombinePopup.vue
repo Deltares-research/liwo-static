@@ -14,6 +14,7 @@
               class="btn primary"
               target="_blank"
               rel="noopener"
+              @click="$emit('close')"
             >Combineren</a>
             <button
               type="button"
