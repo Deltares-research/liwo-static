@@ -43,27 +43,14 @@ export default {
     }
   },
   computed: {
-    ...mapState([
-      'selectedBreaches',
-      'visibleVariantIndexByLayerId'
-    ]),
     ...mapGetters([
-      'panelLayerSets'
+      'selectedVariants'
     ]),
     path () {
       const { id } = this.$route.params
-      const variantIds = this.panelLayerSets.reduce((acc, layerSet) => {
-        const isSelected = this.selectedBreaches.includes(layerSet.id)
+      const commaSeperatedIds = this.selectedVariants.join(',')
 
-        if (isSelected) {
-          const layer = layerSet.layers[0]
-          const selectedIndex = this.visibleVariantIndexByLayerId[layer.id]
-          const selectedVariant = layer.variants[selectedIndex]
-        }
-      })
-      const commaSeperatedIds = 'variantids' || variantIds.join(',')
-
-      return `/combine/${id}/${this.selected}/${commaSeperatedIds}`
+      return `/combine/${id}/${commaSeperatedIds}/${this.selected}`
     }
   },
   mounted () {

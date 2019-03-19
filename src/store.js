@@ -271,7 +271,7 @@ export default new Vuex.Store({
             if (layer.layer === BREACHES_PRIMARY_LAYER_ID || layer.layer === BREACHES_REGIONAL_LAYER_ID) {
               const filterIndex = state.breachProbabilityFilterIndex
               const probabilityFilter = probabilityConfig[filterIndex]
-              
+
               geojson.features = geojson.features
                 .filter(feature => (filterIndex === 0 || feature.properties[probabilityFilter.identifier] > 0))
 
@@ -333,6 +333,23 @@ export default new Vuex.Store({
         return [...layers, ...selectedLayers]
       } else {
         return layers
+      }
+    },
+    selectedVariants ({ selectedBreaches, visibleVariantIndexByLayerId }, { panelLayerSets }) {
+      if (selectedBreaches) {
+        return panelLayerSets.reduce((acc, layerSet) => {
+          const isSelected = selectedBreaches.includes(layerSet.id)
+
+          if (isSelected) {
+            const layer = layerSet.layers[0]
+            const selectedIndex = visibleVariantIndexByLayerId[layer.id]
+            const selectedVariant = layer.variants[selectedIndex]
+
+            acc.push(selectedVariant.map_id)
+          }
+
+          return acc
+        }, [])
       }
     }
   }
