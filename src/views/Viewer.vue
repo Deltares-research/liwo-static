@@ -54,6 +54,8 @@
 <script>
 import { mapGetters, mapState } from 'vuex'
 import isNumber from 'lodash/fp/isNumber'
+import isNaN from 'lodash/fp/isNaN'
+import negate from 'lodash/fp/negate'
 
 import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
@@ -65,7 +67,7 @@ import ImportCombinePopup from '@/components/ImportCombinePopUp'
 import NotificationBar from '@/components/NotificationBar.vue'
 
 import { EPSG_28992, EPSG_3857 } from '@/lib/leaflet-utils/projections'
-import { isTruthy, includedIn, notEmpty } from '../lib/utils'
+import { isTruthy, includedIn, notEmpty, notNaN } from '../lib/utils'
 
 const COMBINE = 'combine'
 const COMBINED = 'combined'
@@ -158,7 +160,7 @@ export default {
     ]),
     validLiwoIds () {
       return notEmpty(this.liwoIds) && this.liwoIds
-        .map(isNumber)
+        .map(id => isNumber(id) && notNaN(id))
         .every(isTruthy)
     },
     validBand () {
@@ -197,6 +199,16 @@ export default {
     combinedSenarioCanBeLoaded (boolean) {
       if (boolean) {
         this.loadCombinedScenarios()
+      }
+    },
+    viewerType (viewerType) {
+      if (viewerType === COMBINED) {
+        if (!this.validBand) {
+          this.$store.commit('addNotification', 'Er is geen band geselecteerd')
+        }
+        if (!this.validLiwoIds) {
+          this.$store.commit('addNotification', 'Er zijn geen ids geselecteerd')
+        }
       }
     }
   },

@@ -2,6 +2,7 @@ import get from 'lodash/fp/get'
 import pipe from 'lodash/fp/pipe'
 import negate from 'lodash/fp/negate'
 import isNull from 'lodash/fp/isNull'
+import isNaN from 'lodash/fp/isNaN'
 import isEmpty from 'lodash/fp/isEmpty'
 import includes from 'lodash/fp/includes'
 
@@ -86,3 +87,12 @@ export const notEmpty = negate(isEmpty)
  * notNull(null) // false
  */
 export const notNull = negate(isNull)
+
+/**
+ * Checks if a value if not NaN
+ *
+ * @example
+ * notNaN(undefined) // true
+ * notNaN(NaN) // false
+ */
+export const notNaN = negate(isNaN)

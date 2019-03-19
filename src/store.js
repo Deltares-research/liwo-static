@@ -158,10 +158,15 @@ export default new Vuex.Store({
       this.commit('resetToMapLayers')
     },
     setLayerSetNotifications (state, layerSetNotifications) {
-      Vue.set(state, 'notifications', layerSetNotifications)
+      state.notifications = Object.assign(state.notifications, layerSetNotifications)
     },
     setBreachNotifications (state, breachNotifications) {
       state.notifications = Object.assign(state.notifications, breachNotifications)
+    },
+    addNotification (state, notification) {
+      const notifications = state.notifications.notifications || []
+      notifications.push(notification)
+      state.notifications = Object.assign(state.notifications, { notifications })
     },
     setLayerUnits (state, layerUnits) {
       state.layerUnits = layerUnits
@@ -393,6 +398,7 @@ export default new Vuex.Store({
 
       const notificationBreach = state.notifications.breach
       const notificationMap = state.notifications[mapId]
+      const generalNotifications = state.notifications.notifications || []
       const notificationLayers = get('layers', notificationMap) || []
       const visibleNotificationLayers = notificationLayers.filter(idIncludedIn(visibleLayerIds))
 
@@ -417,6 +423,8 @@ export default new Vuex.Store({
       notifications = notificationForMap ? [notificationForMap] : notifications
       notifications = notificationForSelectedLayer ? [notificationForSelectedLayer] : notifications
       notifications = breachNotifications && breachNotifications.length ? [...breachNotifications] : notifications
+
+      notifications = [...notifications, ...generalNotifications]
 
       return notifications.map(message => ({message, type: 'warning', id: stringToHash(message)}))
     }
