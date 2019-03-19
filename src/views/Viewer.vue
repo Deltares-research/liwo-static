@@ -210,6 +210,9 @@ export default {
           this.$store.commit('addNotification', 'Er zijn geen ids geselecteerd')
         }
       }
+    },
+    validLiwoIds (liwoIds) {
+      this.$store.dispatch('setActiveLayersFromVariantIds', liwoIds)
     }
   },
   methods: {
