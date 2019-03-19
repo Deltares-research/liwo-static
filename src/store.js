@@ -109,7 +109,7 @@ export default new Vuex.Store({
     },
     initToMapLayers (state, mapId) {
       const currentLayerSet = state.layerSetsById[mapId]
-      state.visibleLayerIds = currentLayerSet.map(layer => layer.id)
+      state.visibleLayerIds = currentLayerSet.filter(layer => layer.properties.visible).map(layer => layer.id)
       state.selectedBreaches = []
       state.opacityByLayerId = {}
       state.selectedLayerId = state.visibleLayerIds[0]
