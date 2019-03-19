@@ -46,6 +46,7 @@ export default {
   methods: {
     setActiveLayer () {
       this.$store.commit('setActiveLayerSetId', this.layerId)
+      this.$store.commit('setSelectedLayerId', this.layers[0].id)
     }
   },
   components: {

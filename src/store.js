@@ -1,13 +1,27 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import get from 'lodash/fp/get'
+import pipe from 'lodash/fp/pipe'
+import first from 'lodash/fp/first'
+import includes from 'lodash/fp/includes'
 
 import loadBreach from './lib/load-breach'
 import { loadLayersetById, extractUnit } from './lib/load-layersets'
 import loadGeojson from './lib/load-geojson'
 import { normalizeLayers } from './lib/layer-parser'
 import { probabilityConfig } from './lib/probability-filter'
+import buildLayersetNotifications from './lib/build-layerset-notifications'
+import stringToHash from './lib/string-to-hash'
+import { BREACH_SELECTED } from './lib/liwo-identifiers'
 
 Vue.use(Vuex)
+
+const getId = get('id')
+const isTruthy = val => !!val
+const includedIn = includes.convert({rearg: false})
+const getByIndexFrom = arr => index => arr && arr[index]
+const idSameAs = value => pipe([getId, id => id === value])
+const idIncludedIn = collection => pipe([getId, includedIn(collection)])
 
 const BREACHES_PRIMARY_LAYER_ID = 'geo_doorbraaklocaties_primair'
 const BREACHES_REGIONAL_LAYER_ID = 'geo_doorbraaklocaties_regionaal'
@@ -30,7 +44,8 @@ export default new Vuex.Store({
     selectedBreaches: [],
     selectedLayerSetIndex: 0,
     visibleBreachLayers: {},
-    layerUnits: {}
+    layerUnits: {},
+    notifications: [],
   },
   mutations: {
     addBreachLayer (state, { id, breachLayers, breachName }) {
@@ -94,7 +109,7 @@ export default new Vuex.Store({
     },
     initToMapLayers (state, mapId) {
       const currentLayerSet = state.layerSetsById[mapId]
-      state.visibleLayerIds = currentLayerSet.map(layer => layer.id)
+      state.visibleLayerIds = currentLayerSet.filter(layer => layer.properties.visible).map(layer => layer.id)
       state.selectedBreaches = []
       state.opacityByLayerId = {}
       state.selectedLayerId = state.visibleLayerIds[0]
@@ -136,6 +151,12 @@ export default new Vuex.Store({
       state.breachProbabilityFilterIndex = index
       this.commit('resetToMapLayers')
     },
+    setLayerSetNotifications (state, layerSetNotifications) {
+      Vue.set(state, 'notifications', layerSetNotifications)
+    },
+    setBreachNotifications (state, breachNotifications) {
+      state.notifications = Object.assign(state.notifications, breachNotifications)
+    },
     setLayerUnits (state, layerUnits) {
       state.layerUnits = {...state.layerUnits, ...layerUnits}
     }
@@ -148,7 +169,7 @@ export default new Vuex.Store({
 
       const layersetById = await loadLayersetById(id)
       const layerSet = normalizeLayers(layersetById.layers)
-
+      const notifications = buildLayersetNotifications(layersetById)
       const layerUnits = layersetById.layers.reduce((acc, layer) => {
         acc[layer.legend.layer] = extractUnit(layer.legend.title)
         return acc
@@ -157,6 +178,7 @@ export default new Vuex.Store({
       state.commit('setLayerSetById', { id, layerSet })
       state.commit('setPageTitle', layersetById.title)
       state.commit('setLayerUnits', layerUnits)
+      state.commit('setLayerSetNotifications', notifications)
 
       if (initializeMap) {
         state.commit('initToMapLayers', id)
@@ -219,7 +241,6 @@ export default new Vuex.Store({
       }
 
       return layers.layers
-        .filter(({ id }) => state.visibleLayerIds.some(visibleId => visibleId === id))
         .map(layer => {
           const variantIndex = state.visibleVariantIndexByLayerId[layer.id]
           return {
@@ -227,6 +248,15 @@ export default new Vuex.Store({
             layerId: layer.id,
             layerTitle: layer.properties.title
           }
+        })
+        .map(layer => {
+          const isActiveLayer = state.visibleLayerIds.some(visibleId => visibleId === layer.layerId)
+
+          if (!isActiveLayer) {
+            layer.hide = true
+          }
+
+          return layer
         })
     },
     layerPanelView ({ selectedBreaches }) {
@@ -250,12 +280,12 @@ export default new Vuex.Store({
         ]
       }
     },
-    parsedLayerSet (state, { activeLayerSet }) {
+    async parsedLayerSet (state, { activeLayerSet }) {
       if (!activeLayerSet) {
         return Promise.resolve([])
       }
 
-      return Promise.all(
+      let layers = await Promise.all(
         activeLayerSet.map(async (layer) => {
           if (layer.type === 'json') {
             const geojson = await loadGeojson(layer)
@@ -279,6 +309,85 @@ export default new Vuex.Store({
           return layer
         })
       )
+
+      let selectedLayers = []
+
+      // seperate selected markers into its own layer
+      if (state.activeLayerSetId) {
+        layers.map(layer => {
+          if (layer.type === 'json') {
+            const activeFeature = layer.geojson.features.find(
+              feature => state.selectedBreaches.find(id => id === feature.properties.id)
+            )
+
+            if (activeFeature) {
+              activeFeature.properties.selected = true
+
+              // remove feature from its current layer
+              layer.geojson.features = layer.geojson.features.filter(
+                feature => feature.properties.id !== state.activeLayerSetId
+              )
+
+              layer.geojson.totalFeatures = layer.geojson.features.length
+
+              // create layer for selected feature
+              selectedLayers.push({
+                ...layer,
+                hide: false,
+                namespace: layer.namespace,
+                layer: BREACH_SELECTED,
+                layerId: BREACH_SELECTED,
+                layerTitle: 'Geselecteerde locatie',
+                geojson: {
+                  ...layer.geojson,
+                  totalFeatures: 1,
+                  features: [activeFeature]
+                }
+              })
+            }
+          }
+
+          return layer
+        })
+
+        return [...layers, ...selectedLayers]
+      } else {
+        return layers
+      }
+    },
+    currentNotifications (state) {
+      const { mapId, visibleLayerIds, visibleVariantIndexByLayerId, selectedLayerId, selectedBreaches } = state
+      const getNotificationFrom = get('notification')
+      const getNotificaion = getNotificationFrom
+
+      const notificationBreach = state.notifications.breach
+      const notificationMap = state.notifications[mapId]
+      const notificationLayers = get('layers', notificationMap) || []
+      const visibleNotificationLayers = notificationLayers.filter(idIncludedIn(visibleLayerIds))
+
+      const notificationForLayers = visibleNotificationLayers
+        .filter(idSameAs(selectedLayerId))
+        .map(({id, variants, notification: layerNotification}) => {
+          const variantsIndex = visibleVariantIndexByLayerId[id]
+          const currentVariant = variants[variantsIndex]
+          return getNotificationFrom(currentVariant) || layerNotification
+        })
+        .filter(isTruthy)
+
+      const breachNotifications = selectedBreaches
+        .map(getByIndexFrom(notificationBreach))
+        .map(getNotificaion)
+        .filter(isTruthy)
+
+      const notificationForSelectedLayer = first(notificationForLayers)
+      const notificationForMap = getNotificationFrom(notificationMap)
+
+      let notifications = []
+      notifications = notificationForMap ? [notificationForMap] : notifications
+      notifications = notificationForSelectedLayer ? [notificationForSelectedLayer] : notifications
+      notifications = breachNotifications && breachNotifications.length ? [...breachNotifications] : notifications
+
+      return notifications.map(message => ({message, type: 'warning', id: stringToHash(message)}))
     }
   }
 })

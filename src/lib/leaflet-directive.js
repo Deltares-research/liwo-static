@@ -3,8 +3,6 @@ import mapFactory from './leaflet-utils/map-factory'
 import L from '@/lib/leaflet-utils/leaf'
 
 let map
-let currentMapLayers = []
-let leafletLayers = []
 let layerGroup
 
 export default {
@@ -21,33 +19,11 @@ export default {
 
     const { mapLayers, callbacks } = value
 
-    const mapLayersToDelete = currentMapLayers.reduce((layersToDelete, layer) => {
-      if (!mapLayers.find(l => (l.layerId === layer.layerId))) {
-        layersToDelete.push(layer)
-      }
+    layerGroup.clearLayers()
 
-      return layersToDelete
-    }, [])
-
-    const mapLayersToAdd = mapLayers.reduce((layersToAdd, layer) => {
-      if (!currentMapLayers.find(l => (l.layerId === layer.layerId))) {
-        layersToAdd.push(layer)
-      }
-
-      return layersToAdd
-    }, [])
-
-    mapLayersToAdd
+    mapLayers
+      .filter(layer => !layer.hide)
       .map(layer => layerFactory(layer, callbacks))
       .forEach(layer => layerGroup.addLayer(layer))
-
-    mapLayersToDelete
-      .map(layer => leafletLayers.find(
-        leafletLayer => (leafletLayer.layerId || leafletLayer.options.layers) === layer.layer
-      ))
-      .forEach(leafletLayer => layerGroup.removeLayer(leafletLayer))
-
-    leafletLayers = layerGroup.getLayers()
-    currentMapLayers = mapLayers
   }
 }
