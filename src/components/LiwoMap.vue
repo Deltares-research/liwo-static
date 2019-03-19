@@ -6,7 +6,6 @@
       callbacks: { breachCallBack, initMapObject },
       config: mapConfig,
       mapLayers: [ ...expandedMapLayers ].reverse(),
-      combinedScenario: combinedScenario
     }"
   ></div>
 </template>
@@ -79,8 +78,14 @@ export default {
       parsedLayerSet
         .then(
           (layers) => {
-            this.expandedMapLayers = Object.freeze(layers)
+            const combinedScenarioArr = this.combinedScenario ? [this.combinedScenario] : []
+            const allLayers = [...layers, ...combinedScenarioArr]
+            this.expandedMapLayers = Object.freeze(allLayers)
           })
+    },
+    combinedScenario (combinedScenario) {
+      if (!combinedScenario) return
+      this.expandedMapLayers = Object.freeze([...this.expandedMapLayers, combinedScenario])
     }
   }
 }

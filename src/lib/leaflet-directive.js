@@ -19,7 +19,7 @@ export default {
       return
     }
 
-    const { mapLayers: _mapLayers, callbacks, combinedScenario } = value
+    const { mapLayers: _mapLayers, callbacks } = value
     const mapLayers = _mapLayers.filter(value => value)
 
     const mapLayersToDelete = currentMapLayers.reduce((layersToDelete, layer) => {
@@ -47,12 +47,6 @@ export default {
         leafletLayer => (leafletLayer.layerId || leafletLayer.options.layers) === layer.layer
       ))
       .forEach(leafletLayer => layerGroup.removeLayer(leafletLayer))
-
-    if (combinedScenario) {
-      const layer = L.tileLayer(combinedScenario.url)
-      console.log(combinedScenario)
-      layerGroup.addLayer(layer)
-    }
 
     leafletLayers = layerGroup.getLayers()
     currentMapLayers = mapLayers
