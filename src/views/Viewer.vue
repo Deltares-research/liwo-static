@@ -232,7 +232,10 @@ export default {
     LayerPanel,
     LegendPanel,
     LiwoMap,
-    NotificationBar
+    NotificationBar,
+    ImportCombinePopup,
+    ExportCombinePopup,
+    CombinePopup
   }
 }
 </script>
