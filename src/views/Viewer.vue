@@ -100,6 +100,12 @@ export default {
         }
       )
     }
+
+    if (this.$route.params.layerIds) {
+      const ids = this.$route.params.layerIds.split(',')
+
+      this.$store.dispatch('setActiveLayersFromVariantIds', ids)
+    }
   },
   computed: {
     ...mapState({

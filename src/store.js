@@ -146,7 +146,7 @@ export default new Vuex.Store({
     },
     setViewerType (state, type) {
       state.viewerType = type
-    }
+    },
   },
   actions: {
     async loadLayerSetsById (state, { id, initializeMap }) {
@@ -180,6 +180,10 @@ export default new Vuex.Store({
       }
 
       commit('toggleSelectedBreach', id)
+    },
+    async setActiveLayersFromVariantIds ({ getters }, ids) {
+      return
+      await Promise.all(ids.map(id => fetch('url').then(res => res.json())))
     }
   },
   getters: {
