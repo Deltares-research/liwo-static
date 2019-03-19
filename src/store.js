@@ -44,8 +44,8 @@ export default new Vuex.Store({
     selectedBreaches: [],
     selectedLayerSetIndex: 0,
     visibleBreachLayers: {},
-    notifications: [],
-    layerUnits: undefined
+    layerUnits: {},
+    notifications: []
   },
   mutations: {
     addBreachLayer (state, { id, breachLayers, breachName }) {
@@ -158,7 +158,7 @@ export default new Vuex.Store({
       state.notifications = Object.assign(state.notifications, breachNotifications)
     },
     setLayerUnits (state, layerUnits) {
-      state.layerUnits = layerUnits
+      state.layerUnits = {...state.layerUnits, ...layerUnits}
     }
   },
   actions: {
@@ -188,10 +188,17 @@ export default new Vuex.Store({
       if (Object.keys(state.breachLayersById).indexOf(String(id)) === -1) {
         const breach = await loadBreach(id, layerType)
         const breachLayers = normalizeLayers(breach.layers)
+
+        const layerUnits = breachLayers.reduce((acc, layer) => {
+          acc[layer.legend.layer] = extractUnit(layer.legend.title)
+          return acc
+        }, [])
+
         const visibleBreachLayers = breachLayers.map((layer) => layer.id)
 
         commit('addBreachLayer', { id, breachLayers, breachName })
         commit('setVisibleBreachLayers', { breach: id, layers: visibleBreachLayers })
+        commit('setLayerUnits', layerUnits)
       }
 
       commit('toggleSelectedBreach', id)
