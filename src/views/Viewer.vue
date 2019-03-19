@@ -79,6 +79,27 @@ export default {
     this.$store.commit('setMapId', mapId)
     this.$store.dispatch('loadLayerSetsById', { id: mapId, initializeMap: true })
     this.$store.commit('setPageTitle', PAGE_TITLE)
+
+    if (this.viewerType === 'combine') {
+      // watch selected variants and update route
+      this.$store.watch(
+        (state, getters) => getters.selectedVariants,
+        ids => {
+          if (ids.length) {
+            const { id, band } = this.$route.params
+
+            this.$router.replace({
+              name: 'combine',
+              params: {
+                id,
+                layerIds: ids.join(','),
+                band
+              }
+            })
+          }
+        }
+      )
+    }
   },
   computed: {
     ...mapState({
