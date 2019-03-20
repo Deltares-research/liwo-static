@@ -280,7 +280,7 @@ export default new Vuex.Store({
         ]
       }
     },
-    async parsedLayerSet (state, { activeLayerSet }) {
+    async parsedLayerSet (state, { activeLayerSet, panelLayerSets }) {
       if (!activeLayerSet) {
         return Promise.resolve([])
       }
@@ -321,6 +321,17 @@ export default new Vuex.Store({
             )
 
             if (activeFeature) {
+              const panelLayerSet = panelLayerSets.find(panelLayerSet =>
+                panelLayerSet.id === activeFeature.properties.id
+              )
+              const panelLayer = panelLayerSet.layers[0]
+
+              if (panelLayer.variants.length > 1) {
+                const selectedIndex = state.visibleVariantIndexByLayerId[panelLayer.id]
+                const selectedVariant = panelLayer.variants[selectedIndex]
+                activeFeature.properties.selectedVariant = selectedVariant.title
+              }
+
               activeFeature.properties.selected = true
 
               // remove feature from its current layer
