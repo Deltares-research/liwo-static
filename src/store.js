@@ -45,7 +45,8 @@ export default new Vuex.Store({
     selectedLayerSetIndex: 0,
     visibleBreachLayers: {},
     layerUnits: {},
-    notifications: []
+    notifications: [],
+    hiddenBreachMarkers: []
   },
   mutations: {
     addBreachLayer (state, { id, breachLayers, breachName }) {
@@ -159,6 +160,13 @@ export default new Vuex.Store({
     },
     setLayerUnits (state, layerUnits) {
       state.layerUnits = {...state.layerUnits, ...layerUnits}
+    },
+    toggleActiveMarker (state, id) {
+      if (state.hiddenBreachMarkers.includes(id)) {
+        state.hiddenBreachMarkers = state.hiddenBreachMarkers.filter(markerId => markerId !== id)
+      } else {
+        state.hiddenBreachMarkers = [...state.hiddenBreachMarkers, id]
+      }
     }
   },
   actions: {
@@ -280,7 +288,7 @@ export default new Vuex.Store({
         ]
       }
     },
-    async parsedLayerSet (state, { activeLayerSet }) {
+    async parsedLayerSet ({ breachProbabilityFilterIndex, selectedBreaches, activeLayerSetId, hiddenBreachMarkers }, { activeLayerSet }) {
       if (!activeLayerSet) {
         return Promise.resolve([])
       }
@@ -291,7 +299,7 @@ export default new Vuex.Store({
             const geojson = await loadGeojson(layer)
 
             if (layer.layer === BREACHES_PRIMARY_LAYER_ID || layer.layer === BREACHES_REGIONAL_LAYER_ID) {
-              const filterIndex = state.breachProbabilityFilterIndex
+              const filterIndex = breachProbabilityFilterIndex
               const probabilityFilter = probabilityConfig[filterIndex]
 
               geojson.features = geojson.features
@@ -299,7 +307,7 @@ export default new Vuex.Store({
 
               geojson.features
                 .forEach(feature => {
-                  feature.properties.selected = state.selectedBreaches.indexOf(feature.properties.id) !== -1
+                  feature.properties.selected = selectedBreaches.indexOf(feature.properties.id) !== -1
                 })
             }
 
@@ -313,37 +321,39 @@ export default new Vuex.Store({
       let selectedLayers = []
 
       // seperate selected markers into its own layer
-      if (state.activeLayerSetId) {
+      if (selectedBreaches.length) {
         layers.map(layer => {
           if (layer.type === 'json') {
-            const activeFeature = layer.geojson.features.find(
-              feature => state.selectedBreaches.find(id => id === feature.properties.id)
+            const activeFeatures = layer.geojson.features.filter(
+              feature => selectedBreaches.find(id => id === feature.properties.id)
             )
 
-            if (activeFeature) {
-              activeFeature.properties.selected = true
+            if (activeFeatures.length) {
+              selectedLayers = [...selectedLayers, ...activeFeatures.map(activeFeature => {
+                activeFeature.properties.selected = true
 
-              // remove feature from its current layer
-              layer.geojson.features = layer.geojson.features.filter(
-                feature => feature.properties.id !== state.activeLayerSetId
-              )
+                // remove feature from its current layer
+                layer.geojson.features = layer.geojson.features.filter(
+                  feature => feature.properties.id !== activeLayerSetId
+                )
 
-              layer.geojson.totalFeatures = layer.geojson.features.length
+                layer.geojson.totalFeatures = layer.geojson.features.length
 
-              // create layer for selected feature
-              selectedLayers.push({
-                ...layer,
-                hide: false,
-                namespace: layer.namespace,
-                layer: BREACH_SELECTED,
-                layerId: BREACH_SELECTED,
-                layerTitle: 'Geselecteerde locatie',
-                geojson: {
-                  ...layer.geojson,
-                  totalFeatures: 1,
-                  features: [activeFeature]
+                // create layer for selected feature
+                return {
+                  ...layer,
+                  hide: hiddenBreachMarkers.includes(activeFeature.properties.id),
+                  namespace: layer.namespace,
+                  layer: BREACH_SELECTED,
+                  layerId: BREACH_SELECTED,
+                  layerTitle: 'Geselecteerde locatie',
+                  geojson: {
+                    ...layer.geojson,
+                    totalFeatures: 1,
+                    features: [activeFeature]
+                  }
                 }
-              })
+              })]
             }
           }
 

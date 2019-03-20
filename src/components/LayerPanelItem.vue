@@ -7,7 +7,12 @@
     >
       {{ title }}
     </h3>
-    <layer-control-list :layers="layers" :visible="layerControlListIsVisible" />
+    <layer-control-list
+      :layers="layers"
+      :visible="layerControlListIsVisible"
+      :panel-layer-title="title"
+      :panel-layer-id="layerId"
+    />
   </div>
 </template>
 

@@ -1,5 +1,17 @@
 <template>
   <ul class="layer-control-list" :class="{ 'layer-control-list--active': visible }">
+    <li>
+      <layer-control
+        v-if="panelLayerTitle"
+        :active="(panelLayerId === selectedLayerId)"
+        :id="panelLayerId"
+        :title="`${panelLayerTitle} (marker)`"
+        :variants="[]"
+        :layerType="''"
+        :visible="activeMarkerLayerIsVisible"
+        @toggle="toggleActiveMarker"
+      />
+    </li>
     <li
       class="layer-control-list__item"
       v-for="layer in layers"
@@ -36,14 +48,27 @@ export default {
     visible: {
       type: Boolean,
       default: true
+    },
+    panelLayerTitle: {
+      type: String,
+      default: ''
+    },
+    panelLayerId: {
+      type: [String, Number],
+      default: ''
     }
   },
   computed: {
     ...mapState([
       'selectedLayerId',
       'visibleLayerIds',
-      'visibleVariantIndexByLayerId'
-    ])
+      'visibleVariantIndexByLayerId',
+      'hidden',
+      'hiddenBreachMarkers'
+    ]),
+    activeMarkerLayerIsVisible () {
+      return !this.hiddenBreachMarkers.includes(this.panelLayerId)
+    }
   },
   methods: {
     layerMetaData ({ id, variants }) {
@@ -69,7 +94,13 @@ export default {
     },
     setVisibleVariant ({ layerId, variantIndex }) {
       this.$store.commit('setVisibleVariantIndexForLayerId', { layerId, index: variantIndex })
+    },
+    toggleActiveMarker (id) {
+      this.$store.commit('toggleActiveMarker', id)
     }
+  },
+  mounted () {
+    this.$store.commit('toggleLayerById', this.panelLayerId)
   },
   components: {
     LayerControl
