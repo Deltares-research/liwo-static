@@ -356,48 +356,51 @@ export default new Vuex.Store({
       let selectedLayers = []
 
       // seperate selected markers into its own layer
-      if (activeLayerSetId) {
+      if (selectedBreaches.length) {
         layers.map(layer => {
           if (layer.type === 'json') {
-            const activeFeature = layer.geojson.features.find(
+            const activeFeatures = layer.geojson.features.filter(
               feature => selectedBreaches.find(id => id === feature.properties.id)
             )
 
-            if (activeFeature) {
-              const panelLayerSet = panelLayerSets.find(panelLayerSet =>
-                panelLayerSet.id === activeFeature.properties.id
-              )
-              const panelLayer = panelLayerSet.layers[0]
+            if (activeFeatures.length) {
+              selectedLayers = [...selectedLayers, ...activeFeatures.map(activeFeature => {
+                activeFeature.properties.selected = true
 
-              if (panelLayer.variants.length > 1) {
-                const selectedIndex = visibleVariantIndexByLayerId[panelLayer.id]
-                const selectedVariant = panelLayer.variants[selectedIndex]
-                activeFeature.properties.selectedVariant = selectedVariant.title
-              }
+                const panelLayerSet = panelLayerSets.find(panelLayerSet =>
+                  panelLayerSet.id === activeFeature.properties.id
+                )
 
-              activeFeature.properties.selected = true
+                const panelLayer = panelLayerSet.layers[0]
 
-              // remove feature from its current layer
-              layer.geojson.features = layer.geojson.features.filter(
-                feature => feature.properties.id !== activeLayerSetId
-              )
-
-              layer.geojson.totalFeatures = layer.geojson.features.length
-
-              // create layer for selected feature
-              selectedLayers.push({
-                ...layer,
-                hide: hiddenLayers.includes(activeFeature.properties.id),
-                namespace: layer.namespace,
-                layer: BREACH_SELECTED,
-                layerId: BREACH_SELECTED,
-                layerTitle: 'Geselecteerde locatie',
-                geojson: {
-                  ...layer.geojson,
-                  totalFeatures: 1,
-                  features: [activeFeature]
+                if (panelLayer.variants.length > 1) {
+                  const selectedIndex = visibleVariantIndexByLayerId[panelLayer.id]
+                  const selectedVariant = panelLayer.variants[selectedIndex]
+                  activeFeature.properties.selectedVariant = selectedVariant.title
                 }
-              })
+
+                // remove feature from its current layer
+                layer.geojson.features = layer.geojson.features.filter(
+                  feature => feature.properties.id !== activeLayerSetId
+                )
+
+                layer.geojson.totalFeatures = layer.geojson.features.length
+
+                // create layer for selected feature
+                return {
+                  ...layer,
+                  hide: hiddenLayers.includes(activeFeature.properties.id),
+                  namespace: layer.namespace,
+                  layer: BREACH_SELECTED,
+                  layerId: BREACH_SELECTED,
+                  layerTitle: 'Geselecteerde locatie',
+                  geojson: {
+                    ...layer.geojson,
+                    totalFeatures: 1,
+                    features: [activeFeature]
+                  }
+                }
+              })]
             }
           }
 
