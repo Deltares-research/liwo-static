@@ -16,8 +16,15 @@ import { mapState, mapGetters } from 'vuex'
 import createMapConfig from '@/lib/leaflet-utils/mapconfig-factory'
 import buildBreachNotifications from '@/lib/build-breach-notifications'
 import { showLayerInfoPopup } from '@/lib/leaflet-utils/popup'
+import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
 
 export default {
+  props: {
+    projection: {
+      type: String,
+      default: EPSG_28992
+    }
+  },
   data () {
     return {
       expandedMapLayers: undefined
@@ -28,6 +35,7 @@ export default {
       'opacityByLayerId',
       'selectedBreaches',
       'layerUnits',
+      'combinedScenario',
       'selectedLayerId'
     ]),
     ...mapGetters([
@@ -36,7 +44,9 @@ export default {
     ])
   },
   created () {
-    this.mapConfig = createMapConfig()
+    this.mapConfig = createMapConfig({
+      projection: this.projection
+    })
   },
   mounted () {
     this.mapRef = this.$refs.liwoMap
@@ -70,12 +80,18 @@ export default {
       parsedLayerSet
         .then(
           (layers) => {
-            this.expandedMapLayers = Object.freeze(layers)
+            const combinedScenarioArr = this.combinedScenario ? [this.combinedScenario] : []
+            const allLayers = [...layers, ...combinedScenarioArr]
+            this.expandedMapLayers = Object.freeze(allLayers)
           })
 
       parsedLayerSet
         .then(buildBreachNotifications)
         .then(result => this.$store.commit('setBreachNotifications', result))
+    },
+    combinedScenario (combinedScenario) {
+      if (!combinedScenario) return
+      this.expandedMapLayers = Object.freeze([...this.expandedMapLayers, combinedScenario])
     }
   }
 }

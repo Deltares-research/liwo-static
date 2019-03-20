@@ -35,6 +35,7 @@ function loadBreachLayer (breachid, layername) {
   return fetch(BREACHES_API_URL_PRIMARY, {
     method: 'POST',
     mode: 'cors',
+    credentials: 'omit',
     headers,
     body: JSON.stringify({
       breachid,

@@ -3,6 +3,7 @@
     <div class="viewer__map-wrapper">
       <liwo-map
         :layers="activeLayerSet"
+        :projection="projection"
         @initMap="setMapObject"
       />
       <ul class="viewer__notifications" v-if="currentNotifications.length">
@@ -17,6 +18,9 @@
       <layer-panel
         :layerSets="panelLayerSets"
         @open-export="showExport = true"
+        @open-combine="showCombine = true"
+        @open-export-combine="showExportCombine = true"
+        @open-import-combine="showImportCombine = true"
       />
       <legend-panel
         v-if="visibleLayerLegend"
@@ -31,35 +35,109 @@
         :map-layers="activeLayerSet"
         @close="showExport = false"
       />
+      <combine-popup
+        v-if="showCombine"
+        @close="showCombine = false"
+      />
+      <export-combine-popup
+        v-if="showExportCombine"
+        @close="showExportCombine = false"
+      />
+      <import-combine-popup
+        v-if="showImportCombine"
+        @close="showImportCombine = false"
+      />
     </div>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapState } from 'vuex'
+import isNumber from 'lodash/fp/isNumber'
 
 import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
 import LiwoMap from '@/components/LiwoMap'
 import LegendPanel from '@/components/LegendPanel'
+import CombinePopup from '@/components/CombinePopup'
+import ExportCombinePopup from '@/components/ExportCombinePopUp'
+import ImportCombinePopup from '@/components/ImportCombinePopUp'
 import NotificationBar from '@/components/NotificationBar.vue'
 
+import { EPSG_28992, EPSG_3857 } from '@/lib/leaflet-utils/projections'
+import { getFirstLayerSetForRoute } from '../lib/layer-set-route-mapping'
+import { isTruthy, includedIn, notEmpty, notNaN, getId } from '../lib/utils'
+import availableBands from '../lib/available-bands'
+
+const COMBINE = 'combine'
+const COMBINED = 'combined'
 const PAGE_TITLE = 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
+const bands = availableBands.map(getId)
+
+const includedInBands = includedIn(bands)
 
 export default {
+  components: {
+    CombinePopup,
+    ExportCombinePopup,
+    ImportCombinePopup,
+    ExportPopup,
+    LayerPanel,
+    LegendPanel,
+    LiwoMap,
+    NotificationBar
+  },
   data () {
     return {
       parsedLayers: [],
       id: 0,
-      showExport: false
+      showExport: false,
+      showCombine: false,
+      showExportCombine: false,
+      showImportCombine: false,
+      liwoIds: [],
+      band: null,
+      projection: this.$route.name === COMBINED
+        ? EPSG_3857
+        : EPSG_28992
     }
   },
   async mounted () {
-    const mapId = Number(this.$route.params.id)
+    const {id: _mapId, layerIds, band} = this.$route.params
+    const routeName = this.$route.name
+    const mapId = Number(getFirstLayerSetForRoute(this.$route.name, _mapId))
 
-    this.$store.commit('setMapId', mapId)
-    this.$store.dispatch('loadLayerSetsById', { id: mapId, initializeMap: true })
+    this.liwoIds = layerIds ? layerIds.split(',').map(id => parseInt(id, 10)) : []
+    this.band = band
+
+    this.$store.commit('setViewerType', routeName)
     this.$store.commit('setPageTitle', PAGE_TITLE)
+
+    if (this.viewerType === COMBINE) {
+      // watch selected variants and update route
+      this.$store.watch(
+        (state, getters) => getters.selectedVariants,
+        ids => {
+          if (ids.length) {
+            const { id, band } = this.$route.params
+
+            this.$router.replace({
+              name: COMBINE,
+              params: {
+                id,
+                layerIds: ids.join(','),
+                band
+              }
+            })
+          }
+        }
+      )
+    }
+
+    if (mapId) {
+      this.$store.commit('setMapId', mapId)
+      this.$store.dispatch('loadLayerSetsById', { id: mapId, initializeMap: true })
+    }
   },
   computed: {
     ...mapState({
@@ -67,13 +145,25 @@ export default {
     }),
     ...mapState([
       'selectedLayerId',
-      'visibleLayerIds'
+      'visibleLayerIds',
+      'viewerType'
     ]),
     ...mapGetters([
       'activeLayerSet',
       'panelLayerSets',
       'currentNotifications'
     ]),
+    validLiwoIds () {
+      return notEmpty(this.liwoIds) && this.liwoIds
+        .map(id => isNumber(id) && notNaN(id))
+        .every(isTruthy)
+    },
+    validBand () {
+      return includedInBands(this.band)
+    },
+    combinedSenarioCanBeLoaded () {
+      return this.validLiwoIds && this.validBand
+    },
     selectedLayer () {
       if (!this.panelLayerSets) {
         return
@@ -100,6 +190,26 @@ export default {
       }
     }
   },
+  watch: {
+    combinedSenarioCanBeLoaded (boolean) {
+      if (boolean) {
+        this.loadCombinedScenarios()
+      }
+    },
+    viewerType (viewerType) {
+      if (viewerType === COMBINED) {
+        if (!this.validBand) {
+          this.$store.commit('addNotification', 'Er is geen band geselecteerd')
+        }
+        if (!this.validLiwoIds) {
+          this.$store.commit('addNotification', 'Er zijn geen ids geselecteerd')
+        }
+      }
+    },
+    validLiwoIds (liwoIds) {
+      this.$store.dispatch('setActiveLayersFromVariantIds', liwoIds)
+    }
+  },
   methods: {
     setVisibleVariantIdForSelectedlayer (index) {
       this.$store.commit('setVisibleVariantIndexForLayerId', { index, layerId: this.selectedLayerId })
@@ -107,14 +217,10 @@ export default {
     setMapObject (mapObject) {
       this.mapObject = mapObject
       console.log('CRS', mapObject.options.crs.scale())
+    },
+    loadCombinedScenarios () {
+      this.$store.dispatch('loadCombinedScenario', { band: this.band, liwoIds: this.liwoIds })
     }
-  },
-  components: {
-    ExportPopup,
-    LayerPanel,
-    LegendPanel,
-    LiwoMap,
-    NotificationBar
   }
 }
 </script>

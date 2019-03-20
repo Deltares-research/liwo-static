@@ -8,6 +8,7 @@ import includes from 'lodash/fp/includes'
 import loadBreach from './lib/load-breach'
 import { loadLayersetById, extractUnit } from './lib/load-layersets'
 import loadGeojson from './lib/load-geojson'
+import loadCombinedScenario from './lib/load-combined-scenario'
 import { normalizeLayers } from './lib/layer-parser'
 import { probabilityConfig } from './lib/probability-filter'
 import buildLayersetNotifications from './lib/build-layerset-notifications'
@@ -30,6 +31,7 @@ const LAYERPANEL_VIEW_BREACHES = 'breaches_view'
 
 export default new Vuex.Store({
   state: {
+    viewerType: undefined,
     activeLayerSetId: undefined,
     breachLayersById: [],
     breachProbabilityFilterIndex: 0,
@@ -46,6 +48,7 @@ export default new Vuex.Store({
     visibleBreachLayers: {},
     layerUnits: {},
     notifications: [],
+    combinedScenario: undefined,
     hiddenLayers: []
   },
   mutations: {
@@ -68,14 +71,17 @@ export default new Vuex.Store({
       const breachLayerIds = state.breachLayersById[id].layers.map(layer => layer.id)
 
       if (state.selectedBreaches.indexOf(id) === -1) {
-        state.selectedBreaches = [id]
+        state.selectedBreaches = state.viewerType === 'combine' ? state.selectedBreaches.concat(id) : [id]
         state.visibleLayerIds = state.visibleLayerIds.concat(breachLayerIds[0])
         state.visibleVariantIndexByLayerId = { ...state.visibleVariantIndexByLayerId, [ breachLayerIds[0] ]: 0 }
         state.opacityByLayerId = { ...state.opacityByLayerId, [ state.opacityByLayerId[id] ]: 1 }
         state.activeLayerSetId = id
         state.selectedLayerId = breachLayerIds[0]
       } else {
-        state.selectedBreaches = []
+        // state.selectedBreaches = []
+        state.selectedBreaches = state.viewerType === 'combine' ? state.selectedBreaches.filter(breachId =>
+          breachId !== id
+        ) : []
         state.visibleLayerIds = state.visibleLayerIds.filter(layerId => breachLayerIds.indexOf(layerId) === -1)
         state.visibleVariantIndexByLayerId = { ...state.visibleVariantIndexByLayerId, ...breachLayerIds.reduce((visibleVariants, id) => ({ ...visibleVariants, [ id ]: 0 }), {}) }
         state.activeLayerSetId = state.selectedBreaches[0]
@@ -153,13 +159,27 @@ export default new Vuex.Store({
       this.commit('resetToMapLayers')
     },
     setLayerSetNotifications (state, layerSetNotifications) {
-      Vue.set(state, 'notifications', layerSetNotifications)
+      state.notifications = Object.assign(state.notifications, layerSetNotifications)
     },
     setBreachNotifications (state, breachNotifications) {
       state.notifications = Object.assign(state.notifications, breachNotifications)
     },
+    addNotification (state, notification) {
+      const notifications = state.notifications.notifications || []
+      notifications.push(notification)
+      state.notifications = Object.assign(state.notifications, { notifications })
+    },
     setLayerUnits (state, layerUnits) {
       state.layerUnits = {...state.layerUnits, ...layerUnits}
+    },
+    setViewerType (state, type) {
+      state.viewerType = type
+    },
+    setCombinedScenario (state, options) {
+      state.combinedScenario = options
+    },
+    clearCombinedScenario (state, url) {
+      state.combinedScenario = undefined
     },
     toggleActiveMarker (state, id) {
       if (state.hiddenLayers.includes(id)) {
@@ -210,6 +230,21 @@ export default new Vuex.Store({
       }
 
       commit('toggleSelectedBreach', id)
+    },
+    async loadCombinedScenario ({commit, state}, { liwoIds, band }) {
+      const combinedScenario = await loadCombinedScenario({ liwoIds, band })
+      commit('setCombinedScenario', combinedScenario)
+    },
+    async setActiveLayersFromVariantIds ({ commit, getters }, ids) {
+      // await Promise.all(ids.map(id =>
+      //   // TODO: add url with the right endpoint
+      //   fetch('url' + id)
+      //     .then(res => res.json())
+      //     .then(data => data.id)
+      // ))
+      //   .then(ids => {
+      //     ids.forEach(id => commit('toggleSelectedBreach', id))
+      //   })
     }
   },
   getters: {
@@ -365,6 +400,23 @@ export default new Vuex.Store({
         return layers
       }
     },
+    selectedVariants ({ selectedBreaches, visibleVariantIndexByLayerId }, { panelLayerSets }) {
+      if (selectedBreaches) {
+        return panelLayerSets.reduce((acc, layerSet) => {
+          const isSelected = selectedBreaches.includes(layerSet.id)
+
+          if (isSelected) {
+            const layer = layerSet.layers[0]
+            const selectedIndex = visibleVariantIndexByLayerId[layer.id]
+            const selectedVariant = layer.variants[selectedIndex]
+
+            acc.push(selectedVariant.map_id)
+          }
+
+          return acc
+        }, [])
+      }
+    },
     currentNotifications (state) {
       const { mapId, visibleLayerIds, visibleVariantIndexByLayerId, selectedLayerId, selectedBreaches } = state
       const getNotificationFrom = get('notification')
@@ -372,6 +424,7 @@ export default new Vuex.Store({
 
       const notificationBreach = state.notifications.breach
       const notificationMap = state.notifications[mapId]
+      const generalNotifications = state.notifications.notifications || []
       const notificationLayers = get('layers', notificationMap) || []
       const visibleNotificationLayers = notificationLayers.filter(idIncludedIn(visibleLayerIds))
 
@@ -396,6 +449,8 @@ export default new Vuex.Store({
       notifications = notificationForMap ? [notificationForMap] : notifications
       notifications = notificationForSelectedLayer ? [notificationForSelectedLayer] : notifications
       notifications = breachNotifications && breachNotifications.length ? [...breachNotifications] : notifications
+
+      notifications = [...notifications, ...generalNotifications]
 
       return notifications.map(message => ({message, type: 'warning', id: stringToHash(message)}))
     }
