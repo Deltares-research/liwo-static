@@ -17,9 +17,9 @@
           :layers="layerSet.layers"
           :layerId="layerSet.id"
           :title="layerSet.layerSetTitle"
+          :layerSet="layerSet"
         />
       </div>
-
       <footer
         class="layer-panel__actions"
       >

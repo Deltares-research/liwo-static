@@ -3,7 +3,7 @@
     title="Selectie importeren"
     @close="$emit('close')"
   >
-    <form class="combine-popup__form">
+    <form class="combine-popup__form" @submit.prevent="onSubmit">
       <fieldset>
         <div class="control-group">
           <label class="control-label" for="url">URL</label>
@@ -22,8 +22,6 @@
           <div class="controls">
             <button
               class="btn primary"
-              type="button"
-              @click="onSubmit"
             >
               Importeren
             </button>
@@ -65,6 +63,8 @@ export default {
         const layerIds = parsedUrl.params.layerIds.split(',')
         this.$store.dispatch('setActiveLayersFromVariantIds', layerIds)
       }
+
+      this.$emit('close')
     }
   }
 }
