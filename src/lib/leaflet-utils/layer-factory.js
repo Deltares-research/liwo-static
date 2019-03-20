@@ -73,8 +73,8 @@ export function createBreachGeoJson ({ geojson, layer: layerId, opacity }, callb
   })
 }
 
-export function createTile ({ url }) {
-  return L.tileLayer(url)
+export function createTile ({ url, opacity }) {
+  return L.tileLayer(url, { opacity })
 }
 
 export function createWms ({ namespace, layer, attribution, style, opacity }) {

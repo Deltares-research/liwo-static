@@ -23,7 +23,6 @@ export function showLayerInfoPopup ({ map, activeLayer, unit, position, latlng }
         value = data.properties[activeLayer]
       }
 
-
       if (value) {
         value = value.toFixed(1)
 

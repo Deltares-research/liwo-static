@@ -4,6 +4,7 @@ import get from 'lodash/fp/get'
 import pipe from 'lodash/fp/pipe'
 import first from 'lodash/fp/first'
 import includes from 'lodash/fp/includes'
+import cloneDeep from 'lodash/fp/cloneDeep'
 
 import loadBreach from './lib/load-breach'
 import { loadLayersetById, extractUnit } from './lib/load-layersets'
@@ -234,6 +235,8 @@ export default new Vuex.Store({
     async loadCombinedScenario ({commit, state}, { liwoIds, band }) {
       const combinedScenario = await loadCombinedScenario({ liwoIds, band })
       commit('setCombinedScenario', combinedScenario)
+      commit('setVisibleVariantIndexForLayerId', { index: 0, layerId: 'combined_scenario' })
+      commit('showLayerById', 'combined_scenario')
     },
     async setActiveLayersFromVariantIds ({ commit, getters }, ids) {
       // await Promise.all(ids.map(id =>
@@ -248,12 +251,30 @@ export default new Vuex.Store({
     }
   },
   getters: {
-    mapLayers ({ layerSetsById, mapId }) {
+    combinedScenarioAsLayer ({ combinedScenario }) {
+      const layer = {
+        id: 'combined_scenario',
+        properties: { title: 'Gecombineerd Scenario' },
+        legend: { layer: 'combined_scenario', title: 'Gecombineerd Scenario [-]' },
+        variants: [{
+          layer: 'combined_scenario',
+          ...combinedScenario
+        }]
+      }
+
+      return combinedScenario
+        ? layer
+        : undefined
+    },
+    mapLayers ({ layerSetsById, mapId }, { combinedScenarioAsLayer }) {
       if (!mapId || !layerSetsById) {
         return []
       }
 
-      return [{ layers: layerSetsById[mapId] || [] }]
+      const layers = cloneDeep(layerSetsById[mapId] || [])
+      if (combinedScenarioAsLayer) layers.push(combinedScenarioAsLayer)
+
+      return [{ layers }]
     },
     breachLayers ({ breachLayersById, selectedBreaches }) {
       return selectedBreaches
