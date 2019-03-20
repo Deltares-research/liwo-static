@@ -46,9 +46,10 @@ export default new Vuex.Store({
     selectedBreaches: [],
     selectedLayerSetIndex: 0,
     visibleBreachLayers: {},
-    layerUnits: undefined,
+    layerUnits: {},
+    notifications: [],
     combinedScenario: undefined,
-    notifications: []
+    hiddenLayers: []
   },
   mutations: {
     addBreachLayer (state, { id, breachLayers, breachName }) {
@@ -115,7 +116,7 @@ export default new Vuex.Store({
     },
     initToMapLayers (state, mapId) {
       const currentLayerSet = state.layerSetsById[mapId]
-      state.visibleLayerIds = currentLayerSet.map(layer => layer.id)
+      state.visibleLayerIds = currentLayerSet.filter(layer => layer.properties.visible).map(layer => layer.id)
       state.selectedBreaches = []
       state.opacityByLayerId = {}
       state.selectedLayerId = state.visibleLayerIds[0]
@@ -169,7 +170,7 @@ export default new Vuex.Store({
       state.notifications = Object.assign(state.notifications, { notifications })
     },
     setLayerUnits (state, layerUnits) {
-      state.layerUnits = layerUnits
+      state.layerUnits = {...state.layerUnits, ...layerUnits}
     },
     setViewerType (state, type) {
       state.viewerType = type
@@ -179,6 +180,13 @@ export default new Vuex.Store({
     },
     clearCombinedScenario (state, url) {
       state.combinedScenario = undefined
+    },
+    toggleActiveMarker (state, id) {
+      if (state.hiddenLayers.includes(id)) {
+        state.hiddenLayers = state.hiddenLayers.filter(markerId => markerId !== id)
+      } else {
+        state.hiddenLayers = [...state.hiddenLayers, id]
+      }
     }
   },
   actions: {
@@ -208,10 +216,17 @@ export default new Vuex.Store({
       if (Object.keys(state.breachLayersById).indexOf(String(id)) === -1) {
         const breach = await loadBreach(id, layerType)
         const breachLayers = normalizeLayers(breach.layers)
+
+        const layerUnits = breachLayers.reduce((acc, layer) => {
+          acc[layer.legend.layer] = extractUnit(layer.legend.title)
+          return acc
+        }, [])
+
         const visibleBreachLayers = breachLayers.map((layer) => layer.id)
 
         commit('addBreachLayer', { id, breachLayers, breachName })
         commit('setVisibleBreachLayers', { breach: id, layers: visibleBreachLayers })
+        commit('setLayerUnits', layerUnits)
       }
 
       commit('toggleSelectedBreach', id)
@@ -308,7 +323,7 @@ export default new Vuex.Store({
         ]
       }
     },
-    async parsedLayerSet (state, { activeLayerSet }) {
+    async parsedLayerSet ({ breachProbabilityFilterIndex, selectedBreaches, activeLayerSetId, hiddenLayers }, { activeLayerSet }) {
       if (!activeLayerSet) {
         return Promise.resolve([])
       }
@@ -319,7 +334,7 @@ export default new Vuex.Store({
             const geojson = await loadGeojson(layer)
 
             if (layer.layer === BREACHES_PRIMARY_LAYER_ID || layer.layer === BREACHES_REGIONAL_LAYER_ID) {
-              const filterIndex = state.breachProbabilityFilterIndex
+              const filterIndex = breachProbabilityFilterIndex
               const probabilityFilter = probabilityConfig[filterIndex]
 
               geojson.features = geojson.features
@@ -327,7 +342,7 @@ export default new Vuex.Store({
 
               geojson.features
                 .forEach(feature => {
-                  feature.properties.selected = state.selectedBreaches.indexOf(feature.properties.id) !== -1
+                  feature.properties.selected = selectedBreaches.indexOf(feature.properties.id) !== -1
                 })
             }
 
@@ -341,11 +356,11 @@ export default new Vuex.Store({
       let selectedLayers = []
 
       // seperate selected markers into its own layer
-      if (state.selectedBreaches.length) {
+      if (selectedBreaches.length) {
         layers.map(layer => {
           if (layer.type === 'json') {
             const activeFeatures = layer.geojson.features.filter(
-              feature => state.selectedBreaches.find(id => id === feature.properties.id)
+              feature => selectedBreaches.find(id => id === feature.properties.id)
             )
 
             if (activeFeatures.length) {
@@ -354,7 +369,7 @@ export default new Vuex.Store({
 
                 // remove feature from its current layer
                 layer.geojson.features = layer.geojson.features.filter(
-                  feature => feature.properties.id !== state.activeLayerSetId
+                  feature => feature.properties.id !== activeLayerSetId
                 )
 
                 layer.geojson.totalFeatures = layer.geojson.features.length
@@ -362,7 +377,7 @@ export default new Vuex.Store({
                 // create layer for selected feature
                 return {
                   ...layer,
-                  hide: false,
+                  hide: hiddenLayers.includes(activeFeature.properties.id),
                   namespace: layer.namespace,
                   layer: BREACH_SELECTED,
                   layerId: BREACH_SELECTED,

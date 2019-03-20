@@ -35,7 +35,8 @@ export default {
       'opacityByLayerId',
       'selectedBreaches',
       'layerUnits',
-      'combinedScenario'
+      'combinedScenario',
+      'selectedLayerId'
     ]),
     ...mapGetters([
       'parsedLayerSet',
@@ -62,8 +63,8 @@ export default {
       mapObject.on('click', event => {
         showLayerInfoPopup({
           map: mapObject,
-          activeLayer: this.activeLayerSet[0],
-          unit: this.layerUnits[this.activeLayerSet[0].layerId],
+          activeLayer: this.selectedLayerId,
+          unit: this.layerUnits[this.selectedLayerId],
           position: event.containerPoint,
           latlng: event.latlng
         })
