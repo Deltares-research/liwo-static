@@ -5,10 +5,11 @@
         v-if="panelLayerTitle"
         :active="(panelLayerId === selectedLayerId)"
         :id="panelLayerId"
-        :title="`${panelLayerTitle} (marker)`"
         :variants="[]"
         :layerType="''"
         :visible="activeMarkerLayerIsVisible"
+        :isMarkerLayer="true"
+        title="Locatie"
         @toggle="toggleActiveMarker"
       />
     </li>
