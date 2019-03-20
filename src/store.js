@@ -46,7 +46,7 @@ export default new Vuex.Store({
     visibleBreachLayers: {},
     layerUnits: {},
     notifications: [],
-    hiddenBreachMarkers: []
+    hiddenLayers: []
   },
   mutations: {
     addBreachLayer (state, { id, breachLayers, breachName }) {
@@ -162,10 +162,10 @@ export default new Vuex.Store({
       state.layerUnits = {...state.layerUnits, ...layerUnits}
     },
     toggleActiveMarker (state, id) {
-      if (state.hiddenBreachMarkers.includes(id)) {
-        state.hiddenBreachMarkers = state.hiddenBreachMarkers.filter(markerId => markerId !== id)
+      if (state.hiddenLayers.includes(id)) {
+        state.hiddenLayers = state.hiddenLayers.filter(markerId => markerId !== id)
       } else {
-        state.hiddenBreachMarkers = [...state.hiddenBreachMarkers, id]
+        state.hiddenLayers = [...state.hiddenLayers, id]
       }
     }
   },
@@ -288,7 +288,7 @@ export default new Vuex.Store({
         ]
       }
     },
-    async parsedLayerSet ({ breachProbabilityFilterIndex, selectedBreaches, activeLayerSetId, hiddenBreachMarkers }, { activeLayerSet }) {
+    async parsedLayerSet ({ breachProbabilityFilterIndex, selectedBreaches, activeLayerSetId, hiddenLayers }, { activeLayerSet }) {
       if (!activeLayerSet) {
         return Promise.resolve([])
       }
@@ -342,7 +342,7 @@ export default new Vuex.Store({
                 // create layer for selected feature
                 return {
                   ...layer,
-                  hide: hiddenBreachMarkers.includes(activeFeature.properties.id),
+                  hide: hiddenLayers.includes(activeFeature.properties.id),
                   namespace: layer.namespace,
                   layer: BREACH_SELECTED,
                   layerId: BREACH_SELECTED,

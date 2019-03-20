@@ -64,10 +64,10 @@ export default {
       'visibleLayerIds',
       'visibleVariantIndexByLayerId',
       'hidden',
-      'hiddenBreachMarkers'
+      'hiddenLayers'
     ]),
     activeMarkerLayerIsVisible () {
-      return !this.hiddenBreachMarkers.includes(this.panelLayerId)
+      return !this.hiddenLayers.includes(this.panelLayerId)
     }
   },
   methods: {
