@@ -52,6 +52,22 @@ const router = new Router({
       }
     },
     {
+      path: '/combine/:layerIds?',
+      name: 'combine',
+      component: Viewer,
+      meta: {
+        title: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
+      }
+    },
+    {
+      path: '/combined/:layerIds?/:band?',
+      name: 'combined',
+      component: Viewer,
+      meta: {
+        title: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
+      }
+    },
+    {
       path: '/about',
       name: 'about',
       component: About,

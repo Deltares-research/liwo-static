@@ -17,7 +17,8 @@ export default {
       return
     }
 
-    const { mapLayers, callbacks } = value
+    const { mapLayers: _mapLayers, callbacks } = value
+    const mapLayers = _mapLayers.filter(value => value)
 
     layerGroup.clearLayers()
 

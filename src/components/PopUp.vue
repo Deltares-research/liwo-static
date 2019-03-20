@@ -57,6 +57,7 @@ export default {
   }
   .pop-up__modal {
     z-index: 2;
+    width: 100%;
     max-width: 620px;
     margin: 0 auto;
     border-radius: 4px;

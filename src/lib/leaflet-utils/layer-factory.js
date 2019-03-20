@@ -40,6 +40,8 @@ export default function createLayer (layer, { breachCallBack }) {
     } else {
       return createGeoJson(layer)
     }
+  } else if (layer.type === 'tile') {
+    return createTile(layer)
   } else {
     return createWms(layer)
   }
@@ -69,6 +71,10 @@ export function createBreachGeoJson ({ geojson, layer: layerId, opacity }, callb
         : layer.setIcon(getBreachIcon(layerId))
     }
   })
+}
+
+export function createTile ({ url }) {
+  return L.tileLayer(url)
 }
 
 export function createWms ({ namespace, layer, attribution, style, opacity }) {
