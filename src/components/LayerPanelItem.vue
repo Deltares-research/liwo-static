@@ -2,15 +2,13 @@
   <div class="layerpanel-item" :class="{'layerpanel-item--collapsed': collapsed}">
     <h3
       class="layerpanel-item__title"
-      v-if="title"
-      @click="setActiveLayer"
+      @click="() => title && setActiveLayer()"
     >
-      <span>{{ title }}</span>
+      <span>{{ title || 'Algemeen' }}</span>
       <button class="layerpanel-item__collapse" @click="toggleCollapse">
         <img class="layerpanel-item__collapse-icon" :src="`/icons/baseline-keyboard_arrow_up-24px.svg`" />
       </button>
     </h3>
-
     <layer-control-list
       :layers="layers"
       :visible="!collapsed"
@@ -38,6 +36,10 @@ export default {
     layerId: {
       type: Number,
       required: false
+    },
+    collapse: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
@@ -58,6 +60,9 @@ export default {
   watch: {
     layerControlListIsVisible (visible) {
       this.collapsed = !visible
+    },
+    collapse (collapse) {
+      this.collapsed = collapse
     }
   },
   methods: {
@@ -68,7 +73,7 @@ export default {
     toggleCollapse () {
       this.collapsed = !this.collapsed
 
-      if (this.collapsed) {
+      if (this.collapsed && this.title) {
         this.setActiveLayer()
       }
     }
