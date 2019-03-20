@@ -280,7 +280,7 @@ export default new Vuex.Store({
         ]
       }
     },
-    async parsedLayerSet (state, { activeLayerSet, panelLayerSets }) {
+    async parsedLayerSet ({ breachProbabilityFilterIndex, selectedBreaches, activeLayerSetId, hiddenLayers, visibleVariantIndexByLayerId }, { activeLayerSet, panelLayerSets }) {
       if (!activeLayerSet) {
         return Promise.resolve([])
       }
@@ -291,7 +291,7 @@ export default new Vuex.Store({
             const geojson = await loadGeojson(layer)
 
             if (layer.layer === BREACHES_PRIMARY_LAYER_ID || layer.layer === BREACHES_REGIONAL_LAYER_ID) {
-              const filterIndex = state.breachProbabilityFilterIndex
+              const filterIndex = breachProbabilityFilterIndex
               const probabilityFilter = probabilityConfig[filterIndex]
 
               geojson.features = geojson.features
@@ -299,7 +299,7 @@ export default new Vuex.Store({
 
               geojson.features
                 .forEach(feature => {
-                  feature.properties.selected = state.selectedBreaches.indexOf(feature.properties.id) !== -1
+                  feature.properties.selected = selectedBreaches.indexOf(feature.properties.id) !== -1
                 })
             }
 
@@ -313,11 +313,11 @@ export default new Vuex.Store({
       let selectedLayers = []
 
       // seperate selected markers into its own layer
-      if (state.activeLayerSetId) {
+      if (activeLayerSetId) {
         layers.map(layer => {
           if (layer.type === 'json') {
             const activeFeature = layer.geojson.features.find(
-              feature => state.selectedBreaches.find(id => id === feature.properties.id)
+              feature => selectedBreaches.find(id => id === feature.properties.id)
             )
 
             if (activeFeature) {
@@ -327,7 +327,7 @@ export default new Vuex.Store({
               const panelLayer = panelLayerSet.layers[0]
 
               if (panelLayer.variants.length > 1) {
-                const selectedIndex = state.visibleVariantIndexByLayerId[panelLayer.id]
+                const selectedIndex = visibleVariantIndexByLayerId[panelLayer.id]
                 const selectedVariant = panelLayer.variants[selectedIndex]
                 activeFeature.properties.selectedVariant = selectedVariant.title
               }
@@ -336,7 +336,7 @@ export default new Vuex.Store({
 
               // remove feature from its current layer
               layer.geojson.features = layer.geojson.features.filter(
-                feature => feature.properties.id !== state.activeLayerSetId
+                feature => feature.properties.id !== activeLayerSetId
               )
 
               layer.geojson.totalFeatures = layer.geojson.features.length
