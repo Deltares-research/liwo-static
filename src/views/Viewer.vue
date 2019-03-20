@@ -106,11 +106,12 @@ export default {
     const {id: _mapId, layerIds, band} = this.$route.params
     const routeName = this.$route.name
     const mapId = Number(getFirstLayerSetForRoute(this.$route.name, _mapId))
+    const isCombineViewerType = routeName === COMBINE || routeName === COMBINED
 
     this.liwoIds = layerIds ? layerIds.split(',').map(id => parseInt(id, 10)) : []
     this.band = band
 
-    this.$store.commit('setViewerType', routeName)
+    this.$store.commit('setViewerType', isCombineViewerType ? 'combine' : routeName)
     this.$store.commit('setPageTitle', PAGE_TITLE)
 
     if (this.viewerType === COMBINE) {
