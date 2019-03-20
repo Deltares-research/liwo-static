@@ -240,7 +240,7 @@ export default new Vuex.Store({
       const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
 
       await Promise.all(ids.map(mapid => {
-        return fetch(`http://tw-160.xtr.deltares.nl/liwo.ws/Maps.asmx/GetBreachLocationId`, {
+        return fetch(`${mapConfig.services.WEBSERVICE_URL}/Maps.asmx/GetBreachLocationId`, {
           method: 'POST',
           headers,
           body: JSON.stringify({ mapid })
