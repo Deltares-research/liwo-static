@@ -178,7 +178,7 @@ export default {
   .layer-control__options {
     position: relative;
     display: block;
-    padding: .5rem .5rem 0.5rem 2.5rem;
+    padding: .5rem .5rem .5rem 2.5rem;
   }
 
   .layer-control__main {
@@ -218,7 +218,6 @@ export default {
   }
 
   .layer-control__marker-icon {
-    height: 1rem;
     margin-left: auto;
   }
 </style>
