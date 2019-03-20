@@ -135,6 +135,10 @@ export default {
 </script>
 
 <style>
+  .export-popup__content {
+    padding: 1.5rem;
+  }
+
   .export-popup__form-columns {
     display: flex;
     flex-wrap: wrap;
