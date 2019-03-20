@@ -236,34 +236,36 @@ export default new Vuex.Store({
       const combinedScenario = await loadCombinedScenario({ liwoIds, band })
       commit('setCombinedScenario', combinedScenario)
     },
-    async setActiveLayersFromVariantIds ({ commit, dispatch, getters }, ids) {
+    async setActiveLayersFromVariantIds ({ commit, dispatch, getters, state }, ids) {
       const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
 
-      await Promise.all(ids.map(mapid => {
-        return fetch(`${mapConfig.services.WEBSERVICE_URL}/Maps.asmx/GetBreachLocationId`, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify({ mapid })
-        })
-          .then(res => res.json())
-          .then(data => JSON.parse(data.d))
-      }
-      ))
-        .then((locations) => {
-          locations.forEach(({ breachlocationtype, breachlocationid, breachlocationname }) => {
-            let layerType
-
-            switch (breachlocationtype) {
-              case 'PRIM':
-                layerType = 'geo_doorbraaklocaties_primair'
-                break
-              case 'REG':
-                layerType = 'geo_doorbraaklocaties_regionaal'
-                break
-            }
-
-            dispatch('addBreach', { id: breachlocationid, layerType, breachName: breachlocationname })
+      await Promise.all(ids
+        .map(mapid => {
+          return fetch(`${mapConfig.services.WEBSERVICE_URL}/Maps.asmx/GetBreachLocationId`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ mapid })
           })
+            .then(res => res.json())
+            .then(data => JSON.parse(data.d))
+        }))
+        .then((locations) => {
+          locations
+            .filter(location => !state.selectedBreaches.includes(location.breachlocationid))
+            .forEach(({ breachlocationtype, breachlocationid, breachlocationname }) => {
+              let layerType
+
+              switch (breachlocationtype) {
+                case 'PRIM':
+                  layerType = 'geo_doorbraaklocaties_primair'
+                  break
+                case 'REG':
+                  layerType = 'geo_doorbraaklocaties_regionaal'
+                  break
+              }
+
+              dispatch('addBreach', { id: breachlocationid, layerType, breachName: breachlocationname })
+            })
         })
     }
   },
