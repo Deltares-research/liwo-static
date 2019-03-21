@@ -72,7 +72,12 @@ export default new Vuex.Store({
       const breachLayerIds = state.breachLayersById[id].layers.map(layer => layer.id)
 
       if (state.selectedBreaches.indexOf(id) === -1) {
-        state.selectedBreaches = state.viewerType === 'combine' ? state.selectedBreaches.concat(id) : [id]
+        if (state.viewerType === 'combine' || state.viewerType === 'combined') {
+          state.selectedBreaches = state.selectedBreaches.concat(id)
+        } else {
+          state.selectedBreaches = [id]
+        }
+
         state.visibleLayerIds = state.visibleLayerIds.concat(breachLayerIds[0])
         state.visibleVariantIndexByLayerId = { ...state.visibleVariantIndexByLayerId, [ breachLayerIds[0] ]: 0 }
         state.opacityByLayerId = { ...state.opacityByLayerId, [ state.opacityByLayerId[id] ]: 1 }
