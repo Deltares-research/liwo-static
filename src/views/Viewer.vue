@@ -89,6 +89,7 @@ export default {
   },
   data () {
     return {
+      isMounted: false,
       parsedLayers: [],
       id: 0,
       showExport: false,
@@ -138,6 +139,7 @@ export default {
         }
       )
     }
+    this.isMounted = true
   },
   computed: {
     ...mapState({
@@ -197,7 +199,7 @@ export default {
       }
     },
     viewerType (viewerType) {
-      if (viewerType === COMBINED) {
+      if (viewerType === COMBINED && this.isMounted) {
         if (!this.validBand) {
           this.$store.commit('addNotification', 'Er is geen band geselecteerd')
         }
