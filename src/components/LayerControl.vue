@@ -36,7 +36,12 @@
       />
     </div>
     <div v-if="variantsOptions.length" class="layer-control__options">
-      <layer-control-select name="layer-variant" :options="variantsOptions" @change="setLayerVariant" />
+      <layer-control-select
+        name="layer-variant"
+        :options="variantsOptions"
+        :selected="selectedVariant"
+        @change="setLayerVariant"
+      />
     </div>
     <div class="layer-control__options">
       <layer-control-select :name="`layer-${id}-trans`" :options="transparancyOptions" @change="setOpacity" />
@@ -81,7 +86,9 @@ export default {
   computed: {
     ...mapState([
       'breachProbabilityFilterIndex',
-      'visibleLayerIds'
+      'visibleVariantIndexByLayerId',
+      'visibleLayerIds',
+      'selectedLayerId'
     ]),
     transparancyOptions () {
       return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((index) => ({
@@ -105,6 +112,9 @@ export default {
         value: Number(index),
         title: variant.title
       }))
+    },
+    selectedVariant () {
+      return this.visibleVariantIndexByLayerId[this.selectedLayerId]
     },
     isBreachControlLayer () {
       if (typeof this.layerType !== 'string') {

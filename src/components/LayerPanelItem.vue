@@ -89,6 +89,8 @@ export default {
 </script>
 
 <style>
+  @import './variables.css';
+
   .layerpanel-item {
     background-color: var(--yellow);
     border-top: 2px solid var(--light-gray);
