@@ -100,7 +100,7 @@ export default new Vuex.Store({
     setSelectedLayerId (state, id) {
       state.selectedLayerId = id
     },
-    setVisibleVariantIndexForLayerId (state, {index, layerId}) {
+    setVisibleVariantIndexForLayerId (state, { index, layerId }) {
       state.visibleVariantIndexByLayerId = {
         ...state.visibleVariantIndexByLayerId,
         [layerId]: index
@@ -219,7 +219,7 @@ export default new Vuex.Store({
         state.commit('initToMapLayers', id)
       }
     },
-    async addBreach ({ commit, state }, { id, breachName, layerType }) {
+    async addBreach ({ commit, state }, { id, breachName, layerType, variantId }) {
       if (Object.keys(state.breachLayersById).indexOf(String(id)) === -1) {
         const breach = await loadBreach(id, layerType)
         const breachLayers = normalizeLayers(breach.layers)
@@ -231,12 +231,26 @@ export default new Vuex.Store({
 
         const visibleBreachLayers = breachLayers.map((layer) => layer.id)
 
+        const activeLayer = breach.layers.find(layer =>
+          layer.variants.find(variant => {
+            return variantId === variant.map.map_id
+          })
+        )
+
+        const activeVariant = activeLayer.variants.find(variant => {
+          return variantId === variant.map.map_id
+        })
+
+        const index = activeLayer.variants.indexOf(activeVariant)
+
         commit('addBreachLayer', { id, breachLayers, breachName })
         commit('setVisibleBreachLayers', { breach: id, layers: visibleBreachLayers })
         commit('setLayerUnits', layerUnits)
+        commit('toggleSelectedBreach', id)
+        commit('setVisibleVariantIndexForLayerId', { layerId: activeLayer.legend.layer, index })
+      } else {
+        commit('toggleSelectedBreach', id)
       }
-
-      commit('toggleSelectedBreach', id)
     },
     async loadCombinedScenario ({commit, state}, { liwoIds, band }) {
       const combinedScenario = await loadCombinedScenario({ liwoIds, band })
@@ -256,11 +270,12 @@ export default new Vuex.Store({
           })
             .then(res => res.json())
             .then(data => JSON.parse(data.d))
+            .then(data => ({ ...data, variantId: mapid }))
         }))
         .then((locations) => {
           locations
             .filter(location => !state.selectedBreaches.includes(location.breachlocationid))
-            .forEach(({ breachlocationtype, breachlocationid, breachlocationname }) => {
+            .forEach(({ breachlocationtype, breachlocationid, breachlocationname, variantId }) => {
               let layerType
 
               switch (breachlocationtype) {
@@ -272,7 +287,7 @@ export default new Vuex.Store({
                   break
               }
 
-              dispatch('addBreach', { id: breachlocationid, layerType, breachName: breachlocationname })
+              dispatch('addBreach', { id: breachlocationid, layerType, breachName: breachlocationname, variantId })
             })
         })
     }
