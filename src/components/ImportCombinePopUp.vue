@@ -74,8 +74,6 @@ export default {
 
         this.$emit('close')
       } catch (error) {
-        console.log(error)
-
         this.showError = true
       }
     }
