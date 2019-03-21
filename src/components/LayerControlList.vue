@@ -9,7 +9,7 @@
         :layerType="''"
         :visible="activeMarkerLayerIsVisible"
         :isMarkerLayer="true"
-        title="Locatie"
+        :title="LOCATION"
         @toggle="toggleActiveMarker"
       />
     </li>
@@ -37,8 +37,9 @@
 
 <script>
 import { mapState } from 'vuex'
-
 import LayerControl from './LayerControl'
+
+const LOCATION = 'Locatie'
 
 export default {
   props: {
@@ -57,6 +58,11 @@ export default {
     panelLayerId: {
       type: [String, Number],
       default: ''
+    }
+  },
+  data () {
+    return {
+      LOCATION
     }
   },
   computed: {
