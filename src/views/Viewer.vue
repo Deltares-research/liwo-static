@@ -151,7 +151,7 @@ export default {
     ...mapGetters([
       'activeLayerSet',
       'panelLayerSets',
-      'currentNotifications',
+      'currentNotifications'
     ]),
     validLiwoIds () {
       return notEmpty(this.liwoIds) && this.liwoIds
