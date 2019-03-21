@@ -155,8 +155,8 @@ export default {
     ]),
     validLiwoIds () {
       return notEmpty(this.liwoIds) && this.liwoIds
-        .filter(id => isNumber(id) && notNaN(id))
-        .filter(isTruthy)
+        .map(id => isNumber(id) && notNaN(id))
+        .every(isTruthy)
     },
     validBand () {
       return includedInBands(this.band)
@@ -206,8 +206,10 @@ export default {
         }
       }
     },
-    validLiwoIds (liwoIds) {
-      this.$store.dispatch('setActiveLayersFromVariantIds', liwoIds)
+    validLiwoIds (isValid) {
+      if (isValid) {
+        this.$store.dispatch('setActiveLayersFromVariantIds', this.liwoIds)
+      }
     }
   },
   methods: {
