@@ -5,10 +5,11 @@
         v-if="panelLayerTitle"
         :active="(panelLayerId === selectedLayerId)"
         :id="panelLayerId"
-        :title="`${panelLayerTitle} (marker)`"
         :variants="[]"
         :layerType="''"
         :visible="activeMarkerLayerIsVisible"
+        :isMarkerLayer="true"
+        :title="LOCATION"
         @toggle="toggleActiveMarker"
       />
     </li>
@@ -36,8 +37,9 @@
 
 <script>
 import { mapState } from 'vuex'
-
 import LayerControl from './LayerControl'
+
+const LOCATION = 'Locatie'
 
 export default {
   props: {
@@ -56,6 +58,11 @@ export default {
     panelLayerId: {
       type: [String, Number],
       default: ''
+    }
+  },
+  data () {
+    return {
+      LOCATION
     }
   },
   computed: {
