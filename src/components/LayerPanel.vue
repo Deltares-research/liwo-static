@@ -108,7 +108,7 @@ export default {
     height: 100%;
     background-color: var(--white);
     max-height: calc(100vh - 23rem);
-    overflow-y: scroll;
+    overflow: auto;
   }
 
   .layer-panel__content {
@@ -119,7 +119,7 @@ export default {
 
   .layer-panel__body {
     flex: 1;
-    overflow: auto;
+    overflow-y: scroll;
   }
 
   .layer-panel__actions {
