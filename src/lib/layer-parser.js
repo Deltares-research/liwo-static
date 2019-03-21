@@ -2,6 +2,7 @@ export function normalizeLayer (layer) {
   return {
     id: layer.legend.layer || layer.id,
     properties: layer,
+    iscontrollayer: layer.iscontrollayer,
     legend: {
       ...layer.legend,
       namespace: layer.variants[0].map.namespace // namespace should be available to legend
@@ -9,7 +10,8 @@ export function normalizeLayer (layer) {
     variants: layer.variants.map(variant => ({
       ...variant.map,
       metadata: variant.metadata,
-      title: variant.title
+      title: variant.title,
+      iscontrollayer: layer.iscontrollayer
     }))
   }
 }

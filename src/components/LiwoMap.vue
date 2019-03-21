@@ -52,9 +52,8 @@ export default {
   },
   methods: {
     breachCallBack ({ target }) {
-      const { id, naam: breachName, layerType } = target.feature.properties
-
-      this.$store.dispatch('addBreach', { id, breachName, layerType })
+      const { id, naam: breachName, layerType, isControllable } = target.feature.properties
+      this.$store.dispatch('addBreach', { id, breachName, layerType, isControllable })
     },
     initMapObject (mapObject) {
       this.$emit('initMap', mapObject)

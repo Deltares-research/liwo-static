@@ -54,10 +54,10 @@ export default new Vuex.Store({
     hiddenLayers: []
   },
   mutations: {
-    addBreachLayer (state, { id, breachLayers, breachName }) {
+    addBreachLayer (state, { id, breachLayers, breachName, iscontrollayer }) {
       state.breachLayersById = {
         ...state.breachLayersById,
-        [ id ]: { layers: breachLayers, layerSetTitle: breachName, id }
+        [ id ]: { layers: breachLayers, layerSetTitle: breachName, id, iscontrollayer }
       }
     },
     setLayerSetById (state, { id, layerSet }) {
@@ -219,7 +219,7 @@ export default new Vuex.Store({
         state.commit('initToMapLayers', id)
       }
     },
-    async addBreach ({ commit, state }, { id, breachName, layerType }) {
+    async addBreach ({ commit, state }, { id, breachName, layerType, isControllable }) {
       if (Object.keys(state.breachLayersById).indexOf(String(id)) === -1) {
         const breach = await loadBreach(id, layerType)
         const breachLayers = normalizeLayers(breach.layers)
@@ -231,7 +231,7 @@ export default new Vuex.Store({
 
         const visibleBreachLayers = breachLayers.map((layer) => layer.id)
 
-        commit('addBreachLayer', { id, breachLayers, breachName })
+        commit('addBreachLayer', { id, breachLayers, breachName, iscontrollayer: isControllable })
         commit('setVisibleBreachLayers', { breach: id, layers: visibleBreachLayers })
         commit('setLayerUnits', layerUnits)
       }
@@ -272,7 +272,12 @@ export default new Vuex.Store({
                   break
               }
 
-              dispatch('addBreach', { id: breachlocationid, layerType, breachName: breachlocationname })
+              dispatch('addBreach', {
+                id: breachlocationid,
+                layerType,
+                breachName: breachlocationname,
+                isControllable: state.viewerType !== 'combined'
+              })
             })
         })
     }
@@ -370,7 +375,7 @@ export default new Vuex.Store({
         ]
       }
     },
-    async parsedLayerSet ({ breachProbabilityFilterIndex, selectedBreaches, activeLayerSetId, hiddenLayers, visibleVariantIndexByLayerId }, { activeLayerSet, panelLayerSets }) {
+    async parsedLayerSet ({ breachProbabilityFilterIndex, selectedBreaches, activeLayerSetId, hiddenLayers, visibleVariantIndexByLayerId, viewerType }, { activeLayerSet, panelLayerSets }) {
       if (!activeLayerSet) {
         return Promise.resolve([])
       }
@@ -378,7 +383,8 @@ export default new Vuex.Store({
       let layers = await Promise.all(
         activeLayerSet.map(async (layer) => {
           if (layer.type === 'json') {
-            const geojson = await loadGeojson(layer)
+            const geoJsonOptions = viewerType === 'combined' ? { filteredIds: selectedBreaches } : undefined
+            const geojson = await loadGeojson(layer, geoJsonOptions)
 
             if (layer.layer === BREACHES_PRIMARY_LAYER_ID || layer.layer === BREACHES_REGIONAL_LAYER_ID) {
               const filterIndex = breachProbabilityFilterIndex
@@ -405,6 +411,7 @@ export default new Vuex.Store({
       // seperate selected markers into its own layer
       if (selectedBreaches.length) {
         layers.map(layer => {
+          if (layer.iscontrollayer !== true) return layer
           if (layer.type === 'json') {
             const activeFeatures = layer.geojson.features.filter(
               feature => selectedBreaches.find(id => id === feature.properties.id)
