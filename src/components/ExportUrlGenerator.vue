@@ -42,10 +42,10 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'selectedVariants'
+      'selectedVariantIds'
     ]),
     path () {
-      const commaSeperatedIds = this.selectedVariants.join(',')
+      const commaSeperatedIds = this.selectedVariantIds.join(',')
 
       return `/combined/${commaSeperatedIds}/${this.selected}`
     }

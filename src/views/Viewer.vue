@@ -122,7 +122,7 @@ export default {
 
     if (this.viewerType === COMBINE) {
       this.$store.watch(
-        (state, getters) => getters.selectedVariants,
+        (state, getters) => getters.selectedVariantIds,
         ids => {
           if (ids.length) {
             const { id, band } = this.$route.params
