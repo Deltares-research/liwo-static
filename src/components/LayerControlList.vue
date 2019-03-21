@@ -1,6 +1,6 @@
 <template>
   <ul class="layer-control-list" :class="{ 'layer-control-list--active': visible }">
-    <li>
+    <li class="layer-control-list__item">
       <layer-control
         v-if="panelLayerTitle"
         :active="(panelLayerId === selectedLayerId)"
