@@ -15,17 +15,17 @@ export function showLayerInfoPopup ({ map, activeLayer, unit, position, latlng }
     .then(data => {
       let value
 
-      if (data && data.properties && data.properties.GRAY_INDEX && data.properties.GRAY_INDEX > -999.00) {
+      if (data && data.properties && data.properties.GRAY_INDEX) {
         value = data.properties.GRAY_INDEX
       }
 
-      if (data.properties && data.properties[activeLayer]) {
+      if (data && data.properties && data.properties[activeLayer]) {
         value = data.properties[activeLayer]
       }
 
-      value = value.toFixed(1)
-
       if (value) {
+        value = value.toFixed(1)
+
         L.popup()
           .setLatLng(latlng)
           .setContent(`${value} [${unit}]`)

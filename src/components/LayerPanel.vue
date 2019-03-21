@@ -18,9 +18,9 @@
           :layerId="layerSet.id"
           :title="layerSet.layerSetTitle"
           :collapse="index === 0 && layerSets.length > 1"
+          :layerSet="layerSet"
         />
       </div>
-
       <footer
         class="layer-panel__actions"
       >

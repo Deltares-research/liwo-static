@@ -103,18 +103,23 @@ export default {
     }
   },
   async mounted () {
-    const {id: _mapId, layerIds, band} = this.$route.params
+    const {id: _mapId, band, layerIds} = this.$route.params
     const routeName = this.$route.name
     const mapId = Number(getFirstLayerSetForRoute(this.$route.name, _mapId))
 
-    this.liwoIds = layerIds ? layerIds.split(',').map(id => parseInt(id, 10)) : []
     this.band = band
 
     this.$store.commit('setViewerType', routeName)
     this.$store.commit('setPageTitle', PAGE_TITLE)
 
+    if (mapId) {
+      this.$store.commit('setMapId', mapId)
+      await this.$store.dispatch('loadLayerSetsById', { id: mapId, initializeMap: true })
+    }
+
+    this.liwoIds = layerIds ? layerIds.split(',').map(id => parseInt(id, 10)) : []
+
     if (this.viewerType === COMBINE) {
-      // watch selected variants and update route
       this.$store.watch(
         (state, getters) => getters.selectedVariants,
         ids => {
@@ -132,11 +137,6 @@ export default {
           }
         }
       )
-    }
-
-    if (mapId) {
-      this.$store.commit('setMapId', mapId)
-      this.$store.dispatch('loadLayerSetsById', { id: mapId, initializeMap: true })
     }
   },
   computed: {
@@ -206,8 +206,10 @@ export default {
         }
       }
     },
-    validLiwoIds (liwoIds) {
-      this.$store.dispatch('setActiveLayersFromVariantIds', liwoIds)
+    validLiwoIds (isValid) {
+      if (isValid) {
+        this.$store.dispatch('setActiveLayersFromVariantIds', this.liwoIds)
+      }
     }
   },
   methods: {
@@ -216,7 +218,6 @@ export default {
     },
     setMapObject (mapObject) {
       this.mapObject = mapObject
-      console.log('CRS', mapObject.options.crs.scale())
     },
     loadCombinedScenarios () {
       this.$store.dispatch('loadCombinedScenario', { band: this.band, liwoIds: this.liwoIds })

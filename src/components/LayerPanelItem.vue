@@ -40,6 +40,10 @@ export default {
     collapse: {
       type: Boolean,
       default: false
+    },
+    layerSet: {
+      type: Object,
+      required: false
     }
   },
   data: () => ({
