@@ -108,7 +108,7 @@ export default {
     height: 100%;
     background-color: var(--white);
     max-height: calc(100vh - 23rem);
-    overflow: hidden;
+    overflow-y: scroll;
   }
 
   .layer-panel__content {
