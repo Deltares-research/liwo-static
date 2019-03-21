@@ -3,9 +3,12 @@
     title="Selectie importeren"
     @close="$emit('close')"
   >
-    <form class="combine-popup__form">
+    <form class="combine-popup__form" @submit.prevent="onSubmit">
       <fieldset>
-        <div class="control-group">
+        <div
+          class="control-group"
+          :class="{ 'has-error': showError }"
+        >
           <label class="control-label" for="url">URL</label>
           <div class="controls">
             <input
@@ -15,6 +18,7 @@
               name="url"
               v-model="url"
             >
+            <em v-if="showError" class="errortext">{{ errorText }}</em>
           </div>
         </div>
 
@@ -22,8 +26,6 @@
           <div class="controls">
             <button
               class="btn primary"
-              type="button"
-              @click="onSubmit"
             >
               Importeren
             </button>
@@ -52,18 +54,36 @@ export default {
   },
   data () {
     return {
-      url: ''
+      url: '',
+      showError: false,
+      errorText: 'Geen valide URL'
     }
   },
   methods: {
     onSubmit () {
-      const url = new URL(this.url)
-      const path = url.hash ? url.hash.split('#')[1] : url.path
-      const parsedUrl = this.$router.match(path)
+      try {
+        const url = new URL(this.url)
+        const path = url.href
+          .replace(url.origin, '')
+          .replace(new RegExp('(/)?#(.+)'), '$2')
 
-      if (parsedUrl.params.layerIds) {
-        const layerIds = parsedUrl.params.layerIds.split(',')
-        this.$store.dispatch('setActiveLayersFromVariantIds', layerIds)
+        const parsedUrl = this.$router.match(path)
+
+        if (parsedUrl.params.layerIds) {
+          const layerIds = parsedUrl.params.layerIds.split(',')
+          this.$store.dispatch('setActiveLayersFromVariantIds', layerIds)
+        }
+
+        this.$emit('close')
+      } catch (error) {
+        this.showError = true
+      }
+    }
+  },
+  watch: {
+    url (newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.showError = false
       }
     }
   }

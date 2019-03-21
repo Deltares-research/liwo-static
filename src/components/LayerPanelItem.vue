@@ -34,6 +34,10 @@ export default {
     layerId: {
       type: Number,
       required: false
+    },
+    layerSet: {
+      type: Object,
+      required: false
     }
   },
   computed: {

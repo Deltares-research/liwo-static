@@ -15,6 +15,7 @@ import { probabilityConfig } from './lib/probability-filter'
 import buildLayersetNotifications from './lib/build-layerset-notifications'
 import stringToHash from './lib/string-to-hash'
 import { BREACH_SELECTED } from './lib/liwo-identifiers'
+import mapConfig from './map.config'
 
 Vue.use(Vuex)
 
@@ -72,7 +73,12 @@ export default new Vuex.Store({
       const breachLayerIds = state.breachLayersById[id].layers.map(layer => layer.id)
 
       if (state.selectedBreaches.indexOf(id) === -1) {
-        state.selectedBreaches = state.viewerType === 'combine' ? state.selectedBreaches.concat(id) : [id]
+        if (state.viewerType === 'combine' || state.viewerType === 'combined') {
+          state.selectedBreaches = state.selectedBreaches.concat(id)
+        } else {
+          state.selectedBreaches = [id]
+        }
+
         state.visibleLayerIds = state.visibleLayerIds.concat(breachLayerIds[0])
         state.visibleVariantIndexByLayerId = { ...state.visibleVariantIndexByLayerId, [ breachLayerIds[0] ]: 0 }
         state.opacityByLayerId = { ...state.opacityByLayerId, [ state.opacityByLayerId[id] ]: 1 }
@@ -238,16 +244,37 @@ export default new Vuex.Store({
       commit('setVisibleVariantIndexForLayerId', { index: 0, layerId: 'combined_scenario' })
       commit('showLayerById', 'combined_scenario')
     },
-    async setActiveLayersFromVariantIds ({ commit, getters }, ids) {
-      // await Promise.all(ids.map(id =>
-      //   // TODO: add url with the right endpoint
-      //   fetch('url' + id)
-      //     .then(res => res.json())
-      //     .then(data => data.id)
-      // ))
-      //   .then(ids => {
-      //     ids.forEach(id => commit('toggleSelectedBreach', id))
-      //   })
+    async setActiveLayersFromVariantIds ({ commit, dispatch, getters, state }, ids) {
+      const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
+
+      await Promise.all(ids
+        .map(mapid => {
+          return fetch(`${mapConfig.services.WEBSERVICE_URL}/Maps.asmx/GetBreachLocationId`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ mapid })
+          })
+            .then(res => res.json())
+            .then(data => JSON.parse(data.d))
+        }))
+        .then((locations) => {
+          locations
+            .filter(location => !state.selectedBreaches.includes(location.breachlocationid))
+            .forEach(({ breachlocationtype, breachlocationid, breachlocationname }) => {
+              let layerType
+
+              switch (breachlocationtype) {
+                case 'PRIM':
+                  layerType = 'geo_doorbraaklocaties_primair'
+                  break
+                case 'REG':
+                  layerType = 'geo_doorbraaklocaties_regionaal'
+                  break
+              }
+
+              dispatch('addBreach', { id: breachlocationid, layerType, breachName: breachlocationname })
+            })
+        })
     }
   },
   getters: {
@@ -277,8 +304,7 @@ export default new Vuex.Store({
       return [{ layers }]
     },
     breachLayers ({ breachLayersById, selectedBreaches }) {
-      return selectedBreaches
-        .map(breachId => breachLayersById[breachId])
+      return selectedBreaches.map(breachId => breachLayersById[breachId])
     },
     currentBreachesLayerSet ({ breachLayersById, selectedBreaches, visibleLayerIds, visibleVariantIndexByLayerId }) {
       const layers = selectedBreaches
