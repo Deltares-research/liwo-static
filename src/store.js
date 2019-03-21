@@ -231,23 +231,26 @@ export default new Vuex.Store({
 
         const visibleBreachLayers = breachLayers.map((layer) => layer.id)
 
+        commit('addBreachLayer', { id, breachLayers, breachName })
+        commit('setVisibleBreachLayers', { breach: id, layers: visibleBreachLayers })
+        commit('setLayerUnits', layerUnits)
+        commit('toggleSelectedBreach', id)
+
         const activeLayer = breach.layers.find(layer =>
           layer.variants.find(variant => {
             return variantId === variant.map.map_id
           })
         )
 
-        const activeVariant = activeLayer.variants.find(variant => {
-          return variantId === variant.map.map_id
-        })
+        if (activeLayer) {
+          const activeVariant = activeLayer.variants.find(variant => {
+            return variantId === variant.map.map_id
+          })
 
-        const index = activeLayer.variants.indexOf(activeVariant)
+          const index = activeLayer.variants.indexOf(activeVariant)
 
-        commit('addBreachLayer', { id, breachLayers, breachName })
-        commit('setVisibleBreachLayers', { breach: id, layers: visibleBreachLayers })
-        commit('setLayerUnits', layerUnits)
-        commit('toggleSelectedBreach', id)
-        commit('setVisibleVariantIndexForLayerId', { layerId: activeLayer.legend.layer, index })
+          commit('setVisibleVariantIndexForLayerId', { layerId: activeLayer.legend.layer, index })
+        }
       } else {
         commit('toggleSelectedBreach', id)
       }
