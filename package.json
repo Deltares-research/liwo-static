@@ -22,6 +22,7 @@
     "promise-polyfill": "7.1.2",
     "query-string": "^5.1.1",
     "unfetch": "^4.1.0",
+    "url-polyfill": "^1.1.5",
     "url-search-params": "^0.10.0",
     "url-search-params-polyfill": "^5.0.0",
     "vue": "^2.5.16",

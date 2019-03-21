@@ -6,6 +6,7 @@ import router from './router'
 import store from './store'
 require('@babel/polyfill')
 require('unfetch/polyfill')
+require('url-polyfill')
 
 Vue.config.productionTip = false
 Vue.directive('leaflet', leafletDirective)
