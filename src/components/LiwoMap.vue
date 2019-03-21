@@ -17,6 +17,7 @@ import createMapConfig from '@/lib/leaflet-utils/mapconfig-factory'
 import buildBreachNotifications from '@/lib/build-breach-notifications'
 import { showLayerInfoPopup } from '@/lib/leaflet-utils/popup'
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
+import { isSameAs } from '@/lib/utils'
 
 export default {
   props: {
@@ -64,8 +65,8 @@ export default {
       this.$emit('initMap', mapObject)
 
       mapObject.on('click', event => {
-        const activeLayerset = this.panelLayerSets.find(panelLayerSet => panelLayerSet.id === this.activeLayerSetId)
-        const selectedLayer = activeLayerset.layers.find(layer => layer.id === this.selectedLayerId)
+        const activeLayerset = this.panelLayerSets.find(idSameAs(activeLayerSetId))
+        const selectedLayer = activeLayerset.layers.find(idSameAs(selectedLayerId))
         const selectedVariant = selectedLayer.variants[this.visibleVariantIndexByLayerId[selectedLayer.id]]
 
         showLayerInfoPopup({
