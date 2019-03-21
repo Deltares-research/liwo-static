@@ -12,11 +12,12 @@
 
       <div class="layer-panel__body">
         <layer-panel-item
-          v-for="layerSet in layerSets"
+          v-for="(layerSet, index) in layerSets"
           :key="layerSet.id"
           :layers="layerSet.layers"
           :layerId="layerSet.id"
           :title="layerSet.layerSetTitle"
+          :collapse="index === 0 && layerSets.length > 1"
           :layerSet="layerSet"
         />
       </div>
@@ -107,6 +108,7 @@ export default {
     height: 100%;
     background-color: var(--white);
     max-height: calc(100vh - 23rem);
+    overflow: auto;
   }
 
   .layer-panel__content {
@@ -117,7 +119,12 @@ export default {
 
   .layer-panel__body {
     flex: 1;
-    overflow: auto;
+    overflow-y: scroll;
+  }
+
+  .layer-panel__actions {
+    box-shadow: 0 -1px 3px rgba(0,0,0,0.3);
+    z-index: 1;
   }
 
   .layer-panel__title,
