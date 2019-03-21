@@ -56,7 +56,7 @@ export default {
     return {
       url: '',
       showError: false,
-      errorText: 'Geen valide url'
+      errorText: 'Geen valide URL'
     }
   },
   methods: {
