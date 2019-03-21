@@ -459,6 +459,9 @@ export default new Vuex.Store({
         return layers
       }
     },
+    selectedVariantIds (state, { selectedVariants }) {
+      return selectedVariants.map(selectedVariant => selectedVariant.map_id)
+    },
     selectedVariants ({ selectedBreaches, visibleVariantIndexByLayerId }, { panelLayerSets }) {
       if (selectedBreaches) {
         return panelLayerSets.reduce((acc, layerSet) => {
@@ -469,7 +472,7 @@ export default new Vuex.Store({
             const selectedIndex = visibleVariantIndexByLayerId[layer.id]
             const selectedVariant = layer.variants[selectedIndex]
 
-            acc.push(selectedVariant.map_id)
+            acc.push(selectedVariant)
           }
 
           return acc

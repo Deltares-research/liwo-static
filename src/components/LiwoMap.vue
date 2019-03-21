@@ -35,11 +35,15 @@ export default {
       'opacityByLayerId',
       'selectedBreaches',
       'layerUnits',
-      'selectedLayerId'
+      'selectedLayerId',
+      'visibleVariantIndexByLayerId',
+      'activeLayerSetId'
     ]),
     ...mapGetters([
       'parsedLayerSet',
-      'activeLayerSet'
+      'activeLayerSet',
+      'panelLayerSets',
+      'selectedVariants'
     ])
   },
   created () {
@@ -60,9 +64,13 @@ export default {
       this.$emit('initMap', mapObject)
 
       mapObject.on('click', event => {
+        const activeLayerset = this.panelLayerSets.find(panelLayerSet => panelLayerSet.id === this.activeLayerSetId)
+        const selectedLayer = activeLayerset.layers.find(layer => layer.id === this.selectedLayerId)
+        const selectedVariant = selectedLayer.variants[this.visibleVariantIndexByLayerId[selectedLayer.id]]
+
         showLayerInfoPopup({
           map: mapObject,
-          activeLayer: this.selectedLayerId,
+          activeLayer: selectedVariant.layer,
           unit: this.layerUnits[this.selectedLayerId],
           position: event.containerPoint,
           latlng: event.latlng
