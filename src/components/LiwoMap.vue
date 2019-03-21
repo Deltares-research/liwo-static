@@ -35,7 +35,6 @@ export default {
       'opacityByLayerId',
       'selectedBreaches',
       'layerUnits',
-      'combinedScenario',
       'selectedLayerId'
     ]),
     ...mapGetters([
@@ -80,18 +79,12 @@ export default {
       parsedLayerSet
         .then(
           (layers) => {
-            const combinedScenarioArr = this.combinedScenario ? [this.combinedScenario] : []
-            const allLayers = [...layers, ...combinedScenarioArr]
-            this.expandedMapLayers = Object.freeze(allLayers)
+            this.expandedMapLayers = Object.freeze(layers)
           })
 
       parsedLayerSet
         .then(buildBreachNotifications)
         .then(result => this.$store.commit('setBreachNotifications', result))
-    },
-    combinedScenario (combinedScenario) {
-      if (!combinedScenario) return
-      this.expandedMapLayers = Object.freeze([...this.expandedMapLayers, combinedScenario])
     }
   }
 }
