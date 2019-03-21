@@ -63,7 +63,9 @@ export default {
     onSubmit () {
       try {
         const url = new URL(this.url)
-        const path = url.hash ? url.hash.split('#')[1] : url.path
+        const path = url.href
+          .replace(url.origin, '')
+          .replace(new RegExp('(/)?#(.+)'), '$2')
 
         const parsedUrl = this.$router.match(path)
 
