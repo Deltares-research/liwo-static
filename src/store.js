@@ -94,6 +94,9 @@ export default new Vuex.Store({
         state.activeLayerSetId = state.selectedBreaches[0]
       }
     },
+    resetSelectedBreaches (state) {
+      state.selectedBreaches = []
+    },
     setPageTitle (state, title) {
       state.pageTitle = title
     },

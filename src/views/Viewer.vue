@@ -141,6 +141,9 @@ export default {
     }
     this.isMounted = true
   },
+  beforeDestroy () {
+    this.$store.commit('resetSelectedBreaches')
+  },
   computed: {
     ...mapState({
       variantIndexForSelectedLayer: (state) => state.visibleVariantIndexByLayerId[this.selectedLayerId]
