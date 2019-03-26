@@ -1,6 +1,6 @@
 <template>
    <fieldset class="control-group">
-      <legend class="control-label">Kaarttype</legend>
+      <legend class="control-label">Kies het thema waarvoor u scenario's wilt combineren:</legend>
         <div class="controls">
           <label
             class="radio block"
