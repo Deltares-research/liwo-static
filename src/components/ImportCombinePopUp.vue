@@ -10,7 +10,7 @@
           :class="{ 'has-error': showError }"
         >
           <label class="control-label" for="url">URL</label>
-          <div class="controls">
+          <div class="controls url-box">
             <input
               class="block"
               id="url"
@@ -20,6 +20,8 @@
             >
             <em v-if="showError" class="errortext">{{ errorText }}</em>
           </div>
+
+          <p>U kunt hier een LIWO-Link invoeren die u eerder heeft opgevraagd of die u van iemand hebt ontvangen. Door op importeren te klikken worden de scenario's aan uw bestaande selectie toegevoegd.</p>
         </div>
 
         <footer class="control-group combine-popup__footer">
@@ -101,5 +103,9 @@ export default {
 
   .combine-popup__footer .btn {
     margin-right: 10px;
+  }
+
+  .combine-popup__form .url-box {
+    margin-bottom: 1rem;
   }
 </style>
