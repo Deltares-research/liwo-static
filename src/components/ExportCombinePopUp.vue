@@ -8,8 +8,7 @@
         <export-url-generator v-model="path"/>
 
         <div class="control-group">
-          <label class="control-label" for="url">URL met gewenste selectie</label>
-          <p>Deze link beschrijft de door u gemaakte selectie. U kunt deze zelf opslaan  om uw selectie op een later moment weer op te vragen, of delen met anderen om gezamenlijk een gecombineerd scenario samen te stellen. Let op, u dient deze link zelf op te slaan.</p>
+          <label class="control-label" for="url">Link behorende bij uw selectie</label>
           <div class="controls url-box">
             <input
               class="block"
@@ -23,7 +22,7 @@
               @click="selectUrl"
             >
           </div>
-          <p>U kunt deze link gebruiken gebruiken door de selectie op een later moment te importeren en de selectie te bekijken en eventueel aan te passen alvorens u de combinatie laat maken. U kunt de link ook in uw adresbalk plakken om het resultaat direct op te vragen.</p>
+          <p>Deze link bevat de gemaakte selectie. U kunt deze opslaan en op een later moment importeren om een selectie aan te passen en een gecombineerd scenario opnieuw te maken. U kunt de selectie ook delen met anderen om zo samen met anderen een selectie te maken. Let op, u dient deze link zelf op te slaan.</p>
         </div>
 
         <footer class="control-group combine-popup__footer">
