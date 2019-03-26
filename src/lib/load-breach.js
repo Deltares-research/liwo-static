@@ -4,17 +4,25 @@ import mapConfig from '../map.config'
 const BREACHES_BASE_URL = mapConfig.services.WEBSERVICE_URL
 const BREACHES_API_URL_PRIMARY = `${BREACHES_BASE_URL}/Tools/FloodImage.asmx/GetScenariosPerBreach`
 const BREACHES_API_URL_REGIONAL = `${BREACHES_BASE_URL}/Tools/FloodImage.asmx/GetScenariosPerBreachRegional`
+const COMBINE = 'combine'
+const COMBINED = 'combined'
 
 const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
-const breachLayers = [
-  'waterdiepte',
-  'stroomsnelheid',
-  'stijgsnelheid',
-  'schade',
-  'slachtoffers'
-]
 
-export default function (breachId, layerType) {
+export default function (breachId, layerType, viewerType) {
+  let breachLayers
+  if (viewerType === COMBINE || viewerType === COMBINED) {
+    breachLayers = ['waterdiepte']
+  } else {
+    breachLayers = [
+      'waterdiepte',
+      'stroomsnelheid',
+      'stijgsnelheid',
+      'schade',
+      'slachtoffers'
+    ]
+  }
+
   if (layerType === BREACH_REGIONAL) {
     return loadRegionalBreachLayer(breachId, `${BREACH_REGIONAL}.${breachId}`)
   } else if (layerType === BREACH_PRIMARY) {

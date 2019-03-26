@@ -100,7 +100,8 @@ export default {
       band: null,
       projection: this.$route.name === COMBINED
         ? EPSG_3857
-        : EPSG_28992
+        : EPSG_28992,
+      storeWatcher: null
     }
   },
   async mounted () {
@@ -121,7 +122,7 @@ export default {
     this.liwoIds = layerIds ? layerIds.split(',').map(id => parseInt(id, 10)) : []
 
     if (this.viewerType === COMBINE) {
-      this.$store.watch(
+      this.storeWatcher = this.$store.watch(
         (state, getters) => getters.selectedVariantIds,
         ids => {
           if (ids.length) {
@@ -143,6 +144,11 @@ export default {
   },
   beforeDestroy () {
     this.$store.commit('resetSelectedBreaches')
+    this.$store.commit('resetBreachLayersById')
+    if (this.storeWatcher) {
+      // teardown watcher
+      this.storeWatcher()
+    }
   },
   computed: {
     ...mapState({

@@ -97,6 +97,9 @@ export default new Vuex.Store({
     resetSelectedBreaches (state) {
       state.selectedBreaches = []
     },
+    resetBreachLayersById (state) {
+      state.breachLayersById = []
+    },
     setPageTitle (state, title) {
       state.pageTitle = title
     },
@@ -224,7 +227,7 @@ export default new Vuex.Store({
     },
     async addBreach ({ commit, state }, { id, breachName, layerType, variantId }) {
       if (Object.keys(state.breachLayersById).indexOf(String(id)) === -1) {
-        const breach = await loadBreach(id, layerType)
+        const breach = await loadBreach(id, layerType, state.viewerType)
         const breachLayers = normalizeLayers(breach.layers)
 
         const layerUnits = breachLayers.reduce((acc, layer) => {
