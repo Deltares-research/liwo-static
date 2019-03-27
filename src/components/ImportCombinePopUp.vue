@@ -9,7 +9,7 @@
           class="control-group"
           :class="{ 'has-error': showError }"
         >
-          <label class="control-label" for="url">URL</label>
+          <label class="control-label" for="url">Link</label>
           <div class="controls url-box">
             <input
               class="block"
