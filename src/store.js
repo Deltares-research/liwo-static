@@ -16,6 +16,8 @@ import buildLayersetNotifications from './lib/build-layerset-notifications'
 import stringToHash from './lib/string-to-hash'
 import { BREACH_SELECTED } from './lib/liwo-identifiers'
 import mapConfig from './map.config'
+const COMBINE = 'combine'
+const COMBINED = 'combined'
 
 Vue.use(Vuex)
 
@@ -378,8 +380,12 @@ export default new Vuex.Store({
         ? LAYERPANEL_VIEW_BREACHES
         : LAYERPANEL_VIEW_MAPLAYERS
     },
-    panelLayerSets (_, { mapLayers, breachLayers }) {
-      return [...mapLayers, ...breachLayers]
+    panelLayerSets ({ viewerType }, { mapLayers, breachLayers }) {
+      if (viewerType === COMBINED) {
+        return mapLayers
+      } else {
+        return [...mapLayers, ...breachLayers]
+      }
     },
     activeLayerSet ({ opacityByLayerId }, { currentMapLayerSet, currentBreachesLayerSet, layerPanelView }) {
       const currentMapLayerSetWithOpacity = currentMapLayerSet
@@ -394,7 +400,7 @@ export default new Vuex.Store({
         ]
       }
     },
-    async parsedLayerSet ({ breachProbabilityFilterIndex, selectedBreaches, activeLayerSetId, hiddenLayers, visibleVariantIndexByLayerId }, { activeLayerSet, panelLayerSets }) {
+    async parsedLayerSet ({ viewerType, breachProbabilityFilterIndex, selectedBreaches, activeLayerSetId, hiddenLayers, visibleVariantIndexByLayerId }, { activeLayerSet, panelLayerSets }) {
       if (!activeLayerSet) {
         return Promise.resolve([])
       }
@@ -426,8 +432,21 @@ export default new Vuex.Store({
 
       let selectedLayers = []
 
-      // seperate selected markers into its own layer
-      if (selectedBreaches.length) {
+      if (viewerType === COMBINED) {
+        return layers.map(layer => {
+          if (layer.type === 'json') {
+            const selectedFeatures = layer.geojson.features.filter(
+              feature => selectedBreaches.find(id => id === feature.properties.id)
+            )
+
+            layer.geojson.features = selectedFeatures
+            layer.geojson.totalFeatures = selectedFeatures.length
+          }
+
+          return layer
+        })
+      } else if (selectedBreaches.length) {
+        // seperate selected markers into its own layer
         layers.map(layer => {
           if (layer.type === 'json') {
             const activeFeatures = layer.geojson.features.filter(
