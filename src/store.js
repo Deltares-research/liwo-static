@@ -439,6 +439,11 @@ export default new Vuex.Store({
               feature => selectedBreaches.find(id => id === feature.properties.id)
             )
 
+            selectedFeatures.map(feature => {
+              feature.properties.selectable = false
+              return feature
+            })
+
             layer.geojson.features = selectedFeatures
             layer.geojson.totalFeatures = selectedFeatures.length
           }

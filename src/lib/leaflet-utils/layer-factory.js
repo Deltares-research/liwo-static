@@ -1,4 +1,5 @@
 import L from '@/lib/leaflet-utils/leaf'
+import has from 'lodash/has'
 
 import 'leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
@@ -59,9 +60,12 @@ export function createBreachGeoJson ({ geojson, layer: layerId, opacity }, callb
   return L.geoJson(geojson, {
     onEachFeature: (_, layer) => {
       const { naam, selectedVariant } = layer.feature.properties
+      const selectable = !has(layer.feature.properties, 'selectable') || layer.feature.properties.selectable
 
       layer.bindTooltip(`${naam}${selectedVariant ? ` - ${selectedVariant}` : ''}`)
-      layer.on('click', (event) => breachClickHandler(event, callback))
+      if (selectable) {
+        layer.on('click', (event) => breachClickHandler(event, callback))
+      }
       layer.on('mouseover', (event) => { event.target.openTooltip() })
       layer.on('mouseout', (event) => { event.target.closeTooltip() })
 
