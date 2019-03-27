@@ -67,7 +67,7 @@ export default {
       mapObject.on('click', event => {
         const activeLayerset = this.panelLayerSets.find(idSameAs(this.activeLayerSetId))
         const selectedLayer = activeLayerset.layers.find(idSameAs(this.selectedLayerId))
-        const selectedVariant = selectedLayer.variants[this.visibleVariantIndexByLayerId[selectedLayer.id]]
+        const selectedVariant = selectedLayer.variants[this.visibleVariantIndexByLayerId[selectedLayer.id] || 0]
 
         showLayerInfoPopup({
           map: mapObject,
