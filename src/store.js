@@ -16,7 +16,6 @@ import buildLayersetNotifications from './lib/build-layerset-notifications'
 import stringToHash from './lib/string-to-hash'
 import { BREACH_SELECTED } from './lib/liwo-identifiers'
 import mapConfig from './map.config'
-const COMBINE = 'combine'
 const COMBINED = 'combined'
 
 Vue.use(Vuex)
@@ -429,6 +428,13 @@ export default new Vuex.Store({
           return layer
         })
       )
+
+      if (viewerType === COMBINED) {
+        layers = layers.map(layer => {
+          layer.hideWms = true
+          return layer
+        })
+      }
 
       let selectedLayers = []
 

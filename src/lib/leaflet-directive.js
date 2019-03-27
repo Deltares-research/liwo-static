@@ -25,6 +25,7 @@ export default {
     mapLayers
       .filter(layer => !layer.hide)
       .map(layer => layerFactory(layer, callbacks))
+      .filter(layer => layer)
       .forEach(layer => layerGroup.addLayer(layer))
   }
 }

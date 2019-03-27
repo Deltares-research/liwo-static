@@ -29,6 +29,7 @@ export default function (breachId, layerType, viewerType) {
     return Promise.all(breachLayers.map(layerName => loadBreachLayer(breachId, layerName)))
       .then(layers => {
         return {
+          // do not load layers in 'combined' viewerType
           layers: layers
             .filter(layer => layer !== undefined)
             .reduce((breachLayers, layer) => {

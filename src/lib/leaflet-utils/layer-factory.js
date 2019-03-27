@@ -43,8 +43,10 @@ export default function createLayer (layer, { breachCallBack }) {
     }
   } else if (layer.type === 'tile') {
     return createTile(layer)
-  } else {
+  } else if (!layer.hideWms) {
     return createWms(layer)
+  } else {
+    return null
   }
 }
 
