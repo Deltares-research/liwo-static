@@ -458,6 +458,7 @@ export default new Vuex.Store({
                 const selectedIndex = visibleVariantIndexByLayerId[breachLayer.id]
                 const selectedVariant = breachLayer.variants[selectedIndex]
                 activeFeature.properties.selectedVariant = selectedVariant.title
+                activeFeature.properties.isControllable = false
               }
 
               return activeFeature
@@ -482,7 +483,7 @@ export default new Vuex.Store({
 
                 const breachLayer = breachLayersById[activeFeature.properties.id].layers[0]
 
-                if (breachLayer.variants.length > 1) {
+                if (breachLayer && breachLayer.variants.length > 1) {
                   const selectedIndex = visibleVariantIndexByLayerId[breachLayer.id]
                   const selectedVariant = breachLayer.variants[selectedIndex]
                   activeFeature.properties.selectedVariant = selectedVariant.title
