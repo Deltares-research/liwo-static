@@ -330,7 +330,7 @@ export default new Vuex.Store({
         case 'damage':
           band = 'Schade'
           break
-        case 'slachtoffers':
+        case 'casualties':
           band = 'Slachtoffers'
           break
       }
