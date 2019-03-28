@@ -431,13 +431,6 @@ export default new Vuex.Store({
         })
       )
 
-      if (viewerType === COMBINED) {
-        layers = layers.map(layer => {
-          layer.hideWms = true
-          return layer
-        })
-      }
-
       let selectedLayers = []
 
       if (viewerType === COMBINED) {
@@ -454,6 +447,11 @@ export default new Vuex.Store({
 
             layer.geojson.features = selectedFeatures
             layer.geojson.totalFeatures = selectedFeatures.length
+          } else if (viewerType === COMBINED) {
+            if (layer.style === 'LIWO_Basis_Waterdiepte') {
+              layer.hideWms = true
+              return layer
+            }
           }
 
           return layer
