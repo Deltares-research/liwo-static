@@ -100,7 +100,9 @@ export default {
       this.$store.commit('toggleLayerById', id)
     },
     setVisibleVariant ({ layerId, variantIndex }) {
-      this.$store.commit('setVisibleVariantIndexForLayerId', { layerId, index: variantIndex })
+      this.layers.forEach(layer => {
+        this.$store.commit('setVisibleVariantIndexForLayerId', { layerId: layer.id, index: variantIndex })
+      })
     },
     toggleActiveMarker (id) {
       this.$store.commit('toggleActiveMarker', id)
