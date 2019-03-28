@@ -228,7 +228,7 @@ export default new Vuex.Store({
         state.commit('initToMapLayers', id)
       }
     },
-    async addBreach ({ commit, state }, { id, breachName, layerType, variantId, iscontrollayer: isControllable }) {
+    async addBreach ({ commit, state }, { id, breachName, variantId, layerType, isControllable }) {
       if (Object.keys(state.breachLayersById).indexOf(String(id)) === -1) {
         const breach = await loadBreach(id, layerType, state.viewerType)
         const breachLayers = normalizeLayers(breach.layers)
@@ -240,7 +240,7 @@ export default new Vuex.Store({
 
         const visibleBreachLayers = breachLayers.map((layer) => layer.id)
 
-        commit('addBreachLayer', { id, breachLayers, breachName })
+        commit('addBreachLayer', { id, breachLayers, breachName, iscontrollayer: isControllable })
         commit('setVisibleBreachLayers', { breach: id, layers: visibleBreachLayers })
         commit('setLayerUnits', layerUnits)
         commit('toggleSelectedBreach', id)
@@ -406,7 +406,7 @@ export default new Vuex.Store({
         ]
       }
     },
-    async parsedLayerSet ({ breachProbabilityFilterIndex, selectedBreaches, activeLayerSetId, hiddenLayers, visibleVariantIndexByLayerId, viewerType }, { activeLayerSet, panelLayerSets }) {
+    async parsedLayerSet ({ breachProbabilityFilterIndex, selectedBreaches, activeLayerSetId, hiddenLayers, visibleVariantIndexByLayerId, viewerType, breachLayersById }, { activeLayerSet, panelLayerSets }) {
       if (!activeLayerSet) {
         return Promise.resolve([])
       }
@@ -446,6 +446,25 @@ export default new Vuex.Store({
             return layer
           }
 
+          if (layer.type === 'json') {
+            const activeFeatures = layer.geojson.features.filter(
+              feature => selectedBreaches.find(id => id === feature.properties.id)
+            )
+
+            activeFeatures.map(activeFeature => {
+              const breachLayer = breachLayersById[activeFeature.properties.id].layers[0]
+
+              if (breachLayer.variants.length > 1) {
+                const selectedIndex = visibleVariantIndexByLayerId[breachLayer.id]
+                const selectedVariant = breachLayer.variants[selectedIndex]
+                activeFeature.properties.selectedVariant = selectedVariant.title
+                activeFeature.properties.isControllable = false
+              }
+
+              return activeFeature
+            })
+          }
+
           return layer
         })
       } else if (selectedBreaches.length) {
@@ -462,15 +481,11 @@ export default new Vuex.Store({
               selectedLayers = [...selectedLayers, ...activeFeatures.map(activeFeature => {
                 activeFeature.properties.selected = true
 
-                const panelLayerSet = panelLayerSets.find(panelLayerSet =>
-                  panelLayerSet.id === activeFeature.properties.id
-                )
+                const breachLayer = breachLayersById[activeFeature.properties.id].layers[0]
 
-                const panelLayer = panelLayerSet.layers[0]
-
-                if (panelLayer.variants.length > 1) {
-                  const selectedIndex = visibleVariantIndexByLayerId[panelLayer.id]
-                  const selectedVariant = panelLayer.variants[selectedIndex]
+                if (breachLayer && breachLayer.variants.length > 1) {
+                  const selectedIndex = visibleVariantIndexByLayerId[breachLayer.id]
+                  const selectedVariant = breachLayer.variants[selectedIndex]
                   activeFeature.properties.selectedVariant = selectedVariant.title
                 }
 
