@@ -447,11 +447,11 @@ export default new Vuex.Store({
 
             layer.geojson.features = selectedFeatures
             layer.geojson.totalFeatures = selectedFeatures.length
-          } else if (viewerType === COMBINED) {
-            if (layer.style === 'LIWO_Basis_Waterdiepte') {
-              layer.hideWms = true
-              return layer
-            }
+          }
+
+          if (layer.style === 'LIWO_Basis_Waterdiepte') {
+            layer.hideWms = true
+            return layer
           }
 
           return layer
