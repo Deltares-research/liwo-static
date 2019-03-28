@@ -305,7 +305,7 @@ export default new Vuex.Store({
     }
   },
   getters: {
-    combinedScenarioAsLayer ({ combinedScenario }) {
+    combinedScenarioAsLayer ({ combinedScenario, viewerType }) {
       const layer = {
         id: 'combined_scenario',
         properties: { title: 'Gecombineerd Scenario' },
@@ -316,7 +316,7 @@ export default new Vuex.Store({
         }]
       }
 
-      return combinedScenario
+      return viewerType === COMBINED && combinedScenario
         ? layer
         : undefined
     },
