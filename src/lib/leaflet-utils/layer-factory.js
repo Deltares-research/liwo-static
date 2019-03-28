@@ -61,13 +61,10 @@ export function createGeoJson ({ geojson, style }) {
 export function createBreachGeoJson ({ geojson, layer: layerId, opacity }, callback) {
   return L.geoJson(geojson, {
     onEachFeature: (_, layer) => {
-      const { naam, selectedVariant } = layer.feature.properties
-      const selectable = !has(layer.feature.properties, 'selectable') || layer.feature.properties.selectable
+      const { naam, selectedVariant, isControllable } = layer.feature.properties
 
       layer.bindTooltip(`${naam}${selectedVariant ? ` - ${selectedVariant}` : ''}`)
-      if (selectable) {
-        layer.on('click', (event) => breachClickHandler(event, callback))
-      }
+      isControllable && layer.on('click', (event) => breachClickHandler(event, callback))
       layer.on('mouseover', (event) => { event.target.openTooltip() })
       layer.on('mouseout', (event) => { event.target.closeTooltip() })
 
