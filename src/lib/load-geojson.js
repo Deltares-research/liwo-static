@@ -13,13 +13,26 @@ const requestOptions = ({ namespace, layer }) => ({
   maxFeatures: 2000
 })
 
-export default function (jsonLayer) {
+export default function (jsonLayer, { filteredIds = [] } = {}) {
   if (jsonLayer.type.toLowerCase() === 'json') {
     const options = requestOptions(jsonLayer)
     const params = new URLSearchParams(options).toString()
 
-    return fetch(`${mapConfig.services.STATIC_GEOSERVER_URL}?${params}`, { mode: 'cors' })
+    const filterString = filteredIds.reduce((str, id, index) => {
+      const or = index > 0 ? '%20OR%20' : ''
+      const idString = `id=${id}`
+      return `${str}${or}${idString}`
+    }, filteredIds.length ? '&cql_filter=' : '')
+
+    return fetch(`${mapConfig.services.STATIC_GEOSERVER_URL}?${params}${filterString}`, { mode: 'cors' })
       .then(resp => resp.json())
+      .then(result => {
+        result.features = result.features.map(feature => ({
+          ...feature,
+          properties: Object.assign(feature.properties, { isControllable: !!jsonLayer.iscontrollayer })
+        }))
+        return result
+      })
       .catch(error => console.log('Error:', error, jsonLayer))
   }
 }

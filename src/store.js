@@ -55,10 +55,10 @@ export default new Vuex.Store({
     hiddenLayers: []
   },
   mutations: {
-    addBreachLayer (state, { id, breachLayers, breachName }) {
+    addBreachLayer (state, { id, breachLayers, breachName, iscontrollayer }) {
       state.breachLayersById = {
         ...state.breachLayersById,
-        [ id ]: { layers: breachLayers, layerSetTitle: breachName, id }
+        [ id ]: { layers: breachLayers, layerSetTitle: breachName, id, iscontrollayer }
       }
     },
     setLayerSetById (state, { id, layerSet }) {
@@ -228,7 +228,7 @@ export default new Vuex.Store({
         state.commit('initToMapLayers', id)
       }
     },
-    async addBreach ({ commit, state }, { id, breachName, layerType, variantId }) {
+    async addBreach ({ commit, state }, { id, breachName, layerType, variantId, iscontrollayer: isControllable }) {
       if (Object.keys(state.breachLayersById).indexOf(String(id)) === -1) {
         const breach = await loadBreach(id, layerType, state.viewerType)
         const breachLayers = normalizeLayers(breach.layers)
@@ -299,13 +299,18 @@ export default new Vuex.Store({
                   break
               }
 
-              dispatch('addBreach', { id: breachlocationid, layerType, breachName: breachlocationname, variantId })
+              dispatch('addBreach', {
+                id: breachlocationid,
+                layerType,
+                breachName: breachlocationname,
+                isControllable: state.viewerType !== 'combined'
+              })
             })
         })
     }
   },
   getters: {
-    combinedScenarioAsLayer ({ combinedScenario }) {
+    combinedScenarioAsLayer ({ combinedScenario, viewerType }) {
       const layer = {
         id: 'combined_scenario',
         properties: { title: 'Gecombineerd Scenario' },
@@ -316,7 +321,7 @@ export default new Vuex.Store({
         }]
       }
 
-      return combinedScenario
+      return viewerType === COMBINED && combinedScenario
         ? layer
         : undefined
     },
@@ -401,7 +406,7 @@ export default new Vuex.Store({
         ]
       }
     },
-    async parsedLayerSet ({ viewerType, breachProbabilityFilterIndex, selectedBreaches, activeLayerSetId, hiddenLayers, visibleVariantIndexByLayerId }, { activeLayerSet, panelLayerSets }) {
+    async parsedLayerSet ({ breachProbabilityFilterIndex, selectedBreaches, activeLayerSetId, hiddenLayers, visibleVariantIndexByLayerId, viewerType }, { activeLayerSet, panelLayerSets }) {
       if (!activeLayerSet) {
         return Promise.resolve([])
       }
@@ -409,7 +414,8 @@ export default new Vuex.Store({
       let layers = await Promise.all(
         activeLayerSet.map(async (layer) => {
           if (layer.type === 'json') {
-            const geojson = await loadGeojson(layer)
+            const geoJsonOptions = viewerType === 'combined' ? { filteredIds: selectedBreaches } : undefined
+            const geojson = await loadGeojson(layer, geoJsonOptions)
 
             if (layer.layer === BREACHES_PRIMARY_LAYER_ID || layer.layer === BREACHES_REGIONAL_LAYER_ID) {
               const filterIndex = breachProbabilityFilterIndex
@@ -435,23 +441,9 @@ export default new Vuex.Store({
 
       if (viewerType === COMBINED) {
         return layers.map(layer => {
-          if (layer.type === 'json') {
-            const selectedFeatures = layer.geojson.features.filter(
-              feature => selectedBreaches.find(id => id === feature.properties.id)
-            )
-
-            selectedFeatures.map(feature => {
-              feature.properties.selectable = false
-              return feature
-            })
-
-            layer.geojson.features = selectedFeatures
-            layer.geojson.totalFeatures = selectedFeatures.length
-          } else if (viewerType === COMBINED) {
-            if (layer.style === 'LIWO_Basis_Waterdiepte') {
-              layer.hideWms = true
-              return layer
-            }
+          if (layer.style === 'LIWO_Basis_Waterdiepte') {
+            layer.hideWms = true
+            return layer
           }
 
           return layer
@@ -459,6 +451,8 @@ export default new Vuex.Store({
       } else if (selectedBreaches.length) {
         // seperate selected markers into its own layer
         layers.map(layer => {
+          if (layer.iscontrollayer !== true) return layer
+
           if (layer.type === 'json') {
             const activeFeatures = layer.geojson.features.filter(
               feature => selectedBreaches.find(id => id === feature.properties.id)

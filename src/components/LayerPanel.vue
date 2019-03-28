@@ -12,12 +12,12 @@
 
       <div class="layer-panel__body">
         <layer-panel-item
-          v-for="(layerSet, index) in layerSets"
+          v-for="(layerSet, index) in interactiveLayerSets"
           :key="layerSet.id"
           :layers="layerSet.layers"
           :layerId="layerSet.id"
           :title="layerSet.layerSetTitle"
-          :collapse="index === 0 && layerSets.length > 1"
+          :collapse="index === 0 && interactiveLayerSets.length > 1"
           :layerSet="layerSet"
         />
       </div>
@@ -80,7 +80,10 @@ export default {
     ...mapState([
       'viewerType',
       'selectedBreaches'
-    ])
+    ]),
+    interactiveLayerSets () {
+      return this.layerSets.filter((layer, index) => layer.iscontrollayer || index === 0)
+    }
   },
   methods: {
     setSelectedLayerId (id) {
