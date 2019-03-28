@@ -43,7 +43,7 @@
         @change="setLayerVariant"
       />
     </div>
-    <div class="layer-control__options">
+    <div class="layer-control__options" v-if="viewerType !== 'combined'">
       <layer-control-select :name="`layer-${id}-trans`" :options="transparancyOptions" @change="setOpacity" />
       <button v-if="metadata" class="layer-control__info" @click="popupIsOpen=true">
         <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 64 64">
@@ -88,7 +88,8 @@ export default {
       'breachProbabilityFilterIndex',
       'visibleVariantIndexByLayerId',
       'visibleLayerIds',
-      'selectedLayerId'
+      'selectedLayerId',
+      'viewerType'
     ]),
     transparancyOptions () {
       return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((index) => ({
