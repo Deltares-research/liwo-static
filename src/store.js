@@ -228,7 +228,7 @@ export default new Vuex.Store({
         state.commit('initToMapLayers', id)
       }
     },
-    async addBreach ({ commit, state }, { id, breachName, layerType, variantId, iscontrollayer: isControllable }) {
+    async addBreach ({ commit, state }, { id, breachName, variantId, layerType, isControllable }) {
       if (Object.keys(state.breachLayersById).indexOf(String(id)) === -1) {
         const breach = await loadBreach(id, layerType, state.viewerType)
         const breachLayers = normalizeLayers(breach.layers)
@@ -240,7 +240,7 @@ export default new Vuex.Store({
 
         const visibleBreachLayers = breachLayers.map((layer) => layer.id)
 
-        commit('addBreachLayer', { id, breachLayers, breachName })
+        commit('addBreachLayer', { id, breachLayers, breachName, iscontrollayer: isControllable })
         commit('setVisibleBreachLayers', { breach: id, layers: visibleBreachLayers })
         commit('setLayerUnits', layerUnits)
         commit('toggleSelectedBreach', id)
@@ -406,7 +406,7 @@ export default new Vuex.Store({
         ]
       }
     },
-    async parsedLayerSet ({ breachProbabilityFilterIndex, selectedBreaches, activeLayerSetId, hiddenLayers, visibleVariantIndexByLayerId, viewerType, breachLayersById }, { activeLayerSet }) {
+    async parsedLayerSet ({ breachProbabilityFilterIndex, selectedBreaches, activeLayerSetId, hiddenLayers, visibleVariantIndexByLayerId, viewerType, breachLayersById }, { activeLayerSet, panelLayerSets }) {
       if (!activeLayerSet) {
         return Promise.resolve([])
       }
