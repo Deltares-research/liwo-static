@@ -130,7 +130,9 @@ export default new Vuex.Store({
     },
     initToMapLayers (state, mapId) {
       const currentLayerSet = state.layerSetsById[mapId]
-      state.visibleLayerIds = currentLayerSet.filter(layer => layer.properties.visible).map(layer => layer.id)
+      state.visibleLayerIds = currentLayerSet
+        .filter(layer => layer.properties.visible)
+        .map(layer => layer.id)
       state.selectedBreaches = []
       state.opacityByLayerId = {}
       state.selectedLayerId = state.visibleLayerIds[0]
@@ -211,7 +213,7 @@ export default new Vuex.Store({
 
       const layersetById = await loadLayersetById(id)
       const layerSet = normalizeLayers(layersetById.layers)
-      const notifications = buildLayersetNotifications(layersetById)
+      const notifications = buildLayersetNotifications(layersetById, layerSet[0].id)
       const layerUnits = layersetById.layers.reduce((acc, layer) => {
         acc[layer.legend.layer] = extractUnit(layer.legend.title)
         return acc
@@ -536,8 +538,7 @@ export default new Vuex.Store({
     currentNotifications (state) {
       const { mapId, visibleLayerIds, visibleVariantIndexByLayerId, selectedLayerId, selectedBreaches } = state
       const getNotificationFrom = get('notification')
-      const getNotificaion = getNotificationFrom
-
+      const getNotification = getNotificationFrom
       const notificationBreach = state.notifications.breach
       const notificationMap = state.notifications[mapId]
       const generalNotifications = state.notifications.notifications || []
@@ -555,7 +556,7 @@ export default new Vuex.Store({
 
       const breachNotifications = selectedBreaches
         .map(getByIndexFrom(notificationBreach))
-        .map(getNotificaion)
+        .map(getNotification)
         .filter(isTruthy)
 
       const notificationForSelectedLayer = first(notificationForLayers)
