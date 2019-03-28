@@ -314,7 +314,13 @@ export default new Vuex.Store({
       const layer = {
         id: 'combined_scenario',
         properties: { title: 'Gecombineerd Scenario' },
-        legend: { layer: 'combined_scenario', title: 'Gecombineerd Scenario [-]' },
+        legend: {
+          layer: 'geo_maximale_waterdiepte_2015_nederland',
+          title: 'Gecombineerd Scenario [-]',
+          geojson_style: '',
+          namespace: 'LIWO_MEGO',
+          style: 'LIWO_Basis_Waterdiepte'
+        },
         variants: [{
           layer: 'combined_scenario',
           ...combinedScenario
