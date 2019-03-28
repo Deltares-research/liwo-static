@@ -47,7 +47,7 @@ export default {
     path () {
       const commaSeperatedIds = this.selectedVariantIds.join(',')
 
-      return `/combined/${commaSeperatedIds}/${this.selected}`
+      return `combined/${commaSeperatedIds}/${this.selected}`
     }
   },
   mounted () {

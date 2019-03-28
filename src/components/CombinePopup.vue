@@ -10,7 +10,7 @@
         <footer class="control-group combine-popup__footer">
           <div class="controls">
             <a
-              :href="`/#${path}`"
+              :href="url"
               class="btn primary"
               target="_blank"
               rel="noopener"
@@ -42,6 +42,11 @@ export default {
   data () {
     return {
       path: ''
+    }
+  },
+  computed: {
+    url () {
+      return `${location.pathname}#/${this.path}`
     }
   }
 }

@@ -57,7 +57,7 @@ export default {
   },
   computed: {
     url () {
-      return `${location.origin}${this.path}`
+      return `${location.origin}${location.pathname}#/${this.path}`
     }
   },
   methods: {
