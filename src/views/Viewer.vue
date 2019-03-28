@@ -113,6 +113,7 @@ export default {
 
     this.$store.commit('setViewerType', routeName)
     this.$store.commit('setPageTitle', PAGE_TITLE)
+    this.$store.commit('setCurrentBand', this.$route.params.band)
 
     if (mapId) {
       this.$store.commit('setMapId', mapId)

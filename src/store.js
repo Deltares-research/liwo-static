@@ -52,7 +52,8 @@ export default new Vuex.Store({
     layerUnits: {},
     notifications: [],
     combinedScenario: undefined,
-    hiddenLayers: []
+    hiddenLayers: [],
+    currentBand: undefined
   },
   mutations: {
     addBreachLayer (state, { id, breachLayers, breachName, iscontrollayer }) {
@@ -203,6 +204,9 @@ export default new Vuex.Store({
       } else {
         state.hiddenLayers = [...state.hiddenLayers, id]
       }
+    },
+    setCurrentBand (state, band) {
+      state.currentBand = band
     }
   },
   actions: {
@@ -310,7 +314,27 @@ export default new Vuex.Store({
     }
   },
   getters: {
-    combinedScenarioAsLayer ({ combinedScenario, viewerType }) {
+    combinedScenarioAsLayer ({ combinedScenario, viewerType, currentBand }) {
+      let band
+
+      switch (currentBand) {
+        case 'waterdepth':
+          band = 'Waterdiepte'
+          break
+        case 'velocity':
+          band = 'Stroomsnelheid'
+          break
+        case 'riserate':
+          band = 'Stijgsnelheid'
+          break
+        case 'damage':
+          band = 'Schade'
+          break
+        case 'slachtoffers':
+          band = 'Slachtoffers'
+          break
+      }
+
       const layer = {
         id: 'combined_scenario',
         properties: { title: 'Gecombineerd Scenario' },
@@ -319,7 +343,7 @@ export default new Vuex.Store({
           title: 'Gecombineerd Scenario [-]',
           geojson_style: '',
           namespace: 'LIWO_MEGO',
-          style: 'LIWO_Basis_Waterdiepte'
+          style: `LIWO_Basis_${band}`
         },
         variants: [{
           layer: 'combined_scenario',
