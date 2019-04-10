@@ -6,6 +6,7 @@
       callbacks: { breachCallBack, initMapObject },
       config: mapConfig,
       mapLayers: [ ...expandedMapLayers ].reverse(),
+      cluster: clusterMarkers,
     }"
   ></div>
 </template>
@@ -24,6 +25,10 @@ export default {
     projection: {
       type: String,
       default: EPSG_28992
+    },
+    clusterMarkers: {
+      type: Boolean,
+      default: true,
     }
   },
   data () {
