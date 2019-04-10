@@ -1,8 +1,14 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import get from 'lodash/fp/get'
+import map from 'lodash/fp/map'
+import find from 'lodash/fp/find'
 import pipe from 'lodash/fp/pipe'
 import first from 'lodash/fp/first'
+import merge from 'lodash/fp/merge'
+import reduce from 'lodash/fp/reduce'
+import values from 'lodash/fp/values'
+import flatMap from 'lodash/fp/flatMap'
 import includes from 'lodash/fp/includes'
 import cloneDeep from 'lodash/fp/cloneDeep'
 
@@ -16,14 +22,14 @@ import buildLayersetNotifications from './lib/build-layerset-notifications'
 import stringToHash from './lib/string-to-hash'
 import { BREACH_SELECTED } from './lib/liwo-identifiers'
 import mapConfig from './map.config'
+import { wrapInProperty, apply, getByIndexFrom, getId } from './lib/utils'
+
 const COMBINED = 'combined'
 
 Vue.use(Vuex)
 
-const getId = get('id')
 const isTruthy = val => !!val
 const includedIn = includes.convert({rearg: false})
-const getByIndexFrom = arr => index => arr && arr[index]
 const idSameAs = value => pipe([getId, id => id === value])
 const idIncludedIn = collection => pipe([getId, includedIn(collection)])
 
@@ -314,8 +320,9 @@ export default new Vuex.Store({
     }
   },
   getters: {
-    combinedScenarioAsLayer ({ combinedScenario, viewerType, currentBand }) {
+    combinedScenarioAsLayer ({ combinedScenario, viewerType, currentBand, breachLayersById }) {
       let band
+      let metadata = {}
 
       switch (currentBand) {
         case 'waterdepth':
@@ -334,7 +341,65 @@ export default new Vuex.Store({
           band = 'Slachtoffers'
           break
       }
+      if (combinedScenario) {
+        const layerByMapId = mapId =>
+          pipe([
+            get('variants'),
+            find(['map_id', mapId])
+          ])
 
+        const getVariantById = liwoId =>
+          pipe([
+            get('layers'),
+            flatMap(get('variants')),
+            find(['map_id', liwoId]),
+            wrapInProperty('variant')
+          ])
+
+        const getLayerByVariantId = liwoId =>
+          pipe([
+            get('layers'),
+            find(layerByMapId(liwoId)),
+            get('properties.name'),
+            wrapInProperty('layerName')
+          ])
+
+        const getLayerSetTitle =
+          pipe([
+            get('layerSetTitle'),
+            wrapInProperty('layerSetTitle')
+          ])
+
+        const getMetaDataForLiwoID = liwoId => pipe([
+          map(
+            pipe([
+              apply([
+                getLayerSetTitle,
+                getLayerByVariantId(liwoId),
+                getVariantById(liwoId)
+              ]),
+              reduce(merge, {})
+            ])
+          ),
+          find('variant')
+        ])
+
+        const mapLiwoIdToBreachLayer = liwoId => pipe([
+          values,
+          getMetaDataForLiwoID(liwoId)
+        ])(breachLayersById)
+
+        metadata = combinedScenario.liwo_ids
+          .map(mapLiwoIdToBreachLayer)
+          .map(({ layerName, layerSetTitle, variant }) => ({
+            [layerSetTitle]: `
+              <p>Band: ${layerName}</p>
+              <p>${get('title', variant)}</p>
+              <p>${get('metadata.title', variant)}</p>
+            `
+          }))
+          .reduce(merge, {})
+      }
       const layer = {
         id: 'combined_scenario',
         properties: { title: 'Gecombineerd Scenario' },
@@ -347,6 +412,10 @@ export default new Vuex.Store({
         },
         variants: [{
           layer: 'combined_scenario',
+          metadata: {
+            title: 'Gecombineerd Scenario',
+            ...metadata
+          },
           ...combinedScenario
         }]
       }
