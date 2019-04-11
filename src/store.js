@@ -370,24 +370,26 @@ export default new Vuex.Store({
             wrapInProperty('layerSetTitle')
           ])
 
-        const getMetaDataForLiwoID = liwoId => pipe([
-          map(
-            pipe([
-              apply([
-                getLayerSetTitle,
-                getLayerByVariantId(liwoId),
-                getVariantById(liwoId)
-              ]),
-              reduce(merge, {})
-            ])
-          ),
-          find('variant')
-        ])
+        const getMetaDataForLiwoID = liwoId =>
+          pipe([
+            map(
+              pipe([
+                apply([
+                  getLayerSetTitle,
+                  getLayerByVariantId(liwoId),
+                  getVariantById(liwoId)
+                ]),
+                reduce(merge, {})
+              ])
+            ),
+            find('variant')
+          ])
 
-        const mapLiwoIdToBreachLayer = liwoId => pipe([
-          values,
-          getMetaDataForLiwoID(liwoId)
-        ])(breachLayersById)
+        const mapLiwoIdToBreachLayer = liwoId =>
+          pipe([
+            values,
+            getMetaDataForLiwoID(liwoId)
+          ])(breachLayersById)
 
         metadata = combinedScenario.liwo_ids
           .map(mapLiwoIdToBreachLayer)
@@ -590,7 +592,7 @@ export default new Vuex.Store({
 
                 // remove feature from its current layer
                 layer.geojson.features = layer.geojson.features.filter(
-                  feature => feature.properties.id !== activeLayerSetId
+                  feature => !includedIn(selectedBreaches, feature.properties.id)
                 )
 
                 layer.geojson.totalFeatures = layer.geojson.features.length
