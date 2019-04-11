@@ -21,14 +21,14 @@ const DEFAULT_ICON = new L.Icon.Default()
 const DYNAMIC_GEOSERVER_URL = mapConfig.services.DYNAMIC_GEOSERVER_URL
 const STATIC_GEOSERVER_URL = mapConfig.services.STATIC_GEOSERVER_URL
 
-export default function createLayer (layer, { breachCallBack }) {
+export default function createLayer (layer, { breachCallBack }, cluster = true) {
   if (layer.type === 'json' && layer.geojson) {
     if (layerIsBreach(layer)) {
       const layerGroup = L.layerGroup()
 
       const clusterGroup = L.markerClusterGroup({
         iconCreateFunction: clusterIconFunction(layer.layer || 'BREACH_PRIMARY'),
-        maxClusterRadius: 40
+        maxClusterRadius: cluster ? 40 : 0
       })
 
       clusterGroup.addLayer(createBreachGeoJson(layer, breachCallBack))

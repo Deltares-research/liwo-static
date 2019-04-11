@@ -17,14 +17,14 @@ export default {
       return
     }
 
-    const { mapLayers: _mapLayers, callbacks } = value
+    const { mapLayers: _mapLayers, callbacks, cluster } = value
     const mapLayers = _mapLayers.filter(value => value)
 
     layerGroup.clearLayers()
 
     mapLayers
       .filter(layer => !layer.hide)
-      .map(layer => layerFactory(layer, callbacks))
+      .map(layer => layerFactory(layer, callbacks, cluster))
       .filter(layer => layer)
       .forEach(layer => layerGroup.addLayer(layer))
   }

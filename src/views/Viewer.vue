@@ -4,6 +4,7 @@
       <liwo-map
         :layers="activeLayerSet"
         :projection="projection"
+        :clusterMarkers="clusterMarkers"
         @initMap="setMapObject"
       />
       <ul class="viewer__notifications" v-if="currentNotifications.length">
@@ -200,6 +201,9 @@ export default {
         ...this.selectedLayer.legend,
         layerType: this.selectedLayer.variants[0].type
       }
+    },
+    clusterMarkers () {
+      return !Boolean(this.viewerType === COMBINED)
     }
   },
   watch: {
