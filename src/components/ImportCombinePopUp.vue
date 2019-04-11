@@ -67,6 +67,7 @@ export default {
         const url = new URL(this.url)
         const path = url.href
           .replace(url.origin, '')
+          .replace(url.pathname, '')
           .replace(new RegExp('(/)?#(.+)'), '$2')
 
         const parsedUrl = this.$router.match(path)
@@ -74,10 +75,13 @@ export default {
         if (parsedUrl.params.layerIds) {
           const layerIds = parsedUrl.params.layerIds.split(',')
           this.$store.dispatch('setActiveLayersFromVariantIds', layerIds)
+        } else {
+          throw new Error('layerIds not found in url')
         }
 
         this.$emit('close')
       } catch (error) {
+        console.error(error)
         this.showError = true
       }
     }

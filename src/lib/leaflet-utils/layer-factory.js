@@ -1,5 +1,4 @@
 import L from '@/lib/leaflet-utils/leaf'
-import has from 'lodash/has'
 
 import 'leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
