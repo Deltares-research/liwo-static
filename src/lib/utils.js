@@ -5,6 +5,7 @@ import isNull from 'lodash/fp/isNull'
 import isNaN from 'lodash/fp/isNaN'
 import isEmpty from 'lodash/fp/isEmpty'
 import includes from 'lodash/fp/includes'
+import curry from 'lodash/curry'
 
 /**
  * Gets the id property of the provided object
@@ -96,3 +97,14 @@ export const notNull = negate(isNull)
  * notNaN(NaN) // false
  */
 export const notNaN = negate(isNaN)
+
+/**
+ * Wraps a value in an object with a specified property
+ * _Function is curried_
+ *
+ * @example
+ * wrapInProperty('myNumber', 10) // { myNumber: 10 }
+ */
+export const wrapInProperty = curry((property, value) => ({ [property]: value }))
+
+export const apply = curry((fns, value) => fns.map(fn => fn(value)))

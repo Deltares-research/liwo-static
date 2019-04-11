@@ -43,7 +43,7 @@
         @change="setLayerVariant"
       />
     </div>
-    <div class="layer-control__options" v-if="viewerType !== 'combined'">
+    <div class="layer-control__options">
       <layer-control-select :name="`layer-${id}-trans`" :options="transparancyOptions" @change="setOpacity" />
       <button v-if="metadata" class="layer-control__info" @click="popupIsOpen=true">
         <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 64 64">
