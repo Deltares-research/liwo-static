@@ -28,7 +28,7 @@ export default {
     },
     clusterMarkers: {
       type: Boolean,
-      default: true,
+      default: true
     }
   },
   data () {
