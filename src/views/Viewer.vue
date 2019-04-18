@@ -203,7 +203,7 @@ export default {
       }
     },
     clusterMarkers () {
-      return !Boolean(this.viewerType === COMBINED)
+      return !(this.viewerType === COMBINED)
     }
   },
   watch: {
