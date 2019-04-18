@@ -6,13 +6,14 @@ const headers = { 'Accept': 'application/json', 'Content-Type': 'application/jso
 
 export default function ({ layers, name }) {
   const body = JSON.stringify({ layers, name })
-  return fetch(`${apiBase}Maps.asmx/DownloadZipFileDataLayers`, {
+  return fetch(`${apiBase}/Maps.asmx/DownloadZipFileDataLayers`, {
     method: 'POST',
     mode: 'cors',
     headers,
     body
   })
     .then(res => res.blob())
+  // TODO: don't download a blob when an error page is  returned.
     .then((blob) => {
       downloadBlob({
         blob,
