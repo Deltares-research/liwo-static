@@ -23,42 +23,9 @@
       </div>
       <footer
         class="layer-panel__actions"
-      >
-        <template v-if="viewerType === 'combine'">
-          <button
-            v-if="selectedBreaches.length"
-            class="layer-panel__action"
-            @click="$emit('open-combine')"
-          >
-            Selectie combineren
-          </button>
-          <button
-            v-if="selectedBreaches.length"
-            class="layer-panel__action"
-            @click="$emit('open-export-combine')"
-          >
-            Selectie exporteren
-          </button>
-          <button
-            class="layer-panel__action"
-            @click="$emit('open-import-combine')"
-          >
-            Selectie importeren
-          </button>
-        </template>
-
-        <button
-          v-else
-          class="layer-panel__action"
-          @click="$emit('open-export')"
         >
-          <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
-            <path fill="none" d="M0 0h24v24H0z"/>
-            <path d="M18 17v2H6v-2H3v4c0 .6.4 1 1 1h16c.6 0 1-.4 1-1v-4h-3z"/>
-            <path d="M11 16.5a1.4 1.4 0 0 0 2 0l5.8-7.3a1.4 1.4 0 0 0-1.7-2l-3.1 2V3.4c0-1-1-1.4-2-1.4s-2 .3-2 1.4v5.8l-3-2a1.4 1.4 0 0 0-1.8 2l5.7 7.3z"/>
-          </svg>
-          Kaart exporteren
-        </button>
+        <slot></slot>
+
       </footer>
     </div>
   </div>
