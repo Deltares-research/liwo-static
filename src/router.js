@@ -7,7 +7,8 @@ import About from './views/About'
 import Contact from './views/Contact'
 import Home from './views/Home'
 import Maps from './views/Maps'
-import Viewer from './views/Viewer.vue'
+import Viewer from './views/Viewer'
+import Combine from './views/Combine'
 
 Vue.use(Router)
 
@@ -54,7 +55,7 @@ const router = new Router({
     {
       path: '/combine/:layerIds?',
       name: 'combine',
-      component: Viewer,
+      component: Combine,
       meta: {
         title: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
       }

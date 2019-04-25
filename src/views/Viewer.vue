@@ -4,7 +4,7 @@
       <liwo-map
         :layers="activeLayerSet"
         :projection="projection"
-        :clusterMarkers="clusterMarkers"
+        :clusterMarkers="false"
         @initMap="setMapObject"
       />
       <ul class="viewer__notifications" v-if="currentNotifications.length">
@@ -19,9 +19,6 @@
       <layer-panel
         :layerSets="panelLayerSets"
         @open-export="showExport = true"
-        @open-combine="showCombine = true"
-        @open-export-combine="showExportCombine = true"
-        @open-import-combine="showImportCombine = true"
       />
       <legend-panel
         v-if="visibleLayerLegend"
@@ -36,18 +33,6 @@
         :map-layers="activeLayerSet"
         @close="showExport = false"
       />
-      <combine-popup
-        v-if="showCombine"
-        @close="showCombine = false"
-      />
-      <export-combine-popup
-        v-if="showExportCombine"
-        @close="showExportCombine = false"
-      />
-      <import-combine-popup
-        v-if="showImportCombine"
-        @close="showImportCombine = false"
-      />
     </div>
   </div>
 </template>
@@ -60,18 +45,13 @@ import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
 import LiwoMap from '@/components/LiwoMap'
 import LegendPanel from '@/components/LegendPanel'
-import CombinePopup from '@/components/CombinePopup'
-import ExportCombinePopup from '@/components/ExportCombinePopUp'
-import ImportCombinePopup from '@/components/ImportCombinePopUp'
 import NotificationBar from '@/components/NotificationBar.vue'
 
-import { EPSG_28992, EPSG_3857 } from '@/lib/leaflet-utils/projections'
+import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
 import { getFirstLayerSetForRoute } from '../lib/layer-set-route-mapping'
 import { isTruthy, includedIn, notEmpty, notNaN, getId } from '../lib/utils'
 import availableBands from '../lib/available-bands'
 
-const COMBINE = 'combine'
-const COMBINED = 'combined'
 const PAGE_TITLE = 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
 const bands = availableBands.map(getId)
 
@@ -79,9 +59,6 @@ const includedInBands = includedIn(bands)
 
 export default {
   components: {
-    CombinePopup,
-    ExportCombinePopup,
-    ImportCombinePopup,
     ExportPopup,
     LayerPanel,
     LegendPanel,
@@ -94,25 +71,19 @@ export default {
       parsedLayers: [],
       id: 0,
       showExport: false,
-      showCombine: false,
-      showExportCombine: false,
-      showImportCombine: false,
       liwoIds: [],
       band: null,
-      projection: this.$route.name === COMBINED
-        ? EPSG_3857
-        : EPSG_28992,
+      projection: EPSG_28992,
       storeWatcher: null
     }
   },
   async mounted () {
     const {id: _mapId, band, layerIds} = this.$route.params
-    const routeName = this.$route.name
     const mapId = Number(getFirstLayerSetForRoute(this.$route.name, _mapId))
 
     this.band = band
 
-    this.$store.commit('setViewerType', routeName)
+    this.$store.commit('setViewerType', 'view')
     this.$store.commit('setPageTitle', PAGE_TITLE)
     this.$store.commit('setCurrentBand', this.$route.params.band)
 
@@ -123,25 +94,6 @@ export default {
 
     this.liwoIds = layerIds ? layerIds.split(',').map(id => parseInt(id, 10)) : []
 
-    if (this.viewerType === COMBINE) {
-      this.storeWatcher = this.$store.watch(
-        (state, getters) => getters.selectedVariantIds,
-        ids => {
-          if (ids.length) {
-            const { id, band } = this.$route.params
-
-            this.$router.replace({
-              name: COMBINE,
-              params: {
-                id,
-                layerIds: ids.join(','),
-                band
-              }
-            })
-          }
-        }
-      )
-    }
     this.isMounted = true
   },
   beforeDestroy () {
@@ -201,25 +153,12 @@ export default {
         ...this.selectedLayer.legend,
         layerType: this.selectedLayer.variants[0].type
       }
-    },
-    clusterMarkers () {
-      return !(this.viewerType === COMBINED)
     }
   },
   watch: {
     combinedSenarioCanBeLoaded (boolean) {
       if (boolean) {
         this.loadCombinedScenarios()
-      }
-    },
-    viewerType (viewerType) {
-      if (viewerType === COMBINED && this.isMounted) {
-        if (!this.validBand) {
-          this.$store.commit('addNotification', 'Er is geen band geselecteerd')
-        }
-        if (!this.validLiwoIds) {
-          this.$store.commit('addNotification', 'Er zijn geen ids geselecteerd')
-        }
       }
     },
     validLiwoIds (isValid) {

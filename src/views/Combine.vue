@@ -4,7 +4,7 @@
       <liwo-map
         :layers="activeLayerSet"
         :projection="projection"
-        :clusterMarkers="clusterMarkers"
+        :clusterMarkers="true"
         @initMap="setMapObject"
       />
       <ul class="viewer__notifications" v-if="currentNotifications.length">
@@ -65,13 +65,11 @@ import ExportCombinePopup from '@/components/ExportCombinePopUp'
 import ImportCombinePopup from '@/components/ImportCombinePopUp'
 import NotificationBar from '@/components/NotificationBar.vue'
 
-import { EPSG_28992, EPSG_3857 } from '@/lib/leaflet-utils/projections'
+import { EPSG_3857 } from '@/lib/leaflet-utils/projections'
 import { getFirstLayerSetForRoute } from '../lib/layer-set-route-mapping'
 import { isTruthy, includedIn, notEmpty, notNaN, getId } from '../lib/utils'
 import availableBands from '../lib/available-bands'
 
-const COMBINE = 'combine'
-const COMBINED = 'combined'
 const PAGE_TITLE = 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
 const bands = availableBands.map(getId)
 
@@ -99,20 +97,17 @@ export default {
       showImportCombine: false,
       liwoIds: [],
       band: null,
-      projection: this.$route.name === COMBINED
-        ? EPSG_3857
-        : EPSG_28992,
+      projection: EPSG_3857,
       storeWatcher: null
     }
   },
   async mounted () {
     const {id: _mapId, band, layerIds} = this.$route.params
-    const routeName = this.$route.name
     const mapId = Number(getFirstLayerSetForRoute(this.$route.name, _mapId))
 
     this.band = band
 
-    this.$store.commit('setViewerType', routeName)
+    this.$store.commit('setViewerType', 'combine')
     this.$store.commit('setPageTitle', PAGE_TITLE)
     this.$store.commit('setCurrentBand', this.$route.params.band)
 
@@ -122,26 +117,23 @@ export default {
     }
 
     this.liwoIds = layerIds ? layerIds.split(',').map(id => parseInt(id, 10)) : []
+    this.storeWatcher = this.$store.watch(
+      (state, getters) => getters.selectedVariantIds,
+      ids => {
+        if (ids.length) {
+          const { id, band } = this.$route.params
 
-    if (this.viewerType === COMBINE) {
-      this.storeWatcher = this.$store.watch(
-        (state, getters) => getters.selectedVariantIds,
-        ids => {
-          if (ids.length) {
-            const { id, band } = this.$route.params
-
-            this.$router.replace({
-              name: COMBINE,
-              params: {
-                id,
-                layerIds: ids.join(','),
-                band
-              }
-            })
-          }
+          this.$router.replace({
+            name: 'combine',
+            params: {
+              id,
+              layerIds: ids.join(','),
+              band
+            }
+          })
         }
-      )
-    }
+      }
+    )
     this.isMounted = true
   },
   beforeDestroy () {
@@ -201,9 +193,6 @@ export default {
         ...this.selectedLayer.legend,
         layerType: this.selectedLayer.variants[0].type
       }
-    },
-    clusterMarkers () {
-      return !(this.viewerType === COMBINED)
     }
   },
   watch: {
@@ -213,7 +202,7 @@ export default {
       }
     },
     viewerType (viewerType) {
-      if (viewerType === COMBINED && this.isMounted) {
+      if (this.isMounted) {
         if (!this.validBand) {
           this.$store.commit('addNotification', 'Er is geen band geselecteerd')
         }

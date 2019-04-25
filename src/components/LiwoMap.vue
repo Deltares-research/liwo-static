@@ -88,7 +88,7 @@ export default {
       if (!parsedLayerSet) {
         return []
       }
-
+      console.log('new parsedLayerSet', parsedLayerSet)
       parsedLayerSet
         .then(
           (layers) => {
