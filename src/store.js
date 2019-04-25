@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+
 import get from 'lodash/fp/get'
 import map from 'lodash/fp/map'
 import find from 'lodash/fp/find'

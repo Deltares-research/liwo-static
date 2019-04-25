@@ -3,7 +3,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
   // transpileDependencies: [ 'delay' ],
-  baseUrl: process.env.BASE_URL || '/',
+  publicPath: process.env.BASE_URL || '/',
   devServer: {
     disableHostCheck: true
   },
