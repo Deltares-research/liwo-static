@@ -63,7 +63,7 @@ const router = new Router({
     {
       path: '/combined/:layerIds?/:band?',
       name: 'combined',
-      component: Viewer,
+      component: Combine,
       meta: {
         title: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
       }

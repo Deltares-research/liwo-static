@@ -54,6 +54,8 @@ export default new Vuex.Store({
     selectedLayerId: 0,
     selectedMapLayerId: 0,
     selectedBreaches: [],
+    // alow to select multiple breaches
+    selectBreachMultiple: false
     selectedLayerSetIndex: 0,
     visibleBreachLayers: {},
     layerUnits: {},
@@ -82,7 +84,7 @@ export default new Vuex.Store({
       const breachLayerIds = state.breachLayersById[id].layers.map(layer => layer.id)
 
       if (state.selectedBreaches.indexOf(id) === -1) {
-        if (state.viewerType === 'combine' || state.viewerType === 'combined') {
+        if (state.selectBreachMultiple) {
           state.selectedBreaches = state.selectedBreaches.concat(id)
         } else {
           state.selectedBreaches = [id]
@@ -95,7 +97,11 @@ export default new Vuex.Store({
         state.selectedLayerId = breachLayerIds[0]
       } else {
         // state.selectedBreaches = []
-        state.selectedBreaches = state.viewerType === 'combine' ? state.selectedBreaches.filter(breachId =>
+        if (selectBreachMultiple) {
+          state.selectedBreaches
+        } else {
+        }
+         = state.viewerType === 'combine' ? state.selectedBreaches.filter(breachId =>
           breachId !== id
         ) : []
         state.visibleLayerIds = state.visibleLayerIds.filter(layerId => breachLayerIds.indexOf(layerId) === -1)

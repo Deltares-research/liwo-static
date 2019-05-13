@@ -195,53 +195,5 @@ export default {
 
 <style>
 @import '../components/variables.css';
-
-.viewer {
-  position: relative;
-  padding-top: 1rem;
-}
-
-.viewer__map-wrapper {
-  position: relative;
-}
-
-.viewer__notifications {
-  position: absolute;
-  top: 1rem;
-  z-index: 1000;
-  left: 368px;
-
-  /* 100px: 5 * 20px margin, 320px LayerPanel width, 44px map controls width */
-  width: calc(100% - 100px - 320px - 44px);
-}
-
-.viewer__notification {
-  margin-bottom: 1rem;
-  box-shadow: var(--shadow);
-}
-
-.viewer .layer-panel {
-  position: absolute;
-  top: 1rem;
-  left: 2rem;
-  z-index: 1000;
-  box-shadow: var(--shadow);
-}
-
-.viewer .segmented-buttons {
-  position: absolute;
-  width: 100%;
-  bottom: -1rem;
-  z-index: 1000;
-}
-
-.viewer .legend-panel {
-  position: absolute;
-  right: 2rem;
-  bottom: 2rem;
-  z-index: 500;
-  box-shadow: var(--shadow);
-  max-height: calc(100% - 220px); /* height of leaflet controlls */
-  overflow-y: auto;
-}
+@import  './viewer.css';
 </style>
