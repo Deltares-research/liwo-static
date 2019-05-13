@@ -55,7 +55,7 @@ export default new Vuex.Store({
     selectedMapLayerId: 0,
     selectedBreaches: [],
     // alow to select multiple breaches
-    selectBreachMultiple: false
+    selectBreachMultiple: false,
     selectedLayerSetIndex: 0,
     visibleBreachLayers: {},
     layerUnits: {},
@@ -96,14 +96,13 @@ export default new Vuex.Store({
         state.activeLayerSetId = id
         state.selectedLayerId = breachLayerIds[0]
       } else {
-        // state.selectedBreaches = []
-        if (selectBreachMultiple) {
-          state.selectedBreaches
+        if (state.selectBreachMultiple) {
+          state.selectedBreaches = []
         } else {
+          state.selectedBreaches.filter(
+            breachId => breachId !== id
+          )
         }
-         = state.viewerType === 'combine' ? state.selectedBreaches.filter(breachId =>
-          breachId !== id
-        ) : []
         state.visibleLayerIds = state.visibleLayerIds.filter(layerId => breachLayerIds.indexOf(layerId) === -1)
         state.visibleVariantIndexByLayerId = { ...state.visibleVariantIndexByLayerId, ...breachLayerIds.reduce((visibleVariants, id) => ({ ...visibleVariants, [ id ]: 0 }), {}) }
         state.activeLayerSetId = state.selectedBreaches[0]
