@@ -1,4 +1,5 @@
 export default function buildNotifications (layers) {
+  // TODO: what is this doing
   return {
     breach: layers
       .filter(layer => layer.geojson)
