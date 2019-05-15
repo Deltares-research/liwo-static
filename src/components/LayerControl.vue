@@ -139,6 +139,7 @@ export default {
       })
     },
     setProbabilityFilter ({ target }) {
+      // TODO: what is this....
       this.$store.commit('setProbabilityFilterIndex', Number(target.value))
     },
     selectLayer () {
