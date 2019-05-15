@@ -5,7 +5,7 @@
     v-leaflet="{
       callbacks: { breachCallBack, initMapObject },
       config: mapConfig,
-      mapLayers: [ ...expandedMapLayers ].reverse(),
+      mapLayers: [ ...activeLayerSet ].reverse(),
       cluster: clusterMarkers,
     }"
   ></div>
@@ -15,10 +15,11 @@
 import { mapState, mapGetters } from 'vuex'
 
 import createMapConfig from '@/lib/leaflet-utils/mapconfig-factory'
-import buildBreachNotifications from '@/lib/build-breach-notifications'
 import { showLayerInfoPopup } from '@/lib/leaflet-utils/popup'
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
 import { idSameAs } from '@/lib/utils'
+
+// TODO: replace v-leaflet directive with vue2-leaflet package...
 
 export default {
   props: {
@@ -33,7 +34,6 @@ export default {
   },
   data () {
     return {
-      expandedMapLayers: undefined
     }
   },
   computed: {
@@ -46,7 +46,6 @@ export default {
       'activeLayerSetId'
     ]),
     ...mapGetters([
-      'parsedLayerSet',
       'activeLayerSet',
       'panelLayerSets',
       'selectedVariants'
@@ -82,23 +81,6 @@ export default {
         })
       })
     }
-  },
-  watch: {
-    parsedLayerSet (parsedLayerSet) {
-      if (!parsedLayerSet) {
-        return []
-      }
-      console.log('new parsedLayerSet', parsedLayerSet)
-      parsedLayerSet
-        .then(
-          (layers) => {
-            this.expandedMapLayers = Object.freeze(layers)
-          })
-
-      parsedLayerSet
-        .then(buildBreachNotifications)
-        .then(result => this.$store.commit('setBreachNotifications', result))
-    }
   }
 }
 </script>
@@ -108,7 +90,7 @@ export default {
     width: calc(100% - 2rem);
     display: block;
     margin: 0 auto;
-    height: calc(100vh - 20rem);
+    height: calc(100vh - 17.5rem);
   }
 
   .LIWO_Tools_Dreigingsbeelden_Dijkringen {
