@@ -1,27 +1,16 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import get from 'lodash/fp/get'
-import map from 'lodash/fp/map'
-import find from 'lodash/fp/find'
-import pipe from 'lodash/fp/pipe'
-import first from 'lodash/fp/first'
-import merge from 'lodash/fp/merge'
-import reduce from 'lodash/fp/reduce'
-import values from 'lodash/fp/values'
-import flatMap from 'lodash/fp/flatMap'
-import includes from 'lodash/fp/includes'
-import cloneDeep from 'lodash/fp/cloneDeep'
+// TODO: why the fp?
+import fp from 'lodash/fp'
+import _ from 'lodash'
 
 import loadBreach from './lib/load-breach'
-import { loadLayersetById, extractUnit } from './lib/load-layersets'
-import loadGeojson from './lib/load-geojson'
+import { loadLayerSetById, extractUnit } from './lib/load-layersets'
 import loadCombinedScenario from './lib/load-combined-scenario'
-import { normalizeLayers } from './lib/layer-parser'
-import { probabilityConfig } from './lib/probability-filter'
-import buildLayersetNotifications from './lib/build-layerset-notifications'
+import { flattenLayerSet, normalizeLayerSet, cleanLayerSet } from './lib/layer-parser'
+import buildLayerSetNotifications from './lib/build-layerset-notifications'
 import stringToHash from './lib/string-to-hash'
-import { BREACH_SELECTED } from './lib/liwo-identifiers'
 import mapConfig from './map.config'
 import { wrapInProperty, apply, getByIndexFrom, getId } from './lib/utils'
 
@@ -30,16 +19,15 @@ const COMBINED = 'combined'
 Vue.use(Vuex)
 
 const isTruthy = val => !!val
-const includedIn = includes.convert({rearg: false})
-const idSameAs = value => pipe([getId, id => id === value])
-const idIncludedIn = collection => pipe([getId, includedIn(collection)])
+const includedIn = fp.includes.convert({rearg: false})
+const idSameAs = value => fp.pipe([getId, id => id === value])
+const idIncludedIn = collection => fp.pipe([getId, includedIn(collection)])
 
-const BREACHES_PRIMARY_LAYER_ID = 'geo_doorbraaklocaties_primair'
-const BREACHES_REGIONAL_LAYER_ID = 'geo_doorbraaklocaties_regionaal'
 const LAYERPANEL_VIEW_MAPLAYERS = 'maplayers_view'
 const LAYERPANEL_VIEW_BREACHES = 'breaches_view'
 
 export default new Vuex.Store({
+  // TODO: cleanup state (Map, Reach Overview, Combine)
   state: {
     viewerType: undefined,
     activeLayerSetId: undefined,
@@ -83,26 +71,26 @@ export default new Vuex.Store({
     toggleSelectedBreach (state, id) {
       const breachLayerIds = state.breachLayersById[id].layers.map(layer => layer.id)
 
-      if (state.selectedBreaches.indexOf(id) === -1) {
+      // it was already selected
+      if (fp.includes(state.selectedBreaches, id)) {
+        state.selectedBreaches = fp.filter(state.selectedBreaches, ['id', id])
+      } else {
+        // otherwise add it
         if (state.selectBreachMultiple) {
-          state.selectedBreaches = state.selectedBreaches.concat(id)
+          state.selectedBreaches.push(id)
         } else {
+          // or set it
           state.selectedBreaches = [id]
         }
-
+      }
+      // set associated variables
+      if (state.selectBreachMultiple) {
         state.visibleLayerIds = state.visibleLayerIds.concat(breachLayerIds[0])
         state.visibleVariantIndexByLayerId = { ...state.visibleVariantIndexByLayerId, [ breachLayerIds[0] ]: 0 }
         state.opacityByLayerId = { ...state.opacityByLayerId, [ state.opacityByLayerId[id] ]: 1 }
         state.activeLayerSetId = id
         state.selectedLayerId = breachLayerIds[0]
       } else {
-        if (state.selectBreachMultiple) {
-          state.selectedBreaches = []
-        } else {
-          state.selectedBreaches.filter(
-            breachId => breachId !== id
-          )
-        }
         state.visibleLayerIds = state.visibleLayerIds.filter(layerId => breachLayerIds.indexOf(layerId) === -1)
         state.visibleVariantIndexByLayerId = { ...state.visibleVariantIndexByLayerId, ...breachLayerIds.reduce((visibleVariants, id) => ({ ...visibleVariants, [ id ]: 0 }), {}) }
         state.activeLayerSetId = state.selectedBreaches[0]
@@ -143,6 +131,7 @@ export default new Vuex.Store({
     },
     initToMapLayers (state, mapId) {
       const currentLayerSet = state.layerSetsById[mapId]
+      // Why?
       state.visibleLayerIds = currentLayerSet
         .filter(layer => layer.properties.visible)
         .map(layer => layer.id)
@@ -185,6 +174,7 @@ export default new Vuex.Store({
     },
     setProbabilityFilterIndex (state, index) {
       state.breachProbabilityFilterIndex = index
+      // TODO: apply filter to layer
       this.commit('resetToMapLayers')
     },
     setLayerSetNotifications (state, layerSetNotifications) {
@@ -222,24 +212,45 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    async loadLayerSetsById (state, { id, initializeMap }) {
+    async loadLayerSetsById (state, { id, initializeMap, filterByIds, selectMultipleFeatures }) {
+      // TODO what is this...
       if (state.layerSetsById && state.layerSetsById[id]) {
         return
       }
+      // Load a layerSet
+      // Make  sure you don't add any interaction here  yet.
+      // This should just load and clean up, no filtering, no dependency on any view state
 
-      const layersetById = await loadLayersetById(id)
-      const layerSet = normalizeLayers(layersetById.layers)
-      const notifications = buildLayersetNotifications(layersetById, layerSet[0].id)
-      const layerUnits = layersetById.layers.reduce((acc, layer) => {
+      // load the raw layerSet
+      const layerSetRaw = await loadLayerSetById(id)
+      // the data we get from the api is a bit unorganized so normalize it
+      // Actually I think we're  unnormalizing....
+      // deep clone so we can always compare
+      const layerSetNormalized = normalizeLayerSet(_.cloneDeep(layerSetRaw))
+      // There might be some issues that we need to  fix...
+      const layerSet = cleanLayerSet(layerSetNormalized)
+
+      // The layers are in a deep  structure. Flatten it before  building the notifications
+      const layers = flattenLayerSet(layerSet)
+      const notifications = buildLayerSetNotifications(layers)
+
+      // TODO move this to cleanLayerSet
+      const layerUnits = layerSet.layers.reduce((acc, layer) => {
         acc[layer.legend.layer] = extractUnit(layer.legend.title)
         return acc
       }, {})
 
-      state.commit('setLayerSetById', { id, layerSet })
-      state.commit('setPageTitle', layersetById.title)
+      // TODO: the function is called setLayerSet[s]
+      // but it only loads  the layers of 1 layerSet, make this consistent
+
+      state.commit('setLayerSetById', { id, layerSet: layerSet.layers })
+      state.commit('setPageTitle', layerSet.title)
+      // TODO: get rid of this
       state.commit('setLayerUnits', layerUnits)
+      // TODO: why not in the view...
       state.commit('setLayerSetNotifications', notifications)
 
+      // TODO: why? What does initTo mean?
       if (initializeMap) {
         state.commit('initToMapLayers', id)
       }
@@ -247,7 +258,8 @@ export default new Vuex.Store({
     async addBreach ({ commit, state }, { id, breachName, variantId, layerType, isControllable }) {
       if (Object.keys(state.breachLayersById).indexOf(String(id)) === -1) {
         const breach = await loadBreach(id, layerType, state.viewerType)
-        const breachLayers = normalizeLayers(breach.layers)
+        // TODO why is this different from loadLayerSetsById???
+        const breachLayers = normalizeLayerSet(breach.layers)
 
         const layerUnits = breachLayers.reduce((acc, layer) => {
           acc[layer.legend.layer] = extractUnit(layer.legend.title)
@@ -349,51 +361,51 @@ export default new Vuex.Store({
       }
       if (combinedScenario) {
         const layerByMapId = mapId =>
-          pipe([
-            get('variants'),
-            find(['map_id', mapId])
+          fp.pipe([
+            fp.get('variants'),
+            fp.find(['map_id', mapId])
           ])
 
         const getVariantById = liwoId =>
-          pipe([
-            get('layers'),
-            flatMap(get('variants')),
-            find(['map_id', liwoId]),
+          fp.pipe([
+            fp.get('layers'),
+            fp.flatMap(fp.get('variants')),
+            fp.find(['map_id', liwoId]),
             wrapInProperty('variant')
           ])
 
         const getLayerByVariantId = liwoId =>
-          pipe([
-            get('layers'),
-            find(layerByMapId(liwoId)),
-            get('properties.name'),
+          fp.pipe([
+            fp.get('layers'),
+            fp.find(layerByMapId(liwoId)),
+            fp.get('properties.name'),
             wrapInProperty('layerName')
           ])
 
         const getLayerSetTitle =
-          pipe([
-            get('layerSetTitle'),
+          fp.pipe([
+            fp.get('layerSetTitle'),
             wrapInProperty('layerSetTitle')
           ])
 
         const getMetaDataForLiwoID = liwoId =>
-          pipe([
-            map(
-              pipe([
+          fp.pipe([
+            fp.map(
+              fp.pipe([
                 apply([
                   getLayerSetTitle,
                   getLayerByVariantId(liwoId),
                   getVariantById(liwoId)
                 ]),
-                reduce(merge, {})
+                fp.reduce(fp.merge, {})
               ])
             ),
-            find('variant')
+            fp.find('variant')
           ])
 
         const mapLiwoIdToBreachLayer = liwoId =>
-          pipe([
-            values,
+          fp.pipe([
+            fp.values,
             getMetaDataForLiwoID(liwoId)
           ])(breachLayersById)
 
@@ -402,11 +414,11 @@ export default new Vuex.Store({
           .map(({ layerName, layerSetTitle, variant }) => ({
             [layerSetTitle]: `
               <p>Band: ${layerName}</p>
-              <p>${get('title', variant)}</p>
-              <p>${get('metadata.title', variant)}</p>
+              <p>${fp.get('title', variant)}</p>
+              <p>${fp.get('metadata.title', variant)}</p>
             `
           }))
-          .reduce(merge, {})
+          .reduce(fp.merge, {})
       }
       const layer = {
         id: 'combined_scenario',
@@ -437,7 +449,7 @@ export default new Vuex.Store({
         return []
       }
 
-      const layers = cloneDeep(layerSetsById[mapId] || [])
+      const layers = fp.cloneDeep(layerSetsById[mapId] || [])
       if (combinedScenarioAsLayer) layers.push(combinedScenarioAsLayer)
 
       return [{ layers }]
@@ -513,122 +525,6 @@ export default new Vuex.Store({
         ]
       }
     },
-    async parsedLayerSet ({ breachProbabilityFilterIndex, selectedBreaches, activeLayerSetId, hiddenLayers, visibleVariantIndexByLayerId, viewerType, breachLayersById }, { activeLayerSet, panelLayerSets }) {
-      if (!activeLayerSet) {
-        return Promise.resolve([])
-      }
-
-      let layers = await Promise.all(
-        activeLayerSet.map(async (layer) => {
-          if (layer.type === 'json') {
-            const geoJsonOptions = viewerType === 'combined' ? { filteredIds: selectedBreaches } : undefined
-            const geojson = await loadGeojson(layer, geoJsonOptions)
-
-            if (layer.layer === BREACHES_PRIMARY_LAYER_ID || layer.layer === BREACHES_REGIONAL_LAYER_ID) {
-              const filterIndex = breachProbabilityFilterIndex
-              const probabilityFilter = probabilityConfig[filterIndex]
-
-              geojson.features = geojson.features
-                .filter(feature => (filterIndex === 0 || feature.properties[probabilityFilter.identifier] > 0))
-
-              geojson.features
-                .forEach(feature => {
-                  feature.properties.selected = selectedBreaches.indexOf(feature.properties.id) !== -1
-                })
-            }
-
-            return { ...layer, geojson }
-          }
-
-          return layer
-        })
-      )
-
-      let selectedLayers = []
-
-      if (viewerType === COMBINED) {
-        return layers.map(layer => {
-          if (layer.style === 'LIWO_Basis_Waterdiepte') {
-            layer.hideWms = true
-            return layer
-          }
-
-          if (layer.type === 'json') {
-            const activeFeatures = layer.geojson.features.filter(
-              feature => selectedBreaches.find(id => id === feature.properties.id)
-            )
-
-            activeFeatures.map(activeFeature => {
-              const breachLayer = breachLayersById[activeFeature.properties.id].layers[0]
-
-              if (breachLayer.variants.length > 1) {
-                const selectedIndex = visibleVariantIndexByLayerId[breachLayer.id]
-                const selectedVariant = breachLayer.variants[selectedIndex]
-                activeFeature.properties.selectedVariant = selectedVariant.title
-                activeFeature.properties.isControllable = false
-              }
-
-              return activeFeature
-            })
-          }
-
-          return layer
-        })
-      } else if (selectedBreaches.length) {
-        // seperate selected markers into its own layer
-        layers.map(layer => {
-          if (layer.iscontrollayer !== true) return layer
-
-          if (layer.type === 'json') {
-            const activeFeatures = layer.geojson.features.filter(
-              feature => selectedBreaches.find(id => id === feature.properties.id)
-            )
-
-            if (activeFeatures.length) {
-              selectedLayers = [...selectedLayers, ...activeFeatures.map(activeFeature => {
-                activeFeature.properties.selected = true
-
-                const breachLayer = breachLayersById[activeFeature.properties.id].layers[0]
-
-                if (breachLayer && breachLayer.variants.length > 1) {
-                  const selectedIndex = visibleVariantIndexByLayerId[breachLayer.id]
-                  const selectedVariant = breachLayer.variants[selectedIndex]
-                  activeFeature.properties.selectedVariant = selectedVariant.title
-                }
-
-                // remove feature from its current layer
-                layer.geojson.features = layer.geojson.features.filter(
-                  feature => !includedIn(selectedBreaches, feature.properties.id)
-                )
-
-                layer.geojson.totalFeatures = layer.geojson.features.length
-
-                // create layer for selected feature
-                return {
-                  ...layer,
-                  hide: hiddenLayers.includes(activeFeature.properties.id),
-                  namespace: layer.namespace,
-                  layer: BREACH_SELECTED,
-                  layerId: BREACH_SELECTED,
-                  layerTitle: 'Geselecteerde locatie',
-                  geojson: {
-                    ...layer.geojson,
-                    totalFeatures: 1,
-                    features: [activeFeature]
-                  }
-                }
-              })]
-            }
-          }
-
-          return layer
-        })
-
-        return [...layers, ...selectedLayers]
-      } else {
-        return layers
-      }
-    },
     selectedVariantIds (state, { selectedVariants }) {
       return selectedVariants.map(selectedVariant => selectedVariant.map_id)
     },
@@ -651,12 +547,12 @@ export default new Vuex.Store({
     },
     currentNotifications (state) {
       const { mapId, visibleLayerIds, visibleVariantIndexByLayerId, selectedLayerId, selectedBreaches } = state
-      const getNotificationFrom = get('notification')
+      const getNotificationFrom = fp.get('notification')
       const getNotification = getNotificationFrom
       const notificationBreach = state.notifications.breach
       const notificationMap = state.notifications[mapId]
       const generalNotifications = state.notifications.notifications || []
-      const notificationLayers = get('layers', notificationMap) || []
+      const notificationLayers = fp.get('layers', notificationMap) || []
       const visibleNotificationLayers = notificationLayers.filter(idIncludedIn(visibleLayerIds))
 
       const notificationForLayers = visibleNotificationLayers
@@ -673,7 +569,7 @@ export default new Vuex.Store({
         .map(getNotification)
         .filter(isTruthy)
 
-      const notificationForSelectedLayer = first(notificationForLayers)
+      const notificationForSelectedLayer = fp.first(notificationForLayers)
       const notificationForMap = getNotificationFrom(notificationMap)
 
       let notifications = []
