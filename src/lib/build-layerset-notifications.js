@@ -1,27 +1,65 @@
-function mapVariants (variants) {
-  return variants
-    .map(({ map, notify }) => ({ id: map.layer, notification: notify }))
-}
+import _ from 'lodash'
 
-function mapLayers (layers, layerId) {
-  return layers
-    .map(({ id, notify, variants: _variants }) => {
-      const variants = mapVariants(_variants) || []
-      return { id: layerId, notification: notify, variants }
-    })
-}
+export default function buildLayerSetNotifications (layers) {
+  //  TODO: clean this up
+  let featureNotificationsTree = layers
+  // for all layers that have geojson
+    .filter(layer => layer.geojson)
+    .map(
+      layer => layer.geojson.features
+      // for  all features  in each layer
+        .map(
+          feature => ({
+            id: feature.properties.id,
+            notification: feature.properties.notify,
+            // split off the numbers
+            layerId: feature.id.replace(/(.+)(\.\d+)/, '$1')
+          }))
+        .filter(
+          // replace items with zeros
+          (item) => {
+            let result = item.notification
+            if (item.notification === 'NULL') {
+              result = false
+            }
+            return result
+          }
+        )
+    )
+  let featureNotifications = _.flatten(featureNotificationsTree)
+  // TODO: get rid of the magic
+  // function mapVariants (variants) {
+  //   let result = variants
+  //       .map(
+  //         (variant) => {
+  //           return { id: variant.id, notification: notify }
+  //         })
+  //   return result
+  // }
 
-export default function buildLayersetNotifications (foo, layerId) {
-  const {id, notify, layers: _layers} = foo
+  // function mapLayers (layers, layerId) {
+  //   let result = layers
+  //       .map((layer) => {
+  //         let variants = mapVariants(layer.variants) || []
+  //         return { id: layer.id, notification: layer.notify, variants }
+  //       })
+  //   return result
+  // }
+  // let featureNotifications = featureNotificationsTree
+  //   .reduce((list, layerItems) => ([...list, ...layerItems]), [])
+  //   .reduce((collection, {id, notification, layerId}) => ({
+  //     ...collection,
+  //     [id]: { notification, layerId }
+  //   }), {})
 
-  const layers = mapLayers(_layers, layerId)
-
-  const layerSetById = {
-    [id]: {
-      notification: notify,
-      layers
-    }
-  }
-
-  return layerSetById
+  // // TODO: check if this even works
+  // const layerSetById = {
+  //   [id]: {
+  //     notification: notify,
+  //     layers
+  //   },
+  //   ...featureNotifications
+  // }
+  // return layerSetById
+  return featureNotifications
 }
