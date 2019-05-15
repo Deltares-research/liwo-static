@@ -5,6 +5,7 @@
       :layers="activeLayerSet"
       :projection="projection"
       :clusterMarkers="true"
+      @click="selectFeature"
       @initMap="setMapObject"
       />
     <ul class="viewer__notifications" v-if="currentNotifications.length">
@@ -17,7 +18,7 @@
       </li>
     </ul>
     <layer-panel
-      :layerSets="panelLayerSets"
+      :layer-sets="panelLayerSets"
       @open-export="showExport = true"
       >
       <!-- add these buttons to the button section of the layer panel -->
@@ -81,6 +82,7 @@ import NotificationBar from '@/components/NotificationBar.vue'
 
 import { EPSG_3857 } from '@/lib/leaflet-utils/projections'
 import { getFirstLayerSetForRoute } from '../lib/layer-set-route-mapping'
+import { selectFeatures } from '@/lib/selection'
 import { isTruthy, includedIn, notEmpty, notNaN, getId } from '../lib/utils'
 import availableBands from '../lib/available-bands'
 
@@ -100,6 +102,16 @@ export default {
     LiwoMap,
     NotificationBar
   },
+  props: {
+    filterByIds: {
+      type: Boolean,
+      default: true
+    },
+    selectMultipleFeatures: {
+      type: Boolean,
+      default: true
+    }
+  },
   data () {
     return {
       isMounted: false,
@@ -116,21 +128,30 @@ export default {
     }
   },
   async mounted () {
+    // TODO: where  is the list of  layers for this view?
     const {id: _mapId, band, layerIds} = this.$route.params
     const mapId = Number(getFirstLayerSetForRoute(this.$route.name, _mapId))
 
     this.band = band
 
-    this.$store.commit('setViewerType', 'combine')
     this.$store.commit('setPageTitle', PAGE_TITLE)
     this.$store.commit('setCurrentBand', this.$route.params.band)
 
     if (mapId) {
       this.$store.commit('setMapId', mapId)
-      await this.$store.dispatch('loadLayerSetsById', { id: mapId, initializeMap: true })
+      let options = {
+        id: mapId,
+        initializeMap: true,
+        filterByIds: this.filterByIds,
+        selectMultipleFeatures: this.selectMultipleFeatures
+      }
+      await this.$store.dispatch('loadLayerSetsById', options)
     }
 
     this.liwoIds = layerIds ? layerIds.split(',').map(id => parseInt(id, 10)) : []
+
+    // is this the way to do this?
+    // What is the source for the selectedIds? the route or the store?
     this.storeWatcher = this.$store.watch(
       (state, getters) => getters.selectedVariantIds,
       ids => {
@@ -190,7 +211,7 @@ export default {
       }
 
       const selectedLayers = this.panelLayerSets
-        .map((layerSet) => layerSet.layers)
+        .map((layerset) => layerset.layers)
         .reduce((allLayers, layers) => [ ...allLayers, ...layers ], [])
         .filter(({ id }) => this.selectedLayerId === id)
 
@@ -241,6 +262,10 @@ export default {
     },
     loadCombinedScenarios () {
       this.$store.dispatch('loadCombinedScenario', { band: this.band, liwoIds: this.liwoIds })
+    },
+    selectFeature (evt) {
+      console.log('selected', evt)
+      selectFeatures(evt.target)
     }
   }
 }
