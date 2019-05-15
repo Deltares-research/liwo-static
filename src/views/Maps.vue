@@ -1,45 +1,58 @@
 <template>
-  <article class="maps">
-    <header>
-      <p>
-        Dit informatiesysteem bevat kaartlagen voor professionals, die nodig zijn voor de voorbereiding op wateroverlast en
-        overstromingen in Nederland. De ruimtelijke informatie is ondergebracht onder het kopje 'Kaarten' en is voor iedereen
-        toegankelijk. Het gaat hierbij om crisisbeheersing (preparatie en respons) maar het is ook bruikbaar
-        voor ruimtelijke adaptatie. Kaarten worden vanuit het LIWO ook beschikbaar gesteld aan andere systemen voor het
-        verhogen van het waterbewustzijn en de versterking van zelfredzaamheid.
-      </p>
-    </header>
-    <div class="maps__sections">
-      <layerset-list
-        v-for="layerset in layersets"
-        :key="layerset.id"
-        :title="layerset.name"
-        :items="layerset.layerset"
+<article class="maps">
+  <header>
+    <p>
+      Dit informatiesysteem bevat kaartlagen voor professionals, die nodig zijn voor de voorbereiding op wateroverlast en
+      overstromingen in Nederland. De ruimtelijke informatie is ondergebracht onder het kopje 'Kaarten' en is voor iedereen
+      toegankelijk. Het gaat hierbij om crisisbeheersing (preparatie en respons) maar het is ook bruikbaar
+      voor ruimtelijke adaptatie. Kaarten worden vanuit het LIWO ook beschikbaar gesteld aan andere systemen voor het
+      verhogen van het waterbewustzijn en de versterking van zelfredzaamheid.
+    </p>
+  </header>
+  <div class="maps__sections">
+    <layer-set-list
+      v-for="layerSet in layerSets"
+      :key="layerSet.id"
+      :title="layerSet.name"
+      :items="layerSet.layerset"
       />
+  </div>
+  <div class="notifaction-bar">
+    <div class="notification-bar--warning" v-if="error">
+      Het is niet gelukt om de lijst met kaarten op te vragen. De bijbehorende melding is: <em>{{ error.message }}</em>.
     </div>
-  </article>
+  </div>
+
+</article>
 </template>
 
 <script>
 // @ is an alias to /src
-import LayersetList from '@/components/LayersetList'
-import { loadLayersets } from '@/lib/load-layersets'
+import LayerSetList from '@/components/LayerSetList'
+import { loadLayerSets } from '@/lib/load-layersets'
 
 const PAGE_TITLE = 'Kaarten'
 
 export default {
   name: 'maps',
   data () {
-    return { layersets: [] }
+    return {
+      layerSets: [],
+      error: null
+    }
   },
   beforeCreate: async function () {
-    const layersets = await loadLayersets()
-    this.layersets = layersets
+    try {
+      const layerSets = await loadLayerSets()
+      this.layerSets = layerSets
+    } catch (error) {
+      this.error = error
+    }
   },
   mounted () {
     this.$store.commit('setPageTitle', PAGE_TITLE)
   },
-  components: { LayersetList }
+  components: { LayerSetList }
 }
 </script>
 
