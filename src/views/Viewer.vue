@@ -62,11 +62,10 @@ import NotificationBar from '@/components/NotificationBar.vue'
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
 import { getFirstLayerSetForRoute } from '../lib/layer-set-route-mapping'
 import { isTruthy, includedIn, notEmpty, notNaN, getId } from '../lib/utils'
+
+// TODO: why so functional?
 import availableBands from '../lib/available-bands'
-
-const PAGE_TITLE = 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
 const bands = availableBands.map(getId)
-
 const includedInBands = includedIn(bands)
 
 export default {
@@ -80,12 +79,16 @@ export default {
   data () {
     return {
       isMounted: false,
+      // TODO: is this  used
       parsedLayers: [],
+      // id of what?
       id: 0,
       showExport: false,
+      // ids of what?
       liwoIds: [],
       band: null,
       projection: EPSG_28992,
+      // TODO: is this used?
       storeWatcher: null
     }
   },
@@ -95,22 +98,28 @@ export default {
 
     this.band = band
 
+    // TODO: get rid of this, view is  part of the route, remove from the store...
     this.$store.commit('setViewerType', 'view')
-    this.$store.commit('setPageTitle', PAGE_TITLE)
+    this.$store.commit('setPageTitle', this.$route.params.title)
     this.$store.commit('setCurrentBand', this.$route.params.band)
 
     if (mapId) {
       this.$store.commit('setMapId', mapId)
+      // TODO: why await...
       await this.$store.dispatch('loadLayerSetsById', { id: mapId, initializeMap: true })
     }
 
     this.liwoIds = layerIds ? layerIds.split(',').map(id => parseInt(id, 10)) : []
 
+    // TODO: remove this...
     this.isMounted = true
   },
   beforeDestroy () {
+    // TODO: we should not need this, if state  needs to be removed after view changes,
+    // state should be in this view, not in the store...
     this.$store.commit('resetSelectedBreaches')
     this.$store.commit('resetBreachLayersById')
+    // storewatcher??? get rid of this...
     if (this.storeWatcher) {
       // teardown watcher
       this.storeWatcher()
