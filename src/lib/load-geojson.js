@@ -13,26 +13,36 @@ const requestOptions = ({ namespace, layer }) => ({
   maxFeatures: 2000
 })
 
-export default function (jsonLayer, { filteredIds = [] } = {}) {
-  if (jsonLayer.type.toLowerCase() === 'json') {
-    const options = requestOptions(jsonLayer)
-    const params = new URLSearchParams(options).toString()
+export async function loadGeojson (jsonLayer, { filteredIds = [] } = {}) {
+  // fetch the geojson and add it  to the layer
 
-    const filterString = filteredIds.reduce((str, id, index) => {
-      const or = index > 0 ? '%20OR%20' : ''
-      const idString = `id=${id}`
-      return `${str}${or}${idString}`
-    }, filteredIds.length ? '&cql_filter=' : '')
-
-    return fetch(`${mapConfig.services.STATIC_GEOSERVER_URL}?${params}${filterString}`, { mode: 'cors' })
-      .then(resp => resp.json())
-      .then(result => {
-        result.features = result.features.map(feature => ({
-          ...feature,
-          properties: Object.assign(feature.properties, { isControllable: !!jsonLayer.iscontrollayer })
-        }))
-        return result
-      })
-      .catch(error => console.log('Error:', error, jsonLayer))
+  // no json, nothing to do
+  if (!['json', 'cluster'].includes(jsonLayer.type)) {
+    return Promise.resolve(jsonLayer)
   }
+  const options = requestOptions(jsonLayer)
+  const params = new URLSearchParams(options).toString()
+
+  // TODO: remove this, filtering is done client side
+  // we need to get the full dataset first anyway
+  const filterString = filteredIds.reduce((str, id, index) => {
+    const or = index > 0 ? '%20OR%20' : ''
+    const idString = `id=${id}`
+    return `${str}${or}${idString}`
+  }, filteredIds.length ? '&cql_filter=' : '')
+
+  let url = `${mapConfig.services.STATIC_GEOSERVER_URL}?${params}${filterString}`
+  let result = fetch(url, { mode: 'cors' })
+    .then(resp => resp.json())
+    .then(geojson => {
+      geojson.features = geojson.features.map(feature => ({
+        ...feature,
+        // TODO: why the rename here?
+        // the name in leaflet is "interactive" not controllable
+        properties: Object.assign(feature.properties, { isControllable: !!jsonLayer.iscontrollayer })
+      }))
+      return geojson
+    })
+    .catch(error => console.log('Error:', error, jsonLayer))
+  return result
 }
