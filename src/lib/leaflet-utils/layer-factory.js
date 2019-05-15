@@ -4,42 +4,33 @@ import 'leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 
-import {
-  BREACH_PRIMARY,
-  BREACH_REGIONAL,
-  BREACH_OUTSIDE_DIKE,
-  BREACH_FLOODING,
-  BREACHES_IDS
-} from '@/lib/liwo-identifiers'
 import mapConfig from '@/map.config'
-import { redIcon, blackIcon, greenIcon } from './markers'
 
 import './cluster-icon.css'
 
 const DEFAULT_ICON = new L.Icon.Default()
+
 const DYNAMIC_GEOSERVER_URL = mapConfig.services.DYNAMIC_GEOSERVER_URL
 const STATIC_GEOSERVER_URL = mapConfig.services.STATIC_GEOSERVER_URL
 
-export default function createLayer (layer, { breachCallBack }, cluster = true) {
+export default function createLayer (layer, { breachCallBack }) {
   if (layer.type === 'json' && layer.geojson) {
-    if (layerIsBreach(layer)) {
-      const layerGroup = L.layerGroup()
+    return createGeoJson(layer)
+  } else if (layer.type === 'cluster') {
+    const layerGroup = L.layerGroup()
+    const clusterGroup = L.markerClusterGroup({
+      iconCreateFunction: clusterIconFunction(layer.layer || 'BREACH_PRIMARY'),
+      maxClusterRadius: 40
+    })
+    // TODO, get this out of here....
+    let geojsonLayer = createBreachGeoJson(layer, breachCallBack)
+    clusterGroup.addLayer(geojsonLayer)
 
-      const clusterGroup = L.markerClusterGroup({
-        iconCreateFunction: clusterIconFunction(layer.layer || 'BREACH_PRIMARY'),
-        maxClusterRadius: cluster ? 40 : 0
-      })
+    layerGroup.addLayer(clusterGroup)
 
-      clusterGroup.addLayer(createBreachGeoJson(layer, breachCallBack))
+    layerGroup.layerId = layer.layerId
 
-      layerGroup.addLayer(clusterGroup)
-
-      layerGroup.layerId = layer.layerId
-
-      return layerGroup
-    } else {
-      return createGeoJson(layer)
-    }
+    return layerGroup
   } else if (layer.type === 'tile') {
     return createTile(layer)
   } else if (!layer.hideWms) {
@@ -57,8 +48,9 @@ export function createGeoJson ({ geojson, style }) {
   })
 }
 
+// TODO: remove this here...
 export function createBreachGeoJson ({ geojson, layer: layerId, opacity }, callback) {
-  return L.geoJson(geojson, {
+  let options = {
     onEachFeature: (_, layer) => {
       const { naam, selectedVariant, isControllable } = layer.feature.properties
 
@@ -69,10 +61,12 @@ export function createBreachGeoJson ({ geojson, layer: layerId, opacity }, callb
 
       layer.feature.properties.layerType = layerId
       layer.feature.properties.selected
-        ? layer.setIcon(redIcon)
-        : layer.setIcon(getBreachIcon(layerId))
+        ? layer.setIcon(DEFAULT_ICON)
+        : layer.setIcon(layer.getIcon(layerId))
     }
-  })
+  }
+  console.log('layer', layerId, options, geojson)
+  return L.geoJson(geojson, options)
 }
 
 export function createTile ({ url, opacity }) {
@@ -96,12 +90,11 @@ function geoServerURL (namespace) {
     : STATIC_GEOSERVER_URL
 }
 
+// TODO: move to component/view
 function breachClickHandler (event, callback) {
-  const { selected, layerType } = event.target.feature.properties
+  const { selected } = event.target.feature.properties
 
-  selected
-    ? event.target.setIcon(getBreachIcon(layerType))
-    : event.target.setIcon(redIcon)
+  event.target.setIcon(event.target.getIcon(event.target))
 
   event.target.feature.properties.selected = !selected
 
@@ -120,23 +113,4 @@ function clusterIconFunction (type) {
       iconSize: new L.Point(45, 45)
     })
   }
-}
-
-function getBreachIcon (type) {
-  switch (type) {
-    case BREACH_PRIMARY:
-      return DEFAULT_ICON
-    case BREACH_REGIONAL:
-      return greenIcon
-    case BREACH_OUTSIDE_DIKE:
-      return blackIcon
-    case BREACH_FLOODING:
-      return blackIcon
-    default:
-      return DEFAULT_ICON
-  }
-}
-
-function layerIsBreach ({ layer }) {
-  return BREACHES_IDS.indexOf(layer) !== -1
 }
