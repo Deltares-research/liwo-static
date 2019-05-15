@@ -58,6 +58,10 @@ const router = new Router({
       component: Combine,
       meta: {
         title: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
+      },
+      props: {
+        selectMultipleFeatures: true,
+        filterByIds: false
       }
     },
     {
@@ -66,6 +70,10 @@ const router = new Router({
       component: Combine,
       meta: {
         title: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
+      },
+      props: {
+        selectMultipleFeatures: false,
+        filterByIds: true
       }
     },
     {
