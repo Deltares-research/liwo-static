@@ -73,4 +73,8 @@ export default {
   .icon {
     vertical-align: middle;
   }
+
+  .site-footer__content {
+    padding: 0.5em 0.5em;
+  }
 </style>
