@@ -4,7 +4,9 @@ import L from '@/lib/leaflet-utils/leaf'
 
 let map
 let layerGroup
-
+// TODO: replace  this with vue2-leaflet
+// see vue docs
+// https://vuejs.org/v2/guide/components-edge-cases.html#Accessing-the-Parent-Component-Instance
 export default {
   bind (el, { value }) {
     let { config, callbacks } = value
