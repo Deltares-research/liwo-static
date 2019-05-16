@@ -25,8 +25,8 @@
     "url-polyfill": "^1.1.5",
     "url-search-params": "^0.10.0",
     "url-search-params-polyfill": "^5.0.0",
-    "vue": "^2.5.16",
-    "vue-router": "^3.0.1",
+    "vue": "^2.6.10",
+    "vue-router": "^3.0.6",
     "vue2-leaflet": "^1.2.3",
     "vuex": "^3.0.1",
     "whatwg-fetch": "2.0.4"
@@ -53,7 +53,7 @@
     "postcss-import": "^11.1.0",
     "sass-loader": "^7.0.1",
     "semantic-release": "15.13.4",
-    "vue-template-compiler": "^2.5.13"
+    "vue-template-compiler": "^2.6.10"
   },
   "eslintConfig": {
     "root": true,
