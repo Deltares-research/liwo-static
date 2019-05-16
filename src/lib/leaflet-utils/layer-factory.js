@@ -60,12 +60,12 @@ export function createBreachGeoJson ({ geojson, layer: layerId, opacity }, callb
       layer.on('mouseout', (event) => { event.target.closeTooltip() })
 
       layer.feature.properties.layerType = layerId
-      layer.feature.properties.selected
-        ? layer.setIcon(DEFAULT_ICON)
-        : layer.setIcon(layer.getIcon(layerId))
+      // TODO: solve in CSS
+      // layer.feature.properties.selected
+      //   ? layer.setIcon(DEFAULT_ICON)
+      //   : layer.setIcon(layer.getIcon(layerId))
     }
   }
-  console.log('layer', layerId, options, geojson)
   return L.geoJson(geojson, options)
 }
 
