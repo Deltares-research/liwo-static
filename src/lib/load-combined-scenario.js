@@ -1,9 +1,10 @@
-export default function loadCombinedScenario ({ liwoIds, band }) {
+export default function loadCombinedScenario ({ layerIds, band }) {
+  // TODO: check what a liwo_id is??
   const requestOptions = {
     method: 'POST',
     mode: 'cors',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ liwo_ids: liwoIds, band, reducer: 'max' })
+    body: JSON.stringify({ liwo_ids: layerIds, band, reducer: 'max' })
   }
 
   return fetch('https://hydro-engine.appspot.com/get_liwo_scenarios', requestOptions)
