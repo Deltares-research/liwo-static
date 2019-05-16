@@ -10,16 +10,10 @@ import { loadLayerSetById, extractUnit } from './lib/load-layersets'
 import loadCombinedScenario from './lib/load-combined-scenario'
 import { flattenLayerSet, normalizeLayerSet, cleanLayerSet } from './lib/layer-parser'
 import buildLayerSetNotifications from './lib/build-layerset-notifications'
-import stringToHash from './lib/string-to-hash'
 import mapConfig from './map.config'
-import { wrapInProperty, apply, getByIndexFrom, getId } from './lib/utils'
+import { wrapInProperty, apply } from './lib/utils'
 
 Vue.use(Vuex)
-
-const isTruthy = val => !!val
-const includedIn = fp.includes.convert({rearg: false})
-const idSameAs = value => fp.pipe([getId, id => id === value])
-const idIncludedIn = collection => fp.pipe([getId, includedIn(collection)])
 
 const LAYERPANEL_VIEW_MAPLAYERS = 'maplayers_view'
 const LAYERPANEL_VIEW_BREACHES = 'breaches_view'
@@ -476,7 +470,7 @@ export default new Vuex.Store({
         }]
       }
 
-      return combinedScenario
+      return layer
     },
     mapLayers ({ layerSetsById, layerSetId }, { combinedScenarioAsLayer }) {
       if (!layerSetId || !layerSetsById) {
@@ -578,7 +572,7 @@ export default new Vuex.Store({
       }
     },
     currentNotifications (state) {
-      const { layerSetId, notificationsById, visibleLayerIds, visibleVariantIndexByLayerId, selectedLayerId, selectedBreaches } = state
+      const { layerSetId, notificationsById } = state
       // const notifications = state.notificationsById
 
       if (!_.has(notificationsById, layerSetId)) {
@@ -588,6 +582,8 @@ export default new Vuex.Store({
       return notifications
 
       // TODO: move this to component that wants to add some custom notifications
+      // import stringToHash from './lib/string-to-hash'
+      // import {getByIndexFrom, isTruthy} from '@/lib/utils'
 
       // const getNotificationFrom = fp.get('notification')
       // const getNotification = getNotificationFrom
