@@ -19,8 +19,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-
 import LayerControlList from './LayerControlList'
 
 export default {
