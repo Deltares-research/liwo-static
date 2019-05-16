@@ -35,15 +35,19 @@ const router = new Router({
       }
     },
     {
-      path: '/viewer/:id',
+      path: '/viewer/:id(\\d+)',
       name: 'viewer',
       component: Viewer,
       meta: {
         title: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
       },
+      // pass id to component
+      props: true,
       beforeEnter: (to, from, next) => {
         // number or NaN
         let id = toNumber(get('params.id', to))
+        // TODO: check if there's a more elegant way to type check properties
+        to.params.id = id
         // don't show non-public maps, not secret, just not that relevant for the public
         if (includes(id, nonPublicViews)) {
           next('/')
@@ -53,7 +57,8 @@ const router = new Router({
       }
     },
     {
-      path: '/combine/:layerIds?',
+      // TODO: does this not have a layerSet?
+      path: '/combine/:layerIds(\\d+)?',
       name: 'combine',
       component: Combine,
       meta: {
@@ -61,11 +66,19 @@ const router = new Router({
       },
       props: {
         selectMultipleFeatures: true,
-        filterByIds: false
+        filterByIds: false,
+        layerSetId: 33
+      },
+      beforeEnter: (to, from, next) => {
+        // make sure we pass numbers
+        let layerIds = to.params.layerIds
+        layerIds = layerIds.split(',')
+        layerIds = layerIds.map(id => toNumber(id))
+        to.params.layerIds = layerIds
       }
     },
     {
-      path: '/combined/:layerIds?/:band?',
+      path: '/combined/:layerIds(\\d+)?/:band?',
       name: 'combined',
       component: Combine,
       meta: {
@@ -73,7 +86,15 @@ const router = new Router({
       },
       props: {
         selectMultipleFeatures: false,
-        filterByIds: true
+        filterByIds: true,
+        layerSetId: 34
+      },
+      beforeEnter: (to, from, next) => {
+        // make sure we pass numbers
+        let layerIds = to.params.layerIds
+        layerIds = layerIds.split(',')
+        layerIds = layerIds.map(id => toNumber(id))
+        to.params.layerIds = layerIds
       }
     },
     {
