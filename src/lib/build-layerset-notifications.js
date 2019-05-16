@@ -11,9 +11,10 @@ export default function buildLayerSetNotifications (layers) {
         .map(
           feature => ({
             id: feature.properties.id,
-            notification: feature.properties.notify,
+            message: feature.properties.notify,
             // split off the numbers
-            layerId: feature.id.replace(/(.+)(\.\d+)/, '$1')
+            layerId: feature.id.replace(/(.+)(\.\d+)/, '$1'),
+            show: true
           }))
         .filter(
           // replace items with zeros
@@ -27,6 +28,25 @@ export default function buildLayerSetNotifications (layers) {
         )
     )
   let featureNotifications = _.flatten(featureNotificationsTree)
+  let layerNotifications = layers
+    .filter(layer => layer.layer.properties.notify)
+    .map(layer => {
+      return {
+        id: layer.layer.id,
+        message: layer.layer.properties.notify,
+        show: true
+      }
+    })
+  let layerSetNotifications = layers
+    .filter(layer => layer.layerSet.notify)
+    .map(layer => {
+      return {
+        id: layer.layerSet.id,
+        message: layer.layerSet.notify,
+        show: true
+      }
+    })
+
   // TODO: get rid of the magic
   // function mapVariants (variants) {
   //   let result = variants
@@ -61,5 +81,7 @@ export default function buildLayerSetNotifications (layers) {
   //   ...featureNotifications
   // }
   // return layerSetById
-  return featureNotifications
+  let result = [...featureNotifications, ...layerNotifications, ...layerSetNotifications]
+  result = _.uniqWith(result, _.isEqual)
+  return result
 }
