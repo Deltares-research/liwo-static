@@ -57,8 +57,7 @@ const router = new Router({
       }
     },
     {
-      // TODO: does this not have a layerSet?
-      path: '/combine/:layerIds(\\d+)?',
+      path: '/combine/:ids(\\d+)?',
       name: 'combine',
       component: Combine,
       meta: {
@@ -68,17 +67,10 @@ const router = new Router({
         selectMultipleFeatures: true,
         filterByIds: false,
         layerSetId: 33
-      },
-      beforeEnter: (to, from, next) => {
-        // make sure we pass numbers
-        let layerIds = to.params.layerIds
-        layerIds = layerIds.split(',')
-        layerIds = layerIds.map(id => toNumber(id))
-        to.params.layerIds = layerIds
       }
     },
     {
-      path: '/combined/:layerIds(\\d+)?/:band?',
+      path: '/combined/:ids(\\d+)?/:band?',
       name: 'combined',
       component: Combine,
       meta: {
@@ -88,13 +80,6 @@ const router = new Router({
         selectMultipleFeatures: false,
         filterByIds: true,
         layerSetId: 34
-      },
-      beforeEnter: (to, from, next) => {
-        // make sure we pass numbers
-        let layerIds = to.params.layerIds
-        layerIds = layerIds.split(',')
-        layerIds = layerIds.map(id => toNumber(id))
-        to.params.layerIds = layerIds
       }
     },
     {

@@ -61,6 +61,7 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex'
+import _ from 'lodash'
 import isNumber from 'lodash/fp/isNumber'
 
 import ExportPopup from '@/components/ExportPopup'
@@ -98,8 +99,9 @@ export default {
       type: Boolean,
       default: true
     },
-    layerIds: {
-      type: Array
+    // don't use this, use the computed layerIds
+    ids: {
+      type: String
     },
     band: {
       type: String,
@@ -141,7 +143,7 @@ export default {
       filterByIds: this.filterByIds,
       selectMultipleFeatures: this.selectMultipleFeatures
     }
-    await this.$store.dispatch('loadLayerSetsById', options)
+    await this.$store.dispatch('loadLayerSetById', options)
 
     // is this the way to do this?
     // What is the source for the selectedIds? the route or the store?
@@ -187,6 +189,15 @@ export default {
       'panelLayerSets',
       'currentNotifications'
     ]),
+    layerIds () {
+      // unpack the layer id string
+      if (!this.ids) {
+        return []
+      }
+      let layerIds = this.ids.split(',')
+      layerIds = layerIds.map(id => _.toNumber(id))
+      return layerIds
+    },
     validLayerIds () {
       return notEmpty(this.layerIds) && this.layerIds
         .map(id => isNumber(id) && notNaN(id))
