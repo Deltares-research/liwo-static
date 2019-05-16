@@ -50,15 +50,8 @@ export default {
     collapsed: false
   }),
   computed: {
-    ...mapState([
-      'activeLayerSetId'
-    ]),
     layerControlListIsVisible () {
-      if (!this.activeLayerSetId || !this.layerId) {
-        return true
-      }
-
-      return Number(this.activeLayerSetId) === Number(this.layerId)
+      return !this.layerId
     }
   },
   watch: {
@@ -71,7 +64,6 @@ export default {
   },
   methods: {
     setActiveLayer () {
-      this.$store.commit('setActiveLayerSetId', this.layerId)
       this.$store.commit('setSelectedLayerId', this.layers[0].id)
     },
     toggleCollapse () {
