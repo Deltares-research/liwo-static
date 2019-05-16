@@ -18,15 +18,20 @@ export default {
     if (value === oldValue) {
       return
     }
+    // TODO: use vue2-leaflet so we don't have to pass a magic  attribute
 
-    const { mapLayers: _mapLayers, callbacks, cluster } = value
-    const mapLayers = _mapLayers.filter(value => value)
+    const { callbacks, cluster } = value
+    // TODO: why? remove falsy values?
+    let layerSet = value.layerSet.filter(value => value)
 
     layerGroup.clearLayers()
 
-    mapLayers
+    let leafletLayers = layerSet
       .filter(layer => !layer.hide)
       .map(layer => layerFactory(layer, callbacks, cluster))
+
+    // add leafletLayers to the L.layerGroup
+    leafletLayers
       .filter(layer => layer)
       .forEach(layer => layerGroup.addLayer(layer))
   }
