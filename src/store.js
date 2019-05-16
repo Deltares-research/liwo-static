@@ -208,7 +208,7 @@ export default new Vuex.Store({
       this.commit('resetToMapLayers')
     },
     setNotificationsById (state, {id, notifications}) {
-      state.notificationsById[id] = notifications
+      Vue.set(state.notificationsById, id, notifications)
     },
     addNotificationById (state, {id, notification}) {
       const notifications = state.notificationsById[id] || []
@@ -371,6 +371,9 @@ export default new Vuex.Store({
       // return the current layerSet
       return layerSetsById[layerSetId]
     },
+    flatLayers (state, { layerSet }) {
+      return flattenLayerSet(layerSet)
+    },
     combinedScenarioAsLayer ({ combinedScenario, viewerType, currentBand, breachLayersById }) {
       // TODO: move to combine view
       let band
@@ -519,6 +522,7 @@ export default new Vuex.Store({
         return []
       }
 
+      // here the variants  are expanded
       return layers.layers
         .map(layer => {
           const variantIndex = state.visibleVariantIndexByLayerId[layer.id]
