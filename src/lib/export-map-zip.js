@@ -2,7 +2,7 @@ import downloadBlob from './download-blob'
 import mapConfig from '../map.config'
 
 const apiBase = mapConfig.services.WEBSERVICE_URL
-const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
+const headers = { 'Accept': '*/*', 'Content-Type': 'application/json' }
 
 export default function ({ layers, name }) {
   const body = JSON.stringify({ layers, name })
@@ -15,6 +15,7 @@ export default function ({ layers, name }) {
     .then(res => res.blob())
   // TODO: don't download a blob when an error page is  returned.
     .then((blob) => {
+      console.log('length of blob', blob.size)
       downloadBlob({
         blob,
         filename: `${name}.zip`,
