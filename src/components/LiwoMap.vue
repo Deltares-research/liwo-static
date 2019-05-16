@@ -5,7 +5,7 @@
     v-leaflet="{
       callbacks: { breachCallBack, initMapObject },
       config: mapConfig,
-      mapLayers: [ ...activeLayerSet ].reverse(),
+      layerSet: [ ...activeLayerSet ].reverse(),
       cluster: clusterMarkers,
     }"
   ></div>
@@ -43,7 +43,7 @@ export default {
       'layerUnits',
       'selectedLayerId',
       'visibleVariantIndexByLayerId',
-      'activeLayerSetId'
+      'layerSetId'
     ]),
     ...mapGetters([
       'activeLayerSet',
@@ -68,8 +68,8 @@ export default {
       this.$emit('initMap', mapObject)
 
       mapObject.on('click', event => {
-        const activeLayerset = this.panelLayerSets.find(idSameAs(this.activeLayerSetId))
-        const selectedLayer = activeLayerset.layers.find(idSameAs(this.selectedLayerId))
+        const activeLayerSet = this.panelLayerSets.find(idSameAs(this.layerSetId))
+        const selectedLayer = activeLayerSet.layers.find(idSameAs(this.selectedLayerId))
         const selectedVariant = selectedLayer.variants[this.visibleVariantIndexByLayerId[selectedLayer.id] || 0]
 
         showLayerInfoPopup({
