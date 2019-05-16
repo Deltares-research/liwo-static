@@ -1,6 +1,5 @@
 import toNumber from 'lodash/fp/toNumber'
 import includes from 'lodash/fp/includes'
-import get from 'lodash/fp/get'
 import Vue from 'vue'
 import Router from 'vue-router'
 import About from './views/About'
@@ -42,14 +41,14 @@ const router = new Router({
         title: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
       },
       // pass id to component
-      props: true,
+      props: (route) => {
+        return {
+          id: toNumber(route.params.id)
+        }
+      },
       beforeEnter: (to, from, next) => {
-        // number or NaN
-        let id = toNumber(get('params.id', to))
-        // TODO: check if there's a more elegant way to type check properties
-        to.params.id = id
         // don't show non-public maps, not secret, just not that relevant for the public
-        if (includes(id, nonPublicViews)) {
+        if (includes(toNumber(to.params.id), nonPublicViews)) {
           next('/')
         } else {
           next()

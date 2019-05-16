@@ -42,7 +42,6 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex'
-import isNumber from 'lodash/fp/isNumber'
 
 import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
@@ -51,8 +50,6 @@ import LegendPanel from '@/components/LegendPanel'
 import NotificationBar from '@/components/NotificationBar.vue'
 
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
-import { getFirstLayerSetForRoute } from '../lib/layer-set-route-mapping'
-import { isTruthy, includedIn, notEmpty, notNaN, getId } from '../lib/utils'
 
 export default {
   components: {
@@ -63,7 +60,6 @@ export default {
     NotificationBar
   },
   props: {
-    // layerSetId
     id: {
       type: Number,
       required: true
@@ -81,12 +77,10 @@ export default {
     }
   },
   async mounted () {
-    let layerSetId = this.id
-
     this.$store.commit('setPageTitle', this.$route.params.title)
-    this.$store.commit('setLayerSetId', layerSetId)
+    this.$store.commit('setLayerSetId', this.id)
     await this.$store.dispatch('loadLayerSetById', {
-      id: layerSetId,
+      id: this.id,
       initializeMap: true
     })
 
