@@ -83,12 +83,6 @@ export default new Vuex.Store({
     combinedScenario: undefined
   },
   mutations: {
-    addBreachLayer (state, { id, breachLayers, breachName, iscontrollayer }) {
-      state.breachLayersById = {
-        ...state.breachLayersById,
-        [ id ]: { layers: breachLayers, layerSetTitle: breachName, id, iscontrollayer }
-      }
-    },
     setLayerSetById (state, { id, layerSet }) {
       state.layerSetsById = {
         ...state.layerSetsById,
@@ -97,6 +91,12 @@ export default new Vuex.Store({
     },
     setLayerSetId (state, id) {
       state.layerSetId = id
+    },
+    addBreachLayer (state, { id, breachLayers, breachName, iscontrollayer }) {
+      state.breachLayersById = {
+        ...state.breachLayersById,
+        [ id ]: { layers: breachLayers, layerSetTitle: breachName, id, iscontrollayer }
+      }
     },
     toggleSelectedBreach (state, id) {
       const breachLayerIds = state.breachLayersById[id].layers.map(layer => layer.id)
@@ -163,14 +163,15 @@ export default new Vuex.Store({
     },
     initToMapLayers (state, layerSetId) {
       const currentLayerSet = state.layerSetsById[layerSetId]
-      // Why?
-      state.visibleLayerIds = currentLayerSet
+      const currentLayers = currentLayerSet.layers
+      // TODO: Why is this here...
+      state.visibleLayerIds = currentLayers
         .filter(layer => layer.properties.visible)
         .map(layer => layer.id)
       state.selectedBreaches = []
       state.opacityByLayerId = {}
       state.selectedLayerId = state.visibleLayerIds[0]
-      state.visibleVariantIndexByLayerId = currentLayerSet
+      state.visibleVariantIndexByLayerId = currentLayers
         .reduce((visibleVariants, { id }) => ({ ...visibleVariants, [ id ]: 0 }), {})
     },
     resetToMapLayers (state) {
@@ -270,7 +271,7 @@ export default new Vuex.Store({
       // TODO: the function is called setLayerSet[s]
       // but it only loads  the layers of 1 layerSet, make this consistent
 
-      state.commit('setLayerSetById', { id, layerSet: layerSet.layers })
+      state.commit('setLayerSetById', { id, layerSet: layerSet })
       state.commit('setPageTitle', layerSet.title)
       // TODO: get rid of this
       state.commit('setLayerUnits', layerUnits)
@@ -366,6 +367,10 @@ export default new Vuex.Store({
     }
   },
   getters: {
+    layerSet ({ layerSetsById, layerSetId }) {
+      // return the current layerSet
+      return layerSetsById[layerSetId]
+    },
     combinedScenarioAsLayer ({ combinedScenario, viewerType, currentBand, breachLayersById }) {
       // TODO: move to combine view
       let band
@@ -472,12 +477,15 @@ export default new Vuex.Store({
 
       return layer
     },
-    mapLayers ({ layerSetsById, layerSetId }, { combinedScenarioAsLayer }) {
+    mapLayers ({ layerSetsById, layerSetId }, { layerSet, combinedScenarioAsLayer }) {
+      // TODO: remove this...
       if (!layerSetId || !layerSetsById) {
         return []
       }
-
-      const layers = fp.cloneDeep(layerSetsById[layerSetId] || [])
+      if (!layerSet) {
+        return []
+      }
+      const layers = fp.cloneDeep(layerSet.layers || [])
       if (combinedScenarioAsLayer) layers.push(combinedScenarioAsLayer)
 
       return [{ layers }]
