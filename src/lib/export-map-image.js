@@ -64,7 +64,7 @@ function legendItem ({ layer, style, layerTitle }) {
   return {
     name: layerTitle || 'Onbekende legenda',
     icons: [
-      `http://localhost:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=${layer}&STYLE=${style}`
+      `http://localhost:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=${layer.id}&STYLE=${style}`
     ]
   }
 }
@@ -97,7 +97,7 @@ function mapLayerItem ({ layer, style, type, namespace }) {
   return {
     baseURL: `http://localhost:8080/geoserver/wms`,
     imageFormat: 'image/png',
-    layers: [ `${namespace}:${layer}` ],
+    layers: [ `${namespace}:${layer.id}` ],
     opacity: 1,
     customParams: {
       transparent: true
