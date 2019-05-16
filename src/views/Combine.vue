@@ -8,15 +8,7 @@
       @click="selectFeature"
       @initMap="setMapObject"
       />
-    <ul class="viewer__notifications" v-if="currentNotifications.length">
-      <li class="viewer__notification" v-for="{type, message, id} in currentNotifications"
-          :key="id">
-        <notification-bar
-          :type="type"
-          :message="message"
-          />
-      </li>
-    </ul>
+    <notification-bar :notifications="currentNotifications"/>
     <layer-panel
       :layer-sets="panelLayerSets"
       @open-export="showExport = true"
@@ -81,7 +73,6 @@ import ImportCombinePopup from '@/components/ImportCombinePopUp'
 import NotificationBar from '@/components/NotificationBar.vue'
 
 import { EPSG_3857 } from '@/lib/leaflet-utils/projections'
-import { getFirstLayerSetForRoute } from '../lib/layer-set-route-mapping'
 import { selectFeatures } from '@/lib/selection'
 import { isTruthy, includedIn, notEmpty, notNaN, getId } from '../lib/utils'
 import availableBands from '../lib/available-bands'
@@ -107,9 +98,19 @@ export default {
       type: Boolean,
       default: true
     },
+    layerIds: {
+      type: Array
+    },
+    band: {
+      type: String,
+      required: false
+    },
     selectMultipleFeatures: {
       type: Boolean,
       default: true
+    },
+    layerSetId: {
+      type: Number
     }
   },
   data () {
@@ -121,34 +122,26 @@ export default {
       showCombine: false,
       showExportCombine: false,
       showImportCombine: false,
-      liwoIds: [],
-      band: null,
       projection: EPSG_3857,
       storeWatcher: null
     }
   },
   async mounted () {
     // TODO: where  is the list of  layers for this view?
-    const {id: _mapId, band, layerIds} = this.$route.params
-    const mapId = Number(getFirstLayerSetForRoute(this.$route.name, _mapId))
-
-    this.band = band
+    const layerSetId = this.layerSetId
 
     this.$store.commit('setPageTitle', PAGE_TITLE)
-    this.$store.commit('setCurrentBand', this.$route.params.band)
+    // TODO: this is not used in store
+    this.$store.commit('setCurrentBand', this.band)
 
-    if (mapId) {
-      this.$store.commit('setMapId', mapId)
-      let options = {
-        id: mapId,
-        initializeMap: true,
-        filterByIds: this.filterByIds,
-        selectMultipleFeatures: this.selectMultipleFeatures
-      }
-      await this.$store.dispatch('loadLayerSetsById', options)
+    this.$store.commit('setLayerSetId', layerSetId)
+    let options = {
+      id: layerSetId,
+      initializeMap: true,
+      filterByIds: this.filterByIds,
+      selectMultipleFeatures: this.selectMultipleFeatures
     }
-
-    this.liwoIds = layerIds ? layerIds.split(',').map(id => parseInt(id, 10)) : []
+    await this.$store.dispatch('loadLayerSetsById', options)
 
     // is this the way to do this?
     // What is the source for the selectedIds? the route or the store?
@@ -194,8 +187,8 @@ export default {
       'panelLayerSets',
       'currentNotifications'
     ]),
-    validLiwoIds () {
-      return notEmpty(this.liwoIds) && this.liwoIds
+    validLayerIds () {
+      return notEmpty(this.layerIds) && this.layerIds
         .map(id => isNumber(id) && notNaN(id))
         .every(isTruthy)
     },
@@ -203,7 +196,7 @@ export default {
       return includedInBands(this.band)
     },
     combinedSenarioCanBeLoaded () {
-      return this.validLiwoIds && this.validBand
+      return this.validLayerIds && this.validBand
     },
     selectedLayer () {
       if (!this.panelLayerSets) {
@@ -242,14 +235,15 @@ export default {
         if (!this.validBand) {
           this.$store.commit('addNotification', 'Er is geen band geselecteerd')
         }
-        if (!this.validLiwoIds) {
+        if (!this.validLayerIds) {
           this.$store.commit('addNotification', 'Er zijn geen ids geselecteerd')
         }
       }
     },
-    validLiwoIds (isValid) {
+    validLayerIds (isValid) {
       if (isValid) {
-        this.$store.dispatch('setActiveLayersFromVariantIds', this.liwoIds)
+        // TOD: variants or layers?
+        this.$store.dispatch('setActiveLayersFromVariantIds', this.layerIds)
       }
     }
   },
@@ -261,10 +255,9 @@ export default {
       this.mapObject = mapObject
     },
     loadCombinedScenarios () {
-      this.$store.dispatch('loadCombinedScenario', { band: this.band, liwoIds: this.liwoIds })
+      this.$store.dispatch('loadCombinedScenario', { band: this.band, layerIds: this.layerIds })
     },
     selectFeature (evt) {
-      console.log('selected', evt)
       selectFeatures(evt.target)
     }
   }

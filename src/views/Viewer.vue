@@ -2,20 +2,11 @@
 <div class="viewer" :class="{'viewer--has-notificaton': currentNotifications.length}">
   <div class="viewer__map-wrapper">
     <liwo-map
-      :layers="activeLayerSet"
       :projection="projection"
       :clusterMarkers="false"
       @initMap="setMapObject"
       />
-    <ul class="viewer__notifications" v-if="currentNotifications.length">
-      <li class="viewer__notification" v-for="{type, message, id} in currentNotifications"
-          :key="id">
-        <notification-bar
-          :type="type"
-          :message="message"
-          />
-      </li>
-    </ul>
+    <notification-bar :notifications="currentNotifications"  />
     <layer-panel
       :layerSets="panelLayerSets"
       >
@@ -63,11 +54,6 @@ import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
 import { getFirstLayerSetForRoute } from '../lib/layer-set-route-mapping'
 import { isTruthy, includedIn, notEmpty, notNaN, getId } from '../lib/utils'
 
-// TODO: why so functional?
-import availableBands from '../lib/available-bands'
-const bands = availableBands.map(getId)
-const includedInBands = includedIn(bands)
-
 export default {
   components: {
     ExportPopup,
@@ -76,40 +62,33 @@ export default {
     LiwoMap,
     NotificationBar
   },
+  props: {
+    // layerSetId
+    id: {
+      type: Number,
+      required: true
+    }
+  },
   data () {
     return {
       isMounted: false,
       // TODO: is this  used
       parsedLayers: [],
-      // id of what?
-      id: 0,
       showExport: false,
-      // ids of what?
-      liwoIds: [],
-      band: null,
       projection: EPSG_28992,
-      // TODO: is this used?
+      // TODO: is this used? Get rid of this.  It created a hanging page...
       storeWatcher: null
     }
   },
   async mounted () {
-    const {id: _mapId, band, layerIds} = this.$route.params
-    const mapId = Number(getFirstLayerSetForRoute(this.$route.name, _mapId))
+    let layerSetId = this.id
 
-    this.band = band
-
-    // TODO: get rid of this, view is  part of the route, remove from the store...
-    this.$store.commit('setViewerType', 'view')
     this.$store.commit('setPageTitle', this.$route.params.title)
-    this.$store.commit('setCurrentBand', this.$route.params.band)
-
-    if (mapId) {
-      this.$store.commit('setMapId', mapId)
-      // TODO: why await...
-      await this.$store.dispatch('loadLayerSetsById', { id: mapId, initializeMap: true })
-    }
-
-    this.liwoIds = layerIds ? layerIds.split(',').map(id => parseInt(id, 10)) : []
+    this.$store.commit('setLayerSetId', layerSetId)
+    await this.$store.dispatch('loadLayerSetById', {
+      id: layerSetId,
+      initializeMap: true
+    })
 
     // TODO: remove this...
     this.isMounted = true
@@ -139,17 +118,6 @@ export default {
       'panelLayerSets',
       'currentNotifications'
     ]),
-    validLiwoIds () {
-      return notEmpty(this.liwoIds) && this.liwoIds
-        .map(id => isNumber(id) && notNaN(id))
-        .every(isTruthy)
-    },
-    validBand () {
-      return includedInBands(this.band)
-    },
-    combinedSenarioCanBeLoaded () {
-      return this.validLiwoIds && this.validBand
-    },
     selectedLayer () {
       if (!this.panelLayerSets) {
         return
@@ -194,9 +162,6 @@ export default {
     },
     setMapObject (mapObject) {
       this.mapObject = mapObject
-    },
-    loadCombinedScenarios () {
-      this.$store.dispatch('loadCombinedScenario', { band: this.band, liwoIds: this.liwoIds })
     }
   }
 }
