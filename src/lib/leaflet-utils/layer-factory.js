@@ -8,8 +8,6 @@ import mapConfig from '@/map.config'
 
 import './cluster-icon.css'
 
-const DEFAULT_ICON = new L.Icon.Default()
-
 const DYNAMIC_GEOSERVER_URL = mapConfig.services.DYNAMIC_GEOSERVER_URL
 const STATIC_GEOSERVER_URL = mapConfig.services.STATIC_GEOSERVER_URL
 
