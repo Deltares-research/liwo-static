@@ -46,7 +46,7 @@
     <export-popup
       v-if="showExport"
       :map-object="mapObject"
-      :map-layers="activeLayerSet"
+      :map-layers="flatLayers"
       @close="showExport = false"
       />
   </div>
@@ -122,6 +122,7 @@ export default {
     ]),
     ...mapGetters([
       'layerSet',
+      'flatLayers',
       'panelLayerSets',
       'currentNotifications'
     ]),
