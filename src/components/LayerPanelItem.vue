@@ -2,7 +2,7 @@
   <div class="layerpanel-item" :class="{'layerpanel-item--collapsed': collapsed}">
     <h3
       class="layerpanel-item__title"
-      @click="() => title && setActiveLayer()"
+      @click="() => title && activateFirstLayer()"
     >
       <span>{{ title || 'Algemeen' }}</span>
       <button class="layerpanel-item__collapse" @click="toggleCollapse">
@@ -10,10 +10,10 @@
       </button>
     </h3>
     <layer-control-list
-      :layers="layers"
+      :layers="layerSet.layers"
       :visible="!collapsed"
-      :panel-layer-title="title"
-      :panel-layer-id="layerId"
+      :panel-layer-title="layerSet.title"
+      :panel-layer-id="layerSet.Id"
     />
   </div>
 </template>
@@ -23,52 +23,28 @@ import LayerControlList from './LayerControlList'
 
 export default {
   props: {
-    layers: {
-      type: Array,
-      required: true
-    },
-    title: {
-      type: String,
-      required: false
-    },
-    layerId: {
-      type: Number,
-      required: false
-    },
-    collapse: {
-      type: Boolean,
-      default: false
-    },
     layerSet: {
       type: Object,
-      required: false
+      required: true
     }
   },
   data: () => ({
     collapsed: false
   }),
   computed: {
-    layerControlListIsVisible () {
-      return !this.layerId
-    }
-  },
-  watch: {
-    layerControlListIsVisible (visible) {
-      this.collapsed = !visible
-    },
-    collapse (collapse) {
-      this.collapsed = collapse
+    title () {
+      return this.layerSet.title
     }
   },
   methods: {
-    setActiveLayer () {
-      this.$store.commit('setSelectedLayerId', this.layers[0].id)
+    activateFirstLayer () {
+      this.$store.commit('setSelectedLayerId', this.layerSet.layers[0].id)
     },
     toggleCollapse () {
       this.collapsed = !this.collapsed
 
       if (this.collapsed && this.title) {
-        this.setActiveLayer()
+        this.activateFirstLayer()
       }
     }
   },

@@ -9,18 +9,13 @@
       />
     <notification-bar :notifications="currentNotifications"/>
     <layer-panel
-      :layer-sets="panelLayerSets"
       @open-export="showExport = true"
       >
       <template v-slot:default>
         <layer-panel-item
-          v-for="(layer, index) in interactiveLayers"
-          :key="layer.id"
-          :layers="layerSet.layers"
-          :layerId="layerSet.id"
-          :title="layerSet.layerSetTitle"
-          :collapse="index === 0 && interactiveLayers.length > 1"
-          :layerSet="layerSet"
+          v-for="layerSet_ in layerSets"
+          :layerSet="layerSet_"
+          :key="layerSet_.id"
           />
 
       </template>
@@ -209,6 +204,12 @@ export default {
       'panelLayerSets',
       'currentNotifications'
     ]),
+    layerSets () {
+      if (!this.layerSet) {
+        return []
+      }
+      return [this.layerSet]
+    },
     interactiveLayers () {
       if (!this.layerSet) {
         return []
