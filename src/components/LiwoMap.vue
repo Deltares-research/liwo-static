@@ -3,7 +3,7 @@
     ref="liwoMap"
     class="liwo-map"
     v-leaflet="{
-      callbacks: { breachCallBack, initMapObject },
+      callbacks: { onClick, initMapObject },
       config: mapConfig,
       layerSet: [ ...activeLayerSet ].reverse(),
       cluster: clusterMarkers,
@@ -15,9 +15,7 @@
 import { mapState, mapGetters } from 'vuex'
 
 import createMapConfig from '@/lib/leaflet-utils/mapconfig-factory'
-import { showLayerInfoPopup } from '@/lib/leaflet-utils/popup'
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
-import { idSameAs } from '@/lib/utils'
 
 // TODO: replace v-leaflet directive with vue2-leaflet package...
 
@@ -64,21 +62,16 @@ export default {
       const { id, naam: breachName, layerType, isControllable } = target.feature.properties
       this.$store.dispatch('addBreach', { id, breachName, layerType, isControllable })
     },
+    onClick (event) {
+      // TODO: click on what
+      this.$emit('click', event)
+    },
     initMapObject (mapObject) {
       this.$emit('initMap', mapObject)
-
+      // pass along click to map objects
       mapObject.on('click', event => {
-        const activeLayerSet = this.panelLayerSets.find(idSameAs(this.layerSetId))
-        const selectedLayer = activeLayerSet.layers.find(idSameAs(this.selectedLayerId))
-        const selectedVariant = selectedLayer.variants[this.visibleVariantIndexByLayerId[selectedLayer.id] || 0]
-
-        showLayerInfoPopup({
-          map: mapObject,
-          activeLayer: selectedVariant.layer,
-          unit: this.layerUnits[this.selectedLayerId],
-          position: event.containerPoint,
-          latlng: event.latlng
-        })
+        // pass the  map click event on up
+        this.$emit('map:click', event)
       })
     }
   }
