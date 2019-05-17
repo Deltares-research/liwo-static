@@ -55,28 +55,44 @@ const router = new Router({
         }
       }
     },
+    // Some special views
     {
-      path: '/combine/:ids(\\d+)?',
+      path: '/scenarios',
+      name: 'scenarios',
+      // browse scenarios
+      component: Combine,
+      meta: {
+        title: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
+      },
+      props: {
+        selectFeatureMode: 'single',
+        filterByIds: false,
+        layerSetId: 32
+      }
+
+    },
+    {
+      path: '/combine/:id/:ids(\\d+)?',
       name: 'combine',
       component: Combine,
       meta: {
         title: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
       },
       props: {
-        selectMultipleFeatures: true,
+        selectFeatureMode: 'multiple',
         filterByIds: false,
         layerSetId: 33
       }
     },
     {
-      path: '/combined/:ids(\\d+)?/:band?',
+      path: '/combined/:id/:ids(\\d+)?/:band?',
       name: 'combined',
       component: Combine,
       meta: {
         title: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
       },
       props: {
-        selectMultipleFeatures: false,
+        selectFeatureMode: 'disabled',
         filterByIds: true,
         layerSetId: 34
       }
