@@ -1,19 +1,19 @@
 <template>
-  <section class="layerset-list">
-    <h3>{{ title }}</h3>
-    <ul class="layerset-list__list">
-      <li class="layerset-list__list-item"
+<section class="layerset-list">
+  <h3>{{ title }}</h3>
+  <ul class="layerset-list__list">
+    <li class="layerset-list__list-item"
         v-for="item in items"
         :key="item.id"
-      >
-        <router-link :to="{ name: getName(item.id), params: {id: item.id} }">{{ item.name }}</router-link>
-      </li>
-    </ul>
-  </section>
+        >
+      <router-link :to="{ name: getName(item.id), params: {id: item.id} }">{{ item.name }}</router-link>
+    </li>
+  </ul>
+</section>
 </template>
 
 <script>
-import { getRouteNameByLayerSet } from '@/lib/layer-set-route-mapping'
+import _ from 'lodash'
 
 export default {
   props: {
@@ -30,20 +30,25 @@ export default {
   },
   methods: {
     getName (id) {
-      return getRouteNameByLayerSet(id)
+      let viewMappings = {
+        32: 'scenarios',
+        33: 'combine',
+        34: 'combined'
+      }
+      return _.get(viewMappings, id, 'viewer')
     }
   }
 }
 </script>
 
 <style>
-  .layerset-list__list {
-    margin-left: 1em;
-    margin-bottom: 1rem;
-  }
-  .layerset-list__list-item::before {
-    content: "›";
-    float: left;
-    margin-left: -1em;
-  }
+.layerset-list__list {
+  margin-left: 1em;
+  margin-bottom: 1rem;
+}
+.layerset-list__list-item::before {
+  content: "›";
+  float: left;
+  margin-left: -1em;
+}
 </style>
