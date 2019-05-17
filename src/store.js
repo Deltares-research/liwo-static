@@ -372,6 +372,9 @@ export default new Vuex.Store({
       return layerSetsById[layerSetId]
     },
     flatLayers (state, { layerSet }) {
+      if (!layerSet) {
+        return []
+      }
       return flattenLayerSet(layerSet)
     },
     combinedScenarioAsLayer ({ combinedScenario, viewerType, currentBand, breachLayersById }) {
@@ -587,10 +590,7 @@ export default new Vuex.Store({
       const { layerSetId, notificationsById } = state
       // const notifications = state.notificationsById
 
-      if (!_.has(notificationsById, layerSetId)) {
-        return []
-      }
-      let notifications = notificationsById[layerSetId]
+      let notifications = _.get(notificationsById, layerSetId, [])
       return notifications
 
       // TODO: move this to component that wants to add some custom notifications
