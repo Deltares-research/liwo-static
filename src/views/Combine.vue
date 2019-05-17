@@ -2,7 +2,6 @@
 <div class="viewer" :class="{'viewer--has-notificaton': currentNotifications.length}">
   <div class="viewer__map-wrapper">
     <liwo-map
-      :layers="activeLayerSet"
       :projection="projection"
       :clusterMarkers="true"
       @click="selectFeature"
@@ -13,28 +12,42 @@
       :layer-sets="panelLayerSets"
       @open-export="showExport = true"
       >
-      <!-- add these buttons to the button section of the layer panel -->
-      <!-- use named slots after upgrading to Vue 2.6 -->
-      <button
-        v-if="selectedBreaches.length"
-        class="layer-panel__action"
-        @click="showCombine = true"
-        >
-        Selectie combineren
-      </button>
-      <button
-        v-if="selectedBreaches.length"
-        class="layer-panel__action"
-        @click="showExportCombine = true"
-        >
-        Selectie exporteren
-      </button>
-      <button
-        class="layer-panel__action"
-        @click="showImportCombine = true"
-        >
-        Selectie importeren
-      </button>
+      <template v-slot:default>
+        <layer-panel-item
+          v-for="(layer, index) in interactiveLayers"
+          :key="layer.id"
+          :layers="layerSet.layers"
+          :layerId="layerSet.id"
+          :title="layerSet.layerSetTitle"
+          :collapse="index === 0 && interactiveLayers.length > 1"
+          :layerSet="layerSet"
+          />
+
+      </template>
+      <template v-slot:actions>
+        <!-- add these buttons to the button section of the layer panel -->
+        <!-- use named slots after upgrading to Vue 2.6 -->
+        <button
+          v-if="selectedBreaches.length"
+          class="layer-panel__action"
+          @click="showCombine = true"
+          >
+          Selectie combineren
+        </button>
+        <button
+          v-if="selectedBreaches.length"
+          class="layer-panel__action"
+          @click="showExportCombine = true"
+          >
+          Selectie exporteren
+        </button>
+        <button
+          class="layer-panel__action"
+          @click="showImportCombine = true"
+          >
+          Selectie importeren
+        </button>
+      </template>
     </layer-panel>
     <legend-panel
       v-if="visibleLayerLegend"
@@ -66,6 +79,7 @@ import isNumber from 'lodash/fp/isNumber'
 
 import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
+import LayerPanelItem from '@/components/LayerPanelItem'
 import LiwoMap from '@/components/LiwoMap'
 import LegendPanel from '@/components/LegendPanel'
 import CombinePopup from '@/components/CombinePopup'
@@ -73,8 +87,11 @@ import ExportCombinePopup from '@/components/ExportCombinePopUp'
 import ImportCombinePopup from '@/components/ImportCombinePopUp'
 import NotificationBar from '@/components/NotificationBar.vue'
 
+import { redIcon, defaultIcon } from '@/lib/leaflet-utils/markers'
 import { EPSG_3857 } from '@/lib/leaflet-utils/projections'
-import { selectFeatures } from '@/lib/selection'
+// TODO: check what logic we had here
+// import { selectFeatures } from '@/lib/selection'
+// import { showLayerInfoPopup } from '@/lib/leaflet-utils/popup'
 import { isTruthy, includedIn, notEmpty, notNaN, getId } from '../lib/utils'
 import availableBands from '../lib/available-bands'
 
@@ -90,6 +107,7 @@ export default {
     ImportCombinePopup,
     ExportPopup,
     LayerPanel,
+    LayerPanelItem,
     LegendPanel,
     LiwoMap,
     NotificationBar
@@ -107,9 +125,9 @@ export default {
       type: String,
       required: false
     },
-    selectMultipleFeatures: {
-      type: Boolean,
-      default: true
+    selectFeatureMode: {
+      type: String,
+      default: 'disabled'
     },
     layerSetId: {
       type: Number
@@ -117,6 +135,8 @@ export default {
   },
   data () {
     return {
+      selectedFeatures: [],
+      selectedMarkersById: {},
       isMounted: false,
       parsedLayers: [],
       id: 0,
@@ -185,10 +205,17 @@ export default {
       'selectedBreaches'
     ]),
     ...mapGetters([
-      'activeLayerSet',
+      'layerSet',
       'panelLayerSets',
       'currentNotifications'
     ]),
+    interactiveLayers () {
+      if (!this.layerSet) {
+        return []
+      }
+      let layers = this.layerSet.layers
+      return layers.filter((layer, index) => layer.iscontrollayer || index === 0)
+    },
     layerIds () {
       // unpack the layer id string
       if (!this.ids) {
@@ -269,8 +296,62 @@ export default {
       this.$store.dispatch('loadCombinedScenario', { band: this.band, layerIds: this.layerIds })
     },
     selectFeature (evt) {
-      selectFeatures(evt.target)
+      if (this.selectFeatureMode === 'disabled') {
+        return
+      }
+      let feature = evt.target.feature
+      let selected = !_.includes(this.selectedFeatures, feature)
+      if (!selected) {
+        // was selected, now not, remove it
+        // reset the marker first
+        let marker = this.selectedMarkersById[feature.id]
+        marker.setIcon(defaultIcon)
+        delete this.selectedMarkersById[feature.id]
+        // now get rid of  the feature
+        this.selectedFeatures = _.pull(this.selectedFeatures, feature)
+      } else {
+        let marker = evt.target
+        if (this.selectFeatureMode === 'multiple') {
+          this.selectedFeatures.push(feature)
+        } else {
+          // clear old markers
+          let markersToReset = _.values(this.selectedMarkersById)
+          _.each(
+            markersToReset,
+            (marker) => {
+              marker.setIcon(defaultIcon)
+            }
+          )
+          this.selectedMarkersById = {}
+          this.selectedFeatures = [feature]
+        }
+        marker.setIcon(redIcon)
+        this.selectedMarkersById[feature.id] = marker
+      }
+      // toggle feature to selected
+      feature.properties.selected = selected
+    },
+    onClick (event) {
+      const { selected } = event.target.feature.properties
+      event.target.setIcon(event.target.getIcon(event.target))
+      event.target.feature.properties.selected = !selected
+      // this was moved over from LiwoMap
+      // TODO: what does this do?
+      // mapObject.on('click', event => {
+      //   const activeLayerSet = this.panelLayerSets.find(idSameAs(this.layerSetId))
+      //   const selectedLayer = activeLayerSet.layers.find(idSameAs(this.selectedLayerId))
+      //   const selectedVariant = selectedLayer.variants[this.visibleVariantIndexByLayerId[selectedLayer.id] || 0]
+
+      //   showLayerInfoPopup({
+      //     map: mapObject,
+      //     activeLayer: selectedVariant.layer,
+      //     unit: this.layerUnits[this.selectedLayerId],
+      //     position: event.containerPoint,
+      //     latlng: event.latlng
+      //   })
+      // })
     }
+
   }
 }
 </script>
