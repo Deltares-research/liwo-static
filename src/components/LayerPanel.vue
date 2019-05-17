@@ -24,37 +24,13 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import LayerControl from '@/components/LayerControl'
-import LayerPanelItem from '@/components/LayerPanelItem'
-
+// This panel provides allows  to put  paneLitems in the obdy
 export default {
-  props: {
-    layerSet: {
-      type: Object,
-      default: () => {}
-    }
-  },
-  computed: {
-    ...mapState([
-      'viewerType',
-      'selectedBreaches'
-    ])
-  },
   methods: {
-    setSelectedLayerId (id) {
-      this.$store.commit('setSelectedLayerId', id)
-    },
-    toggleLayerVisibilityById (id) {
-      this.$store.commit('toggleLayerById', id)
-    },
     resetToMapLayers () {
+      // TODO:  what does this even do?
       this.$store.commit('resetToMapLayers')
     }
-  },
-  components: {
-    LayerControl,
-    LayerPanelItem
   }
 }
 </script>
