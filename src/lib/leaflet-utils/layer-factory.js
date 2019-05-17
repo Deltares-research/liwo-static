@@ -11,7 +11,7 @@ import './cluster-icon.css'
 const DYNAMIC_GEOSERVER_URL = mapConfig.services.DYNAMIC_GEOSERVER_URL
 const STATIC_GEOSERVER_URL = mapConfig.services.STATIC_GEOSERVER_URL
 
-export default function createLayer (layer, { breachCallBack }) {
+export default function createLayer (layer, { onClick }) {
   if (layer.type === 'json' && layer.geojson) {
     return createGeoJson(layer)
   } else if (layer.type === 'cluster') {
@@ -21,9 +21,13 @@ export default function createLayer (layer, { breachCallBack }) {
       maxClusterRadius: 40
     })
     // TODO, get this out of here....
-    let geojsonLayer = createBreachGeoJson(layer, breachCallBack)
+    let geojsonLayer = createClusterGeoJson(layer, (evt) => {
+      console.log('click', evt)
+      evt.geojsonLayer = geojsonLayer
+      onClick(evt)
+      clusterGroup.refreshClusters()
+    })
     clusterGroup.addLayer(geojsonLayer)
-
     layerGroup.addLayer(clusterGroup)
 
     layerGroup.layerId = layer.layerId
@@ -41,23 +45,34 @@ export default function createLayer (layer, { breachCallBack }) {
 export function createGeoJson ({ geojson, style }) {
   return L.geoJson(geojson, {
     style: () => {
+      // TODO:  Is this used?
       return { className: style }
     }
   })
 }
 
 // TODO: remove this here...
-export function createBreachGeoJson ({ geojson, layer: layerId, opacity }, callback) {
+export function createClusterGeoJson ({ geojson, layer: layerId, opacity }, onClick) {
   let options = {
-    onEachFeature: (_, layer) => {
-      const { naam, selectedVariant, isControllable } = layer.feature.properties
+    // set custom  style for selected features
+    onEachFeature: (feature, layer) => {
+      const { naam, selectedVariant } = feature.properties
 
+      // TODO: move this out of here...
       layer.bindTooltip(`${naam}${selectedVariant ? ` - ${selectedVariant}` : ''}`)
-      isControllable && layer.on('click', (event) => breachClickHandler(event, callback))
-      layer.on('mouseover', (event) => { event.target.openTooltip() })
-      layer.on('mouseout', (event) => { event.target.closeTooltip() })
+      // TODO: implement is  controllable
+      layer.on('click', (evt) => {
+        evt.layer = layer
+        onClick(evt)
+      })
+      layer.on('mouseover', (event) => {
+        event.target.openTooltip()
+      })
+      layer.on('mouseout', (event) => {
+        event.target.closeTooltip()
+      })
 
-      layer.feature.properties.layerType = layerId
+      // layer.feature.properties.layerType = layerId
       // TODO: solve in CSS
       // layer.feature.properties.selected
       //   ? layer.setIcon(DEFAULT_ICON)
@@ -89,17 +104,11 @@ function geoServerURL (namespace) {
 }
 
 // TODO: move to component/view
-function breachClickHandler (event, callback) {
-  const { selected } = event.target.feature.properties
-
-  event.target.setIcon(event.target.getIcon(event.target))
-
-  event.target.feature.properties.selected = !selected
-
-  if (callback) {
-    callback(event)
-  }
-}
+// function breachClickHandler (event, callback) {
+//   if (callback) {
+//     callback(event)
+//   }
+// }
 
 function clusterIconFunction (type) {
   return function (cluster) {
