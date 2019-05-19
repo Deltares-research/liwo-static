@@ -23,7 +23,7 @@
         <!-- add these buttons to the button section of the layer panel -->
         <!-- use named slots after upgrading to Vue 2.6 -->
         <button
-          v-if="selectedBreaches.length"
+          v-if="selectedFeatures.length"
           class="layer-panel__action"
           @click="showCombine = true"
           >
