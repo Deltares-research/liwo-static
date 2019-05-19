@@ -2,18 +2,16 @@
   <div class="layerpanel-item" :class="{'layerpanel-item--collapsed': collapsed}">
     <h3
       class="layerpanel-item__title"
-      @click="() => title && activateFirstLayer()"
+      @click="() => activateFirstLayer()"
     >
-      <span>{{ title || 'Algemeen' }}</span>
+      <span>{{ title }}</span>
       <button class="layerpanel-item__collapse" @click="toggleCollapse">
         <img class="layerpanel-item__collapse-icon" :src="`/icons/baseline-keyboard_arrow_up-24px.svg`" />
       </button>
     </h3>
     <layer-control-list
-      :layers="layerSet.layers"
+      :layers="layers"
       :visible="!collapsed"
-      :panel-layer-title="layerSet.title"
-      :panel-layer-id="layerSet.Id"
     />
   </div>
 </template>
@@ -23,22 +21,21 @@ import LayerControlList from './LayerControlList'
 
 export default {
   props: {
-    layerSet: {
-      type: Object,
+    layers: {
+      type: Array,
       required: true
+    },
+    title: {
+      type: String,
+      default: 'Algemeen'
     }
   },
   data: () => ({
     collapsed: false
   }),
-  computed: {
-    title () {
-      return this.layerSet.title
-    }
-  },
   methods: {
     activateFirstLayer () {
-      this.$store.commit('setSelectedLayerId', this.layerSet.layers[0].id)
+      this.$store.commit('setSelectedLayerId', this.layers[0].id)
     },
     toggleCollapse () {
       this.collapsed = !this.collapsed
