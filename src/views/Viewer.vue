@@ -7,16 +7,10 @@
       @initMap="setMapObject"
       />
     <notification-bar :notifications="currentNotifications"  />
-    <layer-panel :layer-set="layerSet">
+    <layer-panel v-if="layerSet">
       <template v-slot:default>
         <layer-panel-item
-          v-for="(layer, index) in interactiveLayers"
-          :key="layer.id"
           :layers="layerSet.layers"
-          :layerId="layerSet.id"
-          :title="layerSet.layerSetTitle"
-          :collapse="index === 0 && interactiveLayers.length > 1"
-          :layerSet="layerSet"
           />
 
       </template>
@@ -126,13 +120,6 @@ export default {
       'panelLayerSets',
       'currentNotifications'
     ]),
-    interactiveLayers () {
-      if (!this.layerSet) {
-        return []
-      }
-      let layers = this.layerSet.layers
-      return layers.filter((layer, index) => layer.iscontrollayer || index === 0)
-    },
     selectedLayer () {
       if (!this.panelLayerSets) {
         return
