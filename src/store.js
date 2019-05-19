@@ -213,7 +213,7 @@ export default new Vuex.Store({
     addNotificationById (state, {id, notification}) {
       const notifications = state.notificationsById[id] || []
       notifications.push(notification)
-      state.notifications = notifications
+      state.notificationsById[id] = notifications
     },
     setLayerUnits (state, layerUnits) {
       state.layerUnits = {...state.layerUnits, ...layerUnits}
