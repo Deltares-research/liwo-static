@@ -1,18 +1,17 @@
 <template>
-  <ul class="layer-control-list" :class="{ 'layer-control-list--active': visible }">
-    <li class="layer-control-list__item">
-      <layer-control
-        v-if="panelLayerTitle"
-        :active="(panelLayerId === selectedLayerId)"
-        :id="panelLayerId"
-        :variants="[]"
-        :layerType="''"
-        :visible="activeMarkerLayerIsVisible"
-        :isMarkerLayer="true"
-        :title="LOCATION"
-        @toggle="toggleActiveMarker"
-      />
-    </li>
+  <ul class="layer-control-list layer-control-list--active">
+    <!-- <li class="layer-control-list__item"> -->
+    <!--   <layer-control -->
+    <!--     :active="(panelLayerId === selectedLayerId)" -->
+    <!--     :id="panelLayerId" -->
+    <!--     :variants="[]" -->
+    <!--     :layerType="''" -->
+    <!--     :visible="activeMarkerLayerIsVisible" -->
+    <!--     :isMarkerLayer="true" -->
+    <!--     :title="LOCATION" -->
+    <!--     @toggle="toggleActiveMarker" -->
+    <!--   /> -->
+    <!-- </li> -->
     <li
       class="layer-control-list__item"
       v-for="layer in layers"
@@ -21,7 +20,7 @@
       <layer-control
         :active="(layer.id === selectedLayerId)"
         :id="layer.id"
-        :title="layer.properties.title || layer.properties.name"
+        :title="layer.properties.title"
         :metadata="layerMetaData(layer)"
         :variants="layer.variants || []"
         :layerType="layer.legend.layer"
@@ -45,19 +44,7 @@ export default {
   props: {
     layers: {
       type: Array,
-      default: () => []
-    },
-    visible: {
-      type: Boolean,
-      default: true
-    },
-    panelLayerTitle: {
-      type: String,
-      default: ''
-    },
-    panelLayerId: {
-      type: [String, Number],
-      default: ''
+      requred: true
     }
   },
   data () {
