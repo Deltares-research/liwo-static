@@ -22,11 +22,11 @@ export default {
 
     const { callbacks, cluster } = value
     // TODO: why? remove falsy values?
-    let layerSet = value.layerSet.filter(value => value)
+    let layers = value.layers.filter(value => value)
 
     layerGroup.clearLayers()
 
-    let leafletLayers = layerSet
+    let leafletLayers = layers
       .filter(layer => !layer.hide)
       .map(layer => layerFactory(layer, callbacks, cluster))
 
