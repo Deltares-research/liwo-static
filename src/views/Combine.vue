@@ -4,17 +4,23 @@
     <liwo-map
       :projection="projection"
       :clusterMarkers="true"
+      :layers="layers"
       @click="selectFeature"
       @initMap="setMapObject"
       />
     <notification-bar :notifications="currentNotifications"/>
-    <layer-panel
-      @open-export="showExport = true"
-      >
+    <layer-panel>
       <template v-slot:default>
         <layer-panel-item
-          v-for="layerSet_ in layerSets"
-          :layerSet="layerSet_"
+          v-if="layerSet"
+          :layers="layerSet.layers"
+          :key="layerSet.id"
+          />
+
+        <layer-panel-item
+          v-for="layerSet_ in extraLayerSets"
+          :layers="layerSet_.layers"
+          :title="layerSet_.title"
           :key="layerSet_.id"
           />
 
@@ -82,6 +88,9 @@ import ExportCombinePopup from '@/components/ExportCombinePopUp'
 import ImportCombinePopup from '@/components/ImportCombinePopUp'
 import NotificationBar from '@/components/NotificationBar.vue'
 
+import { normalizeLayerSet, cleanLayerSet } from '@/lib/layer-parser'
+import loadBreach from '@/lib/load-breach'
+
 import { redIcon, defaultIcon } from '@/lib/leaflet-utils/markers'
 import { EPSG_3857 } from '@/lib/leaflet-utils/projections'
 // TODO: check what logic we had here
@@ -132,6 +141,7 @@ export default {
     return {
       selectedFeatures: [],
       selectedMarkersById: {},
+      extraLayerSets: [],
       isMounted: false,
       parsedLayers: [],
       id: 0,
@@ -196,7 +206,6 @@ export default {
     ...mapState([
       'selectedLayerId',
       'visibleLayerIds',
-      'viewerType',
       'selectedBreaches'
     ]),
     ...mapGetters([
@@ -204,12 +213,6 @@ export default {
       'panelLayerSets',
       'currentNotifications'
     ]),
-    layerSets () {
-      if (!this.layerSet) {
-        return []
-      }
-      return [this.layerSet]
-    },
     interactiveLayers () {
       if (!this.layerSet) {
         return []
@@ -225,6 +228,9 @@ export default {
       let layerIds = this.ids.split(',')
       layerIds = layerIds.map(id => _.toNumber(id))
       return layerIds
+    },
+    layers () {
+      return _.flatten(_.map(this.extraLayerSets, 'layers'))
     },
     validLayerIds () {
       return notEmpty(this.layerIds) && this.layerIds
@@ -269,16 +275,6 @@ export default {
         this.loadCombinedScenarios()
       }
     },
-    viewerType (viewerType) {
-      if (this.isMounted) {
-        if (!this.validBand) {
-          this.$store.commit('addNotification', 'Er is geen band geselecteerd')
-        }
-        if (!this.validLayerIds) {
-          this.$store.commit('addNotification', 'Er zijn geen ids geselecteerd')
-        }
-      }
-    },
     validLayerIds (isValid) {
       if (isValid) {
         // TOD: variants or layers?
@@ -301,20 +297,56 @@ export default {
         return
       }
       let feature = evt.target.feature
+      // this is the code to enable/disable the markers
       let selected = !_.includes(this.selectedFeatures, feature)
-      if (!selected) {
-        // was selected, now not, remove it
-        // reset the marker first
-        let marker = this.selectedMarkersById[feature.id]
-        marker.setIcon(defaultIcon)
-        delete this.selectedMarkersById[feature.id]
+      // this looks a bit double, but it's easier to read
+      let wasSelected = !selected
+      // keep state in feature also, so we can pass it along
+      feature.properties.selected = selected
+      // was selected, now not, remove it
+      if (wasSelected) {
         // now get rid of  the feature
         this.selectedFeatures = _.pull(this.selectedFeatures, feature)
       } else {
-        let marker = evt.target
         if (this.selectFeatureMode === 'multiple') {
           this.selectedFeatures.push(feature)
-        } else {
+        }
+      }
+      // set the markers, based on the current selected feature
+      let marker = evt.target
+      this.setMarkers(feature, marker)
+      this.loadFeature(feature)
+    },
+    setMarkers (feature, marker) {
+      // // TODO: do this using css
+      // // Layers need an icon. But  the icon depends on the selected state
+      // layer.getIcon = (layer) => {
+      //   if (layer.properties.selected) {
+      //     return redIcon
+      //   }
+      //   switch (layer.type) {
+      //     case BREACH_PRIMARY:
+      //       return DEFAULT_ICON
+      //     case BREACH_REGIONAL:
+      //       return greenIcon
+      //     case BREACH_OUTSIDE_DIKE:
+      //       return blackIcon
+      //     case BREACH_FLOODING:
+      //       return blackIcon
+      //     default:
+      //       return DEFAULT_ICON
+      //   }
+      // }
+      // set the appropriate markers
+      if (!feature.properties.selected) {
+        // feature is no longer selected
+        // get the old marker and reset it
+        // TODO: use old icon.
+        marker.setIcon(defaultIcon)
+        delete this.selectedMarkersById[feature.id]
+      } else {
+        // we are setting a marker
+        if (this.selectFeatureMode === 'single') {
           // clear old markers
           let markersToReset = _.values(this.selectedMarkersById)
           _.each(
@@ -326,33 +358,25 @@ export default {
           this.selectedMarkersById = {}
           this.selectedFeatures = [feature]
         }
-        marker.setIcon(redIcon)
         this.selectedMarkersById[feature.id] = marker
+        marker.setIcon(redIcon)
       }
-      // toggle feature to selected
-      feature.properties.selected = selected
     },
-    onClick (event) {
-      const { selected } = event.target.feature.properties
-      event.target.setIcon(event.target.getIcon(event.target))
-      event.target.feature.properties.selected = !selected
-      // this was moved over from LiwoMap
-      // TODO: what does this do?
-      // mapObject.on('click', event => {
-      //   const activeLayerSet = this.panelLayerSets.find(idSameAs(this.layerSetId))
-      //   const selectedLayer = activeLayerSet.layers.find(idSameAs(this.selectedLayerId))
-      //   const selectedVariant = selectedLayer.variants[this.visibleVariantIndexByLayerId[selectedLayer.id] || 0]
-
-      //   showLayerInfoPopup({
-      //     map: mapObject,
-      //     activeLayer: selectedVariant.layer,
-      //     unit: this.layerUnits[this.selectedLayerId],
-      //     position: event.containerPoint,
-      //     latlng: event.latlng
-      //   })
-      // })
+    loadFeature (feature) {
+      // Load the layerSet for the breach and add it to the extra list
+      loadBreach(feature)
+        .then(layerSet => {
+          // normalize
+          layerSet = normalizeLayerSet(layerSet)
+          // and clean
+          layerSet = cleanLayerSet(layerSet)
+          if (this.selectFeatureMode === 'single') {
+            this.extraLayerSets = [layerSet]
+          } else {
+            this.extraLayerSets.push(layerSet)
+          }
+        })
     }
-
   }
 }
 </script>
