@@ -1,5 +1,5 @@
 <template>
-<ul class="viewer__notifications" v-if="editableNotifications.length">
+<ul class="viewer__notifications" v-if="editableNotifications && editableNotifications.length">
   <li class="viewer__notification" v-for="(notification, index) in editableNotifications"
       :key="index"
       @click="notification.show = false"
@@ -57,7 +57,10 @@ import _ from 'lodash'
 export default {
   props: {
     notifications: {
-      type: Array
+      type: Array,
+      default () {
+        return []
+      }
     }
   },
   data () {
