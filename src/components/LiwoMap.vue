@@ -5,7 +5,7 @@
     v-leaflet="{
       callbacks: { onClick, initMapObject },
       config: mapConfig,
-      layerSet: [ ...activeLayerSet ].reverse(),
+      layers: layers,
       cluster: clusterMarkers,
     }"
   ></div>
@@ -24,6 +24,10 @@ export default {
     projection: {
       type: String,
       default: EPSG_28992
+    },
+    layers: {
+      type: Array,
+      required: true
     },
     clusterMarkers: {
       type: Boolean,
@@ -44,7 +48,6 @@ export default {
       'layerSetId'
     ]),
     ...mapGetters([
-      'activeLayerSet',
       'panelLayerSets',
       'selectedVariants'
     ])
