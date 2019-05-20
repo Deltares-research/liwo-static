@@ -209,6 +209,7 @@ export default {
       'selectedBreaches'
     ]),
     ...mapGetters([
+      'activeLayerSet',
       'layerSet',
       'panelLayerSets',
       'currentNotifications'
@@ -230,7 +231,12 @@ export default {
       return layerIds
     },
     layers () {
-      return _.flatten(_.map(this.extraLayerSets, 'layers'))
+      if (!this.layerSet) {
+        return []
+      }
+      let extraLayers = _.flatten(_.map(this.extraLayerSets, 'layers'))
+      let layers = this.activeLayerSet
+      return [...layers, ...extraLayers]
     },
     validLayerIds () {
       return notEmpty(this.layerIds) && this.layerIds
