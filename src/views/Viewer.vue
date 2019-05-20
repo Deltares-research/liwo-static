@@ -3,6 +3,7 @@
   <div class="viewer__map-wrapper">
     <liwo-map
       :projection="projection"
+      :layers="layers"
       :clusterMarkers="false"
       @initMap="setMapObject"
       />
@@ -48,6 +49,9 @@
 </template>
 
 <script>
+
+import _ from 'lodash'
+
 import { mapGetters, mapState } from 'vuex'
 
 import ExportPopup from '@/components/ExportPopup'
@@ -115,6 +119,7 @@ export default {
       'viewerType'
     ]),
     ...mapGetters([
+      'activeLayerSet',
       'layerSet',
       'flatLayers',
       'panelLayerSets',
@@ -134,6 +139,12 @@ export default {
         // should only be one
         return selectedLayers[0]
       }
+    },
+    layers () {
+      if (!this.activeLayerSet) {
+        return []
+      }
+      return _.reversed(this.activeLayerSet)
     },
     visibleLayerLegend () {
       if (!this.selectedLayer) {
