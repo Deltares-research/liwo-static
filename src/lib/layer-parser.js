@@ -1,20 +1,8 @@
 import _ from 'lodash'
-import L from 'leaflet'
 
 import {
-  BREACH_PRIMARY,
-  BREACH_REGIONAL,
-  BREACH_OUTSIDE_DIKE,
-  BREACH_FLOODING,
   BREACHES_IDS
 } from '@/lib/liwo-identifiers'
-import {
-  blackIcon,
-  greenIcon,
-  redIcon
-} from '@/lib/leaflet-utils/markers'
-
-const DEFAULT_ICON = new L.Icon.Default()
 
 export function flattenLayerSet (layerSet) {
   // get all the layerSet propreties
@@ -77,30 +65,14 @@ export function cleanLayer (layer) {
       variant.type = 'cluster'
     })
   }
-
-  // TODO: do this using css
-  // Layers need an icon. But  the icon depends on the selected state
-  layer.getIcon = (layer) => {
-    if (layer.properties.selected) {
-      return redIcon
-    }
-    switch (layer.type) {
-      case BREACH_PRIMARY:
-        return DEFAULT_ICON
-      case BREACH_REGIONAL:
-        return greenIcon
-      case BREACH_OUTSIDE_DIKE:
-        return blackIcon
-      case BREACH_FLOODING:
-        return blackIcon
-      default:
-        return DEFAULT_ICON
-    }
-  }
-
   // TODO: Why?
   if (layer.style === 'LIWO_Basis_Waterdiepte') {
     layer.hideWms = true
+  }
+
+  if (_.isNil(layer.properties.title)) {
+    // sometimes the title is not available, fill it in using the name
+    layer.properties.title = layer.properties.name
   }
 
   return layer
