@@ -11,7 +11,7 @@
     </h3>
     <layer-control-list
       :layers="layers"
-      :visible="!collapsed"
+      v-show="!collapsed"
     />
   </div>
 </template>
