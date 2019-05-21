@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import L from '@/lib/leaflet-utils/leaf'
 
 import 'leaflet.markercluster'
@@ -88,7 +89,8 @@ export function createTile ({ url, opacity }) {
 
 export function createWms ({ namespace, layer, attribution, style, opacity }) {
   return L.tileLayer.wms(geoServerURL(namespace), {
-    layers: layer,
+    // TODO: layer is now sometimes a string, sometimes an object. Clean this up
+    layers: _.get(layer, 'id', layer),
     format: 'image/png',
     transparent: true,
     attribution,

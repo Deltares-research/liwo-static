@@ -88,7 +88,7 @@ import ExportCombinePopup from '@/components/ExportCombinePopUp'
 import ImportCombinePopup from '@/components/ImportCombinePopUp'
 import NotificationBar from '@/components/NotificationBar.vue'
 
-import { normalizeLayerSet, cleanLayerSet } from '@/lib/layer-parser'
+import { flattenLayerSet, normalizeLayerSet, cleanLayerSet } from '@/lib/layer-parser'
 import loadBreach from '@/lib/load-breach'
 
 import { redIcon, defaultIcon } from '@/lib/leaflet-utils/markers'
@@ -231,12 +231,13 @@ export default {
       return layerIds
     },
     layers () {
+      // a list of the layers to ber shown in the map
       if (!this.layerSet) {
         return []
       }
-      let extraLayers = _.flatten(_.map(this.extraLayerSets, 'layers'))
+      let extraLayers = _.flatten(this.extraLayerSets.map(flattenLayerSet))
       let layers = this.activeLayerSet
-      return [...layers, ...extraLayers]
+      return [...extraLayers, ...layers]
     },
     validLayerIds () {
       return notEmpty(this.layerIds) && this.layerIds
