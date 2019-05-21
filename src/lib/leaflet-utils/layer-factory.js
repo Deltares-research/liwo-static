@@ -112,13 +112,6 @@ function geoServerURL (namespace) {
     : STATIC_GEOSERVER_URL
 }
 
-// TODO: move to component/view
-// function breachClickHandler (event, callback) {
-//   if (callback) {
-//     callback(event)
-//   }
-// }
-
 function clusterIconFunction (type) {
   return function (cluster) {
     let childCount = cluster.getChildCount()

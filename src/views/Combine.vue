@@ -90,8 +90,8 @@ import NotificationBar from '@/components/NotificationBar.vue'
 
 import { flattenLayerSet, normalizeLayerSet, cleanLayerSet } from '@/lib/layer-parser'
 import loadBreach from '@/lib/load-breach'
-
-import { redIcon, defaultIcon } from '@/lib/leaflet-utils/markers'
+import { getLayerType } from '@/lib/liwo-identifiers'
+import { iconsByLayerType, redIcon, defaultIcon } from '@/lib/leaflet-utils/markers'
 import { EPSG_3857 } from '@/lib/leaflet-utils/projections'
 // TODO: check what logic we had here
 // import { selectFeatures } from '@/lib/selection'
@@ -334,31 +334,14 @@ export default {
       this.loadFeature(feature)
     },
     setMarkers (feature, marker) {
-      // // TODO: do this using css
-      // // Layers need an icon. But  the icon depends on the selected state
-      // layer.getIcon = (layer) => {
-      //   if (layer.properties.selected) {
-      //     return redIcon
-      //   }
-      //   switch (layer.type) {
-      //     case BREACH_PRIMARY:
-      //       return DEFAULT_ICON
-      //     case BREACH_REGIONAL:
-      //       return greenIcon
-      //     case BREACH_OUTSIDE_DIKE:
-      //       return blackIcon
-      //     case BREACH_FLOODING:
-      //       return blackIcon
-      //     default:
-      //       return DEFAULT_ICON
-      //   }
-      // }
       // set the appropriate markers
       if (!feature.properties.selected) {
         // feature is no longer selected
         // get the old marker and reset it
         // TODO: use old icon.
-        marker.setIcon(defaultIcon)
+        let layerType = getLayerType(feature)
+        let icon = _.get(iconsByLayerType, layerType, defaultIcon)
+        marker.setIcon(icon)
         delete this.selectedMarkersById[feature.id]
       } else {
         // we are setting a marker
