@@ -50,8 +50,6 @@
 
 <script>
 
-import _ from 'lodash'
-
 import { mapGetters, mapState } from 'vuex'
 
 import ExportPopup from '@/components/ExportPopup'
@@ -144,7 +142,8 @@ export default {
       if (!this.activeLayerSet) {
         return []
       }
-      return _.reversed(this.activeLayerSet)
+      // return a reversed version of the copied list
+      return this.activeLayerSet.slice().reverse()
     },
     visibleLayerLegend () {
       if (!this.selectedLayer) {
