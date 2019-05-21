@@ -6,6 +6,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 
 import mapConfig from '@/map.config'
+import { redIcon, defaultIcon } from '@/lib/leaflet-utils/markers'
 
 import './cluster-icon.css'
 
@@ -53,34 +54,37 @@ export function createGeoJson ({ geojson, style }) {
 }
 
 // TODO: remove this here...
-export function createClusterGeoJson ({ geojson, layer: layerId, opacity }, onClick) {
+export function createClusterGeoJson (layer, onClick) {
   let options = {
     // set custom  style for selected features
-    onEachFeature: (feature, layer) => {
+    onEachFeature: (feature, marker) => {
       const { naam, selectedVariant } = feature.properties
 
       // TODO: move this out of here...
-      layer.bindTooltip(`${naam}${selectedVariant ? ` - ${selectedVariant}` : ''}`)
+      marker.bindTooltip(`${naam}${selectedVariant ? ` - ${selectedVariant}` : ''}`)
       // TODO: implement is  controllable
-      layer.on('click', (evt) => {
+      marker.on('click', (evt) => {
         evt.layer = layer
         onClick(evt)
       })
-      layer.on('mouseover', (event) => {
+      marker.on('mouseover', (event) => {
         event.target.openTooltip()
       })
-      layer.on('mouseout', (event) => {
+      marker.on('mouseout', (event) => {
         event.target.closeTooltip()
       })
-
-      // layer.feature.properties.layerType = layerId
-      // TODO: solve in CSS
-      // layer.feature.properties.selected
-      //   ? layer.setIcon(DEFAULT_ICON)
-      //   : layer.setIcon(layer.getIcon(layerId))
+      // color selected feature as red
+      if (marker.feature.properties.selected) {
+        marker.setIcon(redIcon)
+      } else {
+        marker.setIcon(defaultIcon)
+      }
     }
   }
-  return L.geoJson(geojson, options)
+  if (_.has(layer, 'filter')) {
+    options.filter = layer.filter
+  }
+  return L.geoJson(layer.geojson, options)
 }
 
 export function createTile ({ url, opacity }) {

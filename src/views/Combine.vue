@@ -308,7 +308,16 @@ export default {
       let selected = !_.includes(this.selectedFeatures, feature)
       // this looks a bit double, but it's easier to read
       let wasSelected = !selected
-      // keep state in feature also, so we can pass it along
+
+      if (this.selectFeatureMode === 'single') {
+        // deselect all features
+        this.selectedFeatures.map(feature => {
+          feature.properties.selected = false
+        })
+      }
+      // This is a double administration
+      // TODO: choose to change map state (more complex) or redraw each time (slow)
+      // keep state in feature also, so we can pass it alon
       feature.properties.selected = selected
       // was selected, now not, remove it
       if (wasSelected) {
