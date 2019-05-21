@@ -7,6 +7,15 @@ export const BREACH_SELECTED = 'selected_marker'
 export const BREACHES_PRIMARY_LAYER_ID = 'geo_doorbraaklocaties_primair'
 export const BREACHES_REGIONAL_LAYER_ID = 'geo_doorbraaklocaties_regionaal'
 
+export function getLayerType (feature) {
+  // get the layer type based on the feature id (assuming the format BREACH_LAYER.ID)
+  const re = new RegExp(`${BREACH_PRIMARY}|${BREACH_REGIONAL}|${BREACH_OUTSIDE_DIKE}|${BREACH_FLOODING}`)
+  let match = feature.id.match(re)
+  // if we have match return the matched part
+  let result = match ? match[0] : ''
+  return result
+}
+
 export const BREACHES_IDS = [
   BREACH_PRIMARY,
   BREACH_REGIONAL,

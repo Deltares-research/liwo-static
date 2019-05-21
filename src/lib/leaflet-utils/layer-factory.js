@@ -6,7 +6,8 @@ import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 
 import mapConfig from '@/map.config'
-import { redIcon, defaultIcon } from '@/lib/leaflet-utils/markers'
+import { getLayerType } from '@/lib/liwo-identifiers'
+import { redIcon, defaultIcon, iconsByLayerType } from '@/lib/leaflet-utils/markers'
 
 import './cluster-icon.css'
 
@@ -77,7 +78,9 @@ export function createClusterGeoJson (layer, onClick) {
       if (marker.feature.properties.selected) {
         marker.setIcon(redIcon)
       } else {
-        marker.setIcon(defaultIcon)
+        let layerType = getLayerType(feature)
+        let icon = _.get(iconsByLayerType, layerType, defaultIcon)
+        marker.setIcon(icon)
       }
     }
   }

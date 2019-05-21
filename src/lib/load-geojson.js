@@ -35,12 +35,12 @@ export async function loadGeojson (jsonLayer, { filteredIds = [] } = {}) {
   let result = fetch(url, { mode: 'cors' })
     .then(resp => resp.json())
     .then(geojson => {
-      geojson.features = geojson.features.map(feature => ({
-        ...feature,
-        // TODO: why the rename here?
-        // the name in leaflet is "interactive" not controllable
-        properties: Object.assign(feature.properties, { isControllable: !!jsonLayer.iscontrollayer })
-      }))
+      geojson.features = geojson.features.map(feature => {
+        feature.properties.isControllable = !!jsonLayer.iscontrollayer
+        feature.properties.icon = 'default'
+        return feature
+      })
+
       return geojson
     })
     .catch(error => console.log('Error:', error, jsonLayer))

@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-import { BREACH_PRIMARY, BREACH_REGIONAL } from '@/lib/liwo-identifiers'
+import { BREACH_PRIMARY, BREACH_REGIONAL, getLayerType } from '@/lib/liwo-identifiers'
 import mapConfig from '../map.config'
 
 const BREACHES_BASE_URL = mapConfig.services.WEBSERVICE_URL
@@ -8,14 +8,6 @@ const BREACHES_API_URL = `${BREACHES_BASE_URL}/Tools/FloodImage.asmx/GetScenario
 
 const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
 
-function getLayerType (feature) {
-  // get the layer type based on the feature id (assuming the format BREACH_LAYER.ID)
-  const re = new RegExp(`${BREACH_PRIMARY}|${BREACH_REGIONAL}`)
-  let match = feature.id.match(re)
-  // if we have match return the matched part
-  let result = match ? match[0] : ''
-  return result
-}
 // Load breach data from the geoserver
 export default async function (feature) {
   // the breach id is hidden here
