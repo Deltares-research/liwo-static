@@ -20,7 +20,7 @@
     >
       <layer-control
         :id="layer.id"
-        :active="layer.active"
+        :active="layer.properties.active"
         :title="layer.properties.title"
         :metadata="layerMetaData(layer)"
         :variants="layer.variants || []"

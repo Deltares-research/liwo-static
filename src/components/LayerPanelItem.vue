@@ -2,10 +2,10 @@
   <div class="layerpanel-item" :class="{'layerpanel-item--collapsed': collapsed}">
     <h3
       class="layerpanel-item__title"
-      @click="() => activateFirstLayer()"
+      @click="activateFirstLayer"
     >
       <span>{{ title }}</span>
-      <button class="layerpanel-item__collapse" @click="toggleCollapse">
+      <button class="layerpanel-item__collapse" @click.stop="toggleCollapse">
         <img class="layerpanel-item__collapse-icon" :src="`/icons/baseline-keyboard_arrow_up-24px.svg`" />
       </button>
     </h3>
@@ -38,10 +38,10 @@ export default {
     collapsed: false
   }),
   methods: {
-    setLayers (evt) {
+    setLayers (layers) {
       // bubble the layers so the parent can use layers.sync
       // see https://vuejs.org/v2/guide/components-custom-events.html#sync-Modifier
-      this.$emit('update:layers', evt.target)
+      this.$emit('update:layers', layers)
     },
     activateFirstLayer () {
       // deactivate all layers
@@ -57,6 +57,7 @@ export default {
     toggleCollapse () {
       this.collapsed = !this.collapsed
       if (this.collapsed) {
+        // TODO: why, remove this?
         this.activateFirstLayer()
       }
     }
