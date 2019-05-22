@@ -14,16 +14,18 @@
     <!-- </li> -->
     <li
       class="layer-control-list__item"
-      v-for="layer in layers"
+      v-for="(layer, index) in layers"
       :key="layer.id"
+      @click="setActive(layer, index)"
     >
       <layer-control
-        :active="(layer.id === selectedLayerId)"
         :id="layer.id"
+        :active="layer.active"
         :title="layer.properties.title"
         :metadata="layerMetaData(layer)"
         :variants="layer.variants || []"
         :layerType="layer.legend.layer"
+        :layer.sync="layer"
         :visible="layerIsVisible(layer.id)"
         @toggle="toggleLayerVisibilityById"
         @changeOpacity="setLayerOpacity"
@@ -35,7 +37,11 @@
 </template>
 
 <script>
+
+import _ from 'lodash'
+
 import { mapState } from 'vuex'
+
 import LayerControl from './LayerControl'
 
 const LOCATION = 'Locatie'
@@ -55,6 +61,7 @@ export default {
   computed: {
     ...mapState([
       'selectedLayerId',
+      'panelLayerId',
       'visibleLayerIds',
       'visibleVariantIndexByLayerId',
       'hidden',
@@ -65,6 +72,18 @@ export default {
     }
   },
   methods: {
+    setActive (layer, index) {
+      let layers = _.clone(this.layers)
+      // set to inactive
+      _.each(layers, (layer) => { layer.properties.active = false })
+      // set our layer to active
+      layer.properties.active = true
+      // store it in the proper location
+      layers[index] = layer
+      // emit update
+      this.$emit('update:layers', layers)
+      console.log('activate', layer, index)
+    },
     layerMetaData ({ id, variants }) {
       const index = this.visibleVariantIndexByLayerId[id]
       return typeof index !== 'undefined'
