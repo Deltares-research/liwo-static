@@ -39,12 +39,13 @@ export default async function (feature) {
   let bands = await Promise.all(promises)
   // merge layers of all unorganized sets
   // and use the feature name
+  let layers = _.flatten(_.map(bands, 'layers'))
   let layerSet = {
     id: breachId,
     feature: feature,
     name: feature.properties.naam,
     title: feature.properties.naam,
-    layers: _.flatten(_.map(bands, 'layers'))
+    layers: layers
   }
   return layerSet
 }
