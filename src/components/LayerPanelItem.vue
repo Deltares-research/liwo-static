@@ -11,12 +11,16 @@
     </h3>
     <layer-control-list
       :layers="layers"
+      @update:layers="setLayers"
       v-show="!collapsed"
+
     />
   </div>
 </template>
 
 <script>
+import _ from 'lodash'
+
 import LayerControlList from './LayerControlList'
 
 export default {
@@ -34,13 +38,25 @@ export default {
     collapsed: false
   }),
   methods: {
+    setLayers (evt) {
+      // bubble the layers so the parent can use layers.sync
+      // see https://vuejs.org/v2/guide/components-custom-events.html#sync-Modifier
+      this.$emit('update:layers', evt.target)
+    },
     activateFirstLayer () {
+      // deactivate all layers
+      let layers = _.clone(this.layers)
+      _.each(layers, (layer) => { layer.properties.active = false })
+      _.first(layers).properties.active = true
+      // bubble up
+      this.$emit('update:layers', layers)
+      // TODO: remove
+      // set first layer to active
       this.$store.commit('setSelectedLayerId', this.layers[0].id)
     },
     toggleCollapse () {
       this.collapsed = !this.collapsed
-
-      if (this.collapsed && this.title) {
+      if (this.collapsed) {
         this.activateFirstLayer()
       }
     }
