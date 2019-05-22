@@ -11,15 +11,18 @@
     <notification-bar :notifications="currentNotifications"/>
     <layer-panel>
       <template v-slot:default>
+        <!-- These layers are set through the store, TODO: make consistent -->
         <layer-panel-item
           v-if="layerSet"
           :layers="layerSet.layers"
           :key="layerSet.id"
           />
 
+        <!-- these layers bubble up -->
         <layer-panel-item
-          v-for="layerSet_ in extraLayerSets"
+          v-for="(layerSet_, index) in extraLayerSets"
           :layers="layerSet_.layers"
+          :update:layers="updateLayersInExtraLayerSets(index, $event)"
           :title="layerSet_.title"
           :key="layerSet_.id"
           />
@@ -235,7 +238,12 @@ export default {
       if (!this.layerSet) {
         return []
       }
-      let extraLayers = _.flatten(this.extraLayerSets.map(flattenLayerSet))
+      let extraLayers = _.flatten(
+        this.extraLayerSets.map(
+          // flatten all layers
+          flattenLayerSet
+        )
+      )
       let layers = this.activeLayerSet
       return [...extraLayers, ...layers]
     },
@@ -360,6 +368,11 @@ export default {
         this.selectedMarkersById[feature.id] = marker
         marker.setIcon(redIcon)
       }
+    },
+    updateLayersInExtraLayerSets (index, layers) {
+      // this method updates the layers in the ExtraLayerSet at index
+      // taking into account https://vuejs.org/v2/guide/list.html#Caveats
+      this.$set(this.extraLayerSets, index, layers)
     },
     loadFeature (feature) {
       // Load the layerSet for the breach and add it to the extra list
