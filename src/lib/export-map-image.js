@@ -63,6 +63,7 @@ function formatLegend ({ layers }) {
 function legendItem ({ layer, style, layerTitle }) {
   return {
     name: layerTitle || 'Onbekende legenda',
+    // TODO: why does this work (localhost??)
     icons: [
       `http://localhost:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=${layer.id}&STYLE=${style}`
     ]
@@ -95,6 +96,7 @@ function formatMapLayers ({ layers, background }) {
 
 function mapLayerItem ({ layer, style, type, namespace }) {
   return {
+    // TODO: why does this work (localhost??)
     baseURL: `http://localhost:8080/geoserver/wms`,
     imageFormat: 'image/png',
     layers: [ `${namespace}:${layer.id}` ],
