@@ -22,7 +22,7 @@
         <layer-panel-item
           v-for="(layerSet_, index) in extraLayerSets"
           :layers="layerSet_.layers"
-          :update:layers="updateLayersInExtraLayerSets(index, $event)"
+          @update:layers="updateLayersInExtraLayerSets(index, $event)"
           :title="layerSet_.title"
           :key="layerSet_.id"
           />
@@ -372,7 +372,9 @@ export default {
     updateLayersInExtraLayerSets (index, layers) {
       // this method updates the layers in the ExtraLayerSet at index
       // taking into account https://vuejs.org/v2/guide/list.html#Caveats
-      this.$set(this.extraLayerSets, index, layers)
+      let layerSet = _.clone(this.extraLayerSets[index])
+      layerSet.layers = layers
+      this.$set(this.extraLayerSets, index, layerSet)
     },
     loadFeature (feature) {
       // Load the layerSet for the breach and add it to the extra list
