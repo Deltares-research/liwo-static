@@ -76,6 +76,7 @@ export default {
   props: {
     id: [String, Number],
     title: String,
+    layer: Object,
     metadata: Object,
     active: Boolean,
     variants: Array,
@@ -127,6 +128,9 @@ export default {
   },
   methods: {
     setOpacity ({ target }) {
+      let layer = {...this.layer}
+      layer.properties.opacity = target.value
+      this.$emit('update:layer')
       this.$emit('changeOpacity', {
         layerId: this.id,
         opacity: target.value
