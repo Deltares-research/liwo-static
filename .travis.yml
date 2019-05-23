@@ -29,16 +29,16 @@ jobs:
       script: BASE_URL=/ npm run e2e
       script: npm run build
     - stage: release
-      script: npm run build
+      script: BASE_URL=/ npm run build
       script: BASE_URL=/ npm run release
     - stage: liwo-subfolder-release
-      script: npm run build
+      script: BASE_URL=/liwo npm run build
       script: BASE_URL=/liwo npm run release
 deploy:
-  provider: pages
-  skip-cleanup: true
-  github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
-  keep-history: true
-  local-dir: dist
-  on:
-    branch: master
+  - provider: pages
+    skip-cleanup: true
+    github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+    keep-history: true
+    local-dir: dist
+    on:
+      branch: master
