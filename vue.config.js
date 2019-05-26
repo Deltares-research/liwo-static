@@ -23,7 +23,9 @@ module.exports = {
       ]
     },
     plugins: [
+      // enable _.get(obj, 'a.b.c') and _.map([], 'a')
       new LodashModuleReplacementPlugin({
+        shorthands: true,
         paths: true
       }),
       new webpack.ProvidePlugin({
