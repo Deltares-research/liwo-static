@@ -1,5 +1,6 @@
 const webpack = require('webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
 
 module.exports = {
   // transpileDependencies: [ 'delay' ],
@@ -13,12 +14,18 @@ module.exports = {
         {
           test: /\.m?js$/,
           use: {
-            loader: 'babel-loader'
+            loader: 'babel-loader',
+            options: {
+              plugins: ['lodash']
+            }
           }
         }
       ]
     },
     plugins: [
+      new LodashModuleReplacementPlugin({
+        paths: true
+      }),
       new webpack.ProvidePlugin({
         L: 'leaflet'
       }),
@@ -35,6 +42,11 @@ module.exports = {
         'unfetch/polyfill',
         'url-search-params-polyfill'
       ]
+    }
+  },
+  pluginOptions: {
+    webpackBundleAnalyzer: {
+      openAnalyzer: false
     }
   }
 }
