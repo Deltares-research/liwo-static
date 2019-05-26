@@ -1,5 +1,5 @@
 <template>
-  <div class="layerpanel-item" :class="{'layerpanel-item--collapsed': collapsed}">
+  <div class="layerpanel-item" :class="{'layerpanel-item--collapsed': isCollapsed}">
     <h3
       class="layerpanel-item__title"
       @click="activateFirstLayer"
@@ -12,8 +12,7 @@
     <layer-control-list
       :layers="layers"
       @update:layers="setLayers"
-      v-show="!collapsed"
-
+      v-show="!isCollapsed"
     />
   </div>
 </template>
@@ -32,11 +31,30 @@ export default {
     title: {
       type: String,
       default: 'Algemeen'
+    },
+    collapsed: {
+      type: Boolean,
+      default: false
     }
   },
-  data: () => ({
-    collapsed: false
-  }),
+  data () {
+    return {
+      // shadow copy so collapsed can be changed in the component
+      // convert to boolean (twice ~= Boolean(x))
+      isCollapsed: !!this.collapsed
+    }
+  },
+  watch: {
+    collapsed (val) {
+      this.isCollapsed = !!this.collapsed
+    },
+    isCollapsed (val) {
+      // pass back changes up
+      if (!!val !== this.collapsed) {
+        this.$emit('update:collapsed', val)
+      }
+    }
+  },
   methods: {
     setLayers (layers) {
       // bubble the layers so the parent can use layers.sync
@@ -55,11 +73,8 @@ export default {
       this.$store.commit('setSelectedLayerId', this.layers[0].id)
     },
     toggleCollapse () {
-      this.collapsed = !this.collapsed
-      if (this.collapsed) {
-        // TODO: why, remove this?
-        this.activateFirstLayer()
-      }
+      // toggle
+      this.isCollapsed = !this.isCollapsed
     }
   },
   components: {

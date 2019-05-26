@@ -15,6 +15,7 @@
         <layer-panel-item
           v-if="layerSet"
           :layers="layerSet.layers"
+          :collapsed="layerSetCollapsed"
           :key="layerSet.id"
           />
 
@@ -80,7 +81,6 @@
 <script>
 import { mapGetters, mapState } from 'vuex'
 import _ from 'lodash'
-import isNumber from 'lodash/fp/isNumber'
 
 import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
@@ -146,6 +146,7 @@ export default {
       selectedFeatures: [],
       selectedMarkersById: {},
       extraLayerSets: [],
+      layerSetCollapsed: false,
       isMounted: false,
       parsedLayers: [],
       id: 0,
@@ -250,7 +251,7 @@ export default {
     },
     validLayerIds () {
       return notEmpty(this.layerIds) && this.layerIds
-        .map(id => isNumber(id) && notNaN(id))
+        .map(id => _.isNumber(id) && notNaN(id))
         .every(isTruthy)
     },
     validBand () {
@@ -341,6 +342,9 @@ export default {
       let marker = evt.target
       this.setMarkers(feature, marker)
       this.loadFeature(feature)
+
+      // collapse first layer
+      this.layerSetCollapsed = true
     },
     setMarkers (feature, marker) {
       // set the appropriate markers
