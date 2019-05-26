@@ -1,5 +1,4 @@
-import toNumber from 'lodash/fp/toNumber'
-import includes from 'lodash/fp/includes'
+import _ from 'lodash'
 import Vue from 'vue'
 import Router from 'vue-router'
 import About from './views/About'
@@ -42,13 +41,14 @@ const router = new Router({
       },
       // pass id to component
       props: (route) => {
+        let id = _.toNumber(route.params.id)
         return {
-          id: toNumber(route.params.id)
+          id
         }
       },
       beforeEnter: (to, from, next) => {
         // don't show non-public maps, not secret, just not that relevant for the public
-        if (includes(toNumber(to.params.id), nonPublicViews)) {
+        if (_.includes(_.toNumber(to.params.id), nonPublicViews)) {
           next('/')
         } else {
           next()
