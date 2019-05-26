@@ -18,7 +18,8 @@
           :key="layerSet.id"
           />
 
-        <!-- these layers bubble up -->
+        <!-- this view keeps track of it's own extra layerSets -->
+        <!-- these correspond to the loaded scenario's based on the selected features -->
         <layer-panel-item
           v-for="(layerSet_, index) in extraLayerSets"
           :layers="layerSet_.layers"
@@ -39,7 +40,7 @@
           Selectie combineren
         </button>
         <button
-          v-if="selectedBreaches.length"
+          v-if="selectedFeatures.length"
           class="layer-panel__action"
           @click="showExportCombine = true"
           >
