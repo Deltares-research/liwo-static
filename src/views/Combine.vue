@@ -10,6 +10,12 @@
       />
     <notification-bar :notifications="currentNotifications"/>
     <layer-panel>
+      <template v-slot:title>
+        <button @click="showFilter = true" class="layer-control__button">
+          <!-- icons are 32x32 but other icons don't fill up the space... -->
+          <svg class="icon" width="27" height="27" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="black" d="M487.976 0H24.028C2.71 0-8.047 25.866 7.058 40.971L192 225.941V432c0 7.831 3.821 15.17 10.237 19.662l80 55.98C298.02 518.69 320 507.493 320 487.98V225.941l184.947-184.97C520.021 25.896 509.338 0 487.976 0z"></path></svg>
+        </button>
+      </template>
       <template v-slot:default>
         <!-- These layers are set through the store, TODO: make consistent -->
         <!-- layers can be updated in the panel item -->
@@ -32,16 +38,13 @@
           :key="layerSet_.id"
           >
           <!-- add extra layer control options -->
-          <template v-slot:layer-control-options>
-          </template>
         </layer-panel-item>
-
       </template>
       <template v-slot:actions>
         <!-- add these buttons to the button section of the layer panel -->
         <!-- use named slots after upgrading to Vue 2.6 -->
         <button
-          v-if="selectedFeatures.length"
+          v-if="selectFeatureMode === 'multiple' && selectedFeatures.length"
           class="layer-panel__action"
           @click="showCombine = true"
           >
@@ -55,6 +58,7 @@
           Selectie exporteren
         </button>
         <button
+          v-if="selectFeatureMode === 'multiple'"
           class="layer-panel__action"
           @click="showImportCombine = true"
           >
@@ -81,6 +85,11 @@
       v-if="showImportCombine"
       @close="showImportCombine = false"
       />
+    <filter-popup
+      v-if="showFilter"
+      @close="showFilter = false"
+      :probability.sync="selectedProbability">
+    </filter-popup>
   </div>
 </div>
 </template>
@@ -98,6 +107,7 @@ import CombinePopup from '@/components/CombinePopup'
 import ExportPopup from '@/components/ExportPopup'
 import ExportCombinePopup from '@/components/ExportCombinePopUp'
 import ImportCombinePopup from '@/components/ImportCombinePopUp'
+import FilterPopup from '@/components/FilterPopup'
 
 import { flattenLayerSet, normalizeLayerSet, cleanLayerSet } from '@/lib/layer-parser'
 import loadBreach from '@/lib/load-breach'
@@ -121,6 +131,7 @@ export default {
     ExportCombinePopup,
     ImportCombinePopup,
     ExportPopup,
+    FilterPopup,
     LayerPanel,
     LayerPanelItem,
     LegendPanel,
@@ -160,11 +171,18 @@ export default {
       // the main layerSet collapse
       layerSetCollapsed: false,
 
+      selectedProbability: 'no_filter',
+
+      // allows to select a layer (for the unit panel)
+      selectedLayerId: null,
+      selectedVariantIndexByLayerId: {},
+
       // menus
       showExport: false,
       showCombine: false,
       showExportCombine: false,
       showImportCombine: false,
+      showFilter: false,
 
       // map projection
       projection: EPSG_3857
@@ -192,13 +210,6 @@ export default {
       'layers',
       'currentNotifications'
     ]),
-    interactiveLayers () {
-      if (!this.layerSet) {
-        return []
-      }
-      let layers = this.layerSet.layers
-      return layers.filter((layer, index) => layer.iscontrollayer || index === 0)
-    },
     layerIds () {
       // unpack the layer id string
       if (!this.ids) {
@@ -229,8 +240,31 @@ export default {
         )
       )
 
-      return [...extraLayers, ...layers]
+      // Now  that we have all layers apply the filters  on the features
+      let selectedLayers = [...extraLayers, ...layers]
+
+      selectedLayers = _.map(selectedLayers, (layer) =>  {
+        // TODO: filter geojson by probability index
+        if (_.has(layer, 'geojson')) {
+          // shallow clone is enough
+          layer = _.clone(layer)
+          let geojson = _.clone(layer.geojson)
+          geojson.features = _.filter(geojson.features, (feature) => {
+            if (this.selectedProbability === 'no_filter') {
+              return true
+            }
+            let result = feature.properties[this.selectedProbability] > 0
+            return result
+
+          })
+          layer.geojson = geojson
+        }
+        return layer
+      })
+
+      return selectedLayers
     },
+
     validLayerIds () {
       return notEmpty(this.layerIds) && this.layerIds
         .map(id => _.isNumber(id) && notNaN(id))
@@ -241,21 +275,6 @@ export default {
     },
     combinedSenarioCanBeLoaded () {
       return this.validLayerIds && this.validBand
-    },
-    selectedLayer () {
-      if (!this.panelLayerSets) {
-        return
-      }
-
-      const selectedLayers = this.panelLayerSets
-        .map((layerset) => layerset.layers)
-        .reduce((allLayers, layers) => [ ...allLayers, ...layers ], [])
-        .filter(({ id }) => this.selectedLayerId === id)
-
-      if (selectedLayers && selectedLayers[0]) {
-        // should only be one
-        return selectedLayers[0]
-      }
     },
     visibleLayerLegend () {
       if (!this.selectedLayer) {
@@ -282,6 +301,15 @@ export default {
     loadCombinedScenarios () {
       this.$store.dispatch('loadCombinedScenario', { band: this.band, layerIds: this.layerIds })
     },
+    selectLayer (layer) {
+      this.selectedLayerId = layer.id
+      // if no variant has been selected yet
+      if (!_.has(this.selectedVariantIndexByLayerId, layer.id)) {
+        // select first variant
+        this.$set(this.selectedVariantIndexByLayerId, layer.id, 0)
+      }
+    },
+
     selectFeature (evt) {
       if (this.selectFeatureMode === 'disabled') {
         return
@@ -377,4 +405,5 @@ export default {
 <style>
 @import '../components/variables.css';
 @import './viewer.css';
+
 </style>
