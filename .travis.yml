@@ -25,9 +25,7 @@ jobs:
     - stage: test
       # run the following with basurl root
       script: BASE_URL=/ npm run lint
-      script: BASE_URL=/ npm run test
-      script: BASE_URL=/ npm run e2e
-      script: npm run build
+      script: BASE_URL=/ npm run test:e2e
     - stage: release
       script: BASE_URL=/ npm run build
       script: BASE_URL=/ npm run release
