@@ -4,25 +4,34 @@ import {
   BREACHES_IDS
 } from '@/lib/liwo-identifiers'
 
-export function flattenLayerSet (layerSet) {
-  // get all the layerSet propreties
+export function flattenLayerSet (layerSet, selectedVariantIndexByLayerId = null) {
+  // this method flattens a layerSet from
+  // layerSet.layers[].variants[] to
+  // [layers] with a layer for each variant or selected variant
+  // the layer object is available as in variant.layerObj, the layerSet object in variant.layerSet
+  // You can pass this to leaflet.
+
+  // get all the layerSet properties
   let layerSetProperties = _.omit(layerSet, ['layers'])
   // loop over all layers
   let layers = _.map(layerSet.layers, layer => {
     // get all layer properties
     let layerProperties = _.omit(layer, ['variants'])
     // get all variants
-    let variants = _.map(layer.variants, variant => {
-      let variantProperties = _.clone(variant)
-      // copy layer properties in variant
-      variantProperties.layer = layerProperties
-      variantProperties.layerSet = layerSetProperties
-      return variantProperties
-    })
-    return variants
+    let variantIndex = _.get(selectedVariantIndexByLayerId, layer.id, 0)
+    // select the variant
+    let variant = layer.variants[variantIndex]
+    // make a copy of the variant as a basis for the flattened layer
+    let newLayer = _.clone(variant)
+    // copy layer properties in variant
+    newLayer.layerObj = layerProperties
+    newLayer.layerSet = layerSetProperties
+    // return the newLayer as a flat layer
+    return newLayer
   })
   // now we have layers[variants[]]
   // so we just need to flatten
+
   return _.flatten(layers)
 }
 
