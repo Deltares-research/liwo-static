@@ -4,7 +4,7 @@
     <liwo-map
       :projection="projection"
       :clusterMarkers="true"
-      :layers="layers"
+      :layers="selectedLayers"
       @click="selectFeature"
       @initMap="setMapObject"
       />
@@ -17,7 +17,7 @@
         <layer-panel-item
           v-if="layerSet"
           :layers="layerSet.layers"
-          @update:layers="updateLayersInLayerSet"
+          @update:layers="updateLayersInLayerSet(layerSet, $event)"
           :collapsed.sync="layerSetCollapsed"
           :key="layerSet.id"
           >
@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 import _ from 'lodash'
 
 import LiwoMap from '@/components/LiwoMap'
@@ -101,6 +101,7 @@ import ImportCombinePopup from '@/components/ImportCombinePopUp'
 
 import { flattenLayerSet, normalizeLayerSet, cleanLayerSet } from '@/lib/layer-parser'
 import loadBreach from '@/lib/load-breach'
+
 import { getLayerType } from '@/lib/liwo-identifiers'
 import { iconsByLayerType, redIcon, defaultIcon } from '@/lib/leaflet-utils/markers'
 import { EPSG_3857 } from '@/lib/leaflet-utils/projections'
@@ -110,7 +111,6 @@ import { EPSG_3857 } from '@/lib/leaflet-utils/projections'
 import { isTruthy, includedIn, notEmpty, notNaN, getId } from '../lib/utils'
 import availableBands from '../lib/available-bands'
 
-const PAGE_TITLE = 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
 const bands = availableBands.map(getId)
 
 const includedInBands = includedIn(bands)
@@ -150,17 +150,23 @@ export default {
   },
   data () {
     return {
+      // selected features
       selectedFeatures: [],
+      // store markers so we can adminster them
       selectedMarkersById: {},
+
+      // the extra layerSets
       extraLayerSets: [],
+      // the main layerSet collapse
       layerSetCollapsed: false,
-      isMounted: false,
-      parsedLayers: [],
-      id: 0,
+
+      // menus
       showExport: false,
       showCombine: false,
       showExportCombine: false,
       showImportCombine: false,
+
+      // map projection
       projection: EPSG_3857
     }
   },
@@ -168,11 +174,8 @@ export default {
     // TODO: where  is the list of  layers for this view?
     const layerSetId = this.layerSetId
 
-    this.$store.commit('setPageTitle', PAGE_TITLE)
-    // TODO: this is not used in store
-    this.$store.commit('setCurrentBand', this.band)
-
     this.$store.commit('setLayerSetId', layerSetId)
+
     let options = {
       id: layerSetId,
       initializeMap: true,
@@ -184,18 +187,9 @@ export default {
     console.log('done mounting')
   },
   computed: {
-    ...mapState({
-      variantIndexForSelectedLayer: (state) => state.visibleVariantIndexByLayerId[this.selectedLayerId]
-    }),
-    ...mapState([
-      'selectedLayerId',
-      'visibleLayerIds',
-      'selectedBreaches'
-    ]),
     ...mapGetters([
-      'activeLayerSet',
       'layerSet',
-      'panelLayerSets',
+      'layers',
       'currentNotifications'
     ]),
     interactiveLayers () {
@@ -214,18 +208,27 @@ export default {
       layerIds = layerIds.map(id => _.toNumber(id))
       return layerIds
     },
-    layers () {
+    selectedLayers () {
       // a list of the layers to ber shown in the map
       if (!this.layerSet) {
         return []
       }
+
+      // the main layers
+      let layers = flattenLayerSet(this.layerSet, this.selectedVariantIndexByLayerId)
+
+      layers = layers.filter(layer => {
+        let result = _.get(layer.layerObj.properties, 'visible', true)
+        return result
+      })
+
       let extraLayers = _.flatten(
         this.extraLayerSets.map(
           // flatten all layers
           flattenLayerSet
         )
       )
-      let layers = this.activeLayerSet
+
       return [...extraLayers, ...layers]
     },
     validLayerIds () {
@@ -266,6 +269,10 @@ export default {
     }
   },
   methods: {
+    updateLayersInLayerSet (layerSet, layers) {
+      // send new layers to the store
+      this.$store.commit('setLayersByLayerSetId', {id: this.layerSet.id, layers})
+    },
     setVisibleVariantIdForSelectedlayer (index) {
       this.$store.commit('setVisibleVariantIndexForLayerId', { index, layerId: this.selectedLayerId })
     },
@@ -347,11 +354,6 @@ export default {
       let layerSet = _.clone(this.extraLayerSets[index])
       layerSet.layers = layers
       this.$set(this.extraLayerSets, index, layerSet)
-    },
-    updateLayersInLayerSet (layers) {
-      console.log('update layers in layerSet')
-      // send new layers to the store
-      this.$store.commit('setLayersByLayerSetId', {id: this.layerSet.id, layers})
     },
     loadFeature (feature) {
       // Load the layerSet for the breach and add it to the extra list
