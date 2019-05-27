@@ -41,9 +41,7 @@ export default new Vuex.Store({
     },
     setLayersByLayerSetId (state, {id, layers}) {
       // update the layers in layerSet id
-      let layerSet = this.getters.layerSet
-      Vue.set(layerSet, 'layers', layers)
-      Vue.set(state.layerSetsById, id, layerSet)
+      Vue.set(state.layerSetsById[id], 'layers', layers)
     },
     setNotificationsById (state, {id, notifications}) {
       // set the notifications
