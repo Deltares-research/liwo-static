@@ -1,7 +1,7 @@
 <template>
   <div class="site-outer-wrapper">
     <div class="site-container" id="app">
-      <app-header :pageTitle="pageTitle || 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'" />
+      <app-header :page-title="layerSet && layerSet.title" />
       <div id="content" role="main">
         <!-- main content goes here, based on router view -->
         <router-view />
@@ -25,7 +25,7 @@ import AppHeader from '../src/components/AppHeader.vue'
 export default {
   computed: {
     ...mapState([
-      'pageTitle'
+      'layerSet'
     ])
   },
   components: {
