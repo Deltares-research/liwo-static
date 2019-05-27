@@ -65,7 +65,8 @@ export async function loadLayerSetById (id, options) {
   // in view group layer on variants using L.layergroups
   // TODO: we could consider returning data without the promise.all
   // that would respond a bit faster but now we show all data at once.
-  layerSet.layers = await Promise.all(
+
+  let layers = await Promise.all(
     layerSet.layers.map(async (layer) => {
       let variants = await Promise.all(
         layer.variants.map(async (variant) => {
@@ -80,6 +81,7 @@ export async function loadLayerSetById (id, options) {
       return layer
     })
   )
+  layerSet.layers = layers
 
   return layerSet
 }
