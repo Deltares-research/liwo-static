@@ -87,17 +87,24 @@ export function createClusterGeoJson (layer, onClick) {
   if (_.has(layer, 'filter')) {
     options.filter = layer.filter
   }
+  let opacity = _.get(layer.layerObj, 'properties.opacity', 1)
+  options.opacity = opacity
   return L.geoJson(layer.geojson, options)
 }
 
-export function createTile ({ url, opacity }) {
-  return L.tileLayer(url, { opacity })
+export function createTile (layer) {
+  let opacity = _.get(layer.layerObj, 'properties.opacity', 1)
+  return L.tileLayer(layer.url, { opacity })
 }
 
-export function createWms ({ namespace, layer, attribution, style, opacity }) {
+export function createWms (layer) {
+  // these options come frome the vaiant properties of the layer
+  let { namespace, attribution, style } = layer
+  // fully visible by default
+  let opacity = _.get(layer.layerObj, 'properties.opacity', 1)
   return L.tileLayer.wms(geoServerURL(namespace), {
     // TODO: layer is now sometimes a string, sometimes an object. Clean this up
-    layers: _.get(layer, 'id', layer),
+    layers: layer.layer,
     format: 'image/png',
     transparent: true,
     attribution,
