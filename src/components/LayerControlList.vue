@@ -1,23 +1,26 @@
 <template>
-  <ul :class="classData">
-    <li
-      class="layer-control-list__item"
-      v-for="(layer, index) in layers"
-      :key="layer.id"
-      @click="setActive(layer)"
+<ul :class="classData">
+  <li
+    class="layer-control-list__item"
+    v-for="(layer, index) in layers"
+    :key="layer.id"
+    @click="setActive(layer)"
     >
-      <layer-control
-        v-if="layer"
-        :id="layer.id"
-        :active="activeLayerId === layer.id"
-        :layer.sync="layer"
-        @update:layer="updateLayer(layer, index)"
-        @select:layer="selectLayer"
-        @select:variant="selectVariant"
-        >
-      </layer-control>
-    </li>
-  </ul>
+    <layer-control
+      v-if="layer"
+      :id="layer.id"
+      :active="activeLayerId === layer.id"
+      :layer.sync="layer"
+      @update:layer="updateLayer(layer, index)"
+      @select:layer="selectLayer"
+      @select:variant="selectVariant"
+      >
+    </layer-control>
+  </li>
+  <li v-if="$slots.default">
+    <slot></slot>
+  </li>
+</ul>
 </template>
 
 <script>
