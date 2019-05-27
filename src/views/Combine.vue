@@ -240,10 +240,15 @@ export default {
         )
       )
 
+      extraLayers = extraLayers.filter(layer => {
+        let result = _.get(layer.layerObj.properties, 'visible', true)
+        return result
+      })
+
       // Now  that we have all layers apply the filters  on the features
       let selectedLayers = [...extraLayers, ...layers]
 
-      selectedLayers = _.map(selectedLayers, (layer) =>  {
+      selectedLayers = _.map(selectedLayers, (layer) => {
         // TODO: filter geojson by probability index
         if (_.has(layer, 'geojson')) {
           // shallow clone is enough
@@ -255,7 +260,6 @@ export default {
             }
             let result = feature.properties[this.selectedProbability] > 0
             return result
-
           })
           layer.geojson = geojson
         }
@@ -378,10 +382,9 @@ export default {
     updateLayersInExtraLayerSets (index, layers) {
       // this method updates the layers in the ExtraLayerSet at index
       // taking into account https://vuejs.org/v2/guide/list.html#Caveats
-      console.log('setting layerSet.layers', index, layers)
-      let layerSet = _.clone(this.extraLayerSets[index])
-      layerSet.layers = layers
-      this.$set(this.extraLayerSets, index, layerSet)
+      console.log('setting layerSet[i].layers', index, layers)
+      // update layers
+      this.$set(this.extraLayerSets[index], 'layers', layers)
     },
     loadFeature (feature) {
       // Load the layerSet for the breach and add it to the extra list
@@ -391,6 +394,12 @@ export default {
           layerSet = normalizeLayerSet(layerSet)
           // and clean
           layerSet = cleanLayerSet(layerSet)
+          // Set the first layer as visible
+          _.each(layerSet.layers, layer => {
+            layer.properties.visible = false
+          })
+          _.first(layerSet.layers).properties.visible = true
+          // store the extra layerset
           if (this.selectFeatureMode === 'single') {
             this.extraLayerSets = [layerSet]
           } else {
