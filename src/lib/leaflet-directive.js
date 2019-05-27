@@ -28,7 +28,10 @@ export default {
 
     let leafletLayers = layers
       .filter(layer => !layer.hide)
-      .map(layer => layerFactory(layer, callbacks, cluster))
+      .map(layer => {
+        let leafletLayer = layerFactory(layer, callbacks, cluster)
+        return leafletLayer
+      })
 
     // add leafletLayers to the L.layerGroup
     leafletLayers
