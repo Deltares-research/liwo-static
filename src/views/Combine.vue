@@ -12,13 +12,16 @@
     <layer-panel>
       <template v-slot:default>
         <!-- These layers are set through the store, TODO: make consistent -->
+        <!-- layers can be updated in the panel item -->
+        <!-- possible updates: opacity, visiblity -->
         <layer-panel-item
           v-if="layerSet"
           :layers="layerSet.layers"
-          :collapsed="layerSetCollapsed"
+          @update:layers="updateLayersInLayerSet"
+          :collapsed.sync="layerSetCollapsed"
           :key="layerSet.id"
-          />
-
+          >
+        </layer-panel-item>
         <!-- this view keeps track of it's own extra layerSets -->
         <!-- these correspond to the loaded scenario's based on the selected features -->
         <layer-panel-item
@@ -27,7 +30,11 @@
           @update:layers="updateLayersInExtraLayerSets(index, $event)"
           :title="layerSet_.title"
           :key="layerSet_.id"
-          />
+          >
+          <!-- add extra layer control options -->
+          <template v-slot:layer-control-options>
+          </template>
+        </layer-panel-item>
 
       </template>
       <template v-slot:actions>
@@ -82,15 +89,15 @@
 import { mapGetters, mapState } from 'vuex'
 import _ from 'lodash'
 
-import ExportPopup from '@/components/ExportPopup'
+import LiwoMap from '@/components/LiwoMap'
+import NotificationBar from '@/components/NotificationBar.vue'
 import LayerPanel from '@/components/LayerPanel'
 import LayerPanelItem from '@/components/LayerPanelItem'
-import LiwoMap from '@/components/LiwoMap'
 import LegendPanel from '@/components/LegendPanel'
 import CombinePopup from '@/components/CombinePopup'
+import ExportPopup from '@/components/ExportPopup'
 import ExportCombinePopup from '@/components/ExportCombinePopUp'
 import ImportCombinePopup from '@/components/ImportCombinePopUp'
-import NotificationBar from '@/components/NotificationBar.vue'
 
 import { flattenLayerSet, normalizeLayerSet, cleanLayerSet } from '@/lib/layer-parser'
 import loadBreach from '@/lib/load-breach'
@@ -154,8 +161,7 @@ export default {
       showCombine: false,
       showExportCombine: false,
       showImportCombine: false,
-      projection: EPSG_3857,
-      storeWatcher: null
+      projection: EPSG_3857
     }
   },
   async mounted () {
@@ -173,36 +179,9 @@ export default {
       filterByIds: this.filterByIds,
       selectMultipleFeatures: this.selectMultipleFeatures
     }
-    await this.$store.dispatch('loadLayerSetById', options)
-
-    // is this the way to do this?
-    // What is the source for the selectedIds? the route or the store?
-    this.storeWatcher = this.$store.watch(
-      (state, getters) => getters.selectedVariantIds,
-      ids => {
-        if (ids.length) {
-          const { id, band } = this.$route.params
-
-          this.$router.replace({
-            name: 'combine',
-            params: {
-              id,
-              layerIds: ids.join(','),
-              band
-            }
-          })
-        }
-      }
-    )
+    this.$store.dispatch('loadLayerSetById', options)
     this.isMounted = true
-  },
-  beforeDestroy () {
-    this.$store.commit('resetSelectedBreaches')
-    this.$store.commit('resetBreachLayersById')
-    if (this.storeWatcher) {
-      // teardown watcher
-      this.storeWatcher()
-    }
+    console.log('done mounting')
   },
   computed: {
     ...mapState({
@@ -286,19 +265,6 @@ export default {
       }
     }
   },
-  watch: {
-    combinedSenarioCanBeLoaded (boolean) {
-      if (boolean) {
-        this.loadCombinedScenarios()
-      }
-    },
-    validLayerIds (isValid) {
-      if (isValid) {
-        // TOD: variants or layers?
-        this.$store.dispatch('setActiveLayersFromVariantIds', this.layerIds)
-      }
-    }
-  },
   methods: {
     setVisibleVariantIdForSelectedlayer (index) {
       this.$store.commit('setVisibleVariantIndexForLayerId', { index, layerId: this.selectedLayerId })
@@ -377,9 +343,15 @@ export default {
     updateLayersInExtraLayerSets (index, layers) {
       // this method updates the layers in the ExtraLayerSet at index
       // taking into account https://vuejs.org/v2/guide/list.html#Caveats
+      console.log('setting layerSet.layers', index, layers)
       let layerSet = _.clone(this.extraLayerSets[index])
       layerSet.layers = layers
       this.$set(this.extraLayerSets, index, layerSet)
+    },
+    updateLayersInLayerSet (layers) {
+      console.log('update layers in layerSet')
+      // send new layers to the store
+      this.$store.commit('setLayersByLayerSetId', {id: this.layerSet.id, layers})
     },
     loadFeature (feature) {
       // Load the layerSet for the breach and add it to the extra list
