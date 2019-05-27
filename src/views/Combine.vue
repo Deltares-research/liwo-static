@@ -4,21 +4,30 @@
     <liwo-map
       :projection="projection"
       :clusterMarkers="true"
-      :layers="layers"
+      :layers="selectedLayers"
       @click="selectFeature"
       @initMap="setMapObject"
       />
     <notification-bar :notifications="currentNotifications"/>
     <layer-panel>
+      <template v-slot:title>
+        <button @click="showFilter = true" class="layer-control__button">
+          <!-- icons are 32x32 but other icons don't fill up the space... -->
+          <svg class="icon" width="27" height="27" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="black" d="M487.976 0H24.028C2.71 0-8.047 25.866 7.058 40.971L192 225.941V432c0 7.831 3.821 15.17 10.237 19.662l80 55.98C298.02 518.69 320 507.493 320 487.98V225.941l184.947-184.97C520.021 25.896 509.338 0 487.976 0z"></path></svg>
+        </button>
+      </template>
       <template v-slot:default>
         <!-- These layers are set through the store, TODO: make consistent -->
+        <!-- layers can be updated in the panel item -->
+        <!-- possible updates: opacity, visiblity -->
         <layer-panel-item
           v-if="layerSet"
           :layers="layerSet.layers"
-          :collapsed="layerSetCollapsed"
+          @update:layers="updateLayersInLayerSet(layerSet, $event)"
+          :collapsed.sync="layerSetCollapsed"
           :key="layerSet.id"
-          />
-
+          >
+        </layer-panel-item>
         <!-- this view keeps track of it's own extra layerSets -->
         <!-- these correspond to the loaded scenario's based on the selected features -->
         <layer-panel-item
@@ -27,14 +36,15 @@
           @update:layers="updateLayersInExtraLayerSets(index, $event)"
           :title="layerSet_.title"
           :key="layerSet_.id"
-          />
-
+          >
+          <!-- add extra layer control options -->
+        </layer-panel-item>
       </template>
       <template v-slot:actions>
         <!-- add these buttons to the button section of the layer panel -->
         <!-- use named slots after upgrading to Vue 2.6 -->
         <button
-          v-if="selectedFeatures.length"
+          v-if="selectFeatureMode === 'multiple' && selectedFeatures.length"
           class="layer-panel__action"
           @click="showCombine = true"
           >
@@ -48,6 +58,7 @@
           Selectie exporteren
         </button>
         <button
+          v-if="selectFeatureMode === 'multiple'"
           class="layer-panel__action"
           @click="showImportCombine = true"
           >
@@ -74,26 +85,33 @@
       v-if="showImportCombine"
       @close="showImportCombine = false"
       />
+    <filter-popup
+      v-if="showFilter"
+      @close="showFilter = false"
+      :probability.sync="selectedProbability">
+    </filter-popup>
   </div>
 </div>
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 import _ from 'lodash'
 
-import ExportPopup from '@/components/ExportPopup'
+import LiwoMap from '@/components/LiwoMap'
+import NotificationBar from '@/components/NotificationBar.vue'
 import LayerPanel from '@/components/LayerPanel'
 import LayerPanelItem from '@/components/LayerPanelItem'
-import LiwoMap from '@/components/LiwoMap'
 import LegendPanel from '@/components/LegendPanel'
 import CombinePopup from '@/components/CombinePopup'
+import ExportPopup from '@/components/ExportPopup'
 import ExportCombinePopup from '@/components/ExportCombinePopUp'
 import ImportCombinePopup from '@/components/ImportCombinePopUp'
-import NotificationBar from '@/components/NotificationBar.vue'
+import FilterPopup from '@/components/FilterPopup'
 
 import { flattenLayerSet, normalizeLayerSet, cleanLayerSet } from '@/lib/layer-parser'
 import loadBreach from '@/lib/load-breach'
+
 import { getLayerType } from '@/lib/liwo-identifiers'
 import { iconsByLayerType, redIcon, defaultIcon } from '@/lib/leaflet-utils/markers'
 import { EPSG_3857 } from '@/lib/leaflet-utils/projections'
@@ -103,7 +121,6 @@ import { EPSG_3857 } from '@/lib/leaflet-utils/projections'
 import { isTruthy, includedIn, notEmpty, notNaN, getId } from '../lib/utils'
 import availableBands from '../lib/available-bands'
 
-const PAGE_TITLE = 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
 const bands = availableBands.map(getId)
 
 const includedInBands = includedIn(bands)
@@ -114,6 +131,7 @@ export default {
     ExportCombinePopup,
     ImportCombinePopup,
     ExportPopup,
+    FilterPopup,
     LayerPanel,
     LayerPanelItem,
     LegendPanel,
@@ -143,89 +161,55 @@ export default {
   },
   data () {
     return {
+      // selected features
       selectedFeatures: [],
+      // store markers so we can adminster them
       selectedMarkersById: {},
+
+      // the extra layerSets
       extraLayerSets: [],
+      // the main layerSet collapse
       layerSetCollapsed: false,
-      isMounted: false,
-      parsedLayers: [],
-      id: 0,
+
+      selectedProbability: 'no_filter',
+
+      // allows to select a layer (for the unit panel)
+      selectedLayerId: null,
+      selectedVariantIndexByLayerId: {},
+
+      // menus
       showExport: false,
       showCombine: false,
       showExportCombine: false,
       showImportCombine: false,
-      projection: EPSG_3857,
-      storeWatcher: null
+      showFilter: false,
+
+      // map projection
+      projection: EPSG_3857
     }
   },
   async mounted () {
     // TODO: where  is the list of  layers for this view?
     const layerSetId = this.layerSetId
 
-    this.$store.commit('setPageTitle', PAGE_TITLE)
-    // TODO: this is not used in store
-    this.$store.commit('setCurrentBand', this.band)
-
     this.$store.commit('setLayerSetId', layerSetId)
+
     let options = {
       id: layerSetId,
       initializeMap: true,
       filterByIds: this.filterByIds,
       selectMultipleFeatures: this.selectMultipleFeatures
     }
-    await this.$store.dispatch('loadLayerSetById', options)
-
-    // is this the way to do this?
-    // What is the source for the selectedIds? the route or the store?
-    this.storeWatcher = this.$store.watch(
-      (state, getters) => getters.selectedVariantIds,
-      ids => {
-        if (ids.length) {
-          const { id, band } = this.$route.params
-
-          this.$router.replace({
-            name: 'combine',
-            params: {
-              id,
-              layerIds: ids.join(','),
-              band
-            }
-          })
-        }
-      }
-    )
+    this.$store.dispatch('loadLayerSetById', options)
     this.isMounted = true
-  },
-  beforeDestroy () {
-    this.$store.commit('resetSelectedBreaches')
-    this.$store.commit('resetBreachLayersById')
-    if (this.storeWatcher) {
-      // teardown watcher
-      this.storeWatcher()
-    }
+    console.log('done mounting')
   },
   computed: {
-    ...mapState({
-      variantIndexForSelectedLayer: (state) => state.visibleVariantIndexByLayerId[this.selectedLayerId]
-    }),
-    ...mapState([
-      'selectedLayerId',
-      'visibleLayerIds',
-      'selectedBreaches'
-    ]),
     ...mapGetters([
-      'activeLayerSet',
       'layerSet',
-      'panelLayerSets',
+      'layers',
       'currentNotifications'
     ]),
-    interactiveLayers () {
-      if (!this.layerSet) {
-        return []
-      }
-      let layers = this.layerSet.layers
-      return layers.filter((layer, index) => layer.iscontrollayer || index === 0)
-    },
     layerIds () {
       // unpack the layer id string
       if (!this.ids) {
@@ -235,20 +219,52 @@ export default {
       layerIds = layerIds.map(id => _.toNumber(id))
       return layerIds
     },
-    layers () {
+    selectedLayers () {
       // a list of the layers to ber shown in the map
       if (!this.layerSet) {
         return []
       }
+
+      // the main layers
+      let layers = flattenLayerSet(this.layerSet, this.selectedVariantIndexByLayerId)
+
+      layers = layers.filter(layer => {
+        let result = _.get(layer.layerObj.properties, 'visible', true)
+        return result
+      })
+
       let extraLayers = _.flatten(
         this.extraLayerSets.map(
           // flatten all layers
           flattenLayerSet
         )
       )
-      let layers = this.activeLayerSet
-      return [...extraLayers, ...layers]
+
+      // Now  that we have all layers apply the filters  on the features
+      let selectedLayers = [...extraLayers, ...layers]
+
+      selectedLayers = _.map(selectedLayers, (layer) =>  {
+        // TODO: filter geojson by probability index
+        if (_.has(layer, 'geojson')) {
+          // shallow clone is enough
+          layer = _.clone(layer)
+          let geojson = _.clone(layer.geojson)
+          geojson.features = _.filter(geojson.features, (feature) => {
+            if (this.selectedProbability === 'no_filter') {
+              return true
+            }
+            let result = feature.properties[this.selectedProbability] > 0
+            return result
+
+          })
+          layer.geojson = geojson
+        }
+        return layer
+      })
+
+      return selectedLayers
     },
+
     validLayerIds () {
       return notEmpty(this.layerIds) && this.layerIds
         .map(id => _.isNumber(id) && notNaN(id))
@@ -259,21 +275,6 @@ export default {
     },
     combinedSenarioCanBeLoaded () {
       return this.validLayerIds && this.validBand
-    },
-    selectedLayer () {
-      if (!this.panelLayerSets) {
-        return
-      }
-
-      const selectedLayers = this.panelLayerSets
-        .map((layerset) => layerset.layers)
-        .reduce((allLayers, layers) => [ ...allLayers, ...layers ], [])
-        .filter(({ id }) => this.selectedLayerId === id)
-
-      if (selectedLayers && selectedLayers[0]) {
-        // should only be one
-        return selectedLayers[0]
-      }
     },
     visibleLayerLegend () {
       if (!this.selectedLayer) {
@@ -286,20 +287,11 @@ export default {
       }
     }
   },
-  watch: {
-    combinedSenarioCanBeLoaded (boolean) {
-      if (boolean) {
-        this.loadCombinedScenarios()
-      }
-    },
-    validLayerIds (isValid) {
-      if (isValid) {
-        // TOD: variants or layers?
-        this.$store.dispatch('setActiveLayersFromVariantIds', this.layerIds)
-      }
-    }
-  },
   methods: {
+    updateLayersInLayerSet (layerSet, layers) {
+      // send new layers to the store
+      this.$store.commit('setLayersByLayerSetId', {id: this.layerSet.id, layers})
+    },
     setVisibleVariantIdForSelectedlayer (index) {
       this.$store.commit('setVisibleVariantIndexForLayerId', { index, layerId: this.selectedLayerId })
     },
@@ -309,6 +301,15 @@ export default {
     loadCombinedScenarios () {
       this.$store.dispatch('loadCombinedScenario', { band: this.band, layerIds: this.layerIds })
     },
+    selectLayer (layer) {
+      this.selectedLayerId = layer.id
+      // if no variant has been selected yet
+      if (!_.has(this.selectedVariantIndexByLayerId, layer.id)) {
+        // select first variant
+        this.$set(this.selectedVariantIndexByLayerId, layer.id, 0)
+      }
+    },
+
     selectFeature (evt) {
       if (this.selectFeatureMode === 'disabled') {
         return
@@ -377,6 +378,7 @@ export default {
     updateLayersInExtraLayerSets (index, layers) {
       // this method updates the layers in the ExtraLayerSet at index
       // taking into account https://vuejs.org/v2/guide/list.html#Caveats
+      console.log('setting layerSet.layers', index, layers)
       let layerSet = _.clone(this.extraLayerSets[index])
       layerSet.layers = layers
       this.$set(this.extraLayerSets, index, layerSet)
@@ -403,4 +405,5 @@ export default {
 <style>
 @import '../components/variables.css';
 @import './viewer.css';
+
 </style>

@@ -35,8 +35,11 @@ export default async function (feature) {
   )
 
   // the layers are a bit out of order, so restructure them
-  // TODO: gonsider making this async, otherwise we lock the browser
+  // TODO: consider making this async, otherwise we lock the browser
   let bands = await Promise.all(promises)
+  // remove undefined bands
+  bands = _.filter(bands)
+
   // merge layers of all unorganized sets
   // and use the feature name
   let layers = _.flatten(_.map(bands, 'layers'))

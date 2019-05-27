@@ -1,20 +1,25 @@
 <template>
-  <div class="layerpanel-item" :class="{'layerpanel-item--collapsed': isCollapsed}">
-    <h3
-      class="layerpanel-item__title"
-      @click="activateFirstLayer"
+<div class="layerpanel-item" :class="{'layerpanel-item--collapsed': isCollapsed}">
+  <h3
+    class="layerpanel-item__title"
+    @click="selectFirstLayer"
     >
-      <span>{{ title }}</span>
-      <button class="layerpanel-item__collapse" @click.stop="toggleCollapse">
-        <img class="layerpanel-item__collapse-icon" :src="`/icons/baseline-keyboard_arrow_up-24px.svg`" />
-      </button>
-    </h3>
-    <layer-control-list
-      :layers="layers"
-      @update:layers="setLayers"
-      v-show="!isCollapsed"
-    />
-  </div>
+    <span>{{ title }}</span>
+    <button class="layerpanel-item__collapse" @click.stop="toggleCollapse">
+      <img class="layerpanel-item__collapse-icon" :src="`/icons/baseline-keyboard_arrow_up-24px.svg`" />
+    </button>
+  </h3>
+  <layer-control-list
+    :layers="layers"
+    @update:layers="updateLayers"
+    @select:layer="selectLayer"
+    @select:variant="selectVariant"
+    v-show="!isCollapsed"
+    >
+    <slot></slot>
+  </layer-control-list>
+
+</div>
 </template>
 
 <script>
@@ -56,21 +61,17 @@ export default {
     }
   },
   methods: {
-    setLayers (layers) {
-      // bubble the layers so the parent can use layers.sync
-      // see https://vuejs.org/v2/guide/components-custom-events.html#sync-Modifier
+    selectFirstLayer () {
+      this.selectLayer(_.first(this.layerSet.layers))
+    },
+    updateLayers (layers) {
       this.$emit('update:layers', layers)
     },
-    activateFirstLayer () {
-      // deactivate all layers
-      let layers = _.clone(this.layers)
-      _.each(layers, (layer) => { layer.properties.active = false })
-      _.first(layers).properties.active = true
-      // bubble up
-      this.$emit('update:layers', layers)
-      // TODO: remove
-      // set first layer to active
-      this.$store.commit('setSelectedLayerId', this.layers[0].id)
+    selectLayer (layer) {
+      this.$emit('select:layer', layer)
+    },
+    selectVariant (variant) {
+      this.$emit('select:variant', variant)
     },
     toggleCollapse () {
       // toggle

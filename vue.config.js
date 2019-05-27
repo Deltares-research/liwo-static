@@ -26,7 +26,10 @@ module.exports = {
       // enable _.get(obj, 'a.b.c') and _.map([], 'a')
       new LodashModuleReplacementPlugin({
         shorthands: true,
-        paths: true
+        paths: true,
+        flattening: true,
+        collections: true
+
       }),
       new webpack.ProvidePlugin({
         L: 'leaflet'

@@ -99,7 +99,7 @@ function mapLayerItem ({ layer, style, type, namespace }) {
     // TODO: why does this work (localhost??)
     baseURL: `http://localhost:8080/geoserver/wms`,
     imageFormat: 'image/png',
-    layers: [ `${namespace}:${layer.id}` ],
+    layers: [ `${namespace}:${layer}` ],
     opacity: 1,
     customParams: {
       transparent: true

@@ -29,11 +29,11 @@ export default function buildLayerSetNotifications (layers) {
     )
   let featureNotifications = _.flatten(featureNotificationsTree)
   let layerNotifications = layers
-    .filter(layer => layer.layer.properties.notify)
+    .filter(layer => layer.layerObj.properties.notify)
     .map(layer => {
       return {
-        id: layer.layer.id,
-        message: layer.layer.properties.notify,
+        id: layer.layerObj.id,
+        message: layer.layerObj.properties.notify,
         show: true
       }
     })
@@ -47,40 +47,6 @@ export default function buildLayerSetNotifications (layers) {
       }
     })
 
-  // TODO: get rid of the magic
-  // function mapVariants (variants) {
-  //   let result = variants
-  //       .map(
-  //         (variant) => {
-  //           return { id: variant.id, notification: notify }
-  //         })
-  //   return result
-  // }
-
-  // function mapLayers (layers, layerId) {
-  //   let result = layers
-  //       .map((layer) => {
-  //         let variants = mapVariants(layer.variants) || []
-  //         return { id: layer.id, notification: layer.notify, variants }
-  //       })
-  //   return result
-  // }
-  // let featureNotifications = featureNotificationsTree
-  //   .reduce((list, layerItems) => ([...list, ...layerItems]), [])
-  //   .reduce((collection, {id, notification, layerId}) => ({
-  //     ...collection,
-  //     [id]: { notification, layerId }
-  //   }), {})
-
-  // // TODO: check if this even works
-  // const layerSetById = {
-  //   [id]: {
-  //     notification: notify,
-  //     layers
-  //   },
-  //   ...featureNotifications
-  // }
-  // return layerSetById
   let result = [...featureNotifications, ...layerNotifications, ...layerSetNotifications]
   result = _.uniqWith(result, _.isEqual)
   return result

@@ -18,7 +18,7 @@
           <li><router-link :to="{name: 'about'}">Over LIWO</router-link></li>
         </ul>
       </nav>
-    <h1 class="app-header__page-title container">{{ this.pageTitle || this.$route.meta.title }}</h1>
+    <h1 class="app-header__page-title container">{{ this.pageTitle }}</h1>
   </div>
   </header>
 </template>
@@ -28,7 +28,7 @@ export default {
   props: {
     pageTitle: {
       type: String,
-      required: false
+      default: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
     }
   }
 }
