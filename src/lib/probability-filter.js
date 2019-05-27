@@ -1,3 +1,4 @@
+// These identifiers originate from the excel file in the ETL process.
 export const probabilityConfig = [
   { title: 'alles weergeven', identifier: 'no_filter' },
   { title: 'grote kans (groter dan 1:30)', identifier: 'lt30' },
