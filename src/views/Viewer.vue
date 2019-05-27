@@ -3,7 +3,7 @@
   <div class="viewer__map-wrapper">
     <liwo-map
       :projection="projection"
-      :layers="layers"
+      :layers="selectedLayers"
       :clusterMarkers="false"
       @initMap="setMapObject"
       />
@@ -12,6 +12,9 @@
       <template v-slot:default>
         <layer-panel-item
           :layers="layerSet.layers"
+          @update:layers="updateLayers(layerSet, $event)"
+          @select:layer="selectLayer"
+          @select:variant="selectVariant"
           />
 
       </template>
@@ -32,16 +35,13 @@
 
     </layer-panel>
     <legend-panel
-      v-if="visibleLayerLegend"
-      :caption="visibleLayerLegend.title"
-      :namespace="visibleLayerLegend.namespace"
-      :layer-name="visibleLayerLegend.layer"
-      :style-name="visibleLayerLegend.style"
+      layer="selectedLayer"
+      v-if="selectedLayer"
       />
     <export-popup
       v-if="showExport"
       :map-object="mapObject"
-      :map-layers="flatLayers"
+      :map-layers="selectedLayers"
       @close="showExport = false"
       />
   </div>
@@ -50,7 +50,8 @@
 
 <script>
 
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters } from 'vuex'
+import _ from 'lodash'
 
 import ExportPopup from '@/components/ExportPopup'
 import LayerPanel from '@/components/LayerPanel'
@@ -58,6 +59,7 @@ import LayerPanelItem from '@/components/LayerPanelItem'
 import LiwoMap from '@/components/LiwoMap'
 import LegendPanel from '@/components/LegendPanel'
 import NotificationBar from '@/components/NotificationBar.vue'
+import { flattenLayerSet } from '@/lib/layer-parser'
 
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
 
@@ -81,99 +83,69 @@ export default {
       isMounted: false,
       showExport: false,
       projection: EPSG_28992,
-      // TODO: is this used? Get rid of this.  It created a hanging page...
-      storeWatcher: null
+      // allows to select a layer (for the unit panel)
+      selectedLayerId: null,
+      selectedVariantIndexByLayerId: {}
+
     }
   },
   async mounted () {
-    this.$store.commit('setPageTitle', this.$route.params.title)
     this.$store.commit('setLayerSetId', this.id)
-    await this.$store.dispatch('loadLayerSetById', {
+    this.$store.dispatch('loadLayerSetById', {
       id: this.id,
       initializeMap: true
     })
-
-    // TODO: remove this...
-    this.isMounted = true
-  },
-  beforeDestroy () {
-    // TODO: we should not need this, if state  needs to be removed after view changes,
-    // state should be in this view, not in the store...
-    this.$store.commit('resetSelectedBreaches')
-    this.$store.commit('resetBreachLayersById')
-    // storewatcher??? get rid of this...
-    if (this.storeWatcher) {
-      // teardown watcher
-      this.storeWatcher()
-    }
   },
   computed: {
-    ...mapState({
-      variantIndexForSelectedLayer: (state) => state.visibleVariantIndexByLayerId[this.selectedLayerId]
-    }),
-    ...mapState([
-      'selectedLayerId',
-      'visibleLayerIds',
-      'viewerType'
-    ]),
     ...mapGetters([
-      'activeLayerSet',
       'layerSet',
-      'flatLayers',
-      'panelLayerSets',
       'currentNotifications'
     ]),
-    selectedLayer () {
-      if (!this.panelLayerSets) {
-        return
-      }
-
-      const selectedLayers = this.panelLayerSets
-        .map((layerSet) => layerSet.layers)
-        .reduce((allLayers, layers) => [ ...allLayers, ...layers ], [])
-        .filter(({ id }) => this.selectedLayerId === id)
-
-      if (selectedLayers && selectedLayers[0]) {
-        // should only be one
-        return selectedLayers[0]
-      }
-    },
-    layers () {
-      if (!this.activeLayerSet) {
+    selectedLayers () {
+      if (!this.layerSet) {
         return []
       }
-      // return a reversed version of the copied list
-      return this.activeLayerSet.slice().reverse()
+      let result = flattenLayerSet(this.layerSet, this.selectedVariantIndexByLayerId)
+      result = result.filter(layer => {
+        let result = _.get(layer.layerObj.properties, 'visible', true)
+        return result
+      })
+      return result
     },
-    visibleLayerLegend () {
-      if (!this.selectedLayer) {
-        return undefined
+    selectedLayer () {
+      // return the selected layer
+      // if we have no id, return null
+      if (_.isNil(this.selectedLayerId)) {
+        return null
       }
-
-      return {
-        ...this.selectedLayer.legend,
-        layerType: this.selectedLayer.variants[0].type
+      // also if we have no layerSet yet
+      if (_.isNil(this.layerSet)) {
+        return null
       }
-    }
-  },
-  watch: {
-    combinedSenarioCanBeLoaded (boolean) {
-      if (boolean) {
-        this.loadCombinedScenarios()
-      }
-    },
-    validLiwoIds (isValid) {
-      if (isValid) {
-        this.$store.dispatch('setActiveLayersFromVariantIds', this.liwoIds)
-      }
+      // if we have both, return the selected layer
+      let result = this.layerSet.layers[this.selectedLayerId]
+      return result
     }
   },
   methods: {
-    setVisibleVariantIdForSelectedlayer (index) {
-      this.$store.commit('setVisibleVariantIndexForLayerId', { index, layerId: this.selectedLayerId })
-    },
     setMapObject (mapObject) {
       this.mapObject = mapObject
+    },
+    updateLayers (layerSet, layers) {
+      // store the new layers
+      this.$store.commit('setLayersByLayerSetId', {id: layerSet.id, layers})
+    },
+    selectLayer (layer) {
+      this.selectedLayerId = layer.id
+      // if no variant has been selected yet
+      if (!_.has(this.selectedVariantIndexByLayerId, layer.id)) {
+        // select first variant
+        this.$set(this.selectedVariantIndexByLayerId, layer.id, 0)
+      }
+    },
+    selectVariant ({layer, index}) {
+      // store the index of the active variant
+      this.$set(this.selectedVariantIndexByLayerId, layer.id, index)
     }
   }
 }
