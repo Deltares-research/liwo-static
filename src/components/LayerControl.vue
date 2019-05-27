@@ -28,14 +28,6 @@
     </div>
   </form>
   <!-- TODO: this is not a layer setting. Move this to an application settings pane. -->
-  <div class="layer-control__options" v-if="hasProbabilities">
-    <layer-control-select
-      name="probability-filter"
-      :options="probabilityFilterOptions"
-      :selected="probabilityFilterIndex"
-      @change="setProbabilityFilter"
-      />
-  </div>
   <div v-if="variantsOptions.length" class="layer-control__options">
     <layer-control-select
       name="layer-variant"
@@ -73,10 +65,6 @@ import { mapState } from 'vuex'
 import LayerPopup from '@/components/LayerPopup'
 import LayerControlSelect from '@/components/LayerControlSelect'
 
-import { probabilityTitles, probabilityConfig } from '@/lib/probability-filter'
-
-import { hasProbabilities } from '@/lib/liwo-identifiers'
-
 export default {
   props: {
     layer: {
@@ -95,7 +83,6 @@ export default {
   },
   computed: {
     ...mapState([
-      'probabilityFilterIndex',
       'visibleVariantIndexByLayerId',
       'visibleLayerIds',
       'selectedLayerId',
@@ -114,15 +101,6 @@ export default {
       return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((index) => ({
         value: 1 - (0.1 * index),
         title: `${index * 10}% transparantie`
-      }))
-    },
-    hasProbabilities () {
-      return hasProbabilities(this.layer)
-    },
-    probabilityFilterOptions () {
-      return probabilityTitles.map((title, index) => ({
-        value: index,
-        title
       }))
     },
     variantsOptions () {
@@ -157,12 +135,6 @@ export default {
         layer: this.layer,
         index: Number(target.value)
       })
-    },
-    setProbabilityFilter ({ target }) {
-      // TODO: get rid of this here... it is not a setting of the layer
-      // Set the probability filter
-      let probabilityFilter = probabilityConfig[Number(target.value)]
-      this.$store.commit('setProbabilityFilter', probabilityFilter.identifier)
     },
     selectLayer () {
       this.$emit('select:layer', this.layer)
