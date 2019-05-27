@@ -12,8 +12,6 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
-
 import createMapConfig from '@/lib/leaflet-utils/mapconfig-factory'
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
 
@@ -38,20 +36,6 @@ export default {
     return {
     }
   },
-  computed: {
-    ...mapState([
-      'opacityByLayerId',
-      'selectedBreaches',
-      'layerUnits',
-      'selectedLayerId',
-      'visibleVariantIndexByLayerId',
-      'layerSetId'
-    ]),
-    ...mapGetters([
-      'panelLayerSets',
-      'selectedVariants'
-    ])
-  },
   created () {
     this.mapConfig = createMapConfig({
       projection: this.projection
@@ -61,10 +45,6 @@ export default {
     this.mapRef = this.$refs.liwoMap
   },
   methods: {
-    breachCallBack ({ target }) {
-      const { id, naam: breachName, layerType, isControllable } = target.feature.properties
-      this.$store.dispatch('addBreach', { id, breachName, layerType, isControllable })
-    },
     onClick (event) {
       // TODO: click on what
       this.$emit('click', event)
