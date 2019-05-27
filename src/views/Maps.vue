@@ -31,8 +31,6 @@
 import LayerSetList from '@/components/LayerSetList'
 import { loadLayerSets } from '@/lib/load-layersets'
 
-const PAGE_TITLE = 'Kaarten'
-
 export default {
   name: 'maps',
   data () {
@@ -48,9 +46,6 @@ export default {
     } catch (error) {
       this.error = error
     }
-  },
-  mounted () {
-    this.$store.commit('setPageTitle', PAGE_TITLE)
   },
   components: { LayerSetList }
 }
