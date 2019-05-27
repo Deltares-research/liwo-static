@@ -1,23 +1,25 @@
 <template>
-  <div class="layerpanel-item" :class="{'layerpanel-item--collapsed': isCollapsed}">
-    <h3
-      class="layerpanel-item__title"
-      @click="selectFirstLayer"
+<div class="layerpanel-item" :class="{'layerpanel-item--collapsed': isCollapsed}">
+  <h3
+    class="layerpanel-item__title"
+    @click="selectFirstLayer"
     >
-      <span>{{ title }}</span>
-      <button class="layerpanel-item__collapse" @click.stop="toggleCollapse">
-        <img class="layerpanel-item__collapse-icon" :src="`/icons/baseline-keyboard_arrow_up-24px.svg`" />
-      </button>
-    </h3>
-    <layer-control-list
-      :layers="layers"
-      @update:layers="updateLayers"
-      @select:layer="selectLayer"
-      @select:variant="selectVariant"
-      v-show="!isCollapsed"
-      >
-    </layer-control-list>
-  </div>
+    <span>{{ title }}</span>
+    <button class="layerpanel-item__collapse" @click.stop="toggleCollapse">
+      <img class="layerpanel-item__collapse-icon" :src="`/icons/baseline-keyboard_arrow_up-24px.svg`" />
+    </button>
+  </h3>
+  <layer-control-list
+    :layers="layers"
+    @update:layers="updateLayers"
+    @select:layer="selectLayer"
+    @select:variant="selectVariant"
+    v-show="!isCollapsed"
+    >
+    <slot></slot>
+  </layer-control-list>
+
+</div>
 </template>
 
 <script>
