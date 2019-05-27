@@ -10,6 +10,7 @@
 
 <script>
 import mapConfig from '../map.config'
+import { extractUnit } from '@/lib/load-layersets'
 
 export default {
   computed: {
@@ -21,10 +22,18 @@ export default {
     }
   },
   props: {
-    caption: String,
-    layerName: String,
-    namespace: String,
-    styleName: String
+    layer: {
+      type: Object,
+      required: true
+    }
+  },
+  data () {
+    return {
+      unit: ''
+    }
+  },
+  mounted () {
+    this.unit = extractUnit(this.layer)
   }
 }
 </script>

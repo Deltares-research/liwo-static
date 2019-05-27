@@ -1,0 +1,66 @@
+.layer-control {
+  background-color: var(--white);
+}
+
+.layer-control__identifiers {
+  display: block;
+}
+
+.layer-control__title {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.layer-control__main,
+.layer-control__options {
+  position: relative;
+  display: block;
+  padding: .5rem .5rem .5rem 2.5rem;
+}
+
+.layer-control__main {
+  margin-bottom: 0;
+}
+
+.layer-control__vis-label>.icon {
+  position: absolute;
+  left: .5rem;
+}
+
+.layer-control__range input {
+  margin: .4rem;
+
+}
+
+.layer-control__options {
+  display: none;
+  border-top: 1px solid var(--white);
+  padding-top: .25rem;
+  justify-content: space-between;
+}
+.layer-control__info {
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+}
+.layer-control__vis-checkbox + .layer-control__vis-label svg {
+  fill: var(--medium-gray);
+}
+.layer-control__vis-checkbox:checked + .layer-control__vis-label svg {
+  fill: var(--black);
+}
+
+.layer-control--active {
+  background-color: var(--light-yellow);
+}
+.layer-control--active .layer-control__options {
+  display: block;
+  display: flex;
+}
+
+.layer-control__marker-icon {
+  margin-left: auto;
+}
