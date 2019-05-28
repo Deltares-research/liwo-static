@@ -25,7 +25,6 @@ export default function createLayer (layer, { onClick }) {
     })
     // TODO, get this out of here....
     let geojsonLayer = createClusterGeoJson(layer, (evt) => {
-      console.log('click', evt)
       evt.geojsonLayer = geojsonLayer
       onClick(evt)
       clusterGroup.refreshClusters()
