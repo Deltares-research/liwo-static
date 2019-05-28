@@ -38,8 +38,8 @@
   </div>
   <div class="layer-control__options">
     <div class="layer-control__range">
-      <label for="`layer-${id}-trans`">Opaciteit: </label>
-      <input type="range" min="0" max="1" step="0.1" :name="`layer-${id}-trans`" value="1" @change.stop="setOpacity">
+      <label for="`layer-${id}-trans`">Transparantie: </label>
+      <input type="range" min="0" max="1" step="0.1" :name="`layer-${id}-trans`" value="0" @change.stop="setTransparancy">
     </div>
     <button v-if="metadata" class="layer-control__info" @click="popupIsOpen=true">
       <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 64 64">
@@ -128,6 +128,19 @@ export default {
       // Create a copy of the layer with the new opacity
       let layer = {...this.layer}
       this.$set(layer.properties, 'opacity', _.toNumber(target.value))
+      this.$emit('update:layer', layer)
+    },
+    setTransparancy ({ target }) {
+      // Create a copy of the layer with the new opacity
+      let layer = {...this.layer}
+      let opacity = 1 - _.toNumber(target.value)
+      if (opacity < 0) {
+        opacity = 0
+      }
+      if (opacity > 1) {
+        opacity = 1
+      }
+      this.$set(layer.properties, 'opacity', opacity)
       this.$emit('update:layer', layer)
     },
     setLayerVariant ({ target }) {
