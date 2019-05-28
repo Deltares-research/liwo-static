@@ -62,7 +62,7 @@ const router = new Router({
       // browse scenarios
       component: Combine,
       meta: {
-        title: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
+        title: 'Bekijken overstromingsscenario\'s'
       },
       props: {
         selectFeatureMode: 'single',
