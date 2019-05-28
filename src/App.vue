@@ -28,8 +28,10 @@ export default {
       'layerSet'
     ]),
     title () {
-      if (this.layerSet) {
-        return this.layerSet.title
+      if (this.$route.name === 'viewer') {
+        if (this.layerSet) {
+          return this.layerSet.title
+        }
       }
       return this.$route.meta.title
     }
