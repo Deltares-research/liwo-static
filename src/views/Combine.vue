@@ -130,20 +130,25 @@ export default {
     NotificationBar
   },
   props: {
+    layerSetId: {
+      type: Number
+    },
+    // Only show selected ids
     filterByIds: {
       type: Boolean,
       default: true
     },
+    // can we select features? multiple features?
     selectFeatureMode: {
       type: String,
+      // multiple/single/disabled
       default: 'disabled'
     },
+    // do we compute breaches or just look them up
     scenarioMode: {
       type: String,
+      // lookup/compute
       default: 'lookup'
-    },
-    layerSetId: {
-      type: Number
     }
   },
   data () {
@@ -184,13 +189,17 @@ export default {
       id: layerSetId
     }
     this.$store.dispatch('loadLayerSetById', options)
-
-    if (this.idList) {
-      // If we  selected something we have to load the scenario
-      // now that we have selected the features, we can load the corresponding maps
-      if (this.scenarioMode === 'compute') {
-        this.computeScenario(this.selectedFeatures)
-      }
+      .then(() => {
+        this.loadExtraLayerSets()
+      })
+  },
+  watch: {
+    selectedFeatureIds (val) {
+      this.$router.replace({
+        params: {
+          ids: val
+        }
+      })
     }
   },
   computed: {
@@ -293,6 +302,36 @@ export default {
     selectVariant ({layer, index}) {
       // store the index of the active variant
       this.$set(this.selectedVariantIndexByLayerId, layer.id, index)
+    },
+    loadExtraLayerSets () {
+      if (!this.ids) {
+        return
+      }
+      let features = _.map(this.ids, this.getFeatureById)
+      // change the selected property
+      features.map(feature => { feature.properties.selected = true })
+
+      // select features
+      this.selectedFeatures = features
+      // If we  selected something we have to load the scenario
+      // now that we have selected the features, we can load the corresponding maps
+      if (this.scenarioMode === 'compute') {
+        this.computeScenario(this.selectedFeatures)
+      } else {
+        features.map(feature => {
+          // load features
+          this.loadFeature(feature)
+        })
+      }
+    },
+    getFeatureById (id) {
+      // get a feature by an id
+      // get layes  with a geojson attribute
+      let flatLayers = flattenLayerSet(this.layerSet)
+      let layers = _.filter(flatLayers, 'geojson')
+      let features = _.flatten(_.map(layers, 'geojson.features'))
+      let feature = _.find(features, ['properties.id', id])
+      return feature
     },
     selectFeature (evt) {
       if (this.selectFeatureMode === 'disabled') {
