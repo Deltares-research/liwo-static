@@ -44,6 +44,7 @@ export default {
   },
   data () {
     return {
+      // TODO: check why this is needed...
       // shadow copy so collapsed can be changed in the component
       // convert to boolean (twice ~= Boolean(x))
       isCollapsed: !!this.collapsed

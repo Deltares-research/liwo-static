@@ -51,9 +51,15 @@ export function normalizeLayer (layer) {
     title: variant.title,
     iscontrollayer: layer.iscontrollayer
   }))
+  let id = _.get(layer, 'legend.layer', layer.id)
+  // for  google earth layers take the mapid  of the layer
+  if (variants.length === 1 && _.has(layer.variants[0], 'mapid')) {
+    id = layer.variants[0].mapid
+  }
   let result = {
     // TODO: check why  we are  getting the layer from the legend...
-    id: _.get(layer, 'legend.layer') || layer.id,
+
+    id: id,
     // copy the rest  of  the layer properties
     properties: _.omit(layer, ['variants']),
     iscontrollayer: layer.iscontrollayer,

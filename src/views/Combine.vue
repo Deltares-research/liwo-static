@@ -39,7 +39,7 @@
           @select:layer="selectLayer"
           @select:variant="selectVariant"
           :title="layerSet_.title"
-          :key="layerSet_.feature.id"
+          :key="(layerSet_.feature && layerSet_.feature.id) || layerSet_.id"
           >
           <!-- add extra layer control options -->
         </layer-panel-item>
