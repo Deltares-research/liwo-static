@@ -161,7 +161,7 @@ export default {
       selectedProbability: 'no_filter',
 
       // allows to select a layer (for the unit panel)
-      selectedLayerId: null,
+      selectedLayer: null,
       selectedVariantIndexByLayerId: {},
 
       // menus
@@ -271,21 +271,6 @@ export default {
       })
 
       return selectedLayers
-    },
-    selectedLayer () {
-      // return the selected layer
-      // if we have no id, return null
-      if (_.isNil(this.selectedLayerId)) {
-        return null
-      }
-      // also if we have no layerSet yet
-      if (_.isNil(this.layerSet)) {
-        return null
-      }
-      // if we have both, search for the layer  and return it
-      let result = _.find(this.layerSet.layers, ['id', this.selectedLayerId])
-      // TODO: als check other layers or just set selectedLayer object.
-      return result
     }
 
   },
@@ -301,7 +286,7 @@ export default {
       this.mapObject = mapObject
     },
     selectLayer (layer) {
-      this.selectedLayerId = layer.id
+      this.selectedLayer = layer
       // if no variant has been selected yet
       if (!_.has(this.selectedVariantIndexByLayerId, layer.id)) {
         // select first variant
