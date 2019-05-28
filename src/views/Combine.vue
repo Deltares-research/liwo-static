@@ -35,7 +35,7 @@
           :layers="layerSet_.layers"
           @update:layers="updateLayersInExtraLayerSets(index, $event)"
           :title="layerSet_.title"
-          :key="layerSet_.id"
+          :key="layerSet_.feature.id"
           >
           <!-- add extra layer control options -->
         </layer-panel-item>
@@ -46,7 +46,7 @@
         <button
           v-if="selectFeatureMode === 'multiple' && selectedFeatures.length"
           class="layer-panel__action"
-          @click="showCombine = true"
+          :to="{name:  'combined', ids: selectedFeatures}"
           >
           Selectie combineren
         </button>
@@ -72,10 +72,6 @@
       :namespace="visibleLayerLegend.namespace"
       :layer-name="visibleLayerLegend.layer"
       :style-name="visibleLayerLegend.style"
-      />
-    <combine-popup
-      v-if="showCombine"
-      @close="showCombine = false"
       />
     <export-combine-popup
       v-if="showExportCombine"
@@ -103,14 +99,13 @@ import NotificationBar from '@/components/NotificationBar.vue'
 import LayerPanel from '@/components/LayerPanel'
 import LayerPanelItem from '@/components/LayerPanelItem'
 import LegendPanel from '@/components/LegendPanel'
-import CombinePopup from '@/components/CombinePopup'
 import ExportPopup from '@/components/ExportPopup'
 import ExportCombinePopup from '@/components/ExportCombinePopUp'
 import ImportCombinePopup from '@/components/ImportCombinePopUp'
 import FilterPopup from '@/components/FilterPopup'
 
 import { flattenLayerSet, normalizeLayerSet, cleanLayerSet } from '@/lib/layer-parser'
-import loadBreach from '@/lib/load-breach'
+import { loadBreach, computeBreaches } from '@/lib/load-breach'
 
 import { getLayerType } from '@/lib/liwo-identifiers'
 import { iconsByLayerType, redIcon, defaultIcon } from '@/lib/leaflet-utils/markers'
@@ -126,8 +121,8 @@ const bands = availableBands.map(getId)
 const includedInBands = includedIn(bands)
 
 export default {
+  name: 'Combine',
   components: {
-    CombinePopup,
     ExportCombinePopup,
     ImportCombinePopup,
     ExportPopup,
@@ -155,6 +150,10 @@ export default {
       type: String,
       default: 'disabled'
     },
+    scenarioMode: {
+      type: String,
+      default: 'lookup'
+    },
     layerSetId: {
       type: Number
     }
@@ -179,7 +178,6 @@ export default {
 
       // menus
       showExport: false,
-      showCombine: false,
       showExportCombine: false,
       showImportCombine: false,
       showFilter: false,
@@ -302,9 +300,6 @@ export default {
     setMapObject (mapObject) {
       this.mapObject = mapObject
     },
-    loadCombinedScenarios () {
-      this.$store.dispatch('loadCombinedScenario', { band: this.band, layerIds: this.layerIds })
-    },
     selectLayer (layer) {
       this.selectedLayerId = layer.id
       // if no variant has been selected yet
@@ -330,14 +325,25 @@ export default {
           feature.properties.selected = false
         })
       }
-      // This is a double administration
-      // TODO: choose to change map state (more complex) or redraw each time (slow)
-      // keep state in feature also, so we can pass it alon
+      // select the feature
       feature.properties.selected = selected
-      // was selected, now not, remove it
+
+      // This is a double administration
+      // TODO: We now replace the map state each time something changes. This is slow, flickering and uncommon.
+      // Change this to using the map as a stateful object that we have to change. This is a bit more complex (aligning two states)
+      // but much more common and responsive
+
+      // administer our own  list of  selected features
       if (wasSelected) {
         // now get rid of  the feature
         this.selectedFeatures = _.pull(this.selectedFeatures, feature)
+        // get rid of extraLayers that are not  currently selected
+        let extraLayerSets = this.extraLayerSets.filter((layerSet) => {
+          // if  this layerSet was  created based on our feature, remove it
+          let selectedIds = _.map(this.selectedFeatures, 'id')
+          return selectedIds.includes(layerSet.feature.id)
+        })
+        this.extraLayerSets = extraLayerSets
       } else {
         if (this.selectFeatureMode === 'multiple') {
           this.selectedFeatures.push(feature)
@@ -346,13 +352,25 @@ export default {
       // set the markers, based on the current selected feature
       let marker = evt.target
       this.setMarkers(feature, marker)
-      this.loadFeature(feature)
+
+      if (wasSelected) {
+        // We deselected something,  we're done
+        return
+      }
+      // If we  selected something we have to load the scenario
+      // now that we have selected the features, we can load the corresponding maps
+      if (this.scenarioMode === 'compute') {
+        this.computeScenario(this.selectedFeatures)
+      } else {
+        this.loadFeature(feature)
+      }
 
       // collapse first layer
       this.layerSetCollapsed = true
     },
     setMarkers (feature, marker) {
       // set the appropriate markers
+      // TODO: choose if we  want to set or replace markers
       if (!feature.properties.selected) {
         // feature is no longer selected
         // get the old marker and reset it
@@ -405,6 +423,23 @@ export default {
           } else {
             this.extraLayerSets.push(layerSet)
           }
+        })
+    },
+    computeScenario (features) {
+      // Load the layerSet for the breach and add it to the extra list
+      computeBreaches(features)
+        .then(layerSet => {
+          // normalize
+          layerSet = normalizeLayerSet(layerSet)
+          // and clean
+          layerSet = cleanLayerSet(layerSet)
+          // Set the first layer as visible
+          _.each(layerSet.layers, layer => {
+            layer.properties.visible = false
+          })
+          _.first(layerSet.layers).properties.visible = true
+          // store the extra layerset
+          this.extraLayerSets = [layerSet]
         })
     }
   }
