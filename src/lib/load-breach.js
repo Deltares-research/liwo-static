@@ -83,13 +83,22 @@ export async function computeBreaches (features) {
 
   // convert bands to layerlike objects
   let layers = _.map(bands, (band) => {
-    let title = _.get(breachLayersEn, band.band)
+    let bandNl = _.get(breachLayersEn, band.band)
+    let title = bandNl
     band.title = title
     band.metadata = {}
     let layer = {
       id: band.mapid,
       variants: [band],
-      title: title
+      title: title,
+      legend: {
+        layer: 'geo_maximale_waterdiepte_2015_nederland',
+        title: 'Gecombineerd Scenario [-]',
+        geojson_style: '',
+        namespace: 'LIWO_MEGO',
+        // we get the band from the default  scenario
+        style: `LIWO_Basis_${bandNl}`
+      }
     }
     return layer
   })
