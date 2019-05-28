@@ -67,6 +67,7 @@ const router = new Router({
       props: {
         selectFeatureMode: 'single',
         filterByIds: false,
+        scenarioMode: 'lookup',
         layerSetId: 32
       }
 
@@ -76,11 +77,12 @@ const router = new Router({
       name: 'combine',
       component: Combine,
       meta: {
-        title: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
+        title: 'Combineren overstromingsscenario\'s'
       },
       props: {
         selectFeatureMode: 'multiple',
         filterByIds: false,
+        scenarioMode: 'lookup',
         layerSetId: 33
       }
     },
@@ -94,6 +96,7 @@ const router = new Router({
       props: {
         selectFeatureMode: 'disabled',
         filterByIds: true,
+        scenarioMode: 'compute',
         layerSetId: 34
       }
     },
