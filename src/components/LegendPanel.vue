@@ -2,7 +2,7 @@
   <aside class="legend-panel">
     <h2 class="legend-panel__title">Legenda</h2>
     <figure class="legend-panel__legend">
-      <figcaption class="legend-panel__caption">{{ caption }}</figcaption>
+      <figcaption class="legend-panel__caption">{{ layer.legend.title }}</figcaption>
       <img :src="legendImageSrc" alt="">
     </figure>
   </aside>
@@ -15,10 +15,15 @@ import { extractUnit } from '@/lib/load-layersets'
 export default {
   computed: {
     legendImageSrc () {
-      const { layerName, namespace, styleName } = this
+      const namespace = this.layer.legend.namespace
+      const styleName = this.layer.legend.style
+      let layerId = this.layer.legend.layer
       const url = mapConfig.services.LEGEND_URL
 
-      return `${url}/${namespace}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=${layerName}&STYLE=${styleName}&HEIGHT=16&WIDTH=84`
+      return `${url}/${namespace}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=${layerId}&STYLE=${styleName}&HEIGHT=16&WIDTH=84`
+    },
+    unit () {
+      return extractUnit(this.layer.legend.title)
     }
   },
   props: {
@@ -26,14 +31,6 @@ export default {
       type: Object,
       required: true
     }
-  },
-  data () {
-    return {
-      unit: ''
-    }
-  },
-  mounted () {
-    this.unit = extractUnit(this.layer)
   }
 }
 </script>
