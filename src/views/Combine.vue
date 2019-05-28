@@ -24,6 +24,8 @@
           v-if="layerSet"
           :layers="layerSet.layers"
           @update:layers="updateLayersInLayerSet(layerSet, $event)"
+          @select:layer="selectLayer"
+          @select:variant="selectVariant"
           :collapsed.sync="layerSetCollapsed"
           :key="layerSet.id"
           >
@@ -34,6 +36,8 @@
           v-for="(layerSet_, index) in extraLayerSets"
           :layers="layerSet_.layers"
           @update:layers="updateLayersInExtraLayerSets(index, $event)"
+          @select:layer="selectLayer"
+          @select:variant="selectVariant"
           :title="layerSet_.title"
           :key="layerSet_.feature.id"
           >
@@ -43,13 +47,17 @@
       <template v-slot:actions>
         <!-- add these buttons to the button section of the layer panel -->
         <!-- use named slots after upgrading to Vue 2.6 -->
-        <button
+        <router-link
           v-if="selectFeatureMode === 'multiple' && selectedFeatures.length"
-          class="layer-panel__action"
-          :to="{name:  'combined', ids: selectedFeatures}"
+          :to="{name: 'combined', params: {ids: selectedFeatureIds}}"
           >
-          Selectie combineren
-        </button>
+          <button
+
+            class="layer-panel__action"
+            >
+            Selectie combineren
+          </button>
+        </router-link>
         <button
           v-if="selectedFeatures.length"
           class="layer-panel__action"
@@ -67,11 +75,8 @@
       </template>
     </layer-panel>
     <legend-panel
-      v-if="visibleLayerLegend"
-      :caption="visibleLayerLegend.title"
-      :namespace="visibleLayerLegend.namespace"
-      :layer-name="visibleLayerLegend.layer"
-      :style-name="visibleLayerLegend.style"
+      :layer="selectedLayer"
+      v-if="selectedLayer"
       />
     <export-combine-popup
       v-if="showExportCombine"
@@ -110,15 +115,6 @@ import { loadBreach, computeBreaches } from '@/lib/load-breach'
 import { getLayerType } from '@/lib/liwo-identifiers'
 import { iconsByLayerType, redIcon, defaultIcon } from '@/lib/leaflet-utils/markers'
 import { EPSG_3857 } from '@/lib/leaflet-utils/projections'
-// TODO: check what logic we had here
-// import { selectFeatures } from '@/lib/selection'
-// import { showLayerInfoPopup } from '@/lib/leaflet-utils/popup'
-import { isTruthy, includedIn, notEmpty, notNaN, getId } from '../lib/utils'
-import availableBands from '../lib/available-bands'
-
-const bands = availableBands.map(getId)
-
-const includedInBands = includedIn(bands)
 
 export default {
   name: 'Combine',
@@ -137,14 +133,6 @@ export default {
     filterByIds: {
       type: Boolean,
       default: true
-    },
-    // don't use this, use the computed layerIds
-    ids: {
-      type: String
-    },
-    band: {
-      type: String,
-      required: false
     },
     selectFeatureMode: {
       type: String,
@@ -193,14 +181,17 @@ export default {
     this.$store.commit('setLayerSetId', layerSetId)
 
     let options = {
-      id: layerSetId,
-      initializeMap: true,
-      filterByIds: this.filterByIds,
-      selectMultipleFeatures: this.selectMultipleFeatures
+      id: layerSetId
     }
     this.$store.dispatch('loadLayerSetById', options)
-    this.isMounted = true
-    console.log('done mounting')
+
+    if (this.idList) {
+      // If we  selected something we have to load the scenario
+      // now that we have selected the features, we can load the corresponding maps
+      if (this.scenarioMode === 'compute') {
+        this.computeScenario(this.selectedFeatures)
+      }
+    }
   },
   computed: {
     ...mapGetters([
@@ -208,14 +199,19 @@ export default {
       'layers',
       'currentNotifications'
     ]),
-    layerIds () {
-      // unpack the layer id string
-      if (!this.ids) {
+    ids () {
+      // unpack the id string to filter all the features
+      if (!this.$route.params.ids) {
         return []
       }
-      let layerIds = this.ids.split(',')
-      layerIds = layerIds.map(id => _.toNumber(id))
-      return layerIds
+      let ids = this.$route.params.ids.split(',')
+      ids = ids.map(id => _.toNumber(id))
+      return ids
+    },
+    selectedFeatureIds  () {
+      // pack the  selected feature into an ids string for the url
+      let featureIds = _.map(this.selectedFeatures, 'properties.id')
+      return featureIds.join(',')
     },
     selectedLayers () {
       // a list of the layers to ber shown in the map
@@ -230,6 +226,16 @@ export default {
         let result = _.get(layer.layerObj.properties, 'visible', true)
         return result
       })
+
+      if (this.filterByIds) {
+        layers = layers.map(layer => {
+          if (_.has(layer, 'geojson')) {
+            let features = layer.geojson.features.filter(feature => this.ids.includes(feature.properties.id))
+            layer.geojson.features = features
+          }
+          return layer
+        })
+      }
 
       let extraLayers = _.flatten(
         this.extraLayerSets.map(
@@ -266,28 +272,22 @@ export default {
 
       return selectedLayers
     },
-
-    validLayerIds () {
-      return notEmpty(this.layerIds) && this.layerIds
-        .map(id => _.isNumber(id) && notNaN(id))
-        .every(isTruthy)
-    },
-    validBand () {
-      return includedInBands(this.band)
-    },
-    combinedSenarioCanBeLoaded () {
-      return this.validLayerIds && this.validBand
-    },
-    visibleLayerLegend () {
-      if (!this.selectedLayer) {
-        return undefined
+    selectedLayer () {
+      // return the selected layer
+      // if we have no id, return null
+      if (_.isNil(this.selectedLayerId)) {
+        return null
       }
-
-      return {
-        ...this.selectedLayer.legend,
-        layerType: this.selectedLayer.variants[0].type
+      // also if we have no layerSet yet
+      if (_.isNil(this.layerSet)) {
+        return null
       }
+      // if we have both, search for the layer  and return it
+      let result = _.find(this.layerSet.layers, ['id', this.selectedLayerId])
+      // TODO: als check other layers or just set selectedLayer object.
+      return result
     }
+
   },
   methods: {
     updateLayersInLayerSet (layerSet, layers) {
@@ -308,7 +308,10 @@ export default {
         this.$set(this.selectedVariantIndexByLayerId, layer.id, 0)
       }
     },
-
+    selectVariant ({layer, index}) {
+      // store the index of the active variant
+      this.$set(this.selectedVariantIndexByLayerId, layer.id, index)
+    },
     selectFeature (evt) {
       if (this.selectFeatureMode === 'disabled') {
         return
@@ -357,13 +360,7 @@ export default {
         // We deselected something,  we're done
         return
       }
-      // If we  selected something we have to load the scenario
-      // now that we have selected the features, we can load the corresponding maps
-      if (this.scenarioMode === 'compute') {
-        this.computeScenario(this.selectedFeatures)
-      } else {
-        this.loadFeature(feature)
-      }
+      this.loadFeature(feature)
 
       // collapse first layer
       this.layerSetCollapsed = true
