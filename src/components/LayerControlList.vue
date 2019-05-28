@@ -4,12 +4,12 @@
     class="layer-control-list__item"
     v-for="(layer, index) in layers"
     :key="layer.id"
-    @click="setActive(layer)"
+    @click="selectLayer(layer)"
     >
     <layer-control
       v-if="layer"
       :id="layer.id"
-      :active="activeLayerId === layer.id"
+      :active="isActive(layer)"
       :layer.sync="layer"
       @update:layer="updateLayer(layer, index)"
       @select:layer="selectLayer"
@@ -54,10 +54,6 @@ export default {
     }
   },
   methods: {
-    setActive (layer) {
-      console.log('set active Layer Id', layer.id)
-      this.activeLayerId = layer.id
-    },
     updateLayer (layer, index) {
       // update layer at index index in the layers list and emit the update event
       let layers = _.clone(this.layers)
@@ -65,10 +61,17 @@ export default {
       this.$emit('update:layers', layers)
     },
     selectLayer (layer) {
+      this.activeLayerId = layer.id
       this.$emit('select:layer', layer)
     },
     selectVariant (variant) {
       this.$emit('select:variant', variant)
+    },
+    isActive (layer) {
+      if (this.activeLayerId === layer.id) {
+        return true
+      }
+      return false
     }
   },
   mounted () {
