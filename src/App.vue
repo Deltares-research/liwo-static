@@ -4,7 +4,8 @@
       <app-header :page-title="title" />
       <div id="content" role="main">
         <!-- main content goes here, based on router view -->
-        <router-view />
+        <!-- make sure we  reload when changing the route name -->
+        <router-view :key="$route.name" />
       </div>
 
       <footer class="site-footer noindex">
