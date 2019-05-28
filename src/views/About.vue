@@ -34,12 +34,7 @@
 </template>
 
 <script>
-const PAGE_TITLE = 'Over LIWO'
-
 export default {
-  name: 'about',
-  mounted () {
-    this.$store.commit('setPageTitle', PAGE_TITLE)
-  }
+  name: 'About'
 }
 </script>
