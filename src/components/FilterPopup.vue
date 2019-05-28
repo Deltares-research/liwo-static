@@ -30,7 +30,6 @@
 </template>
 <script>
 import { probabilityConfig } from '@/lib/probability-filter'
-
 import PopUp from '@/components/PopUp'
 
 export default {
@@ -40,8 +39,10 @@ export default {
   props: {
     probability: {
       type: String,
-      default: 'no_filter'
+      // take the first probability as  default
+      default: probabilityConfig[0].id
     }
+
   },
   data () {
     return {
