@@ -35,7 +35,7 @@
 
     </layer-panel>
     <legend-panel
-      layer="selectedLayer"
+      :layer="selectedLayer"
       v-if="selectedLayer"
       />
     <export-popup
@@ -64,6 +64,7 @@ import { flattenLayerSet } from '@/lib/layer-parser'
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
 
 export default {
+  name: 'Viewer',
   components: {
     ExportPopup,
     LayerPanel,
@@ -122,8 +123,9 @@ export default {
       if (_.isNil(this.layerSet)) {
         return null
       }
-      // if we have both, return the selected layer
-      let result = this.layerSet.layers[this.selectedLayerId]
+      // if we have both, search for the layer  and return it
+      let result = _.find(this.layerSet.layers, ['id', this.selectedLayerId])
+
       return result
     }
   },
