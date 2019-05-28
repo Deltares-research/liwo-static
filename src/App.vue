@@ -1,7 +1,7 @@
 <template>
   <div class="site-outer-wrapper">
     <div class="site-container" id="app">
-      <app-header :page-title="layerSet && layerSet.title" />
+      <app-header :page-title="title" />
       <div id="content" role="main">
         <!-- main content goes here, based on router view -->
         <router-view />
@@ -18,15 +18,21 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 
 import AppHeader from '../src/components/AppHeader.vue'
 
 export default {
   computed: {
-    ...mapState([
+    ...mapGetters([
       'layerSet'
-    ])
+    ]),
+    title () {
+      if (this.layerSet) {
+        return this.layerSet.title
+      }
+      return this.$route.meta.title
+    }
   },
   components: {
     AppHeader
