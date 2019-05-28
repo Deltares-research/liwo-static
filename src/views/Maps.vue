@@ -32,7 +32,7 @@ import LayerSetList from '@/components/LayerSetList'
 import { loadLayerSets } from '@/lib/load-layersets'
 
 export default {
-  name: 'maps',
+  name: 'Maps',
   data () {
     return {
       layerSets: [],
