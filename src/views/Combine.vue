@@ -279,9 +279,6 @@ export default {
       // send new layers to the store
       this.$store.commit('setLayersByLayerSetId', {id: this.layerSet.id, layers})
     },
-    setVisibleVariantIdForSelectedlayer (index) {
-      this.$store.commit('setVisibleVariantIndexForLayerId', { index, layerId: this.selectedLayerId })
-    },
     setMapObject (mapObject) {
       this.mapObject = mapObject
     },
