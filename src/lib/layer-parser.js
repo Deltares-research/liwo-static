@@ -36,6 +36,12 @@ export function flattenLayerSet (layerSet, selectedVariantIndexByLayerId = null)
 }
 
 export function normalizeLayer (layer) {
+  //
+  // This method restructures the objecs, please add  motivation if you add something here.
+  // - Take the namespace of the  first variants map
+  // - Take the properties of the map and move them to the variant (drop the map)
+  // - Set move layer properties  to .properties
+  // - Add the namespace to the layer legend
   let firstVariant = _.first(layer.variants)
   // namespace should be available to legend
   let namespace = _.get(firstVariant, 'map.namespace', '')
@@ -46,8 +52,10 @@ export function normalizeLayer (layer) {
     iscontrollayer: layer.iscontrollayer
   }))
   let result = {
-    id: layer.legend.layer || layer.id,
-    properties: layer,
+    // TODO: check why  we are  getting the layer from the legend...
+    id: _.get(layer, 'legend.layer') || layer.id,
+    // copy the rest  of  the layer properties
+    properties: _.omit(layer, ['variants']),
     iscontrollayer: layer.iscontrollayer,
     legend: {
       ...layer.legend,
