@@ -110,6 +110,7 @@ import ImportCombinePopup from '@/components/ImportCombinePopUp'
 import FilterPopup from '@/components/FilterPopup'
 
 import { flattenLayerSet, normalizeLayerSet, cleanLayerSet } from '@/lib/layer-parser'
+import buildLayerSetNotifications from '@/lib/build-layerset-notifications'
 import { loadBreach, computeBreaches } from '@/lib/load-breach'
 
 import { getLayerType } from '@/lib/liwo-identifiers'
@@ -423,6 +424,7 @@ export default {
       this.$set(this.extraLayerSets[index], 'layers', layers)
     },
     loadFeature (feature) {
+      // TODO: move this back the store in a breach module
       // Load the layerSet for the breach and add it to the extra list
       loadBreach(feature)
         .then(layerSet => {
@@ -430,6 +432,15 @@ export default {
           layerSet = normalizeLayerSet(layerSet)
           // and clean
           layerSet = cleanLayerSet(layerSet)
+          const layers = flattenLayerSet(layerSet)
+          const notifications = buildLayerSetNotifications(layers)
+          _.each(
+            notifications,
+            (notification) => {
+              // add them to the main layerSetId number to show up
+              this.$store.commit('addNotificationById', {id: this.layerSetId, notification})
+            }
+          )
           // Set the first layer as visible
           _.each(layerSet.layers, layer => {
             layer.properties.visible = false
