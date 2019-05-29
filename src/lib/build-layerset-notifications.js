@@ -37,6 +37,19 @@ export default function buildLayerSetNotifications (layers) {
         show: true
       }
     })
+
+  let layerSetFeatureNotifications = layers
+    .filter(layer => _.get(layer, 'layerSet.feature.properties.notify'))
+    .map((layer) => {
+      return {
+        id: layer.layerSet.id,
+        message: _.get(layer, 'layerSet.feature.properties.notify'),
+        show: true
+      }
+    })
+
+  layerSetFeatureNotifications = _.filter(layerSetFeatureNotifications)
+
   let layerSetNotifications = layers
     .filter(layer => layer.layerSet.notify)
     .map(layer => {
@@ -47,7 +60,24 @@ export default function buildLayerSetNotifications (layers) {
       }
     })
 
-  let result = [...featureNotifications, ...layerNotifications, ...layerSetNotifications]
+  // filter out messages that
+  layerSetFeatureNotifications = layerSetFeatureNotifications.filter(feature => {
+    if (feature.message === 'NULL') {
+      return false
+    } else {
+      return true
+    }
+  })
+
+  // concatenate all features
+  let result = [
+    ...featureNotifications,
+    ...layerNotifications,
+    ...layerSetFeatureNotifications,
+    ...layerSetNotifications
+  ]
+
+  // remove any doubles
   result = _.uniqWith(result, _.isEqual)
   return result
 }
