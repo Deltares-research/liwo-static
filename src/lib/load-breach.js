@@ -83,10 +83,15 @@ export async function computeBreaches (features) {
 
   // convert bands to layerlike objects
   let layers = _.map(bands, (band) => {
+    // if it looks like a layer, then it is a layer
     let bandNl = _.get(breachLayersEn, band.band)
     let title = bandNl
     band.title = title
-    band.metadata = {}
+    band.metadata = _.clone(band)
+    band.map = {
+      type: 'tile',
+      url: band.url
+    }
     let layer = {
       id: band.mapid,
       variants: [band],
