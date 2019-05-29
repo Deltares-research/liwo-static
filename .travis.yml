@@ -24,7 +24,7 @@ jobs:
   include:
     - stage: test
       # run the following with basurl root
-      script: BASE_URL=/ npm run lint && BASE_URL=/ npm run test && BASE_URL=/ npm run e2e
+      script: BASE_URL=/ npm run lint && BASE_URL=/ npm run test:e2e
     - stage: release
       script: BASE_URL=/ npm run build && BASE_URL=/ npm run release
     - stage: liwo-subfolder-release
