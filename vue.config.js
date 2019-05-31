@@ -51,6 +51,8 @@ module.exports = {
   },
   pluginOptions: {
     webpackBundleAnalyzer: {
+      // don't run online, only create a report
+      analyzerMode: 'static',
       openAnalyzer: false
     }
   }
