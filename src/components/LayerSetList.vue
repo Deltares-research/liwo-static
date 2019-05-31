@@ -16,6 +16,7 @@
 import _ from 'lodash'
 
 export default {
+  name: 'LayerSetList',
   props: {
     title: {
       type: String,
