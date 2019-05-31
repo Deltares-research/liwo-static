@@ -27,20 +27,28 @@ jobs:
       script: BASE_URL=/ npm run lint && BASE_URL=/ npm run test:e2e
     - stage: release
       script: BASE_URL=/ npm run build && BASE_URL=/ npm run release && tar -czf liwo.tar.gz dist
-    - stage: liwo-subfolder-release
+    - stage: subfolder-release
       script: BASE_URL=/liwo npm run build && BASE_URL=/liwo npm run release && tar -czf liwo-liwo.tar.gz dist
-deploy:
-  - provider: pages
-    skip-cleanup: true
-    github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
-    keep-history: true
-    local-dir: dist
-    on:
-      branch: master
-  - provider: releases
-    api_key:
-      secure: GITHUB_TOKEN
-    file: liwo.tar.gz
-    skip_cleanup: true
-    on:
-      tags: true
+    - stage: deploy
+      deploy:
+        - provider: pages
+          skip-cleanup: true
+          github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+          keep-history: true
+          local-dir: dist
+          on:
+            branch: master
+        - provider: releases
+          api_key:
+            secure: GITHUB_TOKEN
+          file:
+            - liwo.tar.gz
+            - liwo-liwo.tar.gz
+          skip_cleanup: true
+          on:
+            tags: true
+stages:
+  - compile
+  - release
+  - subfolder-release
+  - deploy
