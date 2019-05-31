@@ -82,7 +82,7 @@ export default new Vuex.Store({
       // TODO: the function is called setLayerSet[s]
       // but it only loads  the layers of 1 layerSet, make this consistent
 
-      state.commit('setLayerSetById', { id, layerSet: layerSet, selectedVariantsByLayerId })
+      state.commit('setLayerSetById', { id, layerSet: layerSet })
 
       // TODO: why not in the view...
       state.commit('setNotificationsById', {id, notifications})
