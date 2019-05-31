@@ -60,8 +60,6 @@
 
 import _ from 'lodash'
 
-import { mapState } from 'vuex'
-
 import LayerPopup from '@/components/LayerPopup'
 import LayerControlSelect from '@/components/LayerControlSelect'
 
@@ -78,16 +76,11 @@ export default {
   },
   data () {
     return {
-      popupIsOpen: false
+      popupIsOpen: false,
+      selectedVariantIndex: 0
     }
   },
   computed: {
-    ...mapState([
-      'visibleVariantIndexByLayerId',
-      'visibleLayerIds',
-      'selectedLayerId',
-      'viewerType'
-    ]),
     id () {
       return this.layer.id
     },
@@ -96,12 +89,6 @@ export default {
         'layer-control': true,
         'layer-control--active': this.active
       }
-    },
-    transparancyOptions () {
-      return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((index) => ({
-        value: 1 - (0.1 * index),
-        title: `${index * 10}% transparantie`
-      }))
     },
     variantsOptions () {
       const variantsLength = this.layer.variants.length
@@ -113,9 +100,6 @@ export default {
         value: Number(index),
         title: variant.title
       }))
-    },
-    selectedVariantIndex () {
-      return _.get(this.visibleVariantIndexByLayerId, this.selectedLayerId, 0)
     },
     metadata () {
       let variant = _.get(this.layer.variants, this.selectedVariantIndex)
@@ -144,9 +128,12 @@ export default {
       this.$emit('update:layer', layer)
     },
     setLayerVariant ({ target }) {
+      // inform everybody up the tree that a variant for this layer changed
+      this.selectedVariantIndex = _.toNumber(target.value)
       this.$emit('select:variant', {
         layer: this.layer,
-        index: Number(target.value)
+        variant: this.layer.variants[this.selectedVariantIndex],
+        index: this.selectedVariantIndex
       })
     },
     selectLayer () {
