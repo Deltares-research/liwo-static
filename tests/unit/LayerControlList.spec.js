@@ -10,7 +10,7 @@ const expect = chai.expect
 describe('the LayerControlList', () => {
   it('should have the layer-control-list class', () => {
     const Constructor = Vue.extend(LayerControlList)
-    let propsData = {}
+    let propsData = {layers: []}
     const vm = new Constructor({ propsData: propsData }).$mount()
     expect(vm.$el).to.have.class('layer-control-list')
   })
@@ -22,6 +22,9 @@ describe('the LayerControlList', () => {
     ]
     let propsData = { layers }
     const vm = new Constructor({ propsData: propsData }).$mount()
-    expect(vm.$el).to.have.class('layer-control-list')
+
+    vm.$nextTick(() => {
+      expect(vm.$el.querySelector('.layer-control')).to.have.class('layer-control--active')
+    })
   })
 })
