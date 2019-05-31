@@ -1,26 +1,26 @@
 <template>
-<ul :class="classData">
-  <li
-    class="layer-control-list__item"
-    v-for="(layer, index) in layers"
-    :key="layer.id"
-    @click="selectLayer(layer)"
-    >
-    <layer-control
-      v-if="layer"
-      :id="layer.id"
-      :active="isActive(layer)"
-      :layer.sync="layer"
-      @update:layer="updateLayer(layer, index)"
-      @select:layer="selectLayer"
-      @select:variant="selectVariant"
+  <ul :class="classData">
+    <li
+      class="layer-control-list__item"
+      v-for="(layer, index) in layers"
+      :key="layer.id"
+      @click="selectLayer(layer)"
       >
-    </layer-control>
-  </li>
-  <li v-if="$slots.default">
-    <slot></slot>
-  </li>
-</ul>
+      <layer-control
+        v-if="layer"
+        :id="layer.id"
+        :active="isActive(layer)"
+        :layer.sync="layer"
+        @update:layer="updateLayer(layer, index)"
+        @select:layer="selectLayer"
+        @select:variant="selectVariant"
+        >
+      </layer-control>
+    </li>
+    <li v-if="$slots.default">
+      <slot></slot>
+    </li>
+  </ul>
 </template>
 
 <script>
@@ -53,6 +53,15 @@ export default {
       }
     }
   },
+  watch: {
+    layers (layers) {
+      // if we have new layers, activate the first layer
+      if (!layers) {
+        return
+      }
+      this.selectLayer(_.first(layers))
+    }
+  },
   methods: {
     updateLayer (layer, index) {
       // update layer at index index in the layers list and emit the update event
@@ -75,6 +84,10 @@ export default {
     }
   },
   mounted () {
+    let firstLayer = _.first(this.layers)
+    if (firstLayer) {
+      this.selectLayer(firstLayer)
+    }
   },
   components: {
     LayerControl
@@ -83,17 +96,17 @@ export default {
 </script>
 
 <style>
-  .layer-control-list {
-    background-color: white;
-    height: 0;
-    overflow: hidden;
-  }
+.layer-control-list {
+  background-color: white;
+  height: 0;
+  overflow: hidden;
+}
 
-  .layer-control-list--active {
-    height: auto;
-  }
+.layer-control-list--active {
+  height: auto;
+}
 
-  .layer-control-list__item {
-    border-bottom: 1px solid var(--light-gray)
-  }
+.layer-control-list__item {
+  border-bottom: 1px solid var(--light-gray)
+}
 </style>
