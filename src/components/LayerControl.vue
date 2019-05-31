@@ -108,12 +108,6 @@ export default {
     }
   },
   methods: {
-    setOpacity ({ target }) {
-      // Create a copy of the layer with the new opacity
-      let layer = {...this.layer}
-      this.$set(layer.properties, 'opacity', _.toNumber(target.value))
-      this.$emit('update:layer', layer)
-    },
     setTransparancy ({ target }) {
       // Create a copy of the layer with the new opacity
       let layer = {...this.layer}
