@@ -31,6 +31,15 @@ jobs:
       script: BASE_URL=/liwo npm run build && BASE_URL=/liwo npm run release && tar -czf liwo-liwo.tar.gz dist
     - stage: deploy
       deploy:
+        - provider: releases
+          api_key:
+            secure: $GITHUB_TOKEN
+          file:
+            - liwo.tar.gz
+            - liwo-liwo.tar.gz
+          skip_cleanup: true
+          on:
+            tags: true
         - provider: pages
           skip-cleanup: true
           github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
@@ -38,15 +47,6 @@ jobs:
           local-dir: dist
           on:
             branch: master
-        - provider: releases
-          api_key:
-            secure: GITHUB_TOKEN
-          file:
-            - liwo.tar.gz
-            - liwo-liwo.tar.gz
-          skip_cleanup: true
-          on:
-            tags: true
 stages:
   - compile
   - release
