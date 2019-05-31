@@ -1,51 +1,51 @@
 <template>
-<div class="viewer" :class="{'viewer--has-notificaton': currentNotifications.length}">
-  <div class="viewer__map-wrapper">
-    <liwo-map
-      :projection="projection"
-      :layers="selectedLayers"
-      :clusterMarkers="false"
-      @initMap="setMapObject"
-      />
-    <notification-bar :notifications="currentNotifications"  />
-    <layer-panel v-if="layerSet">
-      <template v-slot:default>
-        <layer-panel-item
-          :layers="layerSet.layers"
-          @update:layers="updateLayers(layerSet, $event)"
-          @select:layer="selectLayer"
-          @select:variant="selectVariant"
-          />
+  <div class="viewer" :class="{'viewer--has-notificaton': currentNotifications.length}">
+    <div class="viewer__map-wrapper">
+      <liwo-map
+        :projection="projection"
+        :layers="selectedLayers"
+        :clusterMarkers="false"
+        @initMap="setMapObject"
+        />
+      <notification-bar :notifications="currentNotifications"  />
+      <layer-panel v-if="layerSet">
+        <template v-slot:default>
+          <layer-panel-item
+            :layers="layerSet.layers"
+            @update:layers="updateLayers(layerSet, $event)"
+            @select:layer="selectLayer"
+            @select:variant="selectVariant"
+            />
 
-      </template>
-      <template v-slot:actions>
-        <button
-          class="layer-panel__action"
-          @click="showExport = true"
-          >
-          <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
-            <path fill="none" d="M0 0h24v24H0z"/>
-            <path d="M18 17v2H6v-2H3v4c0 .6.4 1 1 1h16c.6 0 1-.4 1-1v-4h-3z"/>
-            <path d="M11 16.5a1.4 1.4 0 0 0 2 0l5.8-7.3a1.4 1.4 0 0 0-1.7-2l-3.1 2V3.4c0-1-1-1.4-2-1.4s-2 .3-2 1.4v5.8l-3-2a1.4 1.4 0 0 0-1.8 2l5.7 7.3z"/>
-          </svg>
-          Kaart exporteren
-        </button>
+        </template>
+        <template v-slot:actions>
+          <button
+            class="layer-panel__action"
+            @click="showExport = true"
+            >
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+              <path fill="none" d="M0 0h24v24H0z"/>
+              <path d="M18 17v2H6v-2H3v4c0 .6.4 1 1 1h16c.6 0 1-.4 1-1v-4h-3z"/>
+              <path d="M11 16.5a1.4 1.4 0 0 0 2 0l5.8-7.3a1.4 1.4 0 0 0-1.7-2l-3.1 2V3.4c0-1-1-1.4-2-1.4s-2 .3-2 1.4v5.8l-3-2a1.4 1.4 0 0 0-1.8 2l5.7 7.3z"/>
+            </svg>
+            Kaart exporteren
+          </button>
 
-      </template>
+        </template>
 
-    </layer-panel>
-    <legend-panel
-      :layer="selectedLayer"
-      v-if="selectedLayer"
-      />
-    <export-popup
-      v-if="showExport"
-      :map-object="mapObject"
-      :map-layers="selectedLayers"
-      @close="showExport = false"
-      />
+      </layer-panel>
+      <legend-panel
+        :layer="selectedLayer"
+        v-if="selectedLayer"
+        />
+      <export-popup
+        v-if="showExport"
+        :map-object="mapObject"
+        :map-layers="selectedLayers"
+        @close="showExport = false"
+        />
+    </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -115,12 +115,12 @@ export default {
     },
     selectedLayer () {
       // return the selected layer
-      // if we have no id, return null
-      if (_.isNil(this.selectedLayerId)) {
+      // return null if we have no layerSet yet
+      if (_.isNil(this.layerSet)) {
         return null
       }
-      // also if we have no layerSet yet
-      if (_.isNil(this.layerSet)) {
+      // if we have not selected a layer, no layer is set
+      if (_.isNil(this.selectedLayerId)) {
         return null
       }
       // if we have both, search for the layer  and return it
