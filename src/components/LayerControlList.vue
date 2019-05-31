@@ -73,8 +73,8 @@ export default {
       this.activeLayerId = layer.id
       this.$emit('select:layer', layer)
     },
-    selectVariant (variant) {
-      this.$emit('select:variant', variant)
+    selectVariant (evt) {
+      this.$emit('select:variant', evt)
     },
     isActive (layer) {
       if (this.activeLayerId === layer.id) {
