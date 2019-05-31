@@ -107,11 +107,12 @@ export async function computeBreaches (features) {
     }
     return layer
   })
+  let title = "Combineren overstromingsscenario's"
   let layerSet = {
     id: breachIds.join(','),
     features,
-    name: 'Combined scenario',
-    title: 'Combined scenario',
+    name: title,
+    title: title,
     layers
   }
   return layerSet
