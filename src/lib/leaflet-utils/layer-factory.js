@@ -18,20 +18,36 @@ export default function createLayer (layer, { onClick }) {
   if (layer.type === 'json' && layer.geojson) {
     return createGeoJson(layer)
   } else if (layer.type === 'cluster') {
+    // We have a nested structure of layers
+    // LayerGroup -> [ MarkerCluster, Geojson ]
+    // When selected the markers are filtered from the cluster and show up in the geojson layer
+    // This makes it rather slow
     const layerGroup = L.layerGroup()
+
+    // create the cluster  layer
     const clusterGroup = L.markerClusterGroup({
       iconCreateFunction: clusterIconFunction(layer.layer || 'BREACH_PRIMARY'),
       maxClusterRadius: 40
     })
-    // TODO, get this out of here....
+    // create the markers
     let geojsonLayer = createClusterGeoJson(layer, (evt) => {
       evt.geojsonLayer = geojsonLayer
       onClick(evt)
       clusterGroup.refreshClusters()
     })
+    // add the geojson layer to the cluster (lowest level)
     clusterGroup.addLayer(geojsonLayer)
+    // add  the cluster to the group
     layerGroup.addLayer(clusterGroup)
-
+    // now create the selected markers
+    let selectedLayer = createSelectedGeojson(layer, (evt) => {
+      evt.geojsonLayer = selectedLayer
+      onClick(evt)
+      clusterGroup.refreshClusters()
+    })
+    // also add  them
+    layerGroup.addLayer(selectedLayer)
+    // TODO: check if we can set opacity here...
     layerGroup.layerId = layer.layerId
 
     return layerGroup
@@ -53,42 +69,64 @@ export function createGeoJson ({ geojson, style }) {
   })
 }
 
+// set custom  style for selected features
+function onEachFeature (feature, marker, layer, onClick) {
+  const { naam, selectedVariant } = feature.properties
+  // TODO: move this out of here...
+  marker.bindTooltip(`${naam}${selectedVariant ? ` - ${selectedVariant}` : ''}`)
+  // TODO: implement is  controllable
+  marker.on('click', (evt) => {
+    evt.layer = layer
+    onClick(evt)
+  })
+  marker.on('mouseover', (event) => {
+    event.target.openTooltip()
+  })
+  marker.on('mouseout', (event) => {
+    event.target.closeTooltip()
+  })
+  // color selected feature as red
+  if (marker.feature.properties.selected) {
+    marker.setIcon(redIcon)
+  } else {
+    let layerType = getLayerType(feature)
+    let icon = _.get(iconsByLayerType, layerType, defaultIcon)
+    marker.setIcon(icon)
+  }
+}
+
 // TODO: remove this here...
 export function createClusterGeoJson (layer, onClick) {
   let options = {
     // set custom  style for selected features
-    onEachFeature: (feature, marker) => {
-      const { naam, selectedVariant } = feature.properties
-
-      // TODO: move this out of here...
-      marker.bindTooltip(`${naam}${selectedVariant ? ` - ${selectedVariant}` : ''}`)
-      // TODO: implement is  controllable
-      marker.on('click', (evt) => {
-        evt.layer = layer
-        onClick(evt)
-      })
-      marker.on('mouseover', (event) => {
-        event.target.openTooltip()
-      })
-      marker.on('mouseout', (event) => {
-        event.target.closeTooltip()
-      })
-      // color selected feature as red
-      if (marker.feature.properties.selected) {
-        marker.setIcon(redIcon)
-      } else {
-        let layerType = getLayerType(feature)
-        let icon = _.get(iconsByLayerType, layerType, defaultIcon)
-        marker.setIcon(icon)
-      }
-    }
+    onEachFeature: (feature, marker) => onEachFeature(feature, marker, layer, onClick)
   }
   if (_.has(layer, 'filter')) {
     options.filter = layer.filter
   }
   let opacity = _.get(layer.layerObj, 'properties.opacity', 1)
   options.opacity = opacity
-  return L.geoJson(layer.geojson, options)
+  let unselectedGeoJson = {
+    ...layer.geojson
+  }
+  unselectedGeoJson.features = unselectedGeoJson.features.filter(feature => !feature.properties.selected)
+  return L.geoJson(unselectedGeoJson, options)
+}
+
+export function createSelectedGeojson (layer, onClick) {
+  let options = {
+    onEachFeature: (feature, marker) => onEachFeature(feature, marker, layer, onClick)
+  }
+  if (_.has(layer, 'filter')) {
+    options.filter = layer.filter
+  }
+  let opacity = _.get(layer.layerObj, 'properties.opacity', 1)
+  options.opacity = opacity
+  let selectedGeoJson = {
+    ...layer.geojson
+  }
+  selectedGeoJson.features = selectedGeoJson.features.filter(feature => feature.properties.selected)
+  return L.geoJson(selectedGeoJson, options)
 }
 
 export function createTile (layer) {
