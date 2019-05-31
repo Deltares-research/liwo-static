@@ -34,6 +34,7 @@ export default new Vuex.Store({
   },
   mutations: {
     setLayerSetById (state, { id, layerSet }) {
+      // always update the selected variants and selected id's at the smae time
       Vue.set(state.layerSetsById, id, layerSet)
     },
     setLayerSetId (state, id) {
@@ -81,7 +82,8 @@ export default new Vuex.Store({
       // TODO: the function is called setLayerSet[s]
       // but it only loads  the layers of 1 layerSet, make this consistent
 
-      state.commit('setLayerSetById', { id, layerSet: layerSet })
+      state.commit('setLayerSetById', { id, layerSet: layerSet, selectedVariantsByLayerId })
+
       // TODO: why not in the view...
       state.commit('setNotificationsById', {id, notifications})
     }

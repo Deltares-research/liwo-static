@@ -25,7 +25,7 @@
           :layers="layerSet.layers"
           @update:layers="updateLayersInLayerSet(layerSet, $event)"
           @select:layer="selectLayer"
-          @select:variant="selectVariant"
+          @select:variant="selectVariant({ ...$event, layerSet })"
           :collapsed.sync="layerSetCollapsed"
           :key="layerSet.id"
           >
@@ -37,7 +37,7 @@
           :layers="layerSet_.layers"
           @update:layers="updateLayersInExtraLayerSets(index, $event)"
           @select:layer="selectLayer"
-          @select:variant="selectVariant"
+          @select:variant="selectVariant({...$event, layerSet: layerSet_, extraLayerSetIndex: index})"
           :title="layerSet_.title"
           :key="(layerSet_.feature && layerSet_.feature.id) || layerSet_.id"
           >
@@ -50,6 +50,7 @@
         <router-link
           v-if="selectFeatureMode === 'multiple' && selectedFeatures.length"
           :to="{name: 'combined', params: {ids: selectedFeatureIds}}"
+          target="_blank"
           >
           <button
 
@@ -59,7 +60,7 @@
           </button>
         </router-link>
         <button
-          v-if="selectedFeatures.length"
+          v-if="selectFeatureMode === 'multiple' && selectedFeatures.length"
           class="layer-panel__action"
           @click="showExportCombine = true"
           >
@@ -168,7 +169,6 @@ export default {
 
       // allows to select a layer (for the unit panel)
       selectedLayer: null,
-      selectedVariantIndexByLayerId: {},
 
       // menus
       showExport: false,
@@ -230,7 +230,7 @@ export default {
       }
 
       // the main layers
-      let layers = flattenLayerSet(this.layerSet, this.selectedVariantIndexByLayerId)
+      let layers = flattenLayerSet(this.layerSet)
 
       layers = layers.filter(layer => {
         let result = _.get(layer.layerObj.properties, 'visible', true)
@@ -289,20 +289,28 @@ export default {
       // send new layers to the store
       this.$store.commit('setLayersByLayerSetId', {id: this.layerSet.id, layers})
     },
+    updateLayersInExtraLayerSets (index, layers) {
+      // this method updates the layers in the ExtraLayerSet at index
+      // taking into account https://vuejs.org/v2/guide/list.html#Caveats
+      console.log('setting layerSet[i].layers', index, layers)
+      // update layers
+      this.$set(this.extraLayerSets[index], 'layers', layers)
+    },
     setMapObject (mapObject) {
       this.mapObject = mapObject
     },
     selectLayer (layer) {
       this.selectedLayer = layer
-      // if no variant has been selected yet
-      if (!_.has(this.selectedVariantIndexByLayerId, layer.id)) {
-        // select first variant
-        this.$set(this.selectedVariantIndexByLayerId, layer.id, 0)
-      }
     },
-    selectVariant ({layer, index}) {
+    selectVariant ({ index, layerSet, extraLayerSetIndex, layer }) {
       // store the index of the active variant
-      this.$set(this.selectedVariantIndexByLayerId, layer.id, index)
+      this.$set(layer.properties, 'selectedVariant', index)
+      // Store new layers (which now contain the new active variant)
+      if (layerSet === this.layerSet) {
+        this.updateLayersInLayerSet(layerSet.id, layerSet.layers)
+      } else {
+        this.updateLayersInExtraLayerSets(extraLayerSetIndex, layerSet.layers)
+      }
     },
     loadExtraLayerSets () {
       if (!this.ids) {
@@ -415,13 +423,6 @@ export default {
         this.selectedMarkersById[feature.id] = marker
         marker.setIcon(redIcon)
       }
-    },
-    updateLayersInExtraLayerSets (index, layers) {
-      // this method updates the layers in the ExtraLayerSet at index
-      // taking into account https://vuejs.org/v2/guide/list.html#Caveats
-      console.log('setting layerSet[i].layers', index, layers)
-      // update layers
-      this.$set(this.extraLayerSets[index], 'layers', layers)
     },
     loadFeature (feature) {
       // TODO: move this back the store in a breach module

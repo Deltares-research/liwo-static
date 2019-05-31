@@ -85,8 +85,7 @@ export default {
       showExport: false,
       projection: EPSG_28992,
       // allows to select a layer (for the unit panel)
-      selectedLayerId: null,
-      selectedVariantIndexByLayerId: {}
+      selectedLayerId: null
 
     }
   },
@@ -106,7 +105,7 @@ export default {
       if (!this.layerSet) {
         return []
       }
-      let result = flattenLayerSet(this.layerSet, this.selectedVariantIndexByLayerId)
+      let result = flattenLayerSet(this.layerSet)
       result = result.filter(layer => {
         let result = _.get(layer.layerObj.properties, 'visible', true)
         return result
@@ -139,15 +138,12 @@ export default {
     },
     selectLayer (layer) {
       this.selectedLayerId = layer.id
-      // if no variant has been selected yet
-      if (!_.has(this.selectedVariantIndexByLayerId, layer.id)) {
-        // select first variant
-        this.$set(this.selectedVariantIndexByLayerId, layer.id, 0)
-      }
     },
     selectVariant ({layer, index}) {
-      // store the index of the active variant
-      this.$set(this.selectedVariantIndexByLayerId, layer.id, index)
+      // store the index of the active variant in the layer
+      this.$set(layer.properties, 'selectedVariant', index)
+      // update the  layer in the layerSet
+      this.updateLayers(this.layerSet, this.layerSet.layers)
     }
   }
 }

@@ -79,9 +79,6 @@ export function normalizeLayer (layer) {
     variants
   }
 
-  // select the first variant
-  result.properties.selectedVariant = 0
-
   return result
 }
 
@@ -110,6 +107,11 @@ export function cleanLayer (layer) {
     // sometimes the title is not available, fill it in using the name
     layer.properties.title = layer.properties.name
   }
+
+  // select the first variant
+  // If you update the selectedVariant, make sure you commit/$set back the layerSet
+  // as it should trigger a reload of the map
+  layer.properties.selectedVariant = 0
 
   return layer
 }
