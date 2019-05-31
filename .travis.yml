@@ -20,15 +20,26 @@ before_install:
 install:
   - echo 'installing npm packages'
   - npm install
+
+script: npm run test:unit
+
+cache: npm
+
+env:
+  - BASE_URL=/
+  - BASE_URL=/liwo
+matrix:
+  fast_finish: true
+
 jobs:
   include:
     - stage: test
       # run the following with basurl root
-      script: BASE_URL=/ npm run lint && BASE_URL=/ npm run test:e2e
+      script: npm run lint && npm run test:e2e
+    - stage: build
+      script: npm run build && tar -czf liwo.tar.gz dist
     - stage: release
-      script: BASE_URL=/ npm run build && BASE_URL=/ npm run release && tar -czf liwo.tar.gz dist
-    - stage: subfolder-release
-      script: BASE_URL=/liwo npm run build && BASE_URL=/liwo npm run release && tar -czf liwo-liwo.tar.gz dist
+      script: npm run release
     - stage: deploy
       deploy:
         - provider: releases
@@ -48,7 +59,7 @@ jobs:
           on:
             branch: master
 stages:
-  - compile
+  - test
+  - build
   - release
-  - subfolder-release
   - deploy
