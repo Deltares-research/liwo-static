@@ -80,6 +80,7 @@
       v-if="selectedLayer"
       />
     <export-combine-popup
+      :path="selectedFeatureIds"
       v-if="showExportCombine"
       @close="showExportCombine = false"
       />
