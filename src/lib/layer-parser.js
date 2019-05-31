@@ -4,7 +4,7 @@ import {
   BREACHES_IDS
 } from '@/lib/liwo-identifiers'
 
-export function flattenLayerSet (layerSet, selectedVariantIndexByLayerId = null) {
+export function flattenLayerSet (layerSet) {
   // this method flattens a layerSet from
   // layerSet.layers[].variants[] to
   // [layers] with a layer for each variant or selected variant
@@ -18,7 +18,16 @@ export function flattenLayerSet (layerSet, selectedVariantIndexByLayerId = null)
     // get all layer properties
     let layerProperties = _.omit(layer, ['variants'])
     // get all variants
-    let variantIndex = _.get(selectedVariantIndexByLayerId, layer.id, 0)
+    let variantIndex = _.get(layer.properties, 'selectedVariant', null)
+
+    // pick the first varian if there is only 1 variant
+    if (layer.variants.length === 1) {
+      variantIndex = 0
+    }
+    if (_.isNil(variantIndex)) {
+      console.warn('no variant index set for', layer.id)
+      variantIndex = 0
+    }
     // select the variant
     let variant = layer.variants[variantIndex]
     // make a copy of the variant as a basis for the flattened layer
@@ -69,6 +78,10 @@ export function normalizeLayer (layer) {
     },
     variants
   }
+
+  // select the first variant
+  result.properties.selectedVariant = 0
+
   return result
 }
 
@@ -106,6 +119,16 @@ export function cleanLayerSet (layerSet) {
     cleanLayer
   )
   return layerSet
+}
+
+export function selectFirstVariantsByLayerId (layerSet) {
+  let layersWithVariants = layerSet.layers.filter(layer => layer.variants.length > 0)
+  let result = {}
+  // set the first layer as active
+  layersWithVariants.forEach((layer) => {
+    result[layer.id] = 0
+  })
+  return layersWithVariants
 }
 
 export function expandLayers () {
