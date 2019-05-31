@@ -26,9 +26,9 @@ jobs:
       # run the following with basurl root
       script: BASE_URL=/ npm run lint && BASE_URL=/ npm run test:e2e
     - stage: release
-      script: BASE_URL=/ npm run build && BASE_URL=/ npm run release
+      script: BASE_URL=/ npm run build && BASE_URL=/ npm run release && tar -czf liwo.tar.gz dist
     - stage: liwo-subfolder-release
-      script: BASE_URL=/liwo npm run build && BASE_URL=/liwo npm run release
+      script: BASE_URL=/liwo npm run build && BASE_URL=/liwo npm run release && tar -czf liwo-liwo.tar.gz dist
 deploy:
   - provider: pages
     skip-cleanup: true
@@ -37,3 +37,10 @@ deploy:
     local-dir: dist
     on:
       branch: master
+  - provider: releases
+    api_key:
+      secure: GITHUB_TOKEN
+    file: liwo.tar.gz
+    skip_cleanup: true
+    on:
+      tags: true
