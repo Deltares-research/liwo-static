@@ -49,6 +49,7 @@
     "babel-preset-env": "^1.7.0",
     "caniuse-db": "^1.0.30000840",
     "chai": "^4.1.2",
+    "chai-dom": "^1.8.1",
     "copy-webpack-plugin": "^4.5.4",
     "lint-staged": "^6.0.0",
     "lodash-webpack-plugin": "^0.11.5",
