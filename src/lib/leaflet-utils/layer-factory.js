@@ -26,7 +26,7 @@ export default function createLayer (layer, { onClick }) {
 
     // create the cluster  layer
     const clusterGroup = L.markerClusterGroup({
-      iconCreateFunction: clusterIconFunction(layer.layer || 'BREACH_PRIMARY'),
+      iconCreateFunction: clusterIconCreateFunction(layer),
       maxClusterRadius: 40
     })
     // create the markers
@@ -95,17 +95,26 @@ function onEachFeature (feature, marker, layer, onClick) {
   }
 }
 
-// TODO: remove this here...
+function pointToLayer (feature, latlng, options) {
+  // TODO: consider using circleMarker to allow faster and css based styling
+  let layer = L.marker(latlng, options)
+  return layer
+}
+
 export function createClusterGeoJson (layer, onClick) {
+  // create the geojson layer used as 0 level for the clusters
+  let opacity = _.get(layer.layerObj, 'properties.opacity', 1)
+  let markerOptions = {
+    opacity
+  }
   let options = {
     // set custom  style for selected features
-    onEachFeature: (feature, marker) => onEachFeature(feature, marker, layer, onClick)
+    onEachFeature: (feature, marker) => onEachFeature(feature, marker, layer, onClick),
+    pointToLayer: (feature, latlng) => pointToLayer(feature, latlng, markerOptions)
   }
   if (_.has(layer, 'filter')) {
     options.filter = layer.filter
   }
-  let opacity = _.get(layer.layerObj, 'properties.opacity', 1)
-  options.opacity = opacity
   let unselectedGeoJson = {
     ...layer.geojson
   }
@@ -114,14 +123,14 @@ export function createClusterGeoJson (layer, onClick) {
 }
 
 export function createSelectedGeojson (layer, onClick) {
+  // create the markers for the selected geojsons
   let options = {
-    onEachFeature: (feature, marker) => onEachFeature(feature, marker, layer, onClick)
+    onEachFeature: (feature, marker) => onEachFeature(feature, marker, layer, onClick),
+    pointToLayer: (feature, latlng) => pointToLayer(feature, latlng, {})
   }
   if (_.has(layer, 'filter')) {
     options.filter = layer.filter
   }
-  let opacity = _.get(layer.layerObj, 'properties.opacity', 1)
-  options.opacity = opacity
   let selectedGeoJson = {
     ...layer.geojson
   }
@@ -156,14 +165,16 @@ function geoServerURL (namespace) {
     : STATIC_GEOSERVER_URL
 }
 
-function clusterIconFunction (type) {
+function clusterIconCreateFunction (layer) {
   return function (cluster) {
     let childCount = cluster.getChildCount()
-
-    return new L.DivIcon({
-      html: '<div><span>' + childCount + '</span></div>',
-      className: `cluster-icon cluster-icon__${type}`,
+    let opacity = _.get(layer.layerObj, 'properties.opacity', 1)
+    let type = layer.layer
+    let icon = L.divIcon({
+      html: `<div class="cluster-icon cluster-icon__${type}" style="opacity: ${opacity};"><span>${childCount}</span></div>`,
+      className: ``,
       iconSize: new L.Point(45, 45)
     })
+    return icon
   }
 }
