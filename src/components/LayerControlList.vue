@@ -35,6 +35,7 @@ export default {
       type: Array,
       required: true
     },
+    // whether to show this list as an active list
     active: {
       type: Boolean,
       default: true
@@ -54,12 +55,16 @@ export default {
     }
   },
   watch: {
-    layers (layers) {
+    layers (layers, oldLayers) {
       // if we have new layers, activate the first layer
       if (!layers) {
         return
       }
-      this.selectLayer(_.first(layers))
+      if (_.isEmpty(oldLayers)) {
+        // if we didn't have layers select the first one
+        // TODO: consisder moving this to cleanLayerSet
+        this.selectLayer(_.first(layers))
+      }
     }
   },
   methods: {
