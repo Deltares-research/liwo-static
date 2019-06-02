@@ -6,13 +6,13 @@
       :clusterMarkers="true"
       :layers="selectedLayers"
       @click="selectFeature"
-      @initMap="setMapObject"
       />
     <notification-bar :notifications="currentNotifications"/>
     <layer-panel>
       <template v-slot:title>
         <button @click="showFilter = true" class="layer-control__button">
           <!-- icons are 32x32 but other icons don't fill up the space... -->
+          <!-- TODO: use iconfont -->
           <svg class="icon" width="27" height="27" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="black" d="M487.976 0H24.028C2.71 0-8.047 25.866 7.058 40.971L192 225.941V432c0 7.831 3.821 15.17 10.237 19.662l80 55.98C298.02 518.69 320 507.493 320 487.98V225.941l184.947-184.97C520.021 25.896 509.338 0 487.976 0z"></path></svg>
         </button>
       </template>
@@ -30,6 +30,11 @@
           :key="layerSet.id"
           >
         </layer-panel-item>
+
+        <div class="layer-control layer-control-list__item layerpanel-item__title" v-show="loading">
+          Scenario's worden geladen
+          <div class="lds-dual-ring"></div>
+        </div>
         <!-- these correspond to the loaded scenarios based on the selected features -->
         <layer-panel-item
           v-for="(layerSet_, index) in scenarioLayerSets"
@@ -175,6 +180,8 @@ export default {
       // features loaded by Url, constructed during mount
       featureIds: [],
 
+      loading: false,
+
       // menus
       showExport: false,
       showExportCombine: false,
@@ -197,6 +204,7 @@ export default {
 
     await this.$store.dispatch('loadLayerSetById', options)
 
+    this.loading = true
     // if we just navigated to this list of ids, then we also have to load
     // the scenarios
 
@@ -210,6 +218,7 @@ export default {
       let layerSets = await this.loadScenarioLayerSets(features)
       this.scenarioLayerSets = layerSets
     }
+    this.loading = false
   },
   computed: {
     ...mapGetters([
@@ -322,8 +331,15 @@ export default {
       // update layers
       this.$set(this.scenarioLayerSets[index], 'layers', layers)
     },
-    setMapObject (mapObject) {
-      this.mapObject = mapObject
+    updatePath () {
+      // replace the url with the ids of the currently loaded scenarios
+      // don't put this in a watch because scenario's are loaded asynchronously
+      let path = this.selectedScenarioIdsPath
+      this.$router.replace({
+        params: {
+          ids: path
+        }
+      })
     },
     selectLayer (layer) {
       this.selectedLayer = layer
@@ -438,19 +454,9 @@ export default {
       console.log('result', result)
       this.updatePath()
     },
-    updatePath () {
-      // replace the url with the ids of the currently loaded scenarios
-      // don't put this in a watch because scenario's are loaded asynchronously
-      let path = this.selectedScenarioIdsPath
-      this.$router.replace({
-        params: {
-          ids: path
-        }
-      })
-    },
     setMarkers (feature, marker) {
       // set the appropriate markers
-      // TODO: choose if we  want to set or replace markers
+      // TODO: replace feature reloading with this marker  update code
       if (!feature.properties.selected) {
         // feature is no longer selected
         // get the old marker and reset it
@@ -478,7 +484,7 @@ export default {
       }
     },
     async loadFeature (feature) {
-      // TODO: move this back the store in a breach module
+      // TODO: move this back the store in a scenario module
       // Load the layerSet for the breach and add it to the scenario list
       let layerSet = await loadBreach(feature)
       // normalize
@@ -497,6 +503,7 @@ export default {
       return layerSet
     },
     async computeScenario (scenarioIds) {
+      // TODO: move this back to the store in a scenario module
       this.layerSetCollapsed = true
       // Load the layerSet for the breach and add it to the scenario list
       let layerSet = await computeCombinedScenario(scenarioIds)
@@ -519,5 +526,5 @@ export default {
 <style>
 @import '../components/variables.css';
 @import './viewer.css';
-
+@import './loading.css';
 </style>
