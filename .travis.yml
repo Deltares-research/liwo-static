@@ -41,6 +41,7 @@ jobs:
     - stage: release
       script: npm run release
     - stage: deploy
+      script: npm run build && tar -czf liwo.tar.gz dist
       deploy:
         - provider: releases
           api_key:
