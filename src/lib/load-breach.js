@@ -6,6 +6,7 @@ import { BREACH_PRIMARY, BREACH_REGIONAL, getLayerType } from '@/lib/liwo-identi
 import mapConfig from '../map.config'
 
 const BREACHES_BASE_URL = mapConfig.services.WEBSERVICE_URL
+const HYDRO_ENGINE = mapConfig.services.HYDRO_ENGINE
 const BREACHES_API_URL = `${BREACHES_BASE_URL}/Tools/FloodImage.asmx/GetScenariosPerBreachGeneric`
 
 const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
@@ -138,7 +139,7 @@ function loadBreachLayer (breachId, layerName) {
     .catch(() => null)
 }
 
-export default function loadBreachesLayer (breachIds, band) {
+export function loadBreachesLayer (breachIds, band) {
   // TODO: choose appropriate reducer for the band
   // The band here relates to  quantitites
   let reducer = 'max'
@@ -149,7 +150,7 @@ export default function loadBreachesLayer (breachIds, band) {
     body: JSON.stringify({ liwo_ids: breachIds, band, reducer })
   }
 
-  return fetch('https://hydro-engine.appspot.com/get_liwo_scenarios', requestOptions)
+  return fetch(`${HYDRO_ENGINE}/get_liwo_scenarios`, requestOptions)
     .then(text => text.json())
     .then(response => ({ ...response, type: 'tile' }))
     .catch((resp) => {
@@ -158,4 +159,36 @@ export default function loadBreachesLayer (breachIds, band) {
       store.commit('addNotificationById', {id: breachIds.join(','), notification})
       return null
     })
+}
+
+export function getFeatureIdByScenarioId (scenarioId) {
+  // to know which feature corresponds to a scenario we have to call a webservice.
+  // TODO: store scenario info in the features...
+  let promise = fetch(`${mapConfig.services.WEBSERVICE_URL}/Maps.asmx/GetBreachLocationId`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ mapid: scenarioId })
+  })
+    .then(res => res.json())
+    .then(data => JSON.parse(data.d))
+    .then(data => {
+      // add the scenarioId to the result
+      let result = { ...data, scenarioId }
+      return result
+    })
+  return promise
+}
+
+export async function getFeatureIdsByScenarioIds (scenarioIds) {
+  // This is very ackward logic to get back the list of feature ids that corresponds to a list of scenario's
+  let promises = scenarioIds.map(getFeatureIdByScenarioId)
+  let responses = await Promise.all(promises)
+  let results = {}
+  _.each(responses, (response) => {
+    results[response.scenarioId] = response
+  })
+  let featureIds = _.filter(_.map(results, 'breachlocationid'))
+  // get all uniq ids
+  featureIds = _.uniq(featureIds)
+  return featureIds
 }

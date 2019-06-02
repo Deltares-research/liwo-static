@@ -49,7 +49,7 @@
         <!-- use named slots after upgrading to Vue 2.6 -->
         <router-link
           v-if="selectFeatureMode === 'multiple' && selectedFeatures.length"
-          :to="{name: 'combined', params: {ids: selectedFeatureIds}}"
+          :to="{name: 'combined', params: {ids: selectedScenarioIdsPath}}"
           target="_blank"
           >
           <button
@@ -115,7 +115,7 @@ import FilterPopup from '@/components/FilterPopup'
 
 import { flattenLayerSet, normalizeLayerSet, cleanLayerSet } from '@/lib/layer-parser'
 import buildLayerSetNotifications from '@/lib/build-layerset-notifications'
-import { loadBreach, computeCombinedScenario } from '@/lib/load-breach'
+import { loadBreach, computeCombinedScenario, getFeatureIdsByScenarioIds } from '@/lib/load-breach'
 
 import { getLayerType } from '@/lib/liwo-identifiers'
 import { iconsByLayerType, redIcon, defaultIcon } from '@/lib/leaflet-utils/markers'
@@ -192,26 +192,25 @@ export default {
       id: layerSetId
     }
 
-    this.$store.dispatch('loadLayerSetById', options)
-      .then(() => {
-        // if we just navigated to this list of ids, then we also have to load
-        // the scenarios
-        this.loadScenarioLayerSets()
-      })
+    await this.$store.dispatch('loadLayerSetById', options)
+    // if we just navigated to this list of ids, then we also have to load
+    // the scenarios
+
+    // Get list of features from url
+    let featureIds = await getFeatureIdsByScenarioIds(this.scenarioIds)
+    let features = _.map(featureIds, this.getFeatureById)
+    this.loadScenarioLayerSets(features)
   },
   watch: {
-    selectedFeatureIds (val) {
+    selectedScenarioIdsPath (val) {
       this.$router.replace({
         params: {
           ids: val
         }
       })
     },
-    ids (val) {
-      console.log('ids changed reloading')
-      // if the ids in the url changes than we reload all the scenarioLayerSets
-      this.scenarioLayerSets = []
-      this.loadScenarioLayerSets()
+    scenarioIds (val) {
+      console.log('ids changed we are not reloading')
     }
   },
   computed: {
@@ -220,7 +219,7 @@ export default {
       'layers',
       'currentNotifications'
     ]),
-    ids () {
+    scenarioIds () {
       // unpack the id string to filter all the features
       if (!this.$route.params.ids) {
         return []
@@ -229,10 +228,26 @@ export default {
       ids = ids.map(id => _.toNumber(id))
       return ids
     },
-    selectedFeatureIds  () {
-      // pack the  selected feature into an ids string for the url
-      let featureIds = _.map(this.selectedFeatures, 'properties.id')
-      return featureIds.join(',')
+    selectedScenarioIdsPath () {
+      return this.selectedScenarioIds.join(',')
+    },
+    selectedScenarioIds () {
+      // the ids that are used for the combined scenarios are the map_id in the variants
+      // we have to scan all layerSets
+      // in the layerSets we have to get all layers (should be one per layerSet)
+      // for each layer select the variant that is selected or the first if none is selected.
+      let ids = []
+      this.scenarioLayerSets.forEach(layerSet => {
+        if (layerSet.layers.length !== 1) {
+          console.warn('layerSet  layers not of length 1', layerSet)
+        }
+        layerSet.layers.forEach(layer => {
+          let variantIndex = _.get(layer, 'properties.selectedVariant', 0)
+          let variant = layer.variants[variantIndex]
+          ids.push(variant.map_id)
+        })
+      })
+      return ids
     },
     selectedLayers () {
       // a list of the layers to ber shown in the map
@@ -251,7 +266,7 @@ export default {
       if (this.filterByIds) {
         layers = layers.map(layer => {
           if (_.has(layer, 'geojson')) {
-            let features = layer.geojson.features.filter(feature => this.ids.includes(feature.properties.id))
+            let features = layer.geojson.features.filter(feature => this.scenarioIds.includes(feature.properties.id))
             layer.geojson.features = features
           }
           return layer
@@ -324,18 +339,17 @@ export default {
         this.updateLayersInScenarioLayerSets(scenarioLayerSetIndex, layerSet.layers)
       }
     },
-    async loadScenarioLayerSets () {
+    async loadScenarioLayerSets (features) {
       // load all  scenario's
-
+      this.scenarioLayerSets = []
       // nothing to do
-      if (!this.ids) {
+      if (!this.scenarioIds) {
         return
       }
       // collapse first layer
       this.layerSetCollapsed = true
       // now start loading
 
-      let features = _.map(this.ids, this.getFeatureById)
       // change the selected property
       features.map(feature => { feature.properties.selected = true })
 
@@ -403,6 +417,8 @@ export default {
       } else {
         if (this.selectFeatureMode === 'multiple') {
           this.selectedFeatures.push(feature)
+        } else {
+          this.selectedFeatures = [feature]
         }
       }
       // set the markers, based on the current selected feature
@@ -415,6 +431,9 @@ export default {
           this.selectedFeature = null
         }
       }
+
+      // now manually load the corresponding layerSets
+      this.loadScenarioLayerSets(this.selectedFeatures)
     },
     setMarkers (feature, marker) {
       // set the appropriate markers
