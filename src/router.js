@@ -57,7 +57,8 @@ const router = new Router({
     },
     // Some special views
     {
-      path: '/scenarios',
+      // optional ids consisting of numbers and ,
+      path: '/scenarios/:ids([\\d,]*)?',
       name: 'scenarios',
       // browse scenarios
       component: Combine,
@@ -73,7 +74,8 @@ const router = new Router({
 
     },
     {
-      path: '/combine/:ids([\\d,]+)?',
+      // optional ids consisting of numbers and ,
+      path: '/combine/:ids([\\d,]*)?',
       name: 'combine',
       component: Combine,
       meta: {
@@ -87,7 +89,8 @@ const router = new Router({
       }
     },
     {
-      path: '/combined/:ids([\\d,]+)?',
+      // required ids, numbers and ,
+      path: '/combined/:ids([\\d,]+)',
       name: 'combined',
       component: Combine,
       meta: {
