@@ -94,7 +94,7 @@ const router = new Router({
       name: 'combined',
       component: Combine,
       meta: {
-        title: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
+        title: 'Gecombineerd scenario'
       },
       props: {
         selectFeatureMode: 'disabled',
