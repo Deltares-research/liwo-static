@@ -5,7 +5,7 @@ import L from './leaflet-utils/leaf'
 import mapConfig from '../map.config'
 import rdConfig from './rijksdriehoek.config.js'
 
-import matrices from  './matrices.json'
+import matrices from './matrices.json'
 
 const printGeoServerURI = mapConfig.services.PRINT_GEO_SERVER
 const DEFAULT_DPI = 300

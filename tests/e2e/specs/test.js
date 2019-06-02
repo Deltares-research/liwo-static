@@ -23,11 +23,32 @@ module.exports = {
       .assert.elementPresent('.maps')
       .end()
   },
-  'contact page': browser => {
+  'viewer page': browser => {
     browser
-      .url(process.env.VUE_DEV_SERVER_URL + '#/contact')
+      .url(process.env.VUE_DEV_SERVER_URL + '#/viewer/1')
       .waitForElementVisible('#app', 5000)
-      .assert.elementPresent('.contact')
+      .assert.elementPresent('.viewer')
+      .end()
+  },
+  'scenarios page': browser => {
+    browser
+      .url(process.env.VUE_DEV_SERVER_URL + '#/scenarios')
+      .waitForElementVisible('#app', 5000)
+      .assert.elementPresent('.viewer')
+      .end()
+  },
+  'combine page': browser => {
+    browser
+      .url(process.env.VUE_DEV_SERVER_URL + '#/combine')
+      .waitForElementVisible('#app', 5000)
+      .assert.elementPresent('.viewer')
+      .end()
+  },
+  'combined page': browser => {
+    browser
+      .url(process.env.VUE_DEV_SERVER_URL + '#/combined/1,2')
+      .waitForElementVisible('#app', 5000)
+      .assert.elementPresent('.viewer')
       .end()
   }
 }
