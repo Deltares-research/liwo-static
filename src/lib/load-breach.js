@@ -56,7 +56,8 @@ export async function loadBreach (feature) {
   return layerSet
 }
 
-export async function computeBreaches (features) {
+export async function computeCombinedScenario (features) {
+  // combine multiple breachesinto a new scenario
   // Load combined breaches map, computed by the backend
   // The computation is done in Google Earth Engine / HydroEngine
   // the breach id is hidden here
