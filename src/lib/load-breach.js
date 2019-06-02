@@ -109,7 +109,7 @@ export async function computeCombinedScenario (scenarioIds) {
     }
     return layer
   })
-  let title = "Combineren overstromingsscenario's"
+  let title = 'Gecombineerd scenario'
   let layerSet = {
     id: scenarioIds.join(','),
     scenarioIds,
