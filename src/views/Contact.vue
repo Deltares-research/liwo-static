@@ -19,13 +19,8 @@
 </template>
 
 <script>
-const PAGE_TITLE = 'Contact'
-
 export default {
-  name: 'contact',
-  mounted () {
-    this.$store.commit('setPageTitle', PAGE_TITLE)
-  }
+  name: 'Contact'
 }
 </script>
 

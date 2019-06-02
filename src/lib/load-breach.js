@@ -1,18 +1,30 @@
-import { BREACH_PRIMARY, BREACH_REGIONAL } from '@/lib/liwo-identifiers'
+import _ from 'lodash'
+
+import store from '@/store'
+
+import { BREACH_PRIMARY, BREACH_REGIONAL, getLayerType } from '@/lib/liwo-identifiers'
 import mapConfig from '../map.config'
 
 const BREACHES_BASE_URL = mapConfig.services.WEBSERVICE_URL
+const HYDRO_ENGINE = mapConfig.services.HYDRO_ENGINE
 const BREACHES_API_URL = `${BREACHES_BASE_URL}/Tools/FloodImage.asmx/GetScenariosPerBreachGeneric`
-const COMBINE = 'combine'
-const COMBINED = 'combined'
 
 const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
 
-export default function (breachId, layerType, viewerType) {
-  let breachLayers
-  if (viewerType === COMBINE || viewerType === COMBINED) {
-    breachLayers = ['waterdiepte']
-  } else {
+export async function loadBreach (feature) {
+  // Load breach data from the geoserver
+
+  // the breach id is hidden here
+  let breachId = feature.properties.id
+
+  // TODO: there's also a code PRIM, should we not use that?
+  let layerType = getLayerType(feature)
+
+  // we have different breach layers, depending on the type
+  let breachLayers = []
+  if (layerType === BREACH_REGIONAL) {
+    breachLayers = [`${BREACH_REGIONAL}.${breachId}`]
+  } else if (layerType === BREACH_PRIMARY) {
     breachLayers = [
       'waterdiepte',
       'stroomsnelheid',
@@ -22,36 +34,161 @@ export default function (breachId, layerType, viewerType) {
     ]
   }
 
-  if (layerType === BREACH_REGIONAL) {
-    return loadBreachLayer(breachId, `${BREACH_REGIONAL}.${breachId}`)
-  } else if (layerType === BREACH_PRIMARY) {
-    return Promise.all(breachLayers.map(layerName => loadBreachLayer(breachId, layerName)))
-      .then(layers => {
-        return {
-          // do not load layers in 'combined' viewerType
-          layers: layers
-            .filter(layer => layer !== undefined)
-            .reduce((breachLayers, layer) => {
-              return [ ...breachLayers, ...layer.layers ]
-            }, [])
-        }
-      })
+  let promises = breachLayers.map(
+    layerName => loadBreachLayer(breachId, layerName)
+  )
+
+  // the layers are a bit out of order, so restructure them
+  // TODO: consider making this async, otherwise we lock the browser
+  let bands = await Promise.all(promises)
+  // remove undefined/null bands
+  bands = _.filter(bands)
+
+  // merge layers of all unorganized sets
+  // and use the feature name
+  let layers = _.flatten(_.map(bands, 'layers'))
+  let layerSet = {
+    id: breachId,
+    feature: feature,
+    name: feature.properties.naam,
+    title: feature.properties.naam,
+    layers: layers
   }
+  return layerSet
 }
 
-function loadBreachLayer (breachid, layername) {
+export async function computeCombinedScenario (scenarioIds) {
+  // combine multiple breachesinto a new scenario
+  // Load combined breaches map, computed by the backend
+  // The computation is done in Google Earth Engine / HydroEngine
+  // the breach id is hidden here
+
+  let breachLayersEn = {
+    'waterdepth': 'waterdiepte',
+    'velocity': 'stroomsnelheid',
+    'riserate': 'stijgsnelheid',
+    'damage': 'schade',
+    'fatalities': 'slachtoffers'
+  }
+
+  let selectedLayers = [ 'waterdepth' ]
+  // load  all the variants
+  let promises = selectedLayers.map(
+    bandName => loadBreachesLayer(scenarioIds, bandName)
+  )
+  // the layers are a bit out of order, so restructure them
+  // TODO: consider making this async, otherwise we lock the browser
+  let bands = await Promise.all(promises)
+
+  // remove undefined/null bands
+  bands = _.filter(bands)
+
+  // convert bands to layerlike objects
+  let layers = _.map(bands, (band) => {
+    // if it looks like a layer, then it is a layer
+    let bandNl = _.get(breachLayersEn, band.band)
+    let title = bandNl
+    band.title = title
+    band.metadata = _.clone(band)
+    band.map = {
+      type: 'tile',
+      url: band.url
+    }
+    let layer = {
+      id: band.mapid,
+      variants: [band],
+      title: title,
+      legend: {
+        layer: 'geo_maximale_waterdiepte_2015_nederland',
+        title: 'Gecombineerd Scenario [-]',
+        geojson_style: '',
+        namespace: 'LIWO_MEGO',
+        // we get the band from the default  scenario
+        style: `LIWO_Basis_${bandNl}`
+      }
+    }
+    return layer
+  })
+  let title = 'Gecombineerd scenario'
+  let layerSet = {
+    id: scenarioIds.join(','),
+    scenarioIds,
+    name: title,
+    title: title,
+    layers
+  }
+  return layerSet
+}
+
+function loadBreachLayer (breachId, layerName) {
+  // Load the dataset  for a breach
   return fetch(BREACHES_API_URL, {
     method: 'POST',
     mode: 'cors',
     credentials: 'omit',
     headers,
     body: JSON.stringify({
-      breachid,
-      layername
+      breachid: breachId,
+      layername: layerName
     })
   })
     .then(res => res.json())
+  // get rid of some ASP  fluff
     .then(data => JSON.parse(data.d))
     .then(data => ({ ...data[0].layerset[0] }))
-    .catch(() => undefined)
+    .catch(() => null)
+}
+
+function loadBreachesLayer (scenarioIds, band) {
+  // TODO: choose appropriate reducer for the band
+  // The band here relates to  quantitites
+  let reducer = 'max'
+  const requestOptions = {
+    method: 'POST',
+    mode: 'cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ liwo_ids: scenarioIds, band, reducer })
+  }
+
+  return fetch(`${HYDRO_ENGINE}/get_liwo_scenarios`, requestOptions)
+    .then(text => text.json())
+    .then(response => ({ ...response, type: 'tile' }))
+    .catch((resp) => {
+      let notification = `failed to load ${band} for scnearioIds ${scenarioIds}`
+      // notifiy of failure
+      store.commit('addNotificationById', {id: scenarioIds.join(','), notification})
+      return null
+    })
+}
+
+export function getFeatureIdByScenarioId (scenarioId) {
+  // to know which feature corresponds to a scenario we have to call a webservice.
+  // TODO: store scenario info in the features...
+  let promise = fetch(`${mapConfig.services.WEBSERVICE_URL}/Maps.asmx/GetBreachLocationId`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ mapid: scenarioId })
+  })
+    .then(res => res.json())
+    .then(data => JSON.parse(data.d))
+    .then(data => {
+      // add the scenarioId to the result
+      let result = { ...data, scenarioId }
+      return result
+    })
+  return promise
+}
+
+export async function getFeatureIdsByScenarioIds (scenarioIds) {
+  // This is very ackward logic to get back the list of feature ids that corresponds to a list of scenario's
+  let promises = scenarioIds.map(getFeatureIdByScenarioId)
+  let responses = await Promise.all(promises)
+  let results = {}
+  _.each(responses, (response) => {
+    results[response.scenarioId] = response
+  })
+  let featureIds = _.filter(_.map(results, 'breachlocationid'))
+  // get all uniq ids
+  featureIds = _.uniq(featureIds)
+  return featureIds
 }

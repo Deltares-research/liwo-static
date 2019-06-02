@@ -5,8 +5,6 @@
   >
     <form class="combine-popup__form">
       <fieldset>
-        <export-url-generator v-model="path"/>
-
         <div class="control-group">
           <label class="control-label" for="url">Link behorende bij uw selectie</label>
           <div class="controls url-box">
@@ -43,21 +41,23 @@
 
 <script>
 import PopUp from './PopUp'
-import ExportUrlGenerator from './ExportUrlGenerator'
-
 export default {
   components: {
-    ExportUrlGenerator,
     PopUp
   },
-  data () {
-    return {
-      path: ''
+  props: {
+    // the id section of the url
+    path: {
+      type: String,
+      required: true
     }
   },
   computed: {
     url () {
-      return `${location.origin}${location.pathname}#/${this.path}`
+      // lookup the route
+      let route = this.$router.resolve(this.path)
+      // return absolute path
+      return `${location.origin}/${route.href}`
     }
   },
   methods: {

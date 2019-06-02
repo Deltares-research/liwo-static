@@ -1,0 +1,546 @@
+<template>
+<div class="viewer" :class="{'viewer--has-notificaton': currentNotifications.length}">
+  <div class="viewer__map-wrapper">
+    <liwo-map
+      :projection="projection"
+      :clusterMarkers="true"
+      :layers="selectedLayers"
+      @click="selectFeature"
+      />
+    <notification-bar :notifications="currentNotifications"/>
+    <layer-panel>
+      <template v-slot:title>
+        <button @click="showFilter = true" class="layer-control__button">
+          <!-- icons are 32x32 but other icons don't fill up the space... -->
+          <!-- TODO: use iconfont -->
+          <svg class="icon" width="27" height="27" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="black" d="M487.976 0H24.028C2.71 0-8.047 25.866 7.058 40.971L192 225.941V432c0 7.831 3.821 15.17 10.237 19.662l80 55.98C298.02 518.69 320 507.493 320 487.98V225.941l184.947-184.97C520.021 25.896 509.338 0 487.976 0z"></path></svg>
+        </button>
+      </template>
+      <template v-slot:default>
+        <!-- These layers are set through the store, TODO: make consistent -->
+        <!-- layers can be updated in the panel item -->
+        <!-- possible updates: opacity, visiblity -->
+        <layer-panel-item
+          v-if="layerSet"
+          :layers="layerSet.layers"
+          @update:layers="updateLayersInLayerSet(layerSet, $event)"
+          @select:layer="selectLayer"
+          @select:variant="selectVariant({ ...$event, layerSet })"
+          :collapsed.sync="layerSetCollapsed"
+          :key="layerSet.id"
+          >
+        </layer-panel-item>
+
+        <div class="layer-control layer-control-list__item layerpanel-item__title" v-show="loading">
+          Scenario's worden geladen
+          <div class="lds-dual-ring"></div>
+        </div>
+        <!-- these correspond to the loaded scenarios based on the selected features -->
+        <layer-panel-item
+          v-for="(layerSet_, index) in scenarioLayerSets"
+          :layers="layerSet_.layers"
+          @update:layers="updateLayersInScenarioLayerSets(index, $event)"
+          @select:layer="selectLayer"
+          @select:variant="selectVariant({...$event, layerSet: layerSet_, scenarioLayerSetIndex: index})"
+          :title="layerSet_.title"
+          :key="(layerSet_.feature && layerSet_.feature.id) || layerSet_.id"
+          >
+          <!-- add scenario layer control options -->
+        </layer-panel-item>
+
+      </template>
+      <template v-slot:actions>
+        <!-- add these buttons to the button section of the layer panel -->
+        <!-- use named slots after upgrading to Vue 2.6 -->
+        <router-link
+          v-if="selectFeatureMode === 'multiple' && selectedFeatures.length"
+          :to="{name: 'combined', params: {ids: selectedScenarioIdsPath}}"
+          target="_blank"
+          >
+          <button
+
+            class="layer-panel__action"
+            >
+            Selectie combineren
+          </button>
+        </router-link>
+        <button
+          v-if="selectFeatureMode === 'multiple' && selectedFeatures.length"
+          class="layer-panel__action"
+          @click="showExportCombine = true"
+          >
+          Selectie exporteren
+        </button>
+        <button
+          v-if="selectFeatureMode === 'multiple'"
+          class="layer-panel__action"
+          @click="showImportCombine = true"
+          >
+          Selectie importeren
+        </button>
+      </template>
+    </layer-panel>
+    <legend-panel
+      :layer="selectedLayer"
+      v-if="selectedLayer"
+      />
+    <!-- shows the export url -->
+    <export-combine-popup
+      :path="selectedFeatureIds"
+      v-if="showExportCombine"
+      @close="showExportCombine = false"
+      />
+    <!-- This import popup navigates to the the new url -->
+    <import-combine-popup
+      v-if="showImportCombine"
+      @close="showImportCombine = false"
+      />
+    <filter-popup
+      v-if="showFilter"
+      @close="showFilter = false"
+      :probability.sync="selectedProbability">
+    </filter-popup>
+  </div>
+</div>
+</template>
+
+<script>
+import { mapGetters } from 'vuex'
+import _ from 'lodash'
+
+import LiwoMap from '@/components/LiwoMap'
+import NotificationBar from '@/components/NotificationBar.vue'
+import LayerPanel from '@/components/LayerPanel'
+import LayerPanelItem from '@/components/LayerPanelItem'
+import LegendPanel from '@/components/LegendPanel'
+import ExportPopup from '@/components/ExportPopup'
+import ExportCombinePopup from '@/components/ExportCombinePopUp'
+import ImportCombinePopup from '@/components/ImportCombinePopUp'
+import FilterPopup from '@/components/FilterPopup'
+
+import { flattenLayerSet, normalizeLayerSet, cleanLayerSet } from '@/lib/layer-parser'
+import buildLayerSetNotifications from '@/lib/build-layerset-notifications'
+import { loadBreach, computeCombinedScenario, getFeatureIdsByScenarioIds } from '@/lib/load-breach'
+
+import { getLayerType } from '@/lib/liwo-identifiers'
+import { iconsByLayerType, redIcon, defaultIcon } from '@/lib/leaflet-utils/markers'
+import { EPSG_3857 } from '@/lib/leaflet-utils/projections'
+
+export default {
+  name: 'Combine',
+  components: {
+    ExportCombinePopup,
+    ImportCombinePopup,
+    ExportPopup,
+    FilterPopup,
+    LayerPanel,
+    LayerPanelItem,
+    LegendPanel,
+    LiwoMap,
+    NotificationBar
+  },
+  props: {
+    layerSetId: {
+      type: Number
+    },
+    // Only show selected ids
+    filterByIds: {
+      type: Boolean,
+      default: true
+    },
+    // can we select features? multiple features?
+    selectFeatureMode: {
+      type: String,
+      // multiple/single/disabled
+      default: 'disabled'
+    },
+    // do we compute breaches or just look them up
+    scenarioMode: {
+      type: String,
+      // lookup/compute
+      default: 'lookup'
+    }
+  },
+  data () {
+    return {
+      // selected features
+      selectedFeatures: [],
+      // store markers so we can adminster them
+      selectedMarkersById: {},
+
+      // the scenario layerSets
+      scenarioLayerSets: [],
+      // the main layerSet collapse
+      layerSetCollapsed: false,
+      selectedProbability: 'no_filter',
+
+      // allows to select a layer (for the unit panel)
+      selectedLayer: null,
+
+      // features loaded by Url, constructed during mount
+      featureIds: [],
+
+      // loading icon
+      loading: false,
+
+      // menus
+      showExport: false,
+      showExportCombine: false,
+      showImportCombine: false,
+      showFilter: false,
+
+      // map projection
+      projection: EPSG_3857
+    }
+  },
+  async mounted () {
+    // get the layerSet that corresponds to this map
+    const layerSetId = this.layerSetId
+    // store it
+    this.$store.commit('setLayerSetId', layerSetId)
+
+    // load the corresponding layerSet
+    let options = {
+      id: layerSetId
+    }
+    await this.$store.dispatch('loadLayerSetById', options)
+
+    // Set the loading icon
+    this.loading = true
+
+    // If the url contains a list of scenarioIds
+    this.featureIds = await getFeatureIdsByScenarioIds(this.scenarioIds)
+    if (this.scenarioMode === 'compute') {
+      // if we are  computing, we can pass them on
+      let layerSet = await this.computeScenario(this.scenarioIds)
+      this.scenarioLayerSets = [layerSet]
+    } else {
+      // If we are interacting we need to lookup the corresponding features
+      let features = _.map(this.featureIds, this.getFeatureById)
+      let layerSets = await this.loadScenarioLayerSets(features)
+      this.scenarioLayerSets = layerSets
+    }
+    // we're done, hide the loading icon
+    this.loading = false
+  },
+  computed: {
+    // we get the  default layerSet from the store
+    ...mapGetters([
+      'layerSet',
+      'layers',
+      'currentNotifications'
+    ]),
+    scenarioIds () {
+      // unpack the id string to filter all the features
+      if (!this.$route.params.ids) {
+        return []
+      }
+      let ids = this.$route.params.ids.split(',')
+      ids = ids.map(id => _.toNumber(id))
+      return ids
+    },
+    selectedScenarioIdsPath () {
+      // get the list  of selected scenarios, used to generate the current url
+      return this.selectedScenarioIds.join(',')
+    },
+    selectedScenarioIds () {
+      // the ids that are used for the combined scenarios are the map_id in the variants
+      // we have to scan all layerSets
+      // in the layerSets we have to get all layers (should be one per layerSet)
+      // for each layer select the variant that is selected or the first if none is selected.
+      let ids = []
+      // TODO: restructure backend
+      // here we have a confusion between different types
+      // a scenario can contain multiple layers (e.g. waterdepth, damage)
+      // these ids correspond to the first layer (waterdepth) of the scenario
+      this.scenarioLayerSets.forEach(layerSet => {
+        // Only select first layer
+        // multiple layers in scenarios are bands
+        let layer = _.first(layerSet.layers)
+        let variantIndex = _.get(layer, 'properties.selectedVariant', 0)
+        let variant = layer.variants[variantIndex]
+        ids.push(variant.map_id)
+      })
+      return ids
+    },
+    selectedLayers () {
+      // a list of the layers to ber shown in the map
+      if (!this.layerSet) {
+        return []
+      }
+
+      // the main layers, restructured so we can load them into leaflet
+      let layers = flattenLayerSet(this.layerSet)
+
+      layers = layers.filter(layer => {
+        // toss  out the invisible layers
+        let layerVisible = _.get(layer.layerObj.properties, 'visible', true)
+        return layerVisible
+      })
+
+      // make a deep clone (this is faster than lodash deepClone)
+      // this is needed so we can remove features
+      // TODO: optimize this (using omit?)
+      layers = JSON.parse(JSON.stringify(layers))
+
+      layers = layers.map(layer => {
+        if (_.has(layer, 'geojson')) {
+          return layer
+        }
+        // TODO: do this using stylesheet
+        // replace markers by circle markers and add classes so we can style this
+        let geojson = layer.geojson
+        geojson.features = _.filter(geojson.features, (feature) => {
+          // if we are filtering by Id
+          if (this.filterByIds) {
+            if (this.featureIds.includes(feature.properties.id)) {
+              // and if we have match return true
+              return true
+            }
+          }
+          // if  feature is not selected, filter by probability
+          if (this.selectedProbability === 'no_filter') {
+            return true
+          }
+          let featureSelected = feature.properties[this.selectedProbability] > 0
+          return featureSelected
+        })
+        // store  the new geojson in the layer
+        layer.geojson = geojson
+        // return the new layer
+        return layer
+      })
+
+      // these are the extra scenarios
+      let scenarioLayers = _.flatten(
+        this.scenarioLayerSets.map(
+          // flatten all layers
+          flattenLayerSet
+        )
+      )
+
+      // also filter these by visibility
+      scenarioLayers = scenarioLayers.filter(layer => {
+        let layerVisible = _.get(layer.layerObj.properties, 'visible', true)
+        return layerVisible
+      })
+
+      // Now  that we have all layers combine  them
+      let selectedLayers = [...scenarioLayers, ...layers]
+
+      return selectedLayers
+    }
+
+  },
+  methods: {
+    updateLayersInLayerSet (layerSet, layers) {
+      // send new layers to the store
+      this.$store.commit('setLayersByLayerSetId', {id: this.layerSet.id, layers})
+    },
+    updateLayersInScenarioLayerSets (index, layers) {
+      // this method updates the layers in the ScenarioLayerSet at index
+      // taking into account https://vuejs.org/v2/guide/list.html#Caveats
+      // update layers
+      this.$set(this.scenarioLayerSets[index], 'layers', layers)
+    },
+    updatePath () {
+      // replace the url with the ids of the currently loaded scenarios
+      // don't put this in a watch because scenario's are loaded asynchronously
+      let path = this.selectedScenarioIdsPath
+      this.$router.replace({
+        params: {
+          ids: path
+        }
+      })
+    },
+    selectLayer (layer) {
+      this.selectedLayer = layer
+    },
+    selectVariant ({ index, layerSet, scenarioLayerSetIndex, layer }) {
+      // store the index of the active variant
+      this.$set(layer.properties, 'selectedVariant', index)
+
+      // Store new layers (which now contain the new active variant)
+      if (layerSet === this.layerSet) {
+        // TODO: move this to store
+        this.updateLayersInLayerSet(layerSet.id, layerSet.layers)
+      } else {
+        // store the index in all layers, because layers in the scenario
+        // are actually bands that share the same variant....
+        // TODO: move band selection to more logic location, now it's magic...
+        _.each(layerSet.layers, (layer) => {
+          this.$set(layer.properties, 'selectedVariant', index)
+        })
+        // TODO: move this to scenario module  in store
+        this.updateLayersInScenarioLayerSets(scenarioLayerSetIndex, layerSet.layers)
+      }
+      // now that the new variant is selected we can update the path
+      this.updatePath()
+    },
+    async loadScenarioLayerSets (features) {
+      // load all  scenario's
+      this.scenarioLayerSets = []
+
+      if (_.isEmpty(features)) {
+        return Promise.resolve()
+      }
+      // collapse first layer
+      this.layerSetCollapsed = true
+      // now start loading
+
+      // change the selected property
+      features.map(feature => { feature.properties.selected = true })
+
+      // select features
+      this.selectedFeatures = features
+      // If we  selected something we have to load the scenario
+      // now that we have selected the features, we can load the corresponding maps
+      let layerSets = []
+      let promises = features.map(feature => this.loadFeature(feature))
+      layerSets = await Promise.all(promises)
+      // store the scenario layerset
+      return layerSets
+    },
+    getFeatureById (id) {
+      // get a feature by an id
+      // get layes  with a geojson attribute
+      let flatLayers = flattenLayerSet(this.layerSet)
+      let layers = _.filter(flatLayers, 'geojson')
+      let features = _.flatten(_.map(layers, 'geojson.features'))
+      let feature = _.find(features, ['properties.id', id])
+      return feature
+    },
+    async selectFeature (evt) {
+      if (this.selectFeatureMode === 'disabled') {
+        return
+      }
+      let feature = evt.target.feature
+      // this is the code to enable/disable the markers
+      let selected = !_.includes(this.selectedFeatures, feature)
+      // this looks a bit double, but it's easier to read
+      let wasSelected = !selected
+
+      // set feature properties for reactive components
+      if (this.selectFeatureMode === 'single') {
+        // deselect all features
+        this.selectedFeatures.map(feature => {
+          this.$set(feature.properties, 'selected', false)
+        })
+      }
+      // select the feature
+      this.$set(feature.properties, 'selected', selected)
+
+      // This is a double administration
+      // TODO: We now replace the map state each time something changes. This is slow, flickering and uncommon.
+      // Change this to using the map as a stateful object that we have to change. This is a bit more complex (aligning two states)
+      // but much more common and responsive
+
+      // administer our own  list of  selected features
+      if (wasSelected) {
+        // now get rid of  the feature
+        this.selectedFeatures = _.pull(this.selectedFeatures, feature)
+        // get rid of scenarioLayers that are not  currently selected
+        let scenarioLayerSets = this.scenarioLayerSets.filter((layerSet) => {
+          // if  this layerSet was  created based on our feature, remove it
+          let selectedIds = _.map(this.selectedFeatures, 'id')
+          return selectedIds.includes(layerSet.feature.id)
+        })
+        this.scenarioLayerSets = scenarioLayerSets
+      } else {
+        // we just selected this feature, add it to the list
+        if (this.selectFeatureMode === 'multiple') {
+          this.selectedFeatures.push(feature)
+        } else {
+          this.selectedFeatures = [feature]
+        }
+      }
+      // set the markers, based on the current selected feature
+      let marker = evt.target
+      this.setMarkers(feature, marker)
+
+      if (wasSelected) {
+        // if we deselected the selectedFeature reset the selectedFeature
+        if (_.isEqual(feature, this.selectedFeature)) {
+          this.selectedFeature = null
+        }
+      }
+      // now manually load the layerSets that correspond to the current selection
+      let layerSets = await this.loadScenarioLayerSets(this.selectedFeatures)
+      this.scenarioLayerSets = layerSets
+      // and update the path
+      this.updatePath()
+    },
+    setMarkers (feature, marker) {
+      // set the appropriate markers
+      // TODO: replace feature reloading with this marker  update code
+      if (!feature.properties.selected) {
+        // feature is no longer selected
+        // get the old marker and reset it
+        // TODO: use old icon.
+        let layerType = getLayerType(feature)
+        let icon = _.get(iconsByLayerType, layerType, defaultIcon)
+        marker.setIcon(icon)
+        delete this.selectedMarkersById[feature.id]
+      } else {
+        // we are setting a marker
+        if (this.selectFeatureMode === 'single') {
+          // clear old markers
+          let markersToReset = _.values(this.selectedMarkersById)
+          _.each(
+            markersToReset,
+            (marker) => {
+              marker.setIcon(defaultIcon)
+            }
+          )
+          this.selectedMarkersById = {}
+          this.selectedFeatures = [feature]
+        }
+        this.selectedMarkersById[feature.id] = marker
+        marker.setIcon(redIcon)
+      }
+    },
+    async loadFeature (feature) {
+      // TODO: move this back the store in a scenario module
+      // Load the layerSet for the breach and add it to the scenario list
+      let layerSet = await loadBreach(feature)
+      // normalize
+      layerSet = normalizeLayerSet(layerSet)
+      // and clean
+      layerSet = cleanLayerSet(layerSet)
+      const layers = flattenLayerSet(layerSet)
+      const notifications = buildLayerSetNotifications(layers)
+      _.each(
+        notifications,
+        (notification) => {
+          // add them to the main layerSetId number to show up
+          this.$store.commit('addNotificationById', {id: this.layerSetId, notification})
+        }
+      )
+      return layerSet
+    },
+    async computeScenario (scenarioIds) {
+      // TODO: move this back to the store in a scenario module
+      this.layerSetCollapsed = true
+      // Load the layerSet for the breach and add it to the scenario list
+      let layerSet = await computeCombinedScenario(scenarioIds)
+      // normalize
+      layerSet = normalizeLayerSet(layerSet)
+      // and clean
+      layerSet = cleanLayerSet(layerSet)
+      // Set the first layer as visible
+      _.each(layerSet.layers, layer => {
+        layer.properties.visible = false
+      })
+      _.first(layerSet.layers).properties.visible = true
+      // store the scenario layerset
+      return layerSet
+    }
+  }
+}
+</script>
+
+<style>
+@import '../components/variables.css';
+@import './viewer.css';
+@import './loading.css';
+</style>

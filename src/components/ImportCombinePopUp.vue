@@ -47,11 +47,9 @@
 
 <script>
 import PopUp from './PopUp'
-import ExportUrlGenerator from './ExportUrlGenerator'
 
 export default {
   components: {
-    ExportUrlGenerator,
     PopUp
   },
   data () {
@@ -63,26 +61,14 @@ export default {
   },
   methods: {
     onSubmit () {
-      try {
-        const url = new URL(this.url)
-        const path = url.href
-          .replace(url.origin, '')
-          .replace(url.pathname, '')
-          .replace(new RegExp('(/)?#(.+)'), '$2')
-
-        const parsedUrl = this.$router.match(path)
-
-        if (parsedUrl.params.layerIds) {
-          const layerIds = parsedUrl.params.layerIds.split(',')
-          this.$store.dispatch('setActiveLayersFromVariantIds', layerIds)
-        } else {
-          throw new Error('layerIds not found in url')
-        }
-
-        this.$emit('close')
-      } catch (error) {
-        console.error(error)
+      let re = /(\d+)(,\d+)*$/
+      let match = this.url.match(re)
+      if (!match) {
         this.showError = true
+      } else {
+        this.$emit('close')
+        // go to the new page
+        this.$router.push({ params: { ids: match[0] } })
       }
     }
   },

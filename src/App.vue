@@ -1,10 +1,11 @@
 <template>
   <div class="site-outer-wrapper">
     <div class="site-container" id="app">
-      <app-header :pageTitle="pageTitle || 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'" />
+      <app-header :page-title="title" />
       <div id="content" role="main">
         <!-- main content goes here, based on router view -->
-        <router-view />
+        <!-- make sure we  reload when changing the route name -->
+        <router-view :key="$route.name" />
       </div>
 
       <footer class="site-footer noindex">
@@ -18,15 +19,23 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 
 import AppHeader from '../src/components/AppHeader.vue'
 
 export default {
   computed: {
-    ...mapState([
-      'pageTitle'
-    ])
+    ...mapGetters([
+      'layerSet'
+    ]),
+    title () {
+      if (this.$route.name === 'viewer') {
+        if (this.layerSet) {
+          return this.layerSet.title
+        }
+      }
+      return this.$route.meta.title
+    }
   },
   components: {
     AppHeader
@@ -72,5 +81,9 @@ export default {
 
   .icon {
     vertical-align: middle;
+  }
+
+  .site-footer__content {
+    padding: 0.5em 0.5em;
   }
 </style>

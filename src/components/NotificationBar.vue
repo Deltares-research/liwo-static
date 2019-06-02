@@ -1,11 +1,20 @@
 <template>
-  <aside class="notification-bar"
-    :class="{[`notification-bar--${type}`]:true}">
-    <div class="container">
-      <img class="notification-bar__icon" :src="`/icons/baseline-${type}-24px.svg`" />
-      <p class="notification-bar__message">{{ message }}</p>
-    </div>
-  </aside>
+<ul class="viewer__notifications" v-if="editableNotifications && editableNotifications.length">
+  <li class="viewer__notification" v-for="(notification, index) in editableNotifications"
+      :key="index"
+      @click="notification.show = false"
+      v-show="notification.show"
+      >
+    <aside class="notification-bar"
+           :class="{[`notification-bar--${notification.type}`]:true}"
+           >
+      <div class="container">
+        <img class="notification-bar__icon" :src="`/icons/baseline-${notification.type}-24px.svg`"  />
+        <p class="notification-bar__message">{{ notification.message }} </p>
+      </div>
+    </aside>
+  </li>
+</ul>
 </template>
 
 <style>
@@ -44,22 +53,41 @@
 </style>
 
 <script>
+import _ from 'lodash'
 export default {
   props: {
-    type: {
-      type: String,
-      default: 'info',
-      validator (value) {
-        return ['error', 'warning', 'info', 'confirm'].indexOf(value) !== -1
-      }
-    },
-    message: {
-      type: String,
-      required: true,
-      validator (value) {
-        return typeof value === 'string'
+    notifications: {
+      type: Array,
+      default () {
+        return []
       }
     }
+  },
+  data () {
+    return {
+      editableNotifications: []
+    }
+  },
+  watch: {
+    notifications (val) {
+      this.setNotifications()
+    }
+  },
+  mounted () {
+    this.editableNotifications = this.setNotifications()
+  },
+  methods: {
+    setNotifications () {
+      this.editableNotifications = _.map(this.notifications, (notification) => {
+        let result = {...notification}
+        // use default type
+        if (!['error', 'warning', 'info', 'confirm'].includes(notification.type)) {
+          result.type = 'info'
+        }
+        return result
+      })
+    }
   }
+
 }
 </script>

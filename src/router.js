@@ -1,13 +1,12 @@
-import toNumber from 'lodash/fp/toNumber'
-import includes from 'lodash/fp/includes'
-import get from 'lodash/fp/get'
+import _ from 'lodash'
 import Vue from 'vue'
 import Router from 'vue-router'
 import About from './views/About'
 import Contact from './views/Contact'
 import Home from './views/Home'
 import Maps from './views/Maps'
-import Viewer from './views/Viewer.vue'
+import Viewer from './views/Viewer'
+import Combine from './views/Combine'
 
 Vue.use(Router)
 
@@ -34,37 +33,74 @@ const router = new Router({
       }
     },
     {
-      path: '/viewer/:id',
+      path: '/viewer/:id(\\d+)',
       name: 'viewer',
       component: Viewer,
       meta: {
         title: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
       },
+      // pass id to component
+      props: (route) => {
+        let id = _.toNumber(route.params.id)
+        return {
+          id
+        }
+      },
       beforeEnter: (to, from, next) => {
-        // number or NaN
-        let id = toNumber(get('params.id', to))
         // don't show non-public maps, not secret, just not that relevant for the public
-        if (includes(id, nonPublicViews)) {
+        if (_.includes(_.toNumber(to.params.id), nonPublicViews)) {
           next('/')
         } else {
           next()
         }
       }
     },
+    // Some special views
     {
-      path: '/combine/:layerIds?',
-      name: 'combine',
-      component: Viewer,
+      // optional ids consisting of numbers and ,
+      path: '/scenarios/:ids([\\d,]*)?',
+      name: 'scenarios',
+      // browse scenarios
+      component: Combine,
       meta: {
-        title: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
+        title: 'Bekijken overstromingsscenario\'s'
+      },
+      props: {
+        selectFeatureMode: 'single',
+        filterByIds: false,
+        scenarioMode: 'lookup',
+        layerSetId: 32
+      }
+
+    },
+    {
+      // optional ids consisting of numbers and ,
+      path: '/combine/:ids([\\d,]*)?',
+      name: 'combine',
+      component: Combine,
+      meta: {
+        title: 'Combineren overstromingsscenario\'s'
+      },
+      props: {
+        selectFeatureMode: 'multiple',
+        filterByIds: false,
+        scenarioMode: 'lookup',
+        layerSetId: 33
       }
     },
     {
-      path: '/combined/:layerIds?/:band?',
+      // required ids, numbers and ,
+      path: '/combined/:ids([\\d,]+)',
       name: 'combined',
-      component: Viewer,
+      component: Combine,
       meta: {
-        title: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
+        title: 'Gecombineerd scenario'
+      },
+      props: {
+        selectFeatureMode: 'disabled',
+        filterByIds: true,
+        scenarioMode: 'compute',
+        layerSetId: 34
       }
     },
     {

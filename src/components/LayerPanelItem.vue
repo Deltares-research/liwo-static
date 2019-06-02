@@ -1,25 +1,29 @@
 <template>
-  <div class="layerpanel-item" :class="{'layerpanel-item--collapsed': collapsed}">
-    <h3
-      class="layerpanel-item__title"
-      @click="() => title && setActiveLayer()"
+<div class="layerpanel-item" :class="{'layerpanel-item--collapsed': isCollapsed}">
+  <h3
+    class="layerpanel-item__title"
+    @click="selectFirstLayer"
     >
-      <span>{{ title || 'Algemeen' }}</span>
-      <button class="layerpanel-item__collapse" @click="toggleCollapse">
-        <img class="layerpanel-item__collapse-icon" :src="`/icons/baseline-keyboard_arrow_up-24px.svg`" />
-      </button>
-    </h3>
-    <layer-control-list
-      :layers="layers"
-      :visible="!collapsed"
-      :panel-layer-title="title"
-      :panel-layer-id="layerId"
-    />
-  </div>
+    <span>{{ title }}</span>
+    <button class="layerpanel-item__collapse" @click.stop="toggleCollapse">
+      <img class="layerpanel-item__collapse-icon" :src="`/icons/baseline-keyboard_arrow_up-24px.svg`" />
+    </button>
+  </h3>
+  <layer-control-list
+    :layers="layers"
+    @update:layers="updateLayers"
+    @select:layer="selectLayer"
+    @select:variant="selectVariant"
+    v-show="!isCollapsed"
+    >
+    <slot></slot>
+  </layer-control-list>
+
+</div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import _ from 'lodash'
 
 import LayerControlList from './LayerControlList'
 
@@ -31,55 +35,48 @@ export default {
     },
     title: {
       type: String,
-      required: false
+      default: 'Algemeen'
     },
-    layerId: {
-      type: Number,
-      required: false
-    },
-    collapse: {
+    collapsed: {
       type: Boolean,
       default: false
-    },
-    layerSet: {
-      type: Object,
-      required: false
     }
   },
-  data: () => ({
-    collapsed: false
-  }),
-  computed: {
-    ...mapState([
-      'activeLayerSetId'
-    ]),
-    layerControlListIsVisible () {
-      if (!this.activeLayerSetId || !this.layerId) {
-        return true
-      }
-
-      return Number(this.activeLayerSetId) === Number(this.layerId)
+  data () {
+    return {
+      // TODO: check why this is needed...
+      // shadow copy so collapsed can be changed in the component
+      // convert to boolean (twice ~= Boolean(x))
+      isCollapsed: !!this.collapsed
     }
   },
   watch: {
-    layerControlListIsVisible (visible) {
-      this.collapsed = !visible
+    collapsed (val) {
+      this.isCollapsed = !!this.collapsed
     },
-    collapse (collapse) {
-      this.collapsed = collapse
+    isCollapsed (val) {
+      // pass back changes up
+      if (!!val !== this.collapsed) {
+        this.$emit('update:collapsed', val)
+      }
     }
   },
   methods: {
-    setActiveLayer () {
-      this.$store.commit('setActiveLayerSetId', this.layerId)
-      this.$store.commit('setSelectedLayerId', this.layers[0].id)
+    selectFirstLayer () {
+      this.selectLayer(_.first(this.layerSet.layers))
+    },
+    updateLayers (layers) {
+      this.$emit('update:layers', layers)
+    },
+    selectLayer (layer) {
+      this.$emit('select:layer', layer)
+    },
+    selectVariant (variant) {
+      this.$emit('select:variant', variant)
     },
     toggleCollapse () {
-      this.collapsed = !this.collapsed
-
-      if (this.collapsed && this.title) {
-        this.setActiveLayer()
-      }
+      // toggle
+      this.isCollapsed = !this.isCollapsed
     }
   },
   components: {

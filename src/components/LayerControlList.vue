@@ -1,115 +1,98 @@
 <template>
-  <ul class="layer-control-list" :class="{ 'layer-control-list--active': visible }">
-    <li class="layer-control-list__item">
-      <layer-control
-        v-if="panelLayerTitle"
-        :active="(panelLayerId === selectedLayerId)"
-        :id="panelLayerId"
-        :variants="[]"
-        :layerType="''"
-        :visible="activeMarkerLayerIsVisible"
-        :isMarkerLayer="true"
-        :title="LOCATION"
-        @toggle="toggleActiveMarker"
-      />
-    </li>
+  <ul :class="classData">
     <li
       class="layer-control-list__item"
-      v-for="layer in layers"
+      v-for="(layer, index) in layers"
       :key="layer.id"
-    >
+      @click="selectLayer(layer)"
+      >
       <layer-control
-        :active="(layer.id === selectedLayerId)"
+        v-if="layer"
         :id="layer.id"
-        :title="layer.properties.title || layer.properties.name"
-        :metadata="layerMetaData(layer)"
-        :variants="layer.variants || []"
-        :layerType="layer.legend.layer"
-        :visible="layerIsVisible(layer.id)"
-        @toggle="toggleLayerVisibilityById"
-        @changeOpacity="setLayerOpacity"
-        @selectVariant="setVisibleVariant"
-        @selectActiveLayer="setSelectedLayerId"
-      />
+        :active="isActive(layer)"
+        :layer.sync="layer"
+        @update:layer="updateLayer(layer, index)"
+        @select:layer="selectLayer"
+        @select:variant="selectVariant"
+        >
+      </layer-control>
+    </li>
+    <li v-if="$slots.default">
+      <slot></slot>
     </li>
   </ul>
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import LayerControl from './LayerControl'
 
-const LOCATION = 'Locatie'
+import _ from 'lodash'
+
+import LayerControl from './LayerControl'
 
 export default {
   props: {
     layers: {
       type: Array,
-      default: () => []
+      required: true
     },
-    visible: {
+    // whether to show this list as an active list
+    active: {
       type: Boolean,
       default: true
-    },
-    panelLayerTitle: {
-      type: String,
-      default: ''
-    },
-    panelLayerId: {
-      type: [String, Number],
-      default: ''
     }
   },
   data () {
     return {
-      LOCATION
+      activeLayerId: null
     }
   },
   computed: {
-    ...mapState([
-      'selectedLayerId',
-      'visibleLayerIds',
-      'visibleVariantIndexByLayerId',
-      'hidden',
-      'hiddenLayers'
-    ]),
-    activeMarkerLayerIsVisible () {
-      return !this.hiddenLayers.includes(this.panelLayerId)
+    classData () {
+      return {
+        'layer-control-list': true,
+        'layer-control-list--active': this.active
+      }
+    }
+  },
+  watch: {
+    layers (layers, oldLayers) {
+      // if we have new layers, activate the first layer
+      if (!layers) {
+        return
+      }
+      if (_.isEmpty(oldLayers)) {
+        // if we didn't have layers select the first one
+        // TODO: consisder moving this to cleanLayerSet
+        this.selectLayer(_.first(layers))
+      }
     }
   },
   methods: {
-    layerMetaData ({ id, variants }) {
-      const index = this.visibleVariantIndexByLayerId[id]
-      return typeof index !== 'undefined'
-        ? variants[index].metadata
-        : variants[0].metadata
+    updateLayer (layer, index) {
+      // update layer at index index in the layers list and emit the update event
+      let layers = _.clone(this.layers)
+      layers[index] = layer
+      this.$emit('update:layers', layers)
     },
-    layerIsVisible (id) {
-      return this.visibleLayerIds.indexOf(id) !== -1
+    selectLayer (layer) {
+      this.activeLayerId = layer.id
+      this.$emit('select:layer', layer)
     },
-    setSelectedLayerId (id) {
-      this.$store.commit('setSelectedLayerId', id)
+    selectVariant (evt) {
+      this.$emit('select:variant', evt)
     },
-    setLayerOpacity ({ layerId, opacity }) {
-      this.$store.commit('setOpacityByLayerId', {
-        layerId,
-        opacity
-      })
-    },
-    toggleLayerVisibilityById (id) {
-      this.$store.commit('toggleLayerById', id)
-    },
-    setVisibleVariant ({ layerId, variantIndex }) {
-      this.layers.forEach(layer => {
-        this.$store.commit('setVisibleVariantIndexForLayerId', { layerId: layer.id, index: variantIndex })
-      })
-    },
-    toggleActiveMarker (id) {
-      this.$store.commit('toggleActiveMarker', id)
+    isActive (layer) {
+      if (this.activeLayerId === layer.id) {
+        return true
+      }
+      return false
     }
   },
   mounted () {
-    this.$store.commit('toggleLayerById', this.panelLayerId)
+    let firstLayer = _.first(this.layers)
+    if (firstLayer) {
+      this.selectLayer(firstLayer)
+    }
   },
   components: {
     LayerControl
@@ -118,17 +101,17 @@ export default {
 </script>
 
 <style>
-  .layer-control-list {
-    background-color: white;
-    height: 0;
-    overflow: hidden;
-  }
+.layer-control-list {
+  background-color: white;
+  height: 0;
+  overflow: hidden;
+}
 
-  .layer-control-list--active {
-    height: auto;
-  }
+.layer-control-list--active {
+  height: auto;
+}
 
-  .layer-control-list__item {
-    border-bottom: 1px solid var(--light-gray)
-  }
+.layer-control-list__item {
+  border-bottom: 1px solid var(--light-gray)
+}
 </style>

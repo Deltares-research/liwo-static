@@ -1,9 +1,10 @@
 const webpack = require('webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
 
 module.exports = {
   // transpileDependencies: [ 'delay' ],
-  baseUrl: process.env.BASE_URL || '/',
+  publicPath: process.env.BASE_URL || '/',
   devServer: {
     disableHostCheck: true
   },
@@ -13,12 +14,23 @@ module.exports = {
         {
           test: /\.m?js$/,
           use: {
-            loader: 'babel-loader'
+            loader: 'babel-loader',
+            options: {
+              plugins: ['lodash']
+            }
           }
         }
       ]
     },
     plugins: [
+      // enable _.get(obj, 'a.b.c') and _.map([], 'a')
+      new LodashModuleReplacementPlugin({
+        shorthands: true,
+        paths: true,
+        flattening: true,
+        collections: true
+
+      }),
       new webpack.ProvidePlugin({
         L: 'leaflet'
       }),
@@ -35,6 +47,13 @@ module.exports = {
         'unfetch/polyfill',
         'url-search-params-polyfill'
       ]
+    }
+  },
+  pluginOptions: {
+    webpackBundleAnalyzer: {
+      // don't run online, only create a report
+      analyzerMode: 'static',
+      openAnalyzer: false
     }
   }
 }
