@@ -30,19 +30,19 @@
           :key="layerSet.id"
           >
         </layer-panel-item>
-        <!-- this view keeps track of it's own extra layerSets -->
         <!-- these correspond to the loaded scenario's based on the selected features -->
         <layer-panel-item
-          v-for="(layerSet_, index) in extraLayerSets"
+          v-for="(layerSet_, index) in scenarioLayerSets"
           :layers="layerSet_.layers"
-          @update:layers="updateLayersInExtraLayerSets(index, $event)"
+          @update:layers="updateLayersInScenarioLayerSets(index, $event)"
           @select:layer="selectLayer"
-          @select:variant="selectVariant({...$event, layerSet: layerSet_, extraLayerSetIndex: index})"
+          @select:variant="selectVariant({...$event, layerSet: layerSet_, scenarioLayerSetIndex: index})"
           :title="layerSet_.title"
           :key="(layerSet_.feature && layerSet_.feature.id) || layerSet_.id"
           >
-          <!-- add extra layer control options -->
+          <!-- add scenario layer control options -->
         </layer-panel-item>
+
       </template>
       <template v-slot:actions>
         <!-- add these buttons to the button section of the layer panel -->
@@ -79,11 +79,13 @@
       :layer="selectedLayer"
       v-if="selectedLayer"
       />
+    <!-- shows the export url -->
     <export-combine-popup
       :path="selectedFeatureIds"
       v-if="showExportCombine"
       @close="showExportCombine = false"
       />
+    <!-- This import popup navigates to the the new url -->
     <import-combine-popup
       v-if="showImportCombine"
       @close="showImportCombine = false"
@@ -113,7 +115,7 @@ import FilterPopup from '@/components/FilterPopup'
 
 import { flattenLayerSet, normalizeLayerSet, cleanLayerSet } from '@/lib/layer-parser'
 import buildLayerSetNotifications from '@/lib/build-layerset-notifications'
-import { loadBreach, computeBreaches } from '@/lib/load-breach'
+import { loadBreach, computeCombinedScenario } from '@/lib/load-breach'
 
 import { getLayerType } from '@/lib/liwo-identifiers'
 import { iconsByLayerType, redIcon, defaultIcon } from '@/lib/leaflet-utils/markers'
@@ -161,11 +163,10 @@ export default {
       // store markers so we can adminster them
       selectedMarkersById: {},
 
-      // the extra layerSets
-      extraLayerSets: [],
+      // the scenario layerSets
+      scenarioLayerSets: [],
       // the main layerSet collapse
       layerSetCollapsed: false,
-
       selectedProbability: 'no_filter',
 
       // allows to select a layer (for the unit panel)
@@ -190,9 +191,12 @@ export default {
     let options = {
       id: layerSetId
     }
+
     this.$store.dispatch('loadLayerSetById', options)
       .then(() => {
-        this.loadExtraLayerSets()
+        // if we just navigated to this list of ids, then we also have to load
+        // the scenarios
+        this.loadScenarioLayerSets()
       })
   },
   watch: {
@@ -202,6 +206,12 @@ export default {
           ids: val
         }
       })
+    },
+    ids (val) {
+      console.log('ids changed reloading')
+      // if the ids in the url changes than we reload all the scenarioLayerSets
+      this.scenarioLayerSets = []
+      this.loadScenarioLayerSets()
     }
   },
   computed: {
@@ -248,21 +258,22 @@ export default {
         })
       }
 
-      let extraLayers = _.flatten(
-        this.extraLayerSets.map(
+      let scenarioLayers = _.flatten(
+        this.scenarioLayerSets.map(
           // flatten all layers
           flattenLayerSet
         )
       )
 
-      extraLayers = extraLayers.filter(layer => {
+      scenarioLayers = scenarioLayers.filter(layer => {
         let result = _.get(layer.layerObj.properties, 'visible', true)
         return result
       })
 
       // Now  that we have all layers apply the filters  on the features
-      let selectedLayers = [...extraLayers, ...layers]
+      let selectedLayers = [...scenarioLayers, ...layers]
 
+      // filter the geojsons before passing them to the map
       selectedLayers = _.map(selectedLayers, (layer) => {
         // TODO: filter geojson by probability index
         if (_.has(layer, 'geojson')) {
@@ -290,12 +301,12 @@ export default {
       // send new layers to the store
       this.$store.commit('setLayersByLayerSetId', {id: this.layerSet.id, layers})
     },
-    updateLayersInExtraLayerSets (index, layers) {
-      // this method updates the layers in the ExtraLayerSet at index
+    updateLayersInScenarioLayerSets (index, layers) {
+      // this method updates the layers in the ScenarioLayerSet at index
       // taking into account https://vuejs.org/v2/guide/list.html#Caveats
       console.log('setting layerSet[i].layers', index, layers)
       // update layers
-      this.$set(this.extraLayerSets[index], 'layers', layers)
+      this.$set(this.scenarioLayerSets[index], 'layers', layers)
     },
     setMapObject (mapObject) {
       this.mapObject = mapObject
@@ -303,20 +314,27 @@ export default {
     selectLayer (layer) {
       this.selectedLayer = layer
     },
-    selectVariant ({ index, layerSet, extraLayerSetIndex, layer }) {
+    selectVariant ({ index, layerSet, scenarioLayerSetIndex, layer }) {
       // store the index of the active variant
       this.$set(layer.properties, 'selectedVariant', index)
       // Store new layers (which now contain the new active variant)
       if (layerSet === this.layerSet) {
         this.updateLayersInLayerSet(layerSet.id, layerSet.layers)
       } else {
-        this.updateLayersInExtraLayerSets(extraLayerSetIndex, layerSet.layers)
+        this.updateLayersInScenarioLayerSets(scenarioLayerSetIndex, layerSet.layers)
       }
     },
-    loadExtraLayerSets () {
+    async loadScenarioLayerSets () {
+      // load all  scenario's
+
+      // nothing to do
       if (!this.ids) {
         return
       }
+      // collapse first layer
+      this.layerSetCollapsed = true
+      // now start loading
+
       let features = _.map(this.ids, this.getFeatureById)
       // change the selected property
       features.map(feature => { feature.properties.selected = true })
@@ -325,14 +343,18 @@ export default {
       this.selectedFeatures = features
       // If we  selected something we have to load the scenario
       // now that we have selected the features, we can load the corresponding maps
+      let promise
       if (this.scenarioMode === 'compute') {
-        this.computeScenario(this.selectedFeatures)
+        promise = this.computeScenario(this.selectedFeatures)
       } else {
-        features.map(feature => {
-          // load features
-          this.loadFeature(feature)
-        })
+        promise = Promise.all(
+          features.map(feature => {
+            // load features
+            this.loadFeature(feature)
+          })
+        )
       }
+      return promise
     },
     getFeatureById (id) {
       // get a feature by an id
@@ -371,13 +393,13 @@ export default {
       if (wasSelected) {
         // now get rid of  the feature
         this.selectedFeatures = _.pull(this.selectedFeatures, feature)
-        // get rid of extraLayers that are not  currently selected
-        let extraLayerSets = this.extraLayerSets.filter((layerSet) => {
+        // get rid of scenarioLayers that are not  currently selected
+        let scenarioLayerSets = this.scenarioLayerSets.filter((layerSet) => {
           // if  this layerSet was  created based on our feature, remove it
           let selectedIds = _.map(this.selectedFeatures, 'id')
           return selectedIds.includes(layerSet.feature.id)
         })
-        this.extraLayerSets = extraLayerSets
+        this.scenarioLayerSets = scenarioLayerSets
       } else {
         if (this.selectFeatureMode === 'multiple') {
           this.selectedFeatures.push(feature)
@@ -389,12 +411,10 @@ export default {
 
       if (wasSelected) {
         // We deselected something,  we're done
-        return
+        if (_.isEqual(feature, this.selectedFeature)) {
+          this.selectedFeature = null
+        }
       }
-      this.loadFeature(feature)
-
-      // collapse first layer
-      this.layerSetCollapsed = true
     },
     setMarkers (feature, marker) {
       // set the appropriate markers
@@ -425,9 +445,9 @@ export default {
         marker.setIcon(redIcon)
       }
     },
-    loadFeature (feature) {
+    async loadFeature (feature) {
       // TODO: move this back the store in a breach module
-      // Load the layerSet for the breach and add it to the extra list
+      // Load the layerSet for the breach and add it to the scenario list
       loadBreach(feature)
         .then(layerSet => {
           // normalize
@@ -443,22 +463,18 @@ export default {
               this.$store.commit('addNotificationById', {id: this.layerSetId, notification})
             }
           )
-          // Set the first layer as visible
-          _.each(layerSet.layers, layer => {
-            layer.properties.visible = false
-          })
-          _.first(layerSet.layers).properties.visible = true
-          // store the extra layerset
+          // store the scenario layerset
           if (this.selectFeatureMode === 'single') {
-            this.extraLayerSets = [layerSet]
+            this.scenarioLayerSets = [layerSet]
           } else {
-            this.extraLayerSets.push(layerSet)
+            this.scenarioLayerSets.push(layerSet)
           }
         })
     },
-    computeScenario (features) {
-      // Load the layerSet for the breach and add it to the extra list
-      computeBreaches(features)
+    async computeScenario (features) {
+      // Load the layerSet for the breach and add it to the scenario list
+      let promise = computeCombinedScenario(features)
+      promise
         .then(layerSet => {
           // normalize
           layerSet = normalizeLayerSet(layerSet)
@@ -469,9 +485,10 @@ export default {
             layer.properties.visible = false
           })
           _.first(layerSet.layers).properties.visible = true
-          // store the extra layerset
-          this.extraLayerSets = [layerSet]
+          // store the scenario layerset
+          this.scenarioLayerSets = [layerSet]
         })
+      return promise
     }
   }
 }
