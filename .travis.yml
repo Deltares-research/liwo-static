@@ -26,8 +26,8 @@ script: npm run test:unit
 cache: npm
 
 env:
-  - BASE_URL=/
   - BASE_URL=/liwo
+
 matrix:
   fast_finish: true
 
