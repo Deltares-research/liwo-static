@@ -57,12 +57,11 @@ export async function loadBreach (feature) {
   return layerSet
 }
 
-export async function computeCombinedScenario (features) {
+export async function computeCombinedScenario (scenarioIds) {
   // combine multiple breachesinto a new scenario
   // Load combined breaches map, computed by the backend
   // The computation is done in Google Earth Engine / HydroEngine
   // the breach id is hidden here
-  let breachIds = _.map(features, 'properties.id')
 
   let breachLayersEn = {
     'waterdepth': 'waterdiepte',
@@ -72,9 +71,10 @@ export async function computeCombinedScenario (features) {
     'fatalities': 'slachtoffers'
   }
 
+  let selectedLayers = [ 'waterdepth' ]
   // load  all the variants
-  let promises = _.keys(breachLayersEn).map(
-    bandName => loadBreachesLayer(breachIds, bandName)
+  let promises = selectedLayers.map(
+    bandName => loadBreachesLayer(scenarioIds, bandName)
   )
   // the layers are a bit out of order, so restructure them
   // TODO: consider making this async, otherwise we lock the browser
@@ -111,8 +111,8 @@ export async function computeCombinedScenario (features) {
   })
   let title = "Combineren overstromingsscenario's"
   let layerSet = {
-    id: breachIds.join(','),
-    features,
+    id: scenarioIds.join(','),
+    scenarioIds,
     name: title,
     title: title,
     layers
@@ -139,7 +139,7 @@ function loadBreachLayer (breachId, layerName) {
     .catch(() => null)
 }
 
-export function loadBreachesLayer (breachIds, band) {
+function loadBreachesLayer (scenarioIds, band) {
   // TODO: choose appropriate reducer for the band
   // The band here relates to  quantitites
   let reducer = 'max'
@@ -147,16 +147,16 @@ export function loadBreachesLayer (breachIds, band) {
     method: 'POST',
     mode: 'cors',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ liwo_ids: breachIds, band, reducer })
+    body: JSON.stringify({ liwo_ids: scenarioIds, band, reducer })
   }
 
   return fetch(`${HYDRO_ENGINE}/get_liwo_scenarios`, requestOptions)
     .then(text => text.json())
     .then(response => ({ ...response, type: 'tile' }))
     .catch((resp) => {
-      let notification = `failed to load ${band} for breachIDs ${breachIds}`
+      let notification = `failed to load ${band} for scnearioIds ${scenarioIds}`
       // notifiy of failure
-      store.commit('addNotificationById', {id: breachIds.join(','), notification})
+      store.commit('addNotificationById', {id: scenarioIds.join(','), notification})
       return null
     })
 }
