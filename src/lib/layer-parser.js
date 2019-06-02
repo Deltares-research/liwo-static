@@ -120,6 +120,17 @@ export function cleanLayerSet (layerSet) {
   layerSet.layers = layerSet.layers.map(
     cleanLayer
   )
+
+  // some scenario layersets have the wrong visibility set
+  if (_.has(layerSet, 'feature')) {
+    // Set all layers as invisible and ...
+    _.each(layerSet.layers, layer => {
+      layer.properties.visible = false
+    })
+    // set the first layer as visible
+    _.first(layerSet.layers).properties.visible = true
+  }
+
   return layerSet
 }
 
