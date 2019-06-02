@@ -180,6 +180,7 @@ export default {
       // features loaded by Url, constructed during mount
       featureIds: [],
 
+      // loading icon
       loading: false,
 
       // menus
@@ -193,34 +194,37 @@ export default {
     }
   },
   async mounted () {
-    // TODO: where  is the list of  layers for this view?
+    // get the layerSet that corresponds to this map
     const layerSetId = this.layerSetId
-
+    // store it
     this.$store.commit('setLayerSetId', layerSetId)
 
+    // load the corresponding layerSet
     let options = {
       id: layerSetId
     }
-
     await this.$store.dispatch('loadLayerSetById', options)
 
+    // Set the loading icon
     this.loading = true
-    // if we just navigated to this list of ids, then we also have to load
-    // the scenarios
 
-    // Get list of features from url
+    // If the url contains a list of scenarioIds
     this.featureIds = await getFeatureIdsByScenarioIds(this.scenarioIds)
     if (this.scenarioMode === 'compute') {
+      // if we are  computing, we can pass them on
       let layerSet = await this.computeScenario(this.scenarioIds)
       this.scenarioLayerSets = [layerSet]
     } else {
+      // If we are interacting we need to lookup the corresponding features
       let features = _.map(this.featureIds, this.getFeatureById)
       let layerSets = await this.loadScenarioLayerSets(features)
       this.scenarioLayerSets = layerSets
     }
+    // we're done, hide the loading icon
     this.loading = false
   },
   computed: {
+    // we get the  default layerSet from the store
     ...mapGetters([
       'layerSet',
       'layers',
@@ -236,6 +240,7 @@ export default {
       return ids
     },
     selectedScenarioIdsPath () {
+      // get the list  of selected scenarios, used to generate the current url
       return this.selectedScenarioIds.join(',')
     },
     selectedScenarioIds () {
@@ -244,10 +249,13 @@ export default {
       // in the layerSets we have to get all layers (should be one per layerSet)
       // for each layer select the variant that is selected or the first if none is selected.
       let ids = []
+      // TODO: restructure backend
+      // here we have a confusion between different types
+      // a scenario can contain multiple layers (e.g. waterdepth, damage)
+      // these ids correspond to the first layer (waterdepth) of the scenario
       this.scenarioLayerSets.forEach(layerSet => {
         // Only select first layer
         // multiple layers in scenarios are bands
-        // TODO: restructure backend
         let layer = _.first(layerSet.layers)
         let variantIndex = _.get(layer, 'properties.selectedVariant', 0)
         let variant = layer.variants[variantIndex]
@@ -261,29 +269,49 @@ export default {
         return []
       }
 
-      // the main layers
+      // the main layers, restructured so we can load them into leaflet
       let layers = flattenLayerSet(this.layerSet)
 
       layers = layers.filter(layer => {
-        let result = _.get(layer.layerObj.properties, 'visible', true)
-        return result
+        // toss  out the invisible layers
+        let layerVisible = _.get(layer.layerObj.properties, 'visible', true)
+        return layerVisible
       })
 
       // make a deep clone (this is faster than lodash deepClone)
+      // this is needed so we can remove features
+      // TODO: optimize this (using omit?)
       layers = JSON.parse(JSON.stringify(layers))
 
-      if (this.filterByIds) {
-        layers = layers.map(layer => {
-          if (_.has(layer, 'geojson')) {
-            let features = layer.geojson.features.filter(feature => {
-              return this.featureIds.includes(feature.properties.id)
-            })
-            layer.geojson.features = features
-          }
+      layers = layers.map(layer => {
+        if (_.has(layer, 'geojson')) {
           return layer
+        }
+        // TODO: do this using stylesheet
+        // replace markers by circle markers and add classes so we can style this
+        let geojson = layer.geojson
+        geojson.features = _.filter(geojson.features, (feature) => {
+          // if we are filtering by Id
+          if (this.filterByIds) {
+            if (this.featureIds.includes(feature.properties.id)) {
+              // and if we have match return true
+              return true
+            }
+          }
+          // if  feature is not selected, filter by probability
+          if (this.selectedProbability === 'no_filter') {
+            return true
+          }
+          let featureSelected = feature.properties[this.selectedProbability] > 0
+          return featureSelected
         })
-      }
+        // store  the new geojson in the layer
+        layer.geojson = geojson
+        // return the new layer
+        return layer
+      })
 
+      // these are the extra scenarios
       let scenarioLayers = _.flatten(
         this.scenarioLayerSets.map(
           // flatten all layers
@@ -291,30 +319,14 @@ export default {
         )
       )
 
+      // also filter these by visibility
       scenarioLayers = scenarioLayers.filter(layer => {
-        let result = _.get(layer.layerObj.properties, 'visible', true)
-        return result
+        let layerVisible = _.get(layer.layerObj.properties, 'visible', true)
+        return layerVisible
       })
 
-      // Now  that we have all layers apply the filters  on the features
+      // Now  that we have all layers combine  them
       let selectedLayers = [...scenarioLayers, ...layers]
-
-      // filter the geojsons before passing them to the map
-      selectedLayers = _.map(selectedLayers, (layer) => {
-        if (_.has(layer, 'geojson')) {
-          // TODO: fix this using stylesheet
-          let geojson = layer.geojson
-          geojson.features = _.filter(geojson.features, (feature) => {
-            if (this.selectedProbability === 'no_filter') {
-              return true
-            }
-            let result = feature.properties[this.selectedProbability] > 0
-            return result
-          })
-          layer.geojson = geojson
-        }
-        return layer
-      })
 
       return selectedLayers
     }
@@ -350,6 +362,7 @@ export default {
 
       // Store new layers (which now contain the new active variant)
       if (layerSet === this.layerSet) {
+        // TODO: move this to store
         this.updateLayersInLayerSet(layerSet.id, layerSet.layers)
       } else {
         // store the index in all layers, because layers in the scenario
@@ -358,6 +371,7 @@ export default {
         _.each(layerSet.layers, (layer) => {
           this.$set(layer.properties, 'selectedVariant', index)
         })
+        // TODO: move this to scenario module  in store
         this.updateLayersInScenarioLayerSets(scenarioLayerSetIndex, layerSet.layers)
       }
       // now that the new variant is selected we can update the path
@@ -385,7 +399,6 @@ export default {
       let promises = features.map(feature => this.loadFeature(feature))
       layerSets = await Promise.all(promises)
       // store the scenario layerset
-      this.scenarioLayerSets = layerSets
       return layerSets
     },
     getFeatureById (id) {
@@ -407,14 +420,15 @@ export default {
       // this looks a bit double, but it's easier to read
       let wasSelected = !selected
 
+      // set feature properties for reactive components
       if (this.selectFeatureMode === 'single') {
         // deselect all features
         this.selectedFeatures.map(feature => {
-          feature.properties.selected = false
+          this.$set(feature.properties, 'selected', false)
         })
       }
       // select the feature
-      feature.properties.selected = selected
+      this.$set(feature.properties, 'selected', selected)
 
       // This is a double administration
       // TODO: We now replace the map state each time something changes. This is slow, flickering and uncommon.
@@ -433,6 +447,7 @@ export default {
         })
         this.scenarioLayerSets = scenarioLayerSets
       } else {
+        // we just selected this feature, add it to the list
         if (this.selectFeatureMode === 'multiple') {
           this.selectedFeatures.push(feature)
         } else {
@@ -444,14 +459,15 @@ export default {
       this.setMarkers(feature, marker)
 
       if (wasSelected) {
-        // We deselected something,  we're done
+        // if we deselected the selectedFeature reset the selectedFeature
         if (_.isEqual(feature, this.selectedFeature)) {
           this.selectedFeature = null
         }
       }
-      // now manually load the corresponding layerSets
-      let result = await this.loadScenarioLayerSets(this.selectedFeatures)
-      console.log('result', result)
+      // now manually load the layerSets that correspond to the current selection
+      let layerSets = await this.loadScenarioLayerSets(this.selectedFeatures)
+      this.scenarioLayerSets = layerSets
+      // and update the path
       this.updatePath()
     },
     setMarkers (feature, marker) {
