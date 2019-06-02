@@ -146,5 +146,3 @@ function getScale (map) {
 
   return scale
 }
-
-const matrices = matrices
