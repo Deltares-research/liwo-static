@@ -1,5 +1,5 @@
 import chai, { expect } from 'chai'
-import { normalizeLayerSet, cleanLayerSet } from '@/lib/layer-parser'
+import { flattenLayerSet, normalizeLayerSet, cleanLayerSet } from '@/lib/layer-parser'
 import layerSet from './data/layerSet.json'
 import chaiThings from 'chai-things'
 
@@ -20,5 +20,20 @@ describe('the layer parser', () => {
     let normalizedLayerSet = normalizeLayerSet(layerSet)
     let cleanedLayerSet = cleanLayerSet(normalizedLayerSet)
     expect(cleanedLayerSet.layers).to.all.have.nested.property('properties.title')
+  })
+  it('flattens a layerSet', () => {
+    let normalizedLayerSet = normalizeLayerSet(layerSet)
+    let cleanedLayerSet = cleanLayerSet(normalizedLayerSet)
+    let flatLayers = flattenLayerSet(cleanedLayerSet)
+    // the original layer
+    expect(flatLayers).to.all.have.nested.property('layerObj.properties.title')
+    // the layer id
+    expect(flatLayers).to.all.have.nested.property('layerObj.id')
+    // the metadata  from the variant
+    expect(flatLayers).to.all.have.nested.property('metadata.id')
+    // the layerSet
+    expect(flatLayers).to.all.have.nested.property('layerSet.id')
+    // a title
+    expect(flatLayers).to.all.have.nested.property('title')
   })
 })
