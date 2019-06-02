@@ -284,7 +284,7 @@ export default {
       layers = JSON.parse(JSON.stringify(layers))
 
       layers = layers.map(layer => {
-        if (_.has(layer, 'geojson')) {
+        if (!_.has(layer, 'geojson')) {
           return layer
         }
         // TODO: do this using stylesheet
@@ -304,6 +304,14 @@ export default {
           }
           let featureSelected = feature.properties[this.selectedProbability] > 0
           return featureSelected
+        })
+        let selectedFeatureIds = _.map(this.selectedFeatures, 'properties.id')
+        geojson.features = _.map(geojson.features, (feature) => {
+          // set feature selected to true
+          if (selectedFeatureIds.includes(feature.properties.id)) {
+            feature.properties.selected = true
+          }
+          return feature
         })
         // store  the new geojson in the layer
         layer.geojson = geojson
@@ -382,7 +390,7 @@ export default {
       this.scenarioLayerSets = []
 
       if (_.isEmpty(features)) {
-        return Promise.resolve()
+        return Promise.resolve([])
       }
       // collapse first layer
       this.layerSetCollapsed = true
@@ -424,11 +432,11 @@ export default {
       if (this.selectFeatureMode === 'single') {
         // deselect all features
         this.selectedFeatures.map(feature => {
-          this.$set(feature.properties, 'selected', false)
+          feature.properties.selected = false
         })
       }
       // select the feature
-      this.$set(feature.properties, 'selected', selected)
+      feature.properties.selected = selected
 
       // This is a double administration
       // TODO: We now replace the map state each time something changes. This is slow, flickering and uncommon.
