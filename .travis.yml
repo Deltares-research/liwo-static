@@ -48,7 +48,6 @@ jobs:
             secure: $GITHUB_TOKEN
           file:
             - liwo.tar.gz
-            - liwo-liwo.tar.gz
           skip_cleanup: true
           on:
             tags: true
