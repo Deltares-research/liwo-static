@@ -104,6 +104,7 @@ export default new Vuex.Store({
     currentNotifications (state) {
       const { layerSetId, notificationsById } = state
       let notifications = _.get(notificationsById, layerSetId, [])
+      notifications = _.uniqWith(notifications, _.isEqual)
       return notifications
     }
   }
