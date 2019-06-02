@@ -13,9 +13,11 @@ const globals = [
   'PDOKBRTACHTERGROND',
   'MANUAL_URL',
   'STATIC_GEOSERVER_URL',
-  'PRINT_GEOSERVER_URL'
+  'PRINT_GEOSERVER_URL',
+  'HYDRO_ENGINE_URL'
 ]
 
+// Assertions
 globals.forEach(
   function (v) {
     console.assert(
@@ -45,7 +47,9 @@ const services = {
   // TODO: consistent names
   LEGEND_URL: window.STATIC_GEOSERVER_URL,
   // TODO: consistent names
-  PRINT_GEO_SERVER: window.PRINT_GEOSERVER_URL
+  PRINT_GEO_SERVER: window.PRINT_GEOSERVER_URL,
+  //
+  HYDRO_ENGINE: window.HYDRO_ENGINE_URL
 }
 
 // This is the attribution (maps and datasets often require attribution of the source)
