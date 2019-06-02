@@ -90,7 +90,7 @@ export default function buildNotifications (layers) {
   // create a list of all the  notifications from the layers
   let featureNotifications = buildFeatureNotifications(layers)
   let layerNotifications = buildLayerNotifications(layers)
-  let layerSetFeatureNotifications  buildLayerSetFeatureNotifications(layers)
+  let layerSetFeatureNotifications = buildLayerSetFeatureNotifications(layers)
   let layerSetNotifications = buildLayerNotifications(layers)
 
 
