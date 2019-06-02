@@ -29,6 +29,7 @@
   </form>
   <!-- TODO: this is not a layer setting. Move this to an application settings pane. -->
   <div v-if="variantsOptions.length" class="layer-control__options">
+    <!-- TODO: this now  shows up for each band reorganize -->
     <layer-control-select
       name="layer-variant"
       :options="variantsOptions"
@@ -76,11 +77,15 @@ export default {
   },
   data () {
     return {
-      popupIsOpen: false,
-      selectedVariantIndex: 0
+      popupIsOpen: false
     }
   },
   computed: {
+    selectedVariantIndex () {
+      // get the selectedVariant from the layer
+      let index = _.get(this.layer, 'properties.selectedVariant', 0)
+      return index
+    },
     id () {
       return this.layer.id
     },
@@ -123,11 +128,11 @@ export default {
     },
     setLayerVariant ({ target }) {
       // inform everybody up the tree that a variant for this layer changed
-      this.selectedVariantIndex = _.toNumber(target.value)
+      let selectedVariantIndex = _.toNumber(target.value)
       this.$emit('select:variant', {
         layer: this.layer,
-        variant: this.layer.variants[this.selectedVariantIndex],
-        index: this.selectedVariantIndex
+        variant: this.layer.variants[selectedVariantIndex],
+        index: selectedVariantIndex
       })
     },
     selectLayer () {
