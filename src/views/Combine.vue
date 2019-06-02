@@ -30,7 +30,7 @@
           :key="layerSet.id"
           >
         </layer-panel-item>
-        <!-- these correspond to the loaded scenario's based on the selected features -->
+        <!-- these correspond to the loaded scenarios based on the selected features -->
         <layer-panel-item
           v-for="(layerSet_, index) in scenarioLayerSets"
           :layers="layerSet_.layers"
@@ -172,6 +172,9 @@ export default {
       // allows to select a layer (for the unit panel)
       selectedLayer: null,
 
+      // features loaded by Url, constructed during mount
+      featureIds: [],
+
       // menus
       showExport: false,
       showExportCombine: false,
@@ -193,24 +196,19 @@ export default {
     }
 
     await this.$store.dispatch('loadLayerSetById', options)
+
     // if we just navigated to this list of ids, then we also have to load
     // the scenarios
 
     // Get list of features from url
-    let featureIds = await getFeatureIdsByScenarioIds(this.scenarioIds)
-    let features = _.map(featureIds, this.getFeatureById)
-    this.loadScenarioLayerSets(features)
-  },
-  watch: {
-    selectedScenarioIdsPath (val) {
-      this.$router.replace({
-        params: {
-          ids: val
-        }
-      })
-    },
-    scenarioIds (val) {
-      console.log('ids changed we are not reloading')
+    this.featureIds = await getFeatureIdsByScenarioIds(this.scenarioIds)
+    if (this.scenarioMode === 'compute') {
+      let layerSet = await this.computeScenario(this.scenarioIds)
+      this.scenarioLayerSets = [layerSet]
+    } else {
+      let features = _.map(this.featureIds, this.getFeatureById)
+      let layerSets = await this.loadScenarioLayerSets(features)
+      this.scenarioLayerSets = layerSets
     }
   },
   computed: {
@@ -238,14 +236,13 @@ export default {
       // for each layer select the variant that is selected or the first if none is selected.
       let ids = []
       this.scenarioLayerSets.forEach(layerSet => {
-        if (layerSet.layers.length !== 1) {
-          console.warn('layerSet  layers not of length 1', layerSet)
-        }
-        layerSet.layers.forEach(layer => {
-          let variantIndex = _.get(layer, 'properties.selectedVariant', 0)
-          let variant = layer.variants[variantIndex]
-          ids.push(variant.map_id)
-        })
+        // Only select first layer
+        // multiple layers in scenarios are bands
+        // TODO: restructure backend
+        let layer = _.first(layerSet.layers)
+        let variantIndex = _.get(layer, 'properties.selectedVariant', 0)
+        let variant = layer.variants[variantIndex]
+        ids.push(variant.map_id)
       })
       return ids
     },
@@ -263,10 +260,15 @@ export default {
         return result
       })
 
+      // make a deep clone (this is faster than lodash deepClone)
+      layers = JSON.parse(JSON.stringify(layers))
+
       if (this.filterByIds) {
         layers = layers.map(layer => {
           if (_.has(layer, 'geojson')) {
-            let features = layer.geojson.features.filter(feature => this.scenarioIds.includes(feature.properties.id))
+            let features = layer.geojson.features.filter(feature => {
+              return this.featureIds.includes(feature.properties.id)
+            })
             layer.geojson.features = features
           }
           return layer
@@ -290,11 +292,9 @@ export default {
 
       // filter the geojsons before passing them to the map
       selectedLayers = _.map(selectedLayers, (layer) => {
-        // TODO: filter geojson by probability index
         if (_.has(layer, 'geojson')) {
-          // shallow clone is enough
-          layer = _.clone(layer)
-          let geojson = _.clone(layer.geojson)
+          // TODO: fix this using stylesheet
+          let geojson = layer.geojson
           geojson.features = _.filter(geojson.features, (feature) => {
             if (this.selectedProbability === 'no_filter') {
               return true
@@ -319,7 +319,6 @@ export default {
     updateLayersInScenarioLayerSets (index, layers) {
       // this method updates the layers in the ScenarioLayerSet at index
       // taking into account https://vuejs.org/v2/guide/list.html#Caveats
-      console.log('setting layerSet[i].layers', index, layers)
       // update layers
       this.$set(this.scenarioLayerSets[index], 'layers', layers)
     },
@@ -332,19 +331,28 @@ export default {
     selectVariant ({ index, layerSet, scenarioLayerSetIndex, layer }) {
       // store the index of the active variant
       this.$set(layer.properties, 'selectedVariant', index)
+
       // Store new layers (which now contain the new active variant)
       if (layerSet === this.layerSet) {
         this.updateLayersInLayerSet(layerSet.id, layerSet.layers)
       } else {
+        // store the index in all layers, because layers in the scenario
+        // are actually bands that share the same variant....
+        // TODO: move band selection to more logic location, now it's magic...
+        _.each(layerSet.layers, (layer) => {
+          this.$set(layer.properties, 'selectedVariant', index)
+        })
         this.updateLayersInScenarioLayerSets(scenarioLayerSetIndex, layerSet.layers)
       }
+      // now that the new variant is selected we can update the path
+      this.updatePath()
     },
     async loadScenarioLayerSets (features) {
       // load all  scenario's
       this.scenarioLayerSets = []
-      // nothing to do
-      if (!this.scenarioIds) {
-        return
+
+      if (_.isEmpty(features)) {
+        return Promise.resolve()
       }
       // collapse first layer
       this.layerSetCollapsed = true
@@ -357,18 +365,12 @@ export default {
       this.selectedFeatures = features
       // If we  selected something we have to load the scenario
       // now that we have selected the features, we can load the corresponding maps
-      let promise
-      if (this.scenarioMode === 'compute') {
-        promise = this.computeScenario(this.selectedFeatures)
-      } else {
-        promise = Promise.all(
-          features.map(feature => {
-            // load features
-            this.loadFeature(feature)
-          })
-        )
-      }
-      return promise
+      let layerSets = []
+      let promises = features.map(feature => this.loadFeature(feature))
+      layerSets = await Promise.all(promises)
+      // store the scenario layerset
+      this.scenarioLayerSets = layerSets
+      return layerSets
     },
     getFeatureById (id) {
       // get a feature by an id
@@ -379,7 +381,7 @@ export default {
       let feature = _.find(features, ['properties.id', id])
       return feature
     },
-    selectFeature (evt) {
+    async selectFeature (evt) {
       if (this.selectFeatureMode === 'disabled') {
         return
       }
@@ -431,9 +433,20 @@ export default {
           this.selectedFeature = null
         }
       }
-
       // now manually load the corresponding layerSets
-      this.loadScenarioLayerSets(this.selectedFeatures)
+      let result = await this.loadScenarioLayerSets(this.selectedFeatures)
+      console.log('result', result)
+      this.updatePath()
+    },
+    updatePath () {
+      // replace the url with the ids of the currently loaded scenarios
+      // don't put this in a watch because scenario's are loaded asynchronously
+      let path = this.selectedScenarioIdsPath
+      this.$router.replace({
+        params: {
+          ids: path
+        }
+      })
     },
     setMarkers (feature, marker) {
       // set the appropriate markers
@@ -467,47 +480,37 @@ export default {
     async loadFeature (feature) {
       // TODO: move this back the store in a breach module
       // Load the layerSet for the breach and add it to the scenario list
-      loadBreach(feature)
-        .then(layerSet => {
-          // normalize
-          layerSet = normalizeLayerSet(layerSet)
-          // and clean
-          layerSet = cleanLayerSet(layerSet)
-          const layers = flattenLayerSet(layerSet)
-          const notifications = buildLayerSetNotifications(layers)
-          _.each(
-            notifications,
-            (notification) => {
-              // add them to the main layerSetId number to show up
-              this.$store.commit('addNotificationById', {id: this.layerSetId, notification})
-            }
-          )
-          // store the scenario layerset
-          if (this.selectFeatureMode === 'single') {
-            this.scenarioLayerSets = [layerSet]
-          } else {
-            this.scenarioLayerSets.push(layerSet)
-          }
-        })
+      let layerSet = await loadBreach(feature)
+      // normalize
+      layerSet = normalizeLayerSet(layerSet)
+      // and clean
+      layerSet = cleanLayerSet(layerSet)
+      const layers = flattenLayerSet(layerSet)
+      const notifications = buildLayerSetNotifications(layers)
+      _.each(
+        notifications,
+        (notification) => {
+          // add them to the main layerSetId number to show up
+          this.$store.commit('addNotificationById', {id: this.layerSetId, notification})
+        }
+      )
+      return layerSet
     },
-    async computeScenario (features) {
+    async computeScenario (scenarioIds) {
+      this.layerSetCollapsed = true
       // Load the layerSet for the breach and add it to the scenario list
-      let promise = computeCombinedScenario(features)
-      promise
-        .then(layerSet => {
-          // normalize
-          layerSet = normalizeLayerSet(layerSet)
-          // and clean
-          layerSet = cleanLayerSet(layerSet)
-          // Set the first layer as visible
-          _.each(layerSet.layers, layer => {
-            layer.properties.visible = false
-          })
-          _.first(layerSet.layers).properties.visible = true
-          // store the scenario layerset
-          this.scenarioLayerSets = [layerSet]
-        })
-      return promise
+      let layerSet = await computeCombinedScenario(scenarioIds)
+      // normalize
+      layerSet = normalizeLayerSet(layerSet)
+      // and clean
+      layerSet = cleanLayerSet(layerSet)
+      // Set the first layer as visible
+      _.each(layerSet.layers, layer => {
+        layer.properties.visible = false
+      })
+      _.first(layerSet.layers).properties.visible = true
+      // store the scenario layerset
+      return layerSet
     }
   }
 }
