@@ -6,6 +6,7 @@
       :clusterMarkers="true"
       :layers="selectedLayers"
       @click="selectFeature"
+      @initMap="setMapObject"
       />
     <notification-bar :notifications="currentNotifications"/>
     <layer-panel>
@@ -556,7 +557,26 @@ export default {
       }
       // store the scenario layerset
       return layerSet
-    }
+    },
+    setMapObject (mapObject) {
+      // add a tooltip if the map is clicked
+      this.mapObject = mapObject
+      // TODO: implement in GEE
+      this.mapObject.on('click', (event) => {
+        let unit = '[-]'
+        if (_.has(this.selectedLayer, 'legend.title')) {
+          unit = extractUnit(this.selectedLayer.legend.title)
+        }
+        showLayerInfoPopup({
+          map: mapObject,
+          activeLayer: this.selectedLayerId,
+          unit: unit,
+          position: event.containerPoint,
+          latlng: event.latlng
+        })
+      })
+    },
+
   }
 }
 </script>
