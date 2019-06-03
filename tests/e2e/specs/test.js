@@ -46,7 +46,7 @@ module.exports = {
   },
   'combined page': browser => {
     browser
-      .url(process.env.VUE_DEV_SERVER_URL + '#/combined/1,2')
+      .url(process.env.VUE_DEV_SERVER_URL + '#/combined/1,2/waterdepth')
       .waitForElementVisible('#app', 5000)
       .assert.elementPresent('.viewer')
       .end()
