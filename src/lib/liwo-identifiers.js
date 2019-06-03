@@ -24,6 +24,23 @@ export function hasProbabilities (layer) {
   return result
 }
 
+// translation table for breach layers
+export const BREACH_LAYERS_EN = {
+  'waterdepth': 'waterdiepte',
+  'velocity': 'stroomsnelheid',
+  'riserate': 'stijgsnelheid',
+  'damage': 'schade',
+  'fatalities': 'slachtoffers'
+}
+
+export const BREACH_LAYERS_NL =  [
+  'waterdiepte',
+  'stroomsnelheid',
+  'stijgsnelheid',
+  'schade',
+  'slachtoffers'
+]
+
 export const BREACHES_IDS = [
   BREACH_PRIMARY,
   BREACH_REGIONAL,
