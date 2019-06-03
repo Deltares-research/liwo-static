@@ -18,39 +18,7 @@ export default function createLayer (layer, { onClick }) {
   if (layer.type === 'json' && layer.geojson) {
     return createGeoJson(layer)
   } else if (layer.type === 'cluster') {
-    // We have a nested structure of layers
-    // LayerGroup -> [ MarkerCluster, Geojson ]
-    // When selected the markers are filtered from the cluster and show up in the geojson layer
-    // This makes it rather slow
-    const layerGroup = L.layerGroup()
-
-    // create the cluster  layer
-    const clusterGroup = L.markerClusterGroup({
-      iconCreateFunction: clusterIconCreateFunction(layer),
-      maxClusterRadius: 40
-    })
-    // create the markers
-    let geojsonLayer = createClusterGeoJson(layer, (evt) => {
-      evt.geojsonLayer = geojsonLayer
-      onClick(evt)
-      clusterGroup.refreshClusters()
-    })
-    // add the geojson layer to the cluster (lowest level)
-    clusterGroup.addLayer(geojsonLayer)
-    // add  the cluster to the group
-    layerGroup.addLayer(clusterGroup)
-    // now create the selected markers
-    let selectedLayer = createSelectedGeojson(layer, (evt) => {
-      evt.geojsonLayer = selectedLayer
-      onClick(evt)
-      clusterGroup.refreshClusters()
-    })
-    // also add  them
-    layerGroup.addLayer(selectedLayer)
-    // TODO: check if we can set opacity here...
-    layerGroup.layerId = layer.layerId
-
-    return layerGroup
+    return createCluster(layer, onClick)
   } else if (layer.type === 'tile') {
     return createTile(layer)
   } else if (!layer.hideWms) {
@@ -67,6 +35,43 @@ export function createGeoJson ({ geojson, style }) {
       return { className: style }
     }
   })
+}
+
+function createCluster(layer, onClick) {
+  // We have a nested structure of layers
+  // LayerGroup -> [ MarkerCluster, Geojson ]
+  // When selected the markers are filtered from the cluster and show up in the geojson layer
+  // This makes it rather slow
+  const layerGroup = L.layerGroup()
+
+    // create the cluster  layer
+  const clusterGroup = L.markerClusterGroup({
+      iconCreateFunction: clusterIconCreateFunction(layer),
+    maxClusterRadius: 40
+  })
+  // create the markers
+  let geojsonLayer = createClusterGeoJson(layer, (evt) => {
+    evt.geojsonLayer = geojsonLayer
+    onClick(evt)
+    clusterGroup.refreshClusters()
+  })
+  // add the geojson layer to the cluster (lowest level)
+  clusterGroup.addLayer(geojsonLayer)
+  // add  the cluster to the group
+  layerGroup.addLayer(clusterGroup)
+  // now create the selected markers
+  let selectedLayer = createSelectedGeojson(layer, (evt) => {
+    evt.geojsonLayer = selectedLayer
+    onClick(evt)
+    clusterGroup.refreshClusters()
+  })
+  // also add  them
+  layerGroup.addLayer(selectedLayer)
+  // TODO: check if we can set opacity here...
+  layerGroup.layerId = layer.layerId
+
+  return layerGroup
+
 }
 
 // set custom  style for selected features

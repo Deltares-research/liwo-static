@@ -1,0 +1,242 @@
+[
+  {
+    "identifier": "EPSG:28992:0",
+    "matrixSize": [
+      1,
+      1
+    ],
+    "scaleDenominator": 12288000,
+    "tileSize": [
+      256,
+      256
+    ],
+    "topLeftCorner": [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    "identifier": "EPSG:28992:1",
+    "matrixSize": [
+      2,
+      2
+    ],
+    "scaleDenominator": 6144000,
+    "tileSize": [
+      256,
+      256
+    ],
+    "topLeftCorner": [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    "identifier": "EPSG:28992:2",
+    "matrixSize": [
+      4,
+      4
+    ],
+    "scaleDenominator": 3072000,
+    "tileSize": [
+      256,
+      256
+    ],
+    "topLeftCorner": [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    "identifier": "EPSG:28992:3",
+    "matrixSize": [
+      8,
+      8
+    ],
+    "scaleDenominator": 1536000,
+    "tileSize": [
+      256,
+      256
+    ],
+    "topLeftCorner": [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    "identifier": "EPSG:28992:4",
+    "matrixSize": [
+      16,
+      16
+    ],
+    "scaleDenominator": 768000,
+    "tileSize": [
+      256,
+      256
+    ],
+    "topLeftCorner": [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    "identifier": "EPSG:28992:5",
+    "matrixSize": [
+      32,
+      32
+    ],
+    "scaleDenominator": 384000,
+    "tileSize": [
+      256,
+      256
+    ],
+    "topLeftCorner": [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    "identifier": "EPSG:28992:6",
+    "matrixSize": [
+      64,
+      64
+    ],
+    "scaleDenominator": 192000,
+    "tileSize": [
+      256,
+      256
+    ],
+    "topLeftCorner": [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    "identifier": "EPSG:28992:7",
+    "matrixSize": [
+      128,
+      128
+    ],
+    "scaleDenominator": 96000,
+    "tileSize": [
+      256,
+      256
+    ],
+    "topLeftCorner": [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    "identifier": "EPSG:28992:8",
+    "matrixSize": [
+      256,
+      256
+    ],
+    "scaleDenominator": 48000,
+    "tileSize": [
+      256,
+      256
+    ],
+    "topLeftCorner": [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    "identifier": "EPSG:28992:9",
+    "matrixSize": [
+      512,
+      512
+    ],
+    "scaleDenominator": 24000,
+    "tileSize": [
+      256,
+      256
+    ],
+    "topLeftCorner": [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    "identifier": "EPSG:28992:10",
+    "matrixSize": [
+      1024,
+      1024
+    ],
+    "scaleDenominator": 12000,
+    "tileSize": [
+      256,
+      256
+    ],
+    "topLeftCorner": [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    "identifier": "EPSG:28992:11",
+    "matrixSize": [
+      2048,
+      2048
+    ],
+    "scaleDenominator": 6000,
+    "tileSize": [
+      256,
+      256
+    ],
+    "topLeftCorner": [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    "identifier": "EPSG:28992:12",
+    "matrixSize": [
+      4096,
+      4096
+    ],
+    "scaleDenominator": 3000,
+    "tileSize": [
+      256,
+      256
+    ],
+    "topLeftCorner": [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    "identifier": "EPSG:28992:13",
+    "matrixSize": [
+      8192,
+      8192
+    ],
+    "scaleDenominator": 1500,
+    "tileSize": [
+      256,
+      256
+    ],
+    "topLeftCorner": [
+      -285401.92,
+      903401.92
+    ]
+  },
+  {
+    "identifier": "EPSG:28992:14",
+    "matrixSize": [
+      16384,
+      16384
+    ],
+    "scaleDenominator": 750,
+    "tileSize": [
+      256,
+      256
+    ],
+    "topLeftCorner": [
+      -285401.92,
+      903401.92
+    ]
+  }
+]

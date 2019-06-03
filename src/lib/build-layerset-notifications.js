@@ -1,13 +1,14 @@
 import _ from 'lodash'
 
-export default function buildLayerSetNotifications (layers) {
-  //  TODO: clean this up
+function buildFeatureNotifications (layers) {
+  // create a list of notifications based on the features
+
   let featureNotificationsTree = layers
   // for all layers that have geojson
     .filter(layer => layer.geojson)
     .map(
       layer => layer.geojson.features
-      // for  all features  in each layer
+        // for  all features  in each layer
         .map(
           feature => ({
             id: feature.properties.id,
@@ -28,6 +29,11 @@ export default function buildLayerSetNotifications (layers) {
         )
     )
   let featureNotifications = _.flatten(featureNotificationsTree)
+  return featureNotifications
+}
+
+function buildLayerNotifications (layers) {
+  // create a list of notifications based on the layers
   let layerNotifications = layers
     .filter(layer => layer.layerObj.properties.notify)
     .map(layer => {
@@ -37,7 +43,11 @@ export default function buildLayerSetNotifications (layers) {
         show: true
       }
     })
+  return layerNotifications
+}
 
+function buildLayerSetFeatureNotifications (layers) {
+  // create a list of notifications based on the layerset features, the feature that was  used to create the layerSet
   let layerSetFeatureNotifications = layers
     .filter(layer => _.get(layer, 'layerSet.feature.properties.notify'))
     .map((layer) => {
@@ -47,9 +57,21 @@ export default function buildLayerSetNotifications (layers) {
         show: true
       }
     })
-
   layerSetFeatureNotifications = _.filter(layerSetFeatureNotifications)
+  // filter out messages that
+  // contain NULLs
+  layerSetFeatureNotifications = layerSetFeatureNotifications.filter(feature => {
+    if (feature.message === 'NULL') {
+      return false
+    } else {
+      return true
+    }
+  })
+  return layerSetFeatureNotifications
+}
 
+function buildLayerSetNotifications (layers) {
+  // the list of notifications  on layerSet level
   let layerSetNotifications = layers
     .filter(layer => layer.layerSet.notify)
     .map(layer => {
@@ -59,15 +81,16 @@ export default function buildLayerSetNotifications (layers) {
         show: true
       }
     })
+  return layerSetNotifications
+}
 
-  // filter out messages that
-  layerSetFeatureNotifications = layerSetFeatureNotifications.filter(feature => {
-    if (feature.message === 'NULL') {
-      return false
-    } else {
-      return true
-    }
-  })
+export default function buildNotifications (layers) {
+  // this method expects a flattened list of layers
+  // create a list of all the  notifications from the layers
+  let featureNotifications = buildFeatureNotifications(layers)
+  let layerNotifications = buildLayerNotifications(layers)
+  let layerSetFeatureNotifications = buildLayerSetFeatureNotifications(layers)
+  let layerSetNotifications = buildLayerSetNotifications(layers)
 
   // concatenate all features
   let result = [

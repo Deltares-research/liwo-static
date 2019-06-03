@@ -12,37 +12,31 @@ import redRetinaIconUrl from '../../img/markers/marker-icon-2x-red.png'
 
 export const defaultIcon = new L.Icon.Default()
 
-export const blackIcon = L.icon({
-  iconUrl: blackIconUrl,
-  iconRetinaUrl: blackRetinaIconUrl,
+const iconDefaults = {
   shadowUrl: iconShadowUrl,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
   tooltipAnchor: [16, -28],
   shadowSize: [41, 41]
+}
+
+export const blackIcon = L.icon({
+  iconUrl: blackIconUrl,
+  iconRetinaUrl: blackRetinaIconUrl,
+  ...iconDefaults
 })
 
 export const greenIcon = L.icon({
   iconUrl: greenIconUrl,
   iconRetinaUrl: greenRetinaIconUrl,
-  shadowUrl: iconShadowUrl,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  tooltipAnchor: [16, -28],
-  shadowSize: [41, 41]
+  ...iconDefaults
 })
 
 export const redIcon = L.icon({
   iconUrl: redIconUrl,
   iconRetinaUrl: redRetinaIconUrl,
-  shadowUrl: iconShadowUrl,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  tooltipAnchor: [16, -28],
-  shadowSize: [41, 41]
+  ...iconDefaults
 })
 
 export const iconsByLayerType = {

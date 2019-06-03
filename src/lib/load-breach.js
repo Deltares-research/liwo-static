@@ -2,7 +2,7 @@ import _ from 'lodash'
 
 import store from '@/store'
 
-import { BREACH_PRIMARY, BREACH_REGIONAL, getLayerType } from '@/lib/liwo-identifiers'
+import { BREACH_LAYERS_EN, BREACH_LAYERS_NL, BREACH_PRIMARY, BREACH_REGIONAL, getLayerType } from '@/lib/liwo-identifiers'
 import mapConfig from '../map.config'
 
 const BREACHES_BASE_URL = mapConfig.services.WEBSERVICE_URL
@@ -10,6 +10,7 @@ const HYDRO_ENGINE = mapConfig.services.HYDRO_ENGINE
 const BREACHES_API_URL = `${BREACHES_BASE_URL}/Tools/FloodImage.asmx/GetScenariosPerBreachGeneric`
 
 const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
+
 
 export async function loadBreach (feature) {
   // Load breach data from the geoserver
@@ -25,13 +26,7 @@ export async function loadBreach (feature) {
   if (layerType === BREACH_REGIONAL) {
     breachLayers = [`${BREACH_REGIONAL}.${breachId}`]
   } else if (layerType === BREACH_PRIMARY) {
-    breachLayers = [
-      'waterdiepte',
-      'stroomsnelheid',
-      'stijgsnelheid',
-      'schade',
-      'slachtoffers'
-    ]
+    breachLayers = BREACH_LAYERS_NL
   }
 
   let promises = breachLayers.map(
@@ -63,14 +58,7 @@ export async function computeCombinedScenario (scenarioIds) {
   // The computation is done in Google Earth Engine / HydroEngine
   // the breach id is hidden here
 
-  let breachLayersEn = {
-    'waterdepth': 'waterdiepte',
-    'velocity': 'stroomsnelheid',
-    'riserate': 'stijgsnelheid',
-    'damage': 'schade',
-    'fatalities': 'slachtoffers'
-  }
-
+  // TODO: add  this as  a parameter
   let selectedLayers = [ 'waterdepth' ]
   // load  all the variants
   let promises = selectedLayers.map(
@@ -86,7 +74,8 @@ export async function computeCombinedScenario (scenarioIds) {
   // convert bands to layerlike objects
   let layers = _.map(bands, (band) => {
     // if it looks like a layer, then it is a layer
-    let bandNl = _.get(breachLayersEn, band.band)
+    // lookup the translation
+    let bandNl = _.get(BREACH_LAYERS_EN, band.band)
     let title = bandNl
     band.title = title
     band.metadata = _.clone(band)
