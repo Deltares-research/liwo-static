@@ -132,6 +132,7 @@ export default {
   },
   methods: {
     setMapObject (mapObject) {
+      // add a tooltip if the map is clicked
       this.mapObject = mapObject
       this.mapObject.on('click', (event) => {
         let unit = '[-]'
