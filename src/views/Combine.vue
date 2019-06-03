@@ -52,18 +52,13 @@
       <template v-slot:actions>
         <!-- add these buttons to the button section of the layer panel -->
         <!-- use named slots after upgrading to Vue 2.6 -->
-        <router-link
+        <button
           v-if="selectFeatureMode === 'multiple' && selectedFeatures.length"
-          :to="{name: 'combined', params: {ids: selectedScenarioIdsPath}}"
-          target="_blank"
+          class="layer-panel__action"
+          @click="showCombine = true"
           >
-          <button
-
-            class="layer-panel__action"
-            >
-            Selectie combineren
-          </button>
-        </router-link>
+          Selectie combineren
+        </button>
         <button
           v-if="selectFeatureMode === 'multiple' && selectedFeatures.length"
           class="layer-panel__action"
@@ -84,6 +79,10 @@
       :layer="selectedLayer"
       v-if="selectedLayer"
       />
+    <combine-popup
+      :path="selectedScenarioIdsPath"
+      v-if="showCombine"
+      ></combine-popup>
     <!-- shows the export url -->
     <export-combine-popup
       :path="selectedScenarioIdsPath"
@@ -113,6 +112,7 @@ import NotificationBar from '@/components/NotificationBar.vue'
 import LayerPanel from '@/components/LayerPanel'
 import LayerPanelItem from '@/components/LayerPanelItem'
 import LegendPanel from '@/components/LegendPanel'
+import CombinePopup from '@/components/CombinePopup'
 import ExportPopup from '@/components/ExportPopup'
 import ExportCombinePopup from '@/components/ExportCombinePopUp'
 import ImportCombinePopup from '@/components/ImportCombinePopUp'
@@ -129,6 +129,7 @@ import { EPSG_3857 } from '@/lib/leaflet-utils/projections'
 export default {
   name: 'Combine',
   components: {
+    CombinePopup,
     ExportCombinePopup,
     ImportCombinePopup,
     ExportPopup,
@@ -187,6 +188,7 @@ export default {
       showExport: false,
       showExportCombine: false,
       showImportCombine: false,
+      showCombine: false,
       showFilter: false,
 
       // map projection
@@ -194,6 +196,10 @@ export default {
     }
   },
   async mounted () {
+    // If the url contains a list of scenarioIds
+    // we need to get the features first as we are filtering the layer using these
+    this.featureIds = await getFeatureIdsByScenarioIds(this.scenarioIds)
+
     // get the layerSet that corresponds to this map
     const layerSetId = this.layerSetId
     // store it
@@ -208,11 +214,9 @@ export default {
     // Set the loading icon
     this.loading = true
 
-    // If the url contains a list of scenarioIds
-    this.featureIds = await getFeatureIdsByScenarioIds(this.scenarioIds)
     if (this.scenarioMode === 'compute') {
       // if we are  computing, we can pass them on
-      let layerSet = await this.computeScenario(this.scenarioIds)
+      let layerSet = await this.computeScenario(this.scenarioIds, this.band)
       this.scenarioLayerSets = [layerSet]
     } else {
       // If we are interacting we need to lookup the corresponding features
@@ -238,6 +242,10 @@ export default {
       let ids = this.$route.params.ids.split(',')
       ids = ids.map(id => _.toNumber(id))
       return ids
+    },
+    band () {
+      // the band  from the url
+      return this.$route.params.band
     },
     selectedScenarioIdsPath () {
       // get the list  of selected scenarios, used to generate the current url
@@ -290,21 +298,24 @@ export default {
         // TODO: do this using stylesheet
         // replace markers by circle markers and add classes so we can style this
         let geojson = layer.geojson
-        geojson.features = _.filter(geojson.features, (feature) => {
-          // if we are filtering by Id
-          if (this.filterByIds) {
-            if (this.featureIds.includes(feature.properties.id)) {
-              // and if we have match return true
-              return true
-            }
-          }
-          // if  feature is not selected, filter by probability
-          if (this.selectedProbability === 'no_filter') {
-            return true
-          }
-          let featureSelected = feature.properties[this.selectedProbability] > 0
-          return featureSelected
-        })
+        if (this.filterByIds) {
+          geojson.features = _.filter(geojson.features, (feature) => {
+            // if we are filtering by Id
+            return (this.featureIds.includes(feature.properties.id))
+          })
+          geojson.features = _.map(geojson.features, (feature) => {
+            feature.properties.selected = true
+            return feature
+          })
+        }
+        // if  feature is not selected, filter by probability
+        if (this.selectedProbability !== 'no_filter') {
+          geojson.features = _.filter(geojson.features, (feature) => {
+            let featureSelected = feature.properties[this.selectedProbability] > 0
+            return featureSelected
+          })
+        }
+
         let selectedFeatureIds = _.map(this.selectedFeatures, 'properties.id')
         geojson.features = _.map(geojson.features, (feature) => {
           // set feature selected to true
