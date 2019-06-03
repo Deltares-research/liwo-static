@@ -81,6 +81,7 @@
       />
     <combine-popup
       :path="selectedScenarioIdsPath"
+      @close="showCombine = false"
       v-if="showCombine"
       ></combine-popup>
     <!-- shows the export url -->
@@ -541,7 +542,7 @@ export default {
       // TODO: move this back to the store in a scenario module
       this.layerSetCollapsed = true
       // Load the layerSet for the breach and add it to the scenario list
-      let layerSet = await computeCombinedScenario(scenarioIds)
+      let layerSet = await computeCombinedScenario(scenarioIds, this.band)
       // normalize
       layerSet = normalizeLayerSet(layerSet)
       // and clean
@@ -550,7 +551,9 @@ export default {
       _.each(layerSet.layers, layer => {
         layer.properties.visible = false
       })
-      _.first(layerSet.layers).properties.visible = true
+      if (!_.isEmpty(layerSet.layers)) {
+        _.first(layerSet.layers).properties.visible = true
+      }
       // store the scenario layerset
       return layerSet
     }
