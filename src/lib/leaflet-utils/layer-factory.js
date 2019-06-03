@@ -37,16 +37,16 @@ export function createGeoJson ({ geojson, style }) {
   })
 }
 
-function createCluster(layer, onClick) {
+function createCluster (layer, onClick) {
   // We have a nested structure of layers
   // LayerGroup -> [ MarkerCluster, Geojson ]
   // When selected the markers are filtered from the cluster and show up in the geojson layer
   // This makes it rather slow
   const layerGroup = L.layerGroup()
 
-    // create the cluster  layer
+  // create the cluster  layer
   const clusterGroup = L.markerClusterGroup({
-      iconCreateFunction: clusterIconCreateFunction(layer),
+    iconCreateFunction: clusterIconCreateFunction(layer),
     maxClusterRadius: 40
   })
   // create the markers
@@ -71,7 +71,6 @@ function createCluster(layer, onClick) {
   layerGroup.layerId = layer.layerId
 
   return layerGroup
-
 }
 
 // set custom  style for selected features

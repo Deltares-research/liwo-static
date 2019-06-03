@@ -33,7 +33,7 @@ export const BREACH_LAYERS_EN = {
   'fatalities': 'slachtoffers'
 }
 
-export const BREACH_LAYERS_NL =  [
+export const BREACH_LAYERS_NL = [
   'waterdiepte',
   'stroomsnelheid',
   'stijgsnelheid',
