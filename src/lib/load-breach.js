@@ -11,7 +11,6 @@ const BREACHES_API_URL = `${BREACHES_BASE_URL}/Tools/FloodImage.asmx/GetScenario
 
 const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
 
-
 export async function loadBreach (feature) {
   // Load breach data from the geoserver
 
