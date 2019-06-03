@@ -86,7 +86,7 @@
       />
     <!-- shows the export url -->
     <export-combine-popup
-      :path="selectedFeatureIds"
+      :path="selectedScenarioIdsPath"
       v-if="showExportCombine"
       @close="showExportCombine = false"
       />
