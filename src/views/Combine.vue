@@ -123,10 +123,12 @@ import FilterPopup from '@/components/FilterPopup'
 import { flattenLayerSet, normalizeLayerSet, cleanLayerSet } from '@/lib/layer-parser'
 import buildLayerSetNotifications from '@/lib/build-layerset-notifications'
 import { loadBreach, computeCombinedScenario, getFeatureIdsByScenarioIds } from '@/lib/load-breach'
+import { extractUnit } from '@/lib/load-layersets'
 
 import { getLayerType } from '@/lib/liwo-identifiers'
 import { iconsByLayerType, redIcon, defaultIcon } from '@/lib/leaflet-utils/markers'
 import { EPSG_3857 } from '@/lib/leaflet-utils/projections'
+import { showLayerInfoPopup } from '@/lib/leaflet-utils/popup'
 
 export default {
   name: 'Combine',
@@ -567,16 +569,20 @@ export default {
         if (_.has(this.selectedLayer, 'legend.title')) {
           unit = extractUnit(this.selectedLayer.legend.title)
         }
+        let activeLayer = _.get(this.selectedLayer, 'legend.layer')
+        if (_.isNil(activeLayer)) {
+          console.warn('clicking on layer not supported for layer', this.selectedLayer.id)
+          return
+        }
         showLayerInfoPopup({
           map: mapObject,
-          activeLayer: this.selectedLayerId,
+          activeLayer: activeLayer,
           unit: unit,
           position: event.containerPoint,
           latlng: event.latlng
         })
       })
-    },
-
+    }
   }
 }
 </script>
