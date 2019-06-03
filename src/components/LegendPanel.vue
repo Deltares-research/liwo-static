@@ -3,7 +3,9 @@
     <h2 class="legend-panel__title">Legenda</h2>
     <figure class="legend-panel__legend">
       <figcaption class="legend-panel__caption">{{ layer.legend.title }}</figcaption>
-      <img :src="legendImageSrc" alt="">
+      <slot></slot>
+      <!-- lookup legend if slot is empty -->
+      <img :src="legendImageSrc" alt="" v-if="!this.$slots.default">
     </figure>
   </aside>
 </template>

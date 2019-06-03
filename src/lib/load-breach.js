@@ -86,12 +86,8 @@ export async function computeCombinedScenario (scenarioIds, band) {
       variants: [band],
       title: title,
       legend: {
-        layer: 'geo_maximale_waterdiepte_2015_nederland',
         title: 'Gecombineerd Scenario [-]',
-        geojson_style: '',
-        namespace: 'LIWO_MEGO',
-        // we get the band from the default  scenario
-        style: `LIWO_Basis_${bandNl}`
+        namespace: 'LIWO_MEGO'
       }
     }
     return layer

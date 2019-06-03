@@ -79,7 +79,9 @@
     <legend-panel
       :layer="selectedLayer"
       v-if="selectedLayer"
-      />
+      >
+      <img :src="`legends/${band}.png`" v-if="band">
+    </legend-panel>
     <combine-popup
       :path="selectedScenarioIdsPath"
       @close="showCombine = false"
