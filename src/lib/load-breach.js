@@ -51,14 +51,13 @@ export async function loadBreach (feature) {
   return layerSet
 }
 
-export async function computeCombinedScenario (scenarioIds) {
+export async function computeCombinedScenario (scenarioIds, band) {
   // combine multiple breachesinto a new scenario
   // Load combined breaches map, computed by the backend
   // The computation is done in Google Earth Engine / HydroEngine
   // the breach id is hidden here
 
-  // TODO: add  this as  a parameter
-  let selectedLayers = [ 'waterdepth' ]
+  let selectedLayers = [ band ]
   // load  all the variants
   let promises = selectedLayers.map(
     bandName => loadBreachesLayer(scenarioIds, bandName)
@@ -87,12 +86,8 @@ export async function computeCombinedScenario (scenarioIds) {
       variants: [band],
       title: title,
       legend: {
-        layer: 'geo_maximale_waterdiepte_2015_nederland',
         title: 'Gecombineerd Scenario [-]',
-        geojson_style: '',
-        namespace: 'LIWO_MEGO',
-        // we get the band from the default  scenario
-        style: `LIWO_Basis_${bandNl}`
+        namespace: 'LIWO_MEGO'
       }
     }
     return layer

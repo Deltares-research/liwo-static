@@ -60,8 +60,10 @@ import LiwoMap from '@/components/LiwoMap'
 import LegendPanel from '@/components/LegendPanel'
 import NotificationBar from '@/components/NotificationBar.vue'
 import { flattenLayerSet } from '@/lib/layer-parser'
+import { extractUnit } from '@/lib/load-layersets'
 
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
+import { showLayerInfoPopup } from '@/lib/leaflet-utils/popup'
 
 export default {
   name: 'Viewer',
@@ -130,7 +132,21 @@ export default {
   },
   methods: {
     setMapObject (mapObject) {
+      // add a tooltip if the map is clicked
       this.mapObject = mapObject
+      this.mapObject.on('click', (event) => {
+        let unit = '[-]'
+        if (_.has(this.selectedLayer, 'legend.title')) {
+          unit = extractUnit(this.selectedLayer.legend.title)
+        }
+        showLayerInfoPopup({
+          map: mapObject,
+          activeLayer: this.selectedLayerId,
+          unit: unit,
+          position: event.containerPoint,
+          latlng: event.latlng
+        })
+      })
     },
     updateLayers (layerSet, layers) {
       // store the new layers

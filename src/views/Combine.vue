@@ -6,6 +6,7 @@
       :clusterMarkers="true"
       :layers="selectedLayers"
       @click="selectFeature"
+      @initMap="setMapObject"
       />
     <notification-bar :notifications="currentNotifications"/>
     <layer-panel>
@@ -78,9 +79,12 @@
     <legend-panel
       :layer="selectedLayer"
       v-if="selectedLayer"
-      />
+      >
+      <img :src="`legends/${band}.png`" v-if="band">
+    </legend-panel>
     <combine-popup
       :path="selectedScenarioIdsPath"
+      @close="showCombine = false"
       v-if="showCombine"
       ></combine-popup>
     <!-- shows the export url -->
@@ -121,10 +125,12 @@ import FilterPopup from '@/components/FilterPopup'
 import { flattenLayerSet, normalizeLayerSet, cleanLayerSet } from '@/lib/layer-parser'
 import buildLayerSetNotifications from '@/lib/build-layerset-notifications'
 import { loadBreach, computeCombinedScenario, getFeatureIdsByScenarioIds } from '@/lib/load-breach'
+import { extractUnit } from '@/lib/load-layersets'
 
 import { getLayerType } from '@/lib/liwo-identifiers'
 import { iconsByLayerType, redIcon, defaultIcon } from '@/lib/leaflet-utils/markers'
 import { EPSG_3857 } from '@/lib/leaflet-utils/projections'
+import { showLayerInfoPopup } from '@/lib/leaflet-utils/popup'
 
 export default {
   name: 'Combine',
@@ -541,7 +547,7 @@ export default {
       // TODO: move this back to the store in a scenario module
       this.layerSetCollapsed = true
       // Load the layerSet for the breach and add it to the scenario list
-      let layerSet = await computeCombinedScenario(scenarioIds)
+      let layerSet = await computeCombinedScenario(scenarioIds, this.band)
       // normalize
       layerSet = normalizeLayerSet(layerSet)
       // and clean
@@ -550,9 +556,34 @@ export default {
       _.each(layerSet.layers, layer => {
         layer.properties.visible = false
       })
-      _.first(layerSet.layers).properties.visible = true
+      if (!_.isEmpty(layerSet.layers)) {
+        _.first(layerSet.layers).properties.visible = true
+      }
       // store the scenario layerset
       return layerSet
+    },
+    setMapObject (mapObject) {
+      // add a tooltip if the map is clicked
+      this.mapObject = mapObject
+      // TODO: implement in GEE
+      this.mapObject.on('click', (event) => {
+        let unit = '[-]'
+        if (_.has(this.selectedLayer, 'legend.title')) {
+          unit = extractUnit(this.selectedLayer.legend.title)
+        }
+        let activeLayer = _.get(this.selectedLayer, 'legend.layer')
+        if (_.isNil(activeLayer)) {
+          console.warn('clicking on layer not supported for layer', this.selectedLayer.id)
+          return
+        }
+        showLayerInfoPopup({
+          map: mapObject,
+          activeLayer: activeLayer,
+          unit: unit,
+          position: event.containerPoint,
+          latlng: event.latlng
+        })
+      })
     }
   }
 }
