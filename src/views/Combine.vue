@@ -97,6 +97,7 @@
     <import-combine-popup
       v-if="showImportCombine"
       @close="showImportCombine = false"
+      @update="loadScenarioLayerSetsByRoute"
       />
     <filter-popup
       v-if="showFilter"
@@ -187,7 +188,7 @@ export default {
       // features loaded by Url, constructed during mount
       featureIds: [],
 
-      // loading icon
+      // loading icon and guard against continuous reloading
       loading: false,
 
       // menus
@@ -203,8 +204,6 @@ export default {
   },
   async mounted () {
     // If the url contains a list of scenarioIds
-    // we need to get the features first as we are filtering the layer using these
-    this.featureIds = await getFeatureIdsByScenarioIds(this.scenarioIds)
 
     // get the layerSet that corresponds to this map
     const layerSetId = this.layerSetId
@@ -216,22 +215,8 @@ export default {
       id: layerSetId
     }
     await this.$store.dispatch('loadLayerSetById', options)
-
-    // Set the loading icon
-    this.loading = true
-
-    if (this.scenarioMode === 'compute') {
-      // if we are  computing, we can pass them on
-      let layerSet = await this.computeScenario(this.scenarioIds, this.band)
-      this.scenarioLayerSets = [layerSet]
-    } else {
-      // If we are interacting we need to lookup the corresponding features
-      let features = _.map(this.featureIds, this.getFeatureById)
-      let layerSets = await this.loadScenarioLayerSets(features)
-      this.scenarioLayerSets = layerSets
-    }
-    // we're done, hide the loading icon
-    this.loading = false
+    // now we can load  the scenario layerSets (which will  look for the id's in the url
+    this.loadScenarioLayerSetsByRoute()
   },
   computed: {
     // we get the  default layerSet from the store
@@ -402,7 +387,34 @@ export default {
       // now that the new variant is selected we can update the path
       this.updatePath()
     },
-    async loadScenarioLayerSets (features) {
+    async loadScenarioLayerSetsByRoute () {
+      // A bit long function name but it gets a bit complex here
+      // We have two conditions that can cause the list of scenario's to load to change
+      // - features, selected  on the map
+      // - ids,  changes in the url
+      // Currently the ids in the url are changed after the features are loaded
+      // we could use the url as the source of truth,  but that's not the case at the moment.
+
+      // Set the loading icon
+      this.loading = true
+
+      // we need to get the features first as we are filtering the layer using these
+      this.featureIds = await getFeatureIdsByScenarioIds(this.scenarioIds)
+
+      if (this.scenarioMode === 'compute') {
+        // if we are  computing, we can pass them on
+        let layerSet = await this.computeScenario(this.scenarioIds, this.band)
+        this.scenarioLayerSets = [layerSet]
+      } else {
+        // If we are interacting we need to lookup the corresponding features
+        let features = _.map(this.featureIds, this.getFeatureById)
+        let layerSets = await this.loadScenarioLayerSetsByFeatures(features)
+        this.scenarioLayerSets = layerSets
+      }
+      // we're done, hide the loading icon
+      this.loading = false
+    },
+    async loadScenarioLayerSetsByFeatures (features) {
       // load all  scenario's
       this.scenarioLayerSets = []
 
@@ -441,7 +453,9 @@ export default {
       }
       let feature = evt.target.feature
       // this is the code to enable/disable the markers
-      let selected = !_.includes(this.selectedFeatures, feature)
+      // TODO: check if we need to use properties.id or feature.id
+      let selectedFeatureIds = _.map(this.selectedFeatures, 'properties.id')
+      let selected = !_.includes(selectedFeatureIds, feature.properties.id)
       // this looks a bit double, but it's easier to read
       let wasSelected = !selected
 
@@ -463,7 +477,9 @@ export default {
       // administer our own  list of  selected features
       if (wasSelected) {
         // now get rid of  the feature
-        this.selectedFeatures = _.pull(this.selectedFeatures, feature)
+        let removedFeatures = _.remove(this.selectedFeatures, (otherFeature) => {
+          return otherFeature.properties.id  === feature.properties.id
+        })
         // get rid of scenarioLayers that are not  currently selected
         let scenarioLayerSets = this.scenarioLayerSets.filter((layerSet) => {
           // if  this layerSet was  created based on our feature, remove it
@@ -490,7 +506,7 @@ export default {
         }
       }
       // now manually load the layerSets that correspond to the current selection
-      let layerSets = await this.loadScenarioLayerSets(this.selectedFeatures)
+      let layerSets = await this.loadScenarioLayerSetsByFeatures(this.selectedFeatures)
       this.scenarioLayerSets = layerSets
       // and update the path
       this.updatePath()
