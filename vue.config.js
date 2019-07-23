@@ -1,6 +1,7 @@
 const webpack = require('webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
+process.env.VUE_APP_VERSION = require('./package.json').version
 
 module.exports = {
   // transpileDependencies: [ 'delay' ],

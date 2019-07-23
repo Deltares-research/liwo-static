@@ -27,7 +27,7 @@
         <p>
           Er wordt veel zorg besteed aan het zo compleet, correct, actueel en toegankelijk mogelijk aanbieden van de informatie in LIWO. Wij streven ernaar LIWO zo volledig en gebruikersvriendelijk mogelijk te houden. LIWO wordt steeds verder ontwikkeld en periodiek volgt er een nieuwe release.
         </p>
-        <div class="panel soft" title="$LastChangedDate: 2018-02-06 16:06:41 +0100 (Tue, 06 Feb 2018) $ $Rev: 2250 $">versie: 1.1.1</div>
+        <div class="panel soft" title="De broncode van deze software staat op github.com/deltares/liwo-static">versie: {{ version }}</div>
       </section>
     </div>
   </div>
@@ -35,6 +35,11 @@
 
 <script>
 export default {
-  name: 'About'
+  name: 'About',
+  data () {
+    return {
+      version: process.env.VUE_APP_VERSION
+    }
+  }
 }
 </script>
