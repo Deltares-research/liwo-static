@@ -477,7 +477,7 @@ export default {
       // administer our own  list of  selected features
       if (wasSelected) {
         // now get rid of  the feature
-        let removedFeatures = _.remove(this.selectedFeatures, (otherFeature) => {
+        _.remove(this.selectedFeatures, (otherFeature) => {
           return otherFeature.properties.id  === feature.properties.id
         })
         // get rid of scenarioLayers that are not  currently selected
