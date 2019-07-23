@@ -26,6 +26,9 @@ npm run e2e
 # security audit
 npm audit
 
+# update the version number (displayed in the about page)
+npm version patch -m "Upgrade to %s for because ..."
+
 # outdated check
 npm outdated
 
