@@ -403,7 +403,7 @@ export default {
 
       if (this.scenarioMode === 'compute') {
         // if we are  computing, we can pass them on
-        let layerSet = await this.computeScenario(this.scenarioIds, this.band)
+        let layerSet = await this.computeScenario(this.scenarioIds)
         this.scenarioLayerSets = [layerSet]
       } else {
         // If we are interacting we need to lookup the corresponding features
@@ -563,7 +563,7 @@ export default {
       // TODO: move this back to the store in a scenario module
       this.layerSetCollapsed = true
       // Load the layerSet for the breach and add it to the scenario list
-      let layerSet = await computeCombinedScenario(scenarioIds, this.band)
+      let layerSet = await computeCombinedScenario(scenarioIds, this.band, this.layerSetId)
       // normalize
       layerSet = normalizeLayerSet(layerSet)
       // and clean
