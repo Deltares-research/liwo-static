@@ -69,6 +69,7 @@ export default {
         this.$emit('close')
         // go to the new page
         this.$router.push({ params: { ids: match[0] } })
+        this.$emit('update')
       }
     }
   },

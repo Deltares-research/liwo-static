@@ -59,7 +59,8 @@ The api that is used to get map information can be found at [swagger](https://ap
 
 ## Deployment
 
-Deployment is done through travis based on the gh-pages branch. See the [test server](http://deltares.github.io/liwo-static)
+Deployment is done through travis based on the gh-pages branch. See the [test server](http://deltares.github.io/liwo-static).
+A version per branch is available through [netlify](https://liwo-static.netlify.com)
 
 ## Sig review
 Create a release with `npm run release` and then run `./sig-deploy.sh` to download the latest zip file to the format liwo-static-yyyymmdd.zip. Upload that file to sig.
