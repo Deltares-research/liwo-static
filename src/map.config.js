@@ -48,8 +48,8 @@ const services = {
   LEGEND_URL: window.STATIC_GEOSERVER_URL,
   // TODO: consistent names
   PRINT_GEO_SERVER: window.PRINT_GEOSERVER_URL,
-  //
-  HYDRO_ENGINE: window.HYDRO_ENGINE_URL
+  // add default, so it keeps working with old config files
+  HYDRO_ENGINE: window.HYDRO_ENGINE_URL || 'https://hydro-engine.appspot.com'
 }
 
 // This is the attribution (maps and datasets often require attribution of the source)
