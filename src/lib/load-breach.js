@@ -141,14 +141,23 @@ function loadBreachesLayer (scenarioIds, band, layerSetId) {
     .then(json => {
       let result = { ...json, type: 'tile' }
       if (result.msg) {
-        let notification = "Het door u gevraagde gecombineerde resultaat kan niet gemaakt worden. Er zijn kaarlagen beschikbaar voor de gevraagde combinatie."
+        let notification = {
+          message: 'Het door u gevraagde gecombineerde resultaat kan niet gemaakt worden. Er zijn kaarlagen beschikbaar voor de gevraagde combinatie.',
+          type: 'warning',
+          show: true
+        }
         console.log('original msg', result.msg)
         store.commit('addNotificationById', {id: layerSetId, notification})
       }
       return result
     })
     .catch((error) => {
-      let notification = `Het door u gevraagde gecombineerde resultaat kon niet  gemaakt worden.`
+      let notification = {
+        message: `Het door u gevraagde gecombineerde resultaat kon niet  gemaakt worden.`,
+        type: 'warning',
+        show: true
+      }
+      console.warn('Combined result failed:', error)
       // notifiy of failure
       store.commit('addNotificationById', {id: layerSetId, notification})
       return null
