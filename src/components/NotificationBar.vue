@@ -46,6 +46,8 @@
 .notification-bar__message {
   padding-left: 0.5rem;
   margin-bottom: 0;
+  /* fill the space with the message, moves close icon to the right */
+  flex-basis: 100%;
 }
 
 .notification-bar__icon {

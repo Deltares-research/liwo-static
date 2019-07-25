@@ -51,7 +51,7 @@ export async function loadBreach (feature) {
   return layerSet
 }
 
-export async function computeCombinedScenario (scenarioIds, band) {
+export async function computeCombinedScenario (scenarioIds, band, layerSetId) {
   // combine multiple breachesinto a new scenario
   // Load combined breaches map, computed by the backend
   // The computation is done in Google Earth Engine / HydroEngine
@@ -60,7 +60,8 @@ export async function computeCombinedScenario (scenarioIds, band) {
   let selectedLayers = [ band ]
   // load  all the variants
   let promises = selectedLayers.map(
-    bandName => loadBreachesLayer(scenarioIds, bandName)
+    // pass along  layerSetId for notifications
+    bandName => loadBreachesLayer(scenarioIds, bandName, layerSetId)
   )
   // the layers are a bit out of order, so restructure them
   // TODO: consider making this async, otherwise we lock the browser
@@ -122,7 +123,7 @@ function loadBreachLayer (breachId, layerName) {
     .catch(() => null)
 }
 
-function loadBreachesLayer (scenarioIds, band) {
+function loadBreachesLayer (scenarioIds, band, layerSetId) {
   // TODO: choose appropriate reducer for the band
   // The band here relates to  quantitites
   let reducer = 'max'
@@ -134,12 +135,31 @@ function loadBreachesLayer (scenarioIds, band) {
   }
 
   return fetch(`${HYDRO_ENGINE}/get_liwo_scenarios`, requestOptions)
-    .then(text => text.json())
-    .then(response => ({ ...response, type: 'tile' }))
-    .catch((resp) => {
-      let notification = `failed to load ${band} for scnearioIds ${scenarioIds}`
+    .then(resp => {
+      return resp.json()
+    })
+    .then(json => {
+      let result = { ...json, type: 'tile' }
+      if (result.msg) {
+        let notification = {
+          message: 'Het door u gevraagde gecombineerde resultaat kan niet gemaakt worden. Er zijn kaarlagen beschikbaar voor de gevraagde combinatie.',
+          type: 'warning',
+          show: true
+        }
+        console.log('original msg', result.msg)
+        store.commit('addNotificationById', {id: layerSetId, notification})
+      }
+      return result
+    })
+    .catch((error) => {
+      let notification = {
+        message: `Het door u gevraagde gecombineerde resultaat kon niet gemaakt worden.`,
+        type: 'warning',
+        show: true
+      }
+      console.warn('Combined result failed:', error)
       // notifiy of failure
-      store.commit('addNotificationById', {id: scenarioIds.join(','), notification})
+      store.commit('addNotificationById', {id: layerSetId, notification})
       return null
     })
 }
