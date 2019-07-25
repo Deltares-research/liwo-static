@@ -153,7 +153,7 @@ function loadBreachesLayer (scenarioIds, band, layerSetId) {
     })
     .catch((error) => {
       let notification = {
-        message: `Het door u gevraagde gecombineerde resultaat kon niet  gemaakt worden.`,
+        message: `Het door u gevraagde gecombineerde resultaat kon niet gemaakt worden.`,
         type: 'warning',
         show: true
       }
