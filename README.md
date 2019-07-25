@@ -62,5 +62,9 @@ The api that is used to get map information can be found at [swagger](https://ap
 Deployment is done through travis based on the gh-pages branch. See the [test server](http://deltares.github.io/liwo-static).
 A version per branch is available through [netlify](https://liwo-static.netlify.com)
 
+## Changing the default servers
+If you want to change the servers that are used you can adapt the `webconfig.js` file. This file is not minified during build and can be adapted after deployment. This can be done by for example puppet scripts. Note that each release can add or remove servers from the file so the best approach is to alter the file rather than to overwrite it (think `awk` or `file_line` in puppet).
+
+
 ## Sig review
 Create a release with `npm run release` and then run `./sig-deploy.sh` to download the latest zip file to the format liwo-static-yyyymmdd.zip. Upload that file to sig.
