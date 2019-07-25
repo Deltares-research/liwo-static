@@ -478,7 +478,7 @@ export default {
       if (wasSelected) {
         // now get rid of  the feature
         _.remove(this.selectedFeatures, (otherFeature) => {
-          return otherFeature.properties.id  === feature.properties.id
+          return otherFeature.properties.id === feature.properties.id
         })
         // get rid of scenarioLayers that are not  currently selected
         let scenarioLayerSets = this.scenarioLayerSets.filter((layerSet) => {
