@@ -35,9 +35,6 @@ module.exports = {
         L: 'leaflet'
       })
     ],
-    externals: {
-      './webconfig': 'webconfig'
-    },
     entry: {
       // TODO: check if we can replace this unfetch with whatwg fetch
       vendor: [
