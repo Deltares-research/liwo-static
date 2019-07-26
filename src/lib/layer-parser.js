@@ -144,6 +144,22 @@ export function selectFirstVariantsByLayerId (layerSet) {
   return layersWithVariants
 }
 
+export function selectVariantsInLayerSet (layerSet, scenarioIds) {
+  // Loop over all layers and select variants based on the scenarioIds
+  layerSet.layers.forEach(layer => {
+    // loop until we found a scenarioId
+    layer.variants.some((variant, i) => {
+      if (scenarioIds.includes(variant.map_id)) {
+        layer.properties.selectedVariant = i
+        return true
+      } else {
+        return false
+      }
+    })
+  })
+  return layerSet
+}
+
 export function expandLayers () {
   return undefined
 }
