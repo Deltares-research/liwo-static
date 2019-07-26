@@ -123,7 +123,7 @@ import ExportCombinePopup from '@/components/ExportCombinePopUp'
 import ImportCombinePopup from '@/components/ImportCombinePopUp'
 import FilterPopup from '@/components/FilterPopup'
 
-import { flattenLayerSet, normalizeLayerSet, cleanLayerSet } from '@/lib/layer-parser'
+import { flattenLayerSet, normalizeLayerSet, cleanLayerSet, selectVariantsInLayerSet } from '@/lib/layer-parser'
 import buildLayerSetNotifications from '@/lib/build-layerset-notifications'
 import { loadBreach, computeCombinedScenario, getFeatureIdsByScenarioIds } from '@/lib/load-breach'
 import { extractUnit } from '@/lib/load-layersets'
@@ -548,6 +548,7 @@ export default {
       layerSet = normalizeLayerSet(layerSet)
       // and clean
       layerSet = cleanLayerSet(layerSet)
+      layerSet = selectVariantsInLayerSet(layerSet, this.scenarioIds)
       const layers = flattenLayerSet(layerSet)
       const notifications = buildLayerSetNotifications(layers)
       _.each(
