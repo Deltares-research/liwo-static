@@ -11,10 +11,7 @@ import { redIcon, defaultIcon, iconsByLayerType } from '@/lib/leaflet-utils/mark
 
 import './cluster-icon.css'
 
-const DYNAMIC_GEOSERVER_URL = mapConfig.services.DYNAMIC_GEOSERVER_URL
-const STATIC_GEOSERVER_URL = mapConfig.services.STATIC_GEOSERVER_URL
-
-export default function createLayer (layer, { onClick }) {
+export default async function createLayer (layer, { onClick }) {
   if (layer.type === 'json' && layer.geojson) {
     return createGeoJson(layer)
   } else if (layer.type === 'cluster') {
@@ -147,12 +144,13 @@ export function createTile (layer) {
   return L.tileLayer(layer.url, { opacity })
 }
 
-export function createWms (layer) {
+export async function createWms (layer) {
   // these options come frome the vaiant properties of the layer
   let { namespace, attribution, style } = layer
   // fully visible by default
   let opacity = _.get(layer.layerObj, 'properties.opacity', 1)
-  return L.tileLayer.wms(geoServerURL(namespace), {
+  let url = await getGeoServerURL(namespace)
+  return L.tileLayer.wms(url, {
     // TODO: layer is now sometimes a string, sometimes an object. Clean this up
     layers: layer.layer,
     format: 'image/png',
@@ -163,7 +161,10 @@ export function createWms (layer) {
   })
 }
 
-function geoServerURL (namespace) {
+async function getGeoServerURL (namespace) {
+  let services = await mapConfig.getServices()
+  const DYNAMIC_GEOSERVER_URL = services.DYNAMIC_GEOSERVER_URL
+  const STATIC_GEOSERVER_URL = services.STATIC_GEOSERVER_URL
   return namespace === 'LIWO_Operationeel'
     ? DYNAMIC_GEOSERVER_URL
     : STATIC_GEOSERVER_URL

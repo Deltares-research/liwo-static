@@ -3,11 +3,13 @@ import _ from 'lodash'
 import mapConfig from '../map.config.js'
 import {loadGeojson} from './load-geojson'
 
-const apiBase = mapConfig.services.WEBSERVICE_URL
 const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
 
 export async function loadLayerSetById (id, options) {
   const body = JSON.stringify({ id })
+
+  let services = await mapConfig.getServices()
+  const apiBase = services.WEBSERVICE_URL
   let layerSet = await fetch(`${apiBase}/Maps.asmx/GetLayerSet`, {
     method: 'POST',
     mode: 'cors',
@@ -86,14 +88,16 @@ export async function loadLayerSetById (id, options) {
   return layerSet
 }
 
-export function loadLayerSets () {
+export async function loadLayerSets () {
   // we don't need to login anymore, but the function is still used to
   // get the list of public maps
   const body = JSON.stringify({
-    username: 'marko@voorhoede.nl',
-    password: 'DikkeDoei123',
+    username: 'anonymous@rws.nl',
+    password: '',
     mode: ''
   })
+  let services = await mapConfig.getServices()
+  const apiBase = services.WEBSERVICE_URL
   return fetch(`${apiBase}/Authentication.asmx/Login`, {
     method: 'POST',
     mode: 'cors',

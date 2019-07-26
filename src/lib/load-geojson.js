@@ -31,7 +31,8 @@ export async function loadGeojson (jsonLayer, { filteredIds = [] } = {}) {
     return `${str}${or}${idString}`
   }, filteredIds.length ? '&cql_filter=' : '')
 
-  let url = `${mapConfig.services.STATIC_GEOSERVER_URL}?${params}${filterString}`
+  let services = await mapConfig.getServices()
+  let url = `${services.STATIC_GEOSERVER_URL}?${params}${filterString}`
   let result = fetch(url, { mode: 'cors' })
     .then(resp => resp.json())
     .then(geojson => {

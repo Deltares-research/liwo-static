@@ -1,10 +1,11 @@
 import downloadBlob from './download-blob'
 import mapConfig from '../map.config'
 
-const apiBase = mapConfig.services.WEBSERVICE_URL
 const headers = { 'Accept': '*/*', 'Content-Type': 'application/json' }
 
-export default function ({ layers, name }) {
+export default async function ({ layers, name }) {
+  let services = await mapConfig.getServices()
+  const apiBase = services.WEBSERVICE_URL
   const body = JSON.stringify({ layers, name })
   return fetch(`${apiBase}/Maps.asmx/DownloadZipFileDataLayers`, {
     method: 'POST',

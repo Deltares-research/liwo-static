@@ -1,6 +1,6 @@
 import geoServerUrl from './geoserver-url'
 
-export default function getFeatureInfo ({ bounds, x, y, width, height, layer }) {
+export default async function getFeatureInfo ({ bounds, x, y, width, height, layer }) {
   const bbox = [
     bounds._southWest.lng,
     bounds._southWest.lat,
@@ -8,7 +8,7 @@ export default function getFeatureInfo ({ bounds, x, y, width, height, layer }) 
     bounds._northEast.lat
   ].join()
 
-  const url = geoServerUrl({
+  const url = await geoServerUrl({
     request: 'GetFeatureInfo',
     service: 'WMS',
     info_format: 'application/json',
