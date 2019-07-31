@@ -134,9 +134,9 @@ async function loadBreachesLayer (scenarioIds, band, layerSetId) {
     body: JSON.stringify({ liwo_ids: scenarioIds, band, reducer })
   }
   let services = await mapConfig.getServices()
-  const HYDRO_ENGINE = services.HYDRO_ENGINE
-
-  return fetch(`${HYDRO_ENGINE}/get_liwo_scenarios`, requestOptions)
+  const HYDRO_ENGINE_URL = services.HYDRO_ENGINE_URL
+  let url = `${HYDRO_ENGINE_URL}/get_liwo_scenarios`
+  return fetch(url, requestOptions)
     .then(resp => {
       return resp.json()
     })
