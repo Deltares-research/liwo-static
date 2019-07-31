@@ -88,7 +88,6 @@ export default {
       projection: EPSG_28992,
       // allows to select a layer (for the unit panel)
       selectedLayerId: null
-
     }
   },
   async mounted () {
@@ -103,6 +102,12 @@ export default {
       'layerSet',
       'currentNotifications'
     ]),
+    selectedVariantId () {
+      let variantIndex = _.get(this.selectedLayer, 'properties.selectedVariant', 0)
+      let variant = _.get(this.selectedLayer, ['variants', variantIndex])
+      let id = _.get(variant, 'layer')
+      return id
+    },
     selectedLayers () {
       if (!this.layerSet) {
         return []
@@ -141,7 +146,8 @@ export default {
         }
         showLayerInfoPopup({
           map: mapObject,
-          activeLayer: this.selectedLayerId,
+          // TODO: make consistent, here we mix up two types of layers.
+          activeLayer: this.selectedVariantId,
           unit: unit,
           position: event.containerPoint,
           latlng: event.latlng
