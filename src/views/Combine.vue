@@ -61,9 +61,9 @@
           Selectie combineren
         </button>
         <button
-          v-if="selectFeatureMode === 'multiple' && selectedFeatures.length"
+          v-if="selectedFeatures.length"
           class="layer-panel__action"
-          @click="showExportCombine = true"
+          @click="showExport = true"
           >
           Selectie exporteren
         </button>
@@ -87,11 +87,18 @@
       @close="showCombine = false"
       v-if="showCombine"
       ></combine-popup>
-    <!-- shows the export url -->
+    <!-- This popup is shown in single mode -->
+    <export-popup
+      v-if="selectFeatureMode === 'single' && showExport"
+      :map-object="mapObject"
+      :map-layers="selectedLayers"
+      @close="showExport = false"
+      />
+    <!-- shows the export url in multiple  mode-->
     <export-combine-popup
       :path="selectedScenarioIdsPath"
-      v-if="showExportCombine"
-      @close="showExportCombine = false"
+      v-if="selectFeatureMode === 'multiple' && showExport"
+      @close="showExport = false"
       />
     <!-- This import popup navigates to the the new url -->
     <import-combine-popup
@@ -193,7 +200,6 @@ export default {
 
       // menus
       showExport: false,
-      showExportCombine: false,
       showImportCombine: false,
       showCombine: false,
       showFilter: false,
