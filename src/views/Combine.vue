@@ -339,8 +339,13 @@ export default {
       let selectedLayers = [...scenarioLayers, ...layers]
 
       return selectedLayers
+    },
+    selectedVariantId () {
+      let variantIndex = _.get(this.selectedLayer, 'properties.selectedVariant', 0)
+      let variant = _.get(this.selectedLayer, ['variants', variantIndex])
+      let id = _.get(variant, 'layer')
+      return id
     }
-
   },
   methods: {
     updateLayersInLayerSet (layerSet, layers) {
@@ -595,7 +600,7 @@ export default {
         }
         showLayerInfoPopup({
           map: mapObject,
-          activeLayer: activeLayer,
+          activeLayer: this.selectedVariantId,
           unit: unit,
           position: event.containerPoint,
           latlng: event.latlng
