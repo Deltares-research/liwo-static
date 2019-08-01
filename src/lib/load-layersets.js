@@ -1,7 +1,7 @@
 import _ from 'lodash'
 
 import mapConfig from '../map.config.js'
-import {loadGeojson} from './load-geojson'
+import { loadGeojson } from './load-geojson'
 
 const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
 

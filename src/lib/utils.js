@@ -36,7 +36,7 @@ export const isTruthy = val => !!val
  * includedIn(array)(1) // true
  * includedIn(array)(4) // false
  */
-export const includedIn = includes.convert({rearg: false})
+export const includedIn = includes.convert({ rearg: false })
 
 /**
  * Get the value of the index from the provided array

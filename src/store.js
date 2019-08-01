@@ -40,15 +40,15 @@ export default new Vuex.Store({
     setLayerSetId (state, id) {
       state.layerSetId = id
     },
-    setLayersByLayerSetId (state, {id, layers}) {
+    setLayersByLayerSetId (state, { id, layers }) {
       // update the layers in layerSet id
       Vue.set(state.layerSetsById[id], 'layers', layers)
     },
-    setNotificationsById (state, {id, notifications}) {
+    setNotificationsById (state, { id, notifications }) {
       // set the notifications
       Vue.set(state.notificationsById, id, notifications)
     },
-    addNotificationById (state, {id, notification}) {
+    addNotificationById (state, { id, notification }) {
       // store a notification
       const notifications = state.notificationsById[id] || []
       notifications.push(notification)
@@ -85,7 +85,7 @@ export default new Vuex.Store({
       state.commit('setLayerSetById', { id, layerSet: layerSet })
 
       // TODO: why not in the view...
-      state.commit('setNotificationsById', {id, notifications})
+      state.commit('setNotificationsById', { id, notifications })
     }
 
   },

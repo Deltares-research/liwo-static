@@ -149,7 +149,7 @@ async function loadBreachesLayer (scenarioIds, band, layerSetId) {
           show: true
         }
         console.log('original msg', result.msg)
-        store.commit('addNotificationById', {id: layerSetId, notification})
+        store.commit('addNotificationById', { id: layerSetId, notification })
       }
       return result
     })
@@ -161,7 +161,7 @@ async function loadBreachesLayer (scenarioIds, band, layerSetId) {
       }
       console.warn('Combined result failed:', error)
       // notifiy of failure
-      store.commit('addNotificationById', {id: layerSetId, notification})
+      store.commit('addNotificationById', { id: layerSetId, notification })
       return null
     })
 }

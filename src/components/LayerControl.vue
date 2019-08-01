@@ -115,7 +115,7 @@ export default {
   methods: {
     setTransparancy ({ target }) {
       // Create a copy of the layer with the new opacity
-      let layer = {...this.layer}
+      let layer = { ...this.layer }
       let opacity = 1 - _.toNumber(target.value)
       if (opacity < 0) {
         opacity = 0

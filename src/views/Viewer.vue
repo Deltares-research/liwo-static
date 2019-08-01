@@ -156,12 +156,12 @@ export default {
     },
     updateLayers (layerSet, layers) {
       // store the new layers
-      this.$store.commit('setLayersByLayerSetId', {id: layerSet.id, layers})
+      this.$store.commit('setLayersByLayerSetId', { id: layerSet.id, layers })
     },
     selectLayer (layer) {
       this.selectedLayerId = layer.id
     },
-    selectVariant ({layer, index}) {
+    selectVariant ({ layer, index }) {
       // store the index of the active variant in the layer
       this.$set(layer.properties, 'selectedVariant', index)
       // update the  layer in the layerSet

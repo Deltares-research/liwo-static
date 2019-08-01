@@ -45,7 +45,7 @@ describe('the Combine view', () => {
 
   it('should mount', () => {
     let propsData = {}
-    let {vm} = mount(Combine, {
+    let { vm } = mount(Combine, {
       store,
       router,
       localVue,
