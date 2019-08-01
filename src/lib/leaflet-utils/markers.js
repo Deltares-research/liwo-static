@@ -1,6 +1,6 @@
 import L from '@/lib/leaflet-utils/leaf'
 
-import {BREACH_PRIMARY, BREACH_REGIONAL, BREACH_OUTSIDE_DIKE, BREACH_FLOODING} from '@/lib/liwo-identifiers'
+import { BREACH_PRIMARY, BREACH_REGIONAL, BREACH_OUTSIDE_DIKE, BREACH_FLOODING } from '@/lib/liwo-identifiers'
 
 import blackIconUrl from '../../img/markers/marker-icon-black.png'
 import blackRetinaIconUrl from '../../img/markers/marker-icon-2x-black.png'

@@ -67,7 +67,7 @@ export default {
     // fill the options based on the english translations
     let breachLayers = BREACH_LAYERS_EN
     let options = _.map(breachLayers, (val, key) => {
-      return {id: key, name: val}
+      return { id: key, name: val }
     })
     return {
       selected: null,

@@ -356,7 +356,7 @@ export default {
   methods: {
     updateLayersInLayerSet (layerSet, layers) {
       // send new layers to the store
-      this.$store.commit('setLayersByLayerSetId', {id: this.layerSet.id, layers})
+      this.$store.commit('setLayersByLayerSetId', { id: this.layerSet.id, layers })
     },
     updateLayersInScenarioLayerSets (index, layers) {
       // this method updates the layers in the ScenarioLayerSet at index
@@ -566,7 +566,7 @@ export default {
         notifications,
         (notification) => {
           // add them to the main layerSetId number to show up
-          this.$store.commit('addNotificationById', {id: this.layerSetId, notification})
+          this.$store.commit('addNotificationById', { id: this.layerSetId, notification })
         }
       )
       return layerSet

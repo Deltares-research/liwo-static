@@ -3,7 +3,7 @@ import L from '@/lib/leaflet-utils/leaf'
 import mapConfig from '../../map.config'
 import createCrs from '../leaflet-utils/create-crs'
 
-export default function createMapConfig ({projection}) {
+export default function createMapConfig ({ projection }) {
   return {
     projection,
     continuousWorld: true,
