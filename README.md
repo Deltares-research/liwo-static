@@ -57,6 +57,9 @@ npm run release
 
 The api that is used to get map information can be found at [swagger](https://app.swaggerhub.com/apis/openearth/basisinformatie-overstromingen.nl).
 
+## Semantic releases
+If you specify fixes and features in your commit messages a new [semantic release](https://github.com/semantic-release/semantic-release) will be created, after a merge with master.
+
 ## Deployment
 
 Deployment is done through travis based on the gh-pages branch. See the [test server](http://deltares.github.io/liwo-static).
