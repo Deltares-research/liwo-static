@@ -4,6 +4,8 @@ import mapConfig from '../map.config'
 const headers = { 'Accept': '*/*', 'Content-Type': 'application/json' }
 
 export default async function ({ layers, name }) {
+  // There is a service available in the backend to download a zipe file
+  // get the url, prepare the request and download the zipfile
   let services = await mapConfig.getServices()
   const apiBase = services.WEBSERVICE_URL
   const body = JSON.stringify({ layers, name })
