@@ -1,4 +1,4 @@
-import layerFactory from './leaflet-utils/layer-factory'
+import createLayer from './leaflet-utils/layer-factory'
 import mapFactory from './leaflet-utils/map-factory'
 import L from '@/lib/leaflet-utils/leaf'
 
@@ -28,14 +28,20 @@ export default {
 
     let leafletLayers = layers
       .filter(layer => !layer.hide)
+
+    let promises = leafletLayers
       .map(layer => {
-        let leafletLayer = layerFactory(layer, callbacks, cluster)
-        return leafletLayer
+        let promise = createLayer(layer, callbacks, cluster)
+        return promise
       })
 
-    // add leafletLayers to the L.layerGroup
-    leafletLayers
-      .filter(layer => layer)
-      .forEach(layer => layerGroup.addLayer(layer))
+    // wait for all layers to be created and then add them to the group
+    Promise.all(promises)
+      .then((leafletLayers) => {
+        // add leafletLayers to the L.layerGroup
+        leafletLayers
+          .filter(layer => layer)
+          .forEach(layer => layerGroup.addLayer(layer))
+      })
   }
 }

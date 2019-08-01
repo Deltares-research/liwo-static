@@ -1,7 +1,7 @@
 import { stringify } from 'query-string'
 import mapConfig from '../map.config.js'
 
-export default function ({
+export default async function ({
   url,
   service,
   request,
@@ -13,7 +13,7 @@ export default function ({
   if (!service || !request) {
     return undefined
   }
-
+  let services = mapConfig.getServices()
   const params = stringify({
     service,
     request,
@@ -22,5 +22,5 @@ export default function ({
     ...rest
   }, { encode, sort: false })
 
-  return `${url || mapConfig.services.STATIC_GEOSERVER_URL}?${params}`
+  return `${url || services.STATIC_GEOSERVER_URL}?${params}`
 }

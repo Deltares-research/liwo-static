@@ -54,19 +54,6 @@ export default {
       }
     }
   },
-  watch: {
-    layers (layers, oldLayers) {
-      // if we have new layers, activate the first layer
-      if (!layers) {
-        return
-      }
-      if (_.isEmpty(oldLayers)) {
-        // if we didn't have layers select the first one
-        // TODO: consisder moving this to cleanLayerSet
-        this.selectLayer(_.first(layers))
-      }
-    }
-  },
   methods: {
     updateLayer (layer, index) {
       // update layer at index index in the layers list and emit the update event

@@ -15,13 +15,23 @@ import mapConfig from '../map.config'
 import { extractUnit } from '@/lib/load-layersets'
 
 export default {
+  data () {
+    return {
+      services: null
+    }
+  },
+  async created () {
+    this.services = await mapConfig.getServices()
+  },
   computed: {
     legendImageSrc () {
       const namespace = this.layer.legend.namespace
       const styleName = this.layer.legend.style
       let layerId = this.layer.legend.layer
-      const url = mapConfig.services.LEGEND_URL
-
+      const url = this.services && this.services.LEGEND_URL
+      if (!url) {
+        return ''
+      }
       return `${url}/${namespace}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=${layerId}&STYLE=${styleName}&HEIGHT=16&WIDTH=84`
     },
     unit () {

@@ -5,10 +5,6 @@ import store from '@/store'
 import { BREACH_LAYERS_EN, BREACH_LAYERS_NL, BREACH_PRIMARY, BREACH_REGIONAL, getLayerType } from '@/lib/liwo-identifiers'
 import mapConfig from '../map.config'
 
-const BREACHES_BASE_URL = mapConfig.services.WEBSERVICE_URL
-const HYDRO_ENGINE = mapConfig.services.HYDRO_ENGINE
-const BREACHES_API_URL = `${BREACHES_BASE_URL}/Tools/FloodImage.asmx/GetScenariosPerBreachGeneric`
-
 const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
 
 export async function loadBreach (feature) {
@@ -104,8 +100,12 @@ export async function computeCombinedScenario (scenarioIds, band, layerSetId) {
   return layerSet
 }
 
-function loadBreachLayer (breachId, layerName) {
+async function loadBreachLayer (breachId, layerName) {
   // Load the dataset  for a breach
+  let services = await mapConfig.getServices()
+  const BREACHES_BASE_URL = services.WEBSERVICE_URL
+  const BREACHES_API_URL = `${BREACHES_BASE_URL}/Tools/FloodImage.asmx/GetScenariosPerBreachGeneric`
+
   return fetch(BREACHES_API_URL, {
     method: 'POST',
     mode: 'cors',
@@ -123,7 +123,7 @@ function loadBreachLayer (breachId, layerName) {
     .catch(() => null)
 }
 
-function loadBreachesLayer (scenarioIds, band, layerSetId) {
+async function loadBreachesLayer (scenarioIds, band, layerSetId) {
   // TODO: choose appropriate reducer for the band
   // The band here relates to  quantitites
   let reducer = 'max'
@@ -133,8 +133,10 @@ function loadBreachesLayer (scenarioIds, band, layerSetId) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ liwo_ids: scenarioIds, band, reducer })
   }
-
-  return fetch(`${HYDRO_ENGINE}/get_liwo_scenarios`, requestOptions)
+  let services = await mapConfig.getServices()
+  const HYDRO_ENGINE_URL = services.HYDRO_ENGINE_URL
+  let url = `${HYDRO_ENGINE_URL}/get_liwo_scenarios`
+  return fetch(url, requestOptions)
     .then(resp => {
       return resp.json()
     })
@@ -164,10 +166,12 @@ function loadBreachesLayer (scenarioIds, band, layerSetId) {
     })
 }
 
-export function getFeatureIdByScenarioId (scenarioId) {
+export async function getFeatureIdByScenarioId (scenarioId) {
   // to know which feature corresponds to a scenario we have to call a webservice.
   // TODO: store scenario info in the features...
-  let promise = fetch(`${mapConfig.services.WEBSERVICE_URL}/Maps.asmx/GetBreachLocationId`, {
+
+  let services = await mapConfig.getServices()
+  let promise = fetch(`${services.WEBSERVICE_URL}/Maps.asmx/GetBreachLocationId`, {
     method: 'POST',
     headers,
     body: JSON.stringify({ mapid: scenarioId })

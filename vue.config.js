@@ -1,5 +1,4 @@
 const webpack = require('webpack')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
 process.env.VUE_APP_VERSION = require('./package.json').version
 
@@ -34,14 +33,8 @@ module.exports = {
       }),
       new webpack.ProvidePlugin({
         L: 'leaflet'
-      }),
-      new CopyWebpackPlugin([
-        { from: 'src/webconfig.js', to: 'webconfig.js' }
-      ])
+      })
     ],
-    externals: {
-      './webconfig': 'webconfig'
-    },
     entry: {
       // TODO: check if we can replace this unfetch with whatwg fetch
       vendor: [

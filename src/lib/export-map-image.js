@@ -7,11 +7,13 @@ import rdConfig from './rijksdriehoek.config.js'
 
 import matrices from './matrices.json'
 
-const printGeoServerURI = mapConfig.services.PRINT_GEO_SERVER
 const DEFAULT_DPI = 300
 
-export default function requestImage (options) {
+export default async function requestImage (options) {
   const body = JSON.stringify(requestBody(options))
+
+  let services = mapConfig.getServices()
+  const printGeoServerURI = services.PRINT_GEO_SERVER
 
   return fetch(`${printGeoServerURI}/print/liwo/report.${options.outputFormat}`, {
     method: 'POST',
