@@ -110,7 +110,12 @@ export default {
       if (this.formErrors && this.formErrors.length === 0) { this.exporting = true }
 
       if (this.exportType === 'zip') {
-        const layers = this.mapLayers.map(layer => layer.layerObj.id).join()
+        const layers = this.mapLayers.map(
+          layer => {
+            // TODO: make this consistent
+            // this is actually the id of the variant
+            return layer.layer
+          }).join()
         exportZip({ name: this.exportName, layers })
       }
       if (this.exportType === 'print') {
