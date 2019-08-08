@@ -37,17 +37,18 @@ jobs:
       # run the following with basurl root
       script: npm run lint && npm run test:unit
     - stage: build
-      script: npm run build && tar -czf liwo.tar.gz dist
+      script: npm run build && tar -czf liwo.tar.gz dist && zip -r liwo.zip dist
     - stage: release
       script: npm run release
     - stage: deploy
-      script: npm run build && tar -czf liwo.tar.gz dist
+      script: npm run build && tar -czf liwo.tar.gz dist && zip -r liwo.zip dist
       deploy:
         - provider: releases
           api_key:
             secure: $GITHUB_TOKEN
           file:
             - liwo.tar.gz
+            - liwo.zip
           skip_cleanup: true
           on:
             tags: true
