@@ -33,7 +33,8 @@ npm version patch -m "Upgrade to %s for because ..."
 npm outdated
 
 # build using a different url
-BASE_URL=/liwo npm run build
+# Note that this should include a slash at the end
+BASE_URL=/liwo/ npm run build
 
 # deploy to github (note that travis does this automatically)
 gh-pages -d dist

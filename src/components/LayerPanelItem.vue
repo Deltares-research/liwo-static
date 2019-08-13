@@ -6,7 +6,7 @@
     >
     <span>{{ title }}</span>
     <button class="layerpanel-item__collapse" @click.stop="toggleCollapse">
-      <img class="layerpanel-item__collapse-icon" :src="`/icons/baseline-keyboard_arrow_up-24px.svg`" />
+      <img class="layerpanel-item__collapse-icon" :src="`${publicPath}icons/baseline-keyboard_arrow_up-24px.svg`" />
     </button>
   </h3>
   <layer-control-list
@@ -47,7 +47,9 @@ export default {
       // TODO: check why this is needed...
       // shadow copy so collapsed can be changed in the component
       // convert to boolean (twice ~= Boolean(x))
-      isCollapsed: !!this.collapsed
+      isCollapsed: !!this.collapsed,
+      // path where the server runs (should end in a /)
+      publicPath: process.env.BASE_URL
     }
   },
   watch: {
