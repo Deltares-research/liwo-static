@@ -88,7 +88,7 @@ const router = new Router({
     },
     {
       // required ids, numbers and ,
-      path: '/combined/:ids([\\d,]+)/:band([\\w]+)',
+      path: '/combined/:id/:ids([\\d,]+)/:band([\\w]+)',
       name: 'combined',
       component: Combine,
       meta: {

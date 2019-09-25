@@ -25,10 +25,10 @@
         </div>
       </fieldset>
 
-      <footer class="control-group combine-popup__footer">
+      <footer class="control-group combine-popup__footer" v-if="selected">
         <div class="controls">
           <router-link
-            :to="{name: 'combined', params: {ids: path, band: selected}}"
+            :to="{name: 'combined', params: {ids: path, band: selected,  id: this.layerSetId}}"
             target="_blank"
             @click="$emit('close')"
             class="btn primary"
@@ -60,6 +60,10 @@ export default {
   props: {
     path: {
       type: String,
+      required: true
+    },
+    layerSetId: {
+      type: Number,
       required: true
     }
   },

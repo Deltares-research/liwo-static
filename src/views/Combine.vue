@@ -84,6 +84,7 @@
     </legend-panel>
     <combine-popup
       :path="selectedScenarioIdsPath"
+      :layer-set-id="layerSetId"
       @close="showCombine = false"
       v-if="showCombine"
       ></combine-popup>
@@ -230,7 +231,8 @@ export default {
     ]),
     layerSetId () {
       // this id is passed on from the Maps page.
-      return this.$route.params.id
+      let layerSetId = _.toNumber(this.$route.params.id)
+      return layerSetId
     },
     scenarioIds () {
       // unpack the id string to filter all the features
