@@ -58,7 +58,7 @@ const router = new Router({
     // Some special views
     {
       // optional ids consisting of numbers and ,
-      path: '/scenarios/:ids([\\d,]*)?',
+      path: '/scenarios/:id/:ids([\\d,]*)?',
       name: 'scenarios',
       // browse scenarios
       component: Combine,
@@ -68,14 +68,13 @@ const router = new Router({
       props: {
         selectFeatureMode: 'single',
         filterByIds: false,
-        scenarioMode: 'lookup',
-        layerSetId: 32
+        scenarioMode: 'lookup'
       }
 
     },
     {
       // optional ids consisting of numbers and ,
-      path: '/combine/:ids([\\d,]*)?',
+      path: '/combine/:id/:ids([\\d,]*)?',
       name: 'combine',
       component: Combine,
       meta: {
@@ -84,8 +83,7 @@ const router = new Router({
       props: {
         selectFeatureMode: 'multiple',
         filterByIds: false,
-        scenarioMode: 'lookup',
-        layerSetId: 33
+        scenarioMode: 'lookup'
       }
     },
     {
@@ -99,8 +97,7 @@ const router = new Router({
       props: {
         selectFeatureMode: 'disabled',
         filterByIds: true,
-        scenarioMode: 'compute',
-        layerSetId: 34
+        scenarioMode: 'compute'
       }
     },
     {

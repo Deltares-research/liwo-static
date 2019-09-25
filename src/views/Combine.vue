@@ -155,9 +155,6 @@ export default {
     NotificationBar
   },
   props: {
-    layerSetId: {
-      type: Number
-    },
     // Only show selected ids
     filterByIds: {
       type: Boolean,
@@ -231,6 +228,10 @@ export default {
       'layers',
       'currentNotifications'
     ]),
+    layerSetId () {
+      // this id is passed on from the Maps page.
+      return this.$route.params.id
+    },
     scenarioIds () {
       // unpack the id string to filter all the features
       if (!this.$route.params.ids) {
