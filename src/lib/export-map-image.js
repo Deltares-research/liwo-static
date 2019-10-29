@@ -64,12 +64,12 @@ function formatLegend ({ layers }) {
   return layers.map(legendItem)
 }
 
-function legendItem ({ layer, style, layerTitle }) {
+function legendItem ({ layer, style, title }) {
   return {
-    name: layerTitle || 'Onbekende legenda',
+    name: title || 'Onbekende legenda',
     // TODO: why does this work (localhost??)
     icons: [
-      `http://localhost:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=${layer.id}&STYLE=${style}`
+      `http://localhost:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=${layer}&STYLE=${style}`
     ]
   }
 }
