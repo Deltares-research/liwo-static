@@ -10,10 +10,6 @@ import Combine from './views/Combine'
 
 Vue.use(Router)
 
-// These views contain information that is not interesting for the public.
-// It is public information but not relevant
-const nonPublicViews = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-
 const router = new Router({
   routes: [
     {
@@ -44,14 +40,6 @@ const router = new Router({
         let id = _.toNumber(route.params.id)
         return {
           id
-        }
-      },
-      beforeEnter: (to, from, next) => {
-        // don't show non-public maps, not secret, just not that relevant for the public
-        if (_.includes(_.toNumber(to.params.id), nonPublicViews)) {
-          next('/')
-        } else {
-          next()
         }
       }
     },
