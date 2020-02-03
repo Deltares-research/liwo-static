@@ -11,7 +11,7 @@
            :checked="layer.properties.visible"
            >
     <label
-      @click.stop.prevent="(event) => toggleLayer(event, id)"
+      @click.stop.prevent="(event) => toggleLayer(event)"
       class="layer-control__vis-label"
       :for="`layer-${id}-vis`"
       >
@@ -87,7 +87,7 @@ export default {
       return index
     },
     id () {
-      return this.layer.id
+      return this.layer.breachBandId
     },
     classData () {
       return {

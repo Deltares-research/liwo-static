@@ -3,12 +3,12 @@
     <li
       class="layer-control-list__item"
       v-for="(layer, index) in layers"
-      :key="layer.id"
+      :key="layer.breachBandId"
       @click="selectLayer(layer)"
       >
       <layer-control
         v-if="layer"
-        :id="layer.id"
+        :id="layer.breachBandId"
         :active="isActive(layer)"
         :layer.sync="layer"
         @update:layer="updateLayer(layer, index)"
