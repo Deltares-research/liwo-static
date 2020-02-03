@@ -10,18 +10,18 @@
   border: 3px solid rgb(255, 255, 255, .3);
 }
 
-.cluster-icon__geo_doorbraaklocaties_primair {
+.cluster-icon__gebiedsindeling_doorbraaklocaties_primair {
   background-color: rgb(33, 123, 201);
 }
 
-.cluster-icon__geo_doorbraaklocaties_regionaal {
+.cluster-icon__gebiedsindeling_doorbraaklocaties_regionaal {
   background-color: rgb(33, 170, 30);
 }
 
-.cluster-icon__geo_scenariolocaties_buitendijks {
+.cluster-icon__gebiedsindeling_scenariolocaties_buitendijks {
   background-color: black;
 }
 
-.cluster-icon__geo_scenariolocaties_wateroverlast {
+.cluster-icon__gebiedsindeling_scenariolocaties_wateroverlast {
   background-color: black;
 }
