@@ -40,8 +40,8 @@ export async function loadBreach (feature) {
   let layerSet = {
     id: breachId,
     feature: feature,
-    name: feature.properties.naam,
-    title: feature.properties.naam,
+    name: feature.properties.name,
+    title: feature.properties.name,
     layers: layers
   }
   return layerSet
