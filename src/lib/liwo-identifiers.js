@@ -30,7 +30,10 @@ export const BREACH_LAYERS_EN = {
   'velocity': 'stroomsnelheid',
   'riserate': 'stijgsnelheid',
   'damage': 'schade',
-  'fatalities': 'slachtoffers'
+  'fatalities': 'slachtoffers',
+  'affected': 'getroffenen',
+  'arrivaltime': 'aankomsttijd'
+
 }
 
 export const BREACH_LAYERS_NL = [
@@ -38,7 +41,9 @@ export const BREACH_LAYERS_NL = [
   'stroomsnelheid',
   'stijgsnelheid',
   'schade',
-  'slachtoffers'
+  'slachtoffers',
+  'getroffenen',
+  'aankomsttijd'
 ]
 
 export const BREACHES_IDS = [
