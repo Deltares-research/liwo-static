@@ -267,7 +267,15 @@ export default {
         let layer = _.first(layerSet.layers)
         let variantIndex = _.get(layer, 'properties.selectedVariant', 0)
         let variant = layer.variants[variantIndex]
-        ids.push(variant.map_id)
+        // this is the scenario (breach + return period) id in the form scenario_number
+        let scenario = variant.layer
+        let scenarioRe = /^scenario_(\d+)$/
+        let match = scenario.match(scenarioRe)
+        if (!(match && match.length === 2)) {
+          console.warn('got back  unexpected scenario id from backend', scenario)
+        }
+        let scenarioId = parseInt(match[1])
+        ids.push(scenarioId)
       })
       return ids
     },
