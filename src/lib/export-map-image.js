@@ -12,8 +12,8 @@ const DEFAULT_DPI = 300
 export default async function requestImage (options) {
   const body = JSON.stringify(requestBody(options))
 
-  let services = mapConfig.getServices()
-  const printGeoServerURI = services.PRINT_GEO_SERVER
+  let services = await mapConfig.getServices()
+  const printGeoServerURI = services.PRINT_GEOSERVER_URL
 
   return fetch(`${printGeoServerURI}/print/liwo/report.${options.outputFormat}`, {
     method: 'POST',
