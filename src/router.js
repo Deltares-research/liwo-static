@@ -10,10 +10,6 @@ import Combine from './views/Combine'
 
 Vue.use(Router)
 
-// These views contain information that is not interesting for the public.
-// It is public information but not relevant
-const nonPublicViews = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-
 const router = new Router({
   routes: [
     {
@@ -45,20 +41,14 @@ const router = new Router({
         return {
           id
         }
-      },
-      beforeEnter: (to, from, next) => {
-        // don't show non-public maps, not secret, just not that relevant for the public
-        if (_.includes(_.toNumber(to.params.id), nonPublicViews)) {
-          next('/')
-        } else {
-          next()
-        }
       }
     },
     // Some special views
     {
       // optional ids consisting of numbers and ,
-      path: '/scenarios/:ids([\\d,]*)?',
+      // the first id is  the layerSetId
+      // the ids are the scenario  ids.
+      path: '/scenarios/:id/:ids([\\d,]*)?',
       name: 'scenarios',
       // browse scenarios
       component: Combine,
@@ -68,14 +58,13 @@ const router = new Router({
       props: {
         selectFeatureMode: 'single',
         filterByIds: false,
-        scenarioMode: 'lookup',
-        layerSetId: 32
+        scenarioMode: 'lookup'
       }
 
     },
     {
       // optional ids consisting of numbers and ,
-      path: '/combine/:ids([\\d,]*)?',
+      path: '/combine/:id/:ids([\\d,]*)?',
       name: 'combine',
       component: Combine,
       meta: {
@@ -84,13 +73,12 @@ const router = new Router({
       props: {
         selectFeatureMode: 'multiple',
         filterByIds: false,
-        scenarioMode: 'lookup',
-        layerSetId: 33
+        scenarioMode: 'lookup'
       }
     },
     {
       // required ids, numbers and ,
-      path: '/combined/:ids([\\d,]+)/:band([\\w]+)',
+      path: '/combined/:id/:ids([\\d,]+)/:band([\\w]+)',
       name: 'combined',
       component: Combine,
       meta: {
@@ -99,8 +87,7 @@ const router = new Router({
       props: {
         selectFeatureMode: 'disabled',
         filterByIds: true,
-        scenarioMode: 'compute',
-        layerSetId: 34
+        scenarioMode: 'compute'
       }
     },
     {

@@ -6,7 +6,8 @@
         v-for="item in items"
         :key="item.id"
         >
-      <router-link :to="{ name: getName(item.id), params: {id: item.id} }">{{ item.name }}</router-link>
+      <!-- id here is a layerSetId -->
+      <router-link :to="{ name: getName(item), params: {id: item.id} }">{{ item.name }}</router-link>
     </li>
   </ul>
 </section>
@@ -30,13 +31,8 @@ export default {
     }
   },
   methods: {
-    getName (id) {
-      let viewMappings = {
-        32: 'scenarios',
-        33: 'combine',
-        34: 'combined'
-      }
-      return _.get(viewMappings, id, 'viewer')
+    getName (item) {
+      return _.get(item, 'route', 'viewer')
     }
   }
 }
