@@ -29,9 +29,6 @@ cache: npm
 env:
   - BASE_URL=/liwo/
 
-matrix:
-  fast_finish: true
-
 jobs:
   include:
     - stage: test
