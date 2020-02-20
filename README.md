@@ -67,7 +67,7 @@ Deployment is done through travis based on the gh-pages branch. See the [test se
 A version per branch is available through [netlify](https://liwo-static.netlify.com)
 
 ## Changing the default servers
-If you want to change the servers that are used you can adapt the `public/config/webconfig.json` file, this replaces the old `src/webconfig.js`. This file is not minified during build and can be adapted after deployment. This can be done by for example puppet scripts. Note that each release can add or remove servers from the file so the best approach is to alter the file rather than to overwrite it (think `awk` or `file_line` in puppet).  Note that the `LEGEND_URL` should refer to the same server as the `STATIC_GEOSERVER_URL`.
+If you want to change the servers that are used you can adapt the `public/config/webconfig.json` file, this replaces the old `src/webconfig.js`. This file is not minified during build and can be adapted after deployment. This can be done by for example puppet scripts. Note that each release can add or remove servers from the file so the best approach is to alter the file rather than to overwrite it (think `awk` or `file_line` in puppet).  Note that the `LEGEND_URL` should refer to the same server as the `STATIC_GEOSERVER_URL`. The geoserver is expected to be reachable at http://localhost:8080/geoserver/wms to generate legend images.
 
 ## Deploy under a different url
 If you want to deploy under a different url you can use the environment variable `BASE_URL`, for example by building `BASE_URL=/liwo npm run build`. That is also the default build. You can change the default build in .travis.yml.
