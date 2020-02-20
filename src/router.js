@@ -46,6 +46,8 @@ const router = new Router({
     // Some special views
     {
       // optional ids consisting of numbers and ,
+      // the first id is  the layerSetId
+      // the ids are the scenario  ids.
       path: '/scenarios/:id/:ids([\\d,]*)?',
       name: 'scenarios',
       // browse scenarios
