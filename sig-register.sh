@@ -1,8 +1,10 @@
 #!/bin/sh
-# Create the private key for SIG
-openssl genpkey -algorithm RSA -out sig -pkeyopt rsa_keygen_bits:2048
-# Create the public key for sig
-openssl rsa -pubout -in sig -out sig.pub
+echo "This script is intended as documentation"
+exit 0
+# You don't need to run this more than once.
+# Create the public/private ssh key for SIG
+ssh-keygen -t rsa -f ~/.ssh/sig
+
 
 if [ ! -f ~/.ssh/sig ]
 then
