@@ -72,9 +72,9 @@ function createCluster (layer, onClick) {
 
 // set custom  style for selected features
 function onEachFeature (feature, marker, layer, onClick) {
-  const { naam, selectedVariant } = feature.properties
+  const { name, selectedVariant } = feature.properties
   // TODO: move this out of here...
-  marker.bindTooltip(`${naam}${selectedVariant ? ` - ${selectedVariant}` : ''}`)
+  marker.bindTooltip(`${name}${selectedVariant ? ` - ${selectedVariant}` : ''}`)
   // TODO: implement is  controllable
   marker.on('click', (evt) => {
     evt.layer = layer

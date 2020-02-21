@@ -1,11 +1,11 @@
-export const BREACH_PREFIX = 'geo_doorbraaklocaties'
-export const BREACH_PRIMARY = 'geo_doorbraaklocaties_primair'
-export const BREACH_REGIONAL = 'geo_doorbraaklocaties_regionaal'
-export const BREACH_OUTSIDE_DIKE = 'geo_scenariolocaties_buitendijks'
-export const BREACH_FLOODING = 'geo_scenariolocaties_wateroverlast'
+export const BREACH_PREFIX = 'gebiedsindeling_doorbraaklocaties'
+export const BREACH_PRIMARY = 'gebiedsindeling_doorbraaklocaties_primair'
+export const BREACH_REGIONAL = 'gebiedsindeling_doorbraaklocaties_regionaal'
+export const BREACH_OUTSIDE_DIKE = 'gebiedsindeling_scenariolocaties_buitendijks'
+export const BREACH_FLOODING = 'gebiedsindeling_scenariolocaties_wateroverlast'
 export const BREACH_SELECTED = 'selected_marker'
-export const BREACHES_PRIMARY_LAYER_ID = 'geo_doorbraaklocaties_primair'
-export const BREACHES_REGIONAL_LAYER_ID = 'geo_doorbraaklocaties_regionaal'
+export const BREACHES_PRIMARY_LAYER_ID = 'gebiedsindeling_doorbraaklocaties_primair'
+export const BREACHES_REGIONAL_LAYER_ID = 'gebiedsindeling_doorbraaklocaties_regionaal'
 
 export function getLayerType (feature) {
   // Also works for layer argument
@@ -30,7 +30,10 @@ export const BREACH_LAYERS_EN = {
   'velocity': 'stroomsnelheid',
   'riserate': 'stijgsnelheid',
   'damage': 'schade',
-  'fatalities': 'slachtoffers'
+  'fatalities': 'slachtoffers',
+  'affected': 'getroffenen',
+  'arrivaltime': 'aankomsttijd'
+
 }
 
 export const BREACH_LAYERS_NL = [
@@ -38,7 +41,9 @@ export const BREACH_LAYERS_NL = [
   'stroomsnelheid',
   'stijgsnelheid',
   'schade',
-  'slachtoffers'
+  'slachtoffers',
+  'getroffenen',
+  'aankomsttijd'
 ]
 
 export const BREACHES_IDS = [

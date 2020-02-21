@@ -60,7 +60,13 @@ export function normalizeLayer (layer) {
     title: variant.title,
     iscontrollayer: layer.iscontrollayer
   }))
+
+  // Create an id based on the layer in geoserver, or the layer  in  mapbox
   let id = _.get(layer, 'legend.layer', layer.id)
+
+  // Create an extra id of the combination with bands (referenced by style in geoserver)
+  let breachBandId = id + '__' + layer.legend.style
+
   // for  google earth layers take the mapid  of the layer
   if (variants.length === 1 && _.has(layer.variants[0], 'mapid')) {
     id = layer.variants[0].mapid
@@ -69,6 +75,7 @@ export function normalizeLayer (layer) {
     // TODO: check why  we are  getting the layer from the legend...
 
     id: id,
+    breachBandId,
     // copy the rest  of  the layer properties
     properties: _.omit(layer, ['variants']),
     iscontrollayer: layer.iscontrollayer,

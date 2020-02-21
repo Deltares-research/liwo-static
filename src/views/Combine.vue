@@ -84,6 +84,7 @@
     </legend-panel>
     <combine-popup
       :path="selectedScenarioIdsPath"
+      :layer-set-id="layerSetId"
       @close="showCombine = false"
       v-if="showCombine"
       ></combine-popup>
@@ -155,9 +156,6 @@ export default {
     NotificationBar
   },
   props: {
-    layerSetId: {
-      type: Number
-    },
     // Only show selected ids
     filterByIds: {
       type: Boolean,
@@ -231,6 +229,11 @@ export default {
       'layers',
       'currentNotifications'
     ]),
+    layerSetId () {
+      // this id is passed on from the Maps page.
+      let layerSetId = _.toNumber(this.$route.params.id)
+      return layerSetId
+    },
     scenarioIds () {
       // unpack the id string to filter all the features
       if (!this.$route.params.ids) {
@@ -264,7 +267,15 @@ export default {
         let layer = _.first(layerSet.layers)
         let variantIndex = _.get(layer, 'properties.selectedVariant', 0)
         let variant = layer.variants[variantIndex]
-        ids.push(variant.map_id)
+        // this is the scenario (breach + return period) id in the form scenario_number
+        let scenario = variant.layer
+        let scenarioRe = /^scenario_(\d+)$/
+        let match = scenario.match(scenarioRe)
+        if (!(match && match.length === 2)) {
+          console.warn('got back  unexpected scenario id from backend', scenario)
+        }
+        let scenarioId = parseInt(match[1])
+        ids.push(scenarioId)
       })
       return ids
     },
