@@ -56,3 +56,5 @@ zip -r ${zip_name} ${backend_dir}
 rm -r ${backend_dir}
 
 echo -e "\nNow upload ${zip_name} to https://portal.sig.eu\n"
+
+scp ${zip_name} deltares-liwo@portal.sig.eu:/home/deltares-liwo
