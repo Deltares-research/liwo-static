@@ -28,11 +28,11 @@
         Er wordt veel zorg besteed aan het zo compleet, correct, actueel en toegankelijk mogelijk aanbieden van de informatie in LIWO. Wij streven ernaar LIWO zo volledig en gebruikersvriendelijk mogelijk te houden. LIWO wordt steeds verder ontwikkeld en periodiek volgt er een nieuwe release.
       </p>
       <div class="panel soft" title="applicatie (data + code)">
-        <p>applicatie versie: {{ version }}</p>
-        <p>user interface versie: {{ uiVersion }}</p>
-        <p>dataset versie: {{ datasetVersion }}</p>
-        <p>De broncode van deze software staat op <a href="https://github.com/deltares/liwo-static">github/deltares/liwo-static</a></p>
+        <p>Applicatie versie: {{ version }}</p>
+        <p>User interface versie: {{ uiVersion }}</p>
+        <p>Dataset versie: {{ datasetVersion }}</p>
       </div>
+      <p>De broncode van deze software staat op <a href="https://github.com/deltares/liwo-static">github/deltares/liwo-static</a></p>
 
     </section>
   </div>
