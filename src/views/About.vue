@@ -27,9 +27,10 @@
       <p>
         Er wordt veel zorg besteed aan het zo compleet, correct, actueel en toegankelijk mogelijk aanbieden van de informatie in LIWO. Wij streven ernaar LIWO zo volledig en gebruikersvriendelijk mogelijk te houden. LIWO wordt steeds verder ontwikkeld en periodiek volgt er een nieuwe release.
       </p>
-      <div class="panel soft" title="applicatie (data + code)">
+      <div class="panel soft" >
         <p>Applicatie versie: {{ version }}</p>
         <p>User interface versie: {{ uiVersion }}</p>
+        <p>Backend versie: {{ backendVersion }}</p>
         <p>Dataset versie: {{ datasetVersion }}</p>
       </div>
       <p>De broncode van deze software staat op <a href="https://github.com/deltares/liwo-static">github/deltares/liwo-static</a></p>
@@ -47,10 +48,11 @@ export default {
   name: 'About',
   data () {
     return {
-      uiVersion: process.env.VUE_APP_VERSION,
-      // combined  version
+      /* main version */
       version: process.env.VUE_APP_LIWO_VERSION,
-      datasetVersion: process.env.VUE_APP_DATASET_VERSION
+      uiVersion: process.env.VUE_APP_VERSION,
+      datasetVersion: process.env.VUE_APP_DATASET_VERSION,
+      backendVersion: process.env.VUE_APP_BACKEND_VERSION
 
     }
   }
