@@ -41,20 +41,26 @@
 </template>
 
 <script>
-
-console.log('env', process.env)
+import mapConfig from '../map.config'
 
 export default {
   name: 'About',
   data () {
     return {
       /* main version */
-      version: process.env.VUE_APP_LIWO_VERSION,
+      version: 'not set',
       uiVersion: process.env.VUE_APP_VERSION,
-      datasetVersion: process.env.VUE_APP_DATASET_VERSION,
-      backendVersion: process.env.VUE_APP_BACKEND_VERSION
+      datasetVersion: 'not set',
+      backendVersion: 'not set'
 
     }
+  },
+  async mounted () {
+    let services = await mapConfig.getServices()
+    this.version = services.VERSION
+    this.datasetVersion = services.DATASET_VERSION
+    this.backendVersion = services.BACKEND_VERSION
   }
 }
+
 </script>

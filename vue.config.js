@@ -2,8 +2,6 @@ const webpack = require('webpack')
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
 process.env.VUE_APP_VERSION = require('./package.json').version
 
-console.log('env', process.env)
-
 module.exports = {
   // transpileDependencies: [ 'delay' ],
   publicPath: process.env.BASE_URL || '/',
