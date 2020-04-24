@@ -3,8 +3,7 @@ export const BREACH_PRIMARY = BREACH_PREFIX + '_primair'
 export const BREACH_REGIONAL = BREACH_PREFIX + '_regionaal'
 export const BREACH_OUTSIDE_DIKE = BREACH_PREFIX + '_buitendijks'
 export const BREACH_FLOODING = BREACH_PREFIX + '_wateroverlast'
-export const BREACH_WATERSYSTEM = BREACH_PREFIX + 'regionaalwatersysteem'
-
+export const BREACH_WATERSYSTEM = BREACH_PREFIX + '_regionaalwatersysteem'
 export const BREACH_SELECTED = 'selected_marker'
 export const BREACHES_PRIMARY_LAYER_ID = 'gebiedsindeling_doorbraaklocaties_primair'
 export const BREACHES_REGIONAL_LAYER_ID = 'gebiedsindeling_doorbraaklocaties_regionaal'
@@ -12,7 +11,8 @@ export const BREACHES_REGIONAL_LAYER_ID = 'gebiedsindeling_doorbraaklocaties_reg
 export function getLayerType (feature) {
   // Also works for layer argument
   // get the layer type based on the feature id (assuming the format BREACH_LAYER.ID)
-  const re = new RegExp(`${BREACH_PRIMARY}|${BREACH_REGIONAL}|${BREACH_OUTSIDE_DIKE}|${BREACH_FLOODING}`)
+  // the breach prefix followed by a number of letters and or underscores
+  const re = new RegExp(`${BREACH_PREFIX}[\\w_]+`)
   let match = feature.id.match(re)
   // if we have match return the matched part
   let result = match ? match[0] : ''
