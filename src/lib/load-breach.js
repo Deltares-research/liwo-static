@@ -2,7 +2,7 @@ import _ from 'lodash'
 
 import store from '@/store'
 
-import { BREACH_LAYERS_EN, BREACH_LAYERS_NL, BREACH_PRIMARY, BREACH_REGIONAL, getLayerType } from '@/lib/liwo-identifiers'
+import { BREACH_LAYERS_EN, BREACH_LAYERS_NL, BREACH_PRIMARY, getLayerType } from '@/lib/liwo-identifiers'
 import mapConfig from '../map.config'
 
 const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
@@ -18,10 +18,10 @@ export async function loadBreach (feature) {
 
   // we have different breach layers, depending on the type
   let breachLayers = []
-  if (layerType === BREACH_REGIONAL) {
-    breachLayers = [`${BREACH_REGIONAL}.${breachId}`]
-  } else if (layerType === BREACH_PRIMARY) {
+  if (layerType === BREACH_PRIMARY) {
     breachLayers = BREACH_LAYERS_NL
+  } else {
+    breachLayers = [`${layerType}.${breachId}`]
   }
 
   let promises = breachLayers.map(
@@ -106,7 +106,7 @@ async function loadBreachLayer (breachId, layerName) {
   const BREACHES_BASE_URL = services.WEBSERVICE_URL
   const BREACHES_API_URL = `${BREACHES_BASE_URL}/Tools/FloodImage.asmx/GetScenariosPerBreachGeneric`
 
-  return fetch(BREACHES_API_URL, {
+  let resp = await fetch(BREACHES_API_URL, {
     method: 'POST',
     mode: 'cors',
     credentials: 'omit',
@@ -116,11 +116,12 @@ async function loadBreachLayer (breachId, layerName) {
       layername: layerName
     })
   })
-    .then(res => res.json())
-  // get rid of some ASP  fluff
-    .then(data => JSON.parse(data.d))
-    .then(data => ({ ...data[0].layerset[0] }))
-    .catch(() => null)
+
+  let d = await resp.json()
+  let data = JSON.parse(d.d)
+  // get  the first layerset
+  let result = { ...data[0].layerset[0] }
+  return result
 }
 
 async function loadBreachesLayer (scenarioIds, band, layerSetId) {

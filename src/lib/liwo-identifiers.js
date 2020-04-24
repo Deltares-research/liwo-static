@@ -3,6 +3,8 @@ export const BREACH_PRIMARY = BREACH_PREFIX + '_primair'
 export const BREACH_REGIONAL = BREACH_PREFIX + '_regionaal'
 export const BREACH_OUTSIDE_DIKE = BREACH_PREFIX + '_buitendijks'
 export const BREACH_FLOODING = BREACH_PREFIX + '_wateroverlast'
+export const BREACH_WATERSYSTEM = BREACH_PREFIX + 'regionaalwatersysteem'
+
 export const BREACH_SELECTED = 'selected_marker'
 export const BREACHES_PRIMARY_LAYER_ID = 'gebiedsindeling_doorbraaklocaties_primair'
 export const BREACHES_REGIONAL_LAYER_ID = 'gebiedsindeling_doorbraaklocaties_regionaal'
@@ -51,5 +53,6 @@ export const BREACHES_IDS = [
   BREACH_REGIONAL,
   BREACH_OUTSIDE_DIKE,
   BREACH_FLOODING,
+  BREACH_WATERSYSTEM,
   BREACH_SELECTED
 ]
