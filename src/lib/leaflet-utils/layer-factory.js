@@ -44,7 +44,7 @@ function createCluster (layer, onClick) {
   // create the cluster  layer
   const clusterGroup = L.markerClusterGroup({
     iconCreateFunction: clusterIconCreateFunction(layer),
-    maxClusterRadius: 40
+    maxClusterRadius: 60
   })
   // create the markers
   let geojsonLayer = createClusterGeoJson(layer, (evt) => {

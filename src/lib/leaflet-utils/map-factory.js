@@ -39,7 +39,7 @@ function createBaseLayers (options) {
 
 function baseLayerOptions (config) {
   const tms = config.baseLayer.tms || mapConfig.baseLayer[config.projection].tms
-  return {
+  let options = {
     attribution: config.attribution || mapConfig.attribution,
     maxZoom: config.maxZoom || mapConfig.maxZoom[config.projection],
     minZoom: config.minZoom || mapConfig.minZoom[config.projection],
@@ -47,6 +47,8 @@ function baseLayerOptions (config) {
     continuousWorld: config.continuousWorld || mapConfig.continuousWorld,
     projection: config.projection
   }
+
+  return options
 }
 
 function geoCoderControl (map) {
