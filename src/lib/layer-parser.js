@@ -1,7 +1,7 @@
 import _ from 'lodash'
 
 import {
-  BREACHES_IDS
+  BREACH_PREFIX
 } from '@/lib/liwo-identifiers'
 
 export function flattenLayerSet (layerSet) {
@@ -99,7 +99,7 @@ export function cleanLayer (layer) {
 
   // Breach geojson need to be clustered.
   // Change layer type to cluster
-  if (_.includes(BREACHES_IDS, layer.id)) {
+  if (layer.id.startsWith(BREACH_PREFIX)) {
     // if we have a breach, add the cluster behaviour
     _.each(layer.variants, (variant) => {
       variant.type = 'cluster'
