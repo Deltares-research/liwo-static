@@ -20,7 +20,7 @@ const maxZoom = {
 // The maximum zoom of the map
 const minZoom = {
   [EPSG_28992]: 2,
-  [EPSG_3857]: 7
+  [EPSG_3857]: 5
 }
 
 // This is the default center of the map
