@@ -11,18 +11,21 @@
 }
 
 .cluster-icon__gebiedsindeling_doorbraaklocaties_primair {
-  background-color: hsl(208, 50%, 40%);
+  background-color: hsl(210, 34%, 44%);
 }
 
 .cluster-icon__gebiedsindeling_doorbraaklocaties_regionaal {
-  background-color: hsl(119, 50%, 40%);
+  background-color: hsl(120, 34%, 44%);
 }
 
 .cluster-icon__gebiedsindeling_doorbraaklocaties_wateroverlast {
-  background-color: hsl(10, 50%, 40%);
+  background-color: hsl(30, 34%, 44%);
 }
 
+.cluster-icon__gebiedsindeling_doorbraaklocaties_regionaalwatersysteem {
+  background-color: hsl(180, 34%, 44%);
+}
 
 .cluster-icon__gebiedsindeling_doorbraaklocaties_buitendijks {
-  background-color: hsl(300, 50%, 40%);
+  background-color: hsl(300, 34%, 44%);
 }
