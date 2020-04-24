@@ -11,6 +11,9 @@ import redIconUrl from '../../img/markers/marker-icon-red.png'
 import redRetinaIconUrl from '../../img/markers/marker-icon-2x-red.png'
 
 // disable camelcase warning because we want to separate numbers
+// The numbers refer to hue saturation and  lightness.
+// See the markers.svg source in the src/img/design folder
+
 /* eslint camelcase: 0 */
 import icon_30_60_60_url from '../../img/markers/1x/30-60-60.png'
 import icon_120_60_60_url from '../../img/markers/1x/120-60-60.png'
