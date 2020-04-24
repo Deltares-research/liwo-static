@@ -85,9 +85,8 @@ export const icon_300_60_60 = L.icon({
 export const iconsByLayerType = {
   [BREACH_PRIMARY]: icon_210_60_60,
   [BREACH_REGIONAL]: icon_120_60_60,
-  [BREACH_OUTSIDE_DIKE]: icon_30_60_60,
-  [BREACH_FLOODING]: icon_180_60_60,
-  [BREACH_WATERSYSTEM]: icon_300_60_60,
-
+  [BREACH_FLOODING]: icon_30_60_60,
+  [BREACH_WATERSYSTEM]: icon_180_60_60,
+  [BREACH_OUTSIDE_DIKE]: icon_300_60_60,
   default: defaultIcon
 }
