@@ -61,6 +61,9 @@ The api that is used to get map information can be found at [swagger](https://ap
 ## Semantic releases
 If you specify fixes and features in your commit messages a new [semantic release](https://github.com/semantic-release/semantic-release) will be created, after a merge with master.
 
+## Design
+Icon designs are stored under the folder src/img/design. They are stored in svg which can be  edited using illustrator.
+
 ## Deployment
 
 Deployment is done through travis based on the gh-pages branch. See the [test server](http://deltares.github.io/liwo-static).
