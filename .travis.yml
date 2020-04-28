@@ -1,64 +1,45 @@
 language: node_js
 node_js:
-  - "8"
+- '8'
 addons:
   chrome: stable
-  # apt:
-  #   sources:
-  #     - google-chrome
-  #   packages:
-  #     - google-chrome-stable
-
 before_install:
-  - echo 'installing dependencies'
-  - sudo apt-get install libcairo2-dev libjpeg-dev libpango1.0-dev libgif-dev build-essential g++
-  - export CHROME_BIN=chromium-browser
-  - export DISPLAY=:99.0
-
+- echo 'installing dependencies'
+- sudo apt-get install libcairo2-dev libjpeg-dev libpango1.0-dev libgif-dev build-essential
+  g++
+- export CHROME_BIN=chromium-browser
+- export DISPLAY=:99.0
 services:
-  - xvfb
-
+- xvfb
 install:
-  - echo 'installing npm packages'
-  - npm install
-
+- echo 'installing npm packages'
+- npm install
 script: npm run test:unit
-
 cache: npm
-
 env:
-  - BASE_URL=/liwo/
-
+- BASE_URL=/liwo/
 jobs:
   include:
-    - stage: test
-      # run the following with basurl root
-      script: npm run lint && npm run test:unit
-    - stage: build
-      script: npm run build && tar -czf liwo.tar.gz dist && zip -r liwo.zip dist
-    - stage: release
-      script: npm run release
-    - stage: deploy
-      script: npm run build && tar -czf liwo.tar.gz dist && zip -r liwo.zip dist
-      deploy:
-        - provider: releases
-          api_key:
-            secure: $GITHUB_TOKEN
-          file:
-            - liwo.tar.gz
-            - liwo.zip
-          skip_cleanup: true
-          on:
-            tags: true
-        - provider: pages
-          skip-cleanup: true
-          github-token: $GITHUB_TOKEN_NEW  # Set in the settings page of your repository, as a secure variable
-          keep-history: true
-          local-dir: dist
-          on:
-            branch: master
+  - stage: test
+    script: npm run lint && npm run test:unit
+  - stage: build
+    script: npm run build && tar -czf liwo.tar.gz dist && zip -r liwo.zip dist
+  - stage: release
+    script: npm run release
+  - stage: deploy
+    script: npm run build && tar -czf liwo.tar.gz dist && zip -r liwo.zip dist
+    deploy:
+      - provider: releases
+        api_key:
+          secure: y9b2V9KUQeZWYpuVy7M7Bqd/N+G9/SUflf8JMY3bJzFdv6OELx/NkUlv3TfCv0B1gTvyybgS+U5EbdmvY8MblQR1uAtJat48Mn946PxUPNJo8wEx5FeXWnJAMqDzdLRNFe/tfKOK6PN/kd35+wmwyOnEOiLre2JEiSMsuz/5PRHT0qZbRYPqKgSkhMBf53VPlbZUPHhI/G10OY3b4bVzWJjg6G/RDuXuBPpE5O5dXOCW8mTX+bLW8g/K5ginEZDroew5e281TkTz3Xg11d4Ti7bPVo49bKlgKQUtmAyGi+9KxHF69rUUlDpFejetDgmtCkBZnPEOodoi3/8y1mipnPV8n/p3GzieYcFPJSB7pclH07ordp/MyOMbhu1bzxQsMNz0SO0qBfb65Pw7+bEKzlC++i17TxAdXCoDHYPfxoAC4S3yv2Ty2YGKsiHO4GkKBWw7fLgxHBDbpLAgt66unNtP6XT40o9zYAbPFDC65cxzsEqCBTf1oBiv0Z60BYrdomiikNV20kJEE1EESY93vOxZxPXwxuRwmWSeL3wABP55sXgpB7mIdUaINuf19CPc6jkv73lUins/FWuyJQUFzyY7VScbJHhbVPAHyxAALvE4zbYb3O9LAkzvSE0IMGxQ3jPVuWtNJTX3WxtoIFZChpIkZU/chjtKlOpBrZfvv0c=
+        file:
+          - liwo.tar.gz
+          - liwo.zip
+        skip_cleanup: true
+        on:
+          tags: true
 stages:
-  - test
-  - build
-  - release
-  - deploy
+- test
+- build
+- release
+- deploy
