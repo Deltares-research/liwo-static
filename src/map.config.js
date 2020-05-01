@@ -72,14 +72,6 @@ const tileLayers = [
       tms: true
     }
   },
-  // Only available in 28992 (see https://geodata.nationaalgeoregister.nl/tiles/service/wmts?request=GetCapabilities)
-  // {
-  //   title: 'OpenTopo',
-  //   [EPSG_28992]: {
-  //     url: 'https://geodata.nationaalgeoregister.nl/tiles/service/tms/1.0.0/opentopo/EPSG:28992/{z}/{x}/{y}.png',
-  //     tms: true
-  //   }
-  // },
   {
     title: 'Geen Achtergrondkaart',
     [EPSG_28992]: {
