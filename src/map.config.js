@@ -29,7 +29,7 @@ const center = [52.0, 5.3]
 // Dutch aerial photography and rendered map (default backgrounds)
 const tileLayers = [
   {
-    title: 'Topografische Kaart',
+    title: 'Topografie',
     [EPSG_28992]: {
       url: 'https://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png',
       tms: true
@@ -40,13 +40,35 @@ const tileLayers = [
     }
   },
   {
-    title: 'Satelietbeeld',
+    title: 'Satelliet',
     [EPSG_28992]: {
       url: 'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/tms/1.0.0/2016_ortho25/EPSG:28992/{z}/{x}/{y}.png',
       tms: true
     },
     [EPSG_3857]: {
       url: 'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/Actueel_ortho25/EPSG:3857/{z}/{x}/{y}.png',
+      tms: true
+    }
+  },
+  {
+    title: 'Topografie - water',
+    [EPSG_28992]: {
+      url: 'https://geodata.nationaalgeoregister.nl/tiles/service/tms/1.0.0/brtachtergrondkaartwater/EPSG:28992/{z}/{x}/{y}.png',
+      tms: true
+    },
+    [EPSG_3857]: {
+      url: 'https://geodata.nationaalgeoregister.nl/tiles/service/wmts/brtachtergrondkaartwater/EPSG:3857/{z}/{x}/{y}.png',
+      tms: true
+    }
+  },
+  {
+    title: 'Topografie - grijs',
+    [EPSG_28992]: {
+      url: 'https://geodata.nationaalgeoregister.nl/tiles/service/tms/1.0.0/brtachtergrondkaartgrijs/EPSG:28992/{z}/{x}/{y}.png',
+      tms: true
+    },
+    [EPSG_3857]: {
+      url: 'https://geodata.nationaalgeoregister.nl/tiles/service/wmts/brtachtergrondkaartgrijs/EPSG:3857/{z}/{x}/{y}.png',
       tms: true
     }
   },
