@@ -119,8 +119,11 @@ async function loadBreachLayer (breachId, layerName) {
 
   let d = await resp.json()
   let data = JSON.parse(d.d)
-  // get  the first layerset
-  let result = { ...data[0].layerset[0] }
+  // get  the first layerset  if available,  otherwise return null
+  let result = null
+  if (_.has(data, '[0].layerset[0]')) {
+    result = { ...data[0].layerset[0] }
+  }
   return result
 }
 
