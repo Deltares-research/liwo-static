@@ -15,25 +15,25 @@ export default async function requestImage (options) {
   let services = await mapConfig.getServices()
   const printGeoServerURI = services.PRINT_GEOSERVER_URL
 
-  return fetch(`${printGeoServerURI}/print/liwo/report.${options.outputFormat}`, {
+  let response = await fetch(`${printGeoServerURI}/print/liwo/report.${options.outputFormat}`, {
     method: 'POST',
     mode: 'cors',
     body
   })
-    .then(response => response.json())
-    .then(downloadRefs => statusPolling(`${printGeoServerURI}/${downloadRefs.statusURL}`))
-    .then(statusPromise => statusPromise)
-    .then(statusResponse => statusResponse.json())
-    .then(downloadRefs => fetch(`${printGeoServerURI}${downloadRefs.downloadURL.substring(1)}`))
-    .then(res => res.blob())
-    .then((blob) => {
-      downloadBlob({
-        blob,
-        filename: `${options.outputFilename}.${options.outputFormat}`,
-        type: `image/${options.outputFormat}`
-      })
-    })
-    .catch(error => console.log('ERROR', error))
+  let data = await response.json()
+
+  let statusResponse = await statusPolling(`${printGeoServerURI}/${data.statusURL}`)
+  let status = await statusResponse.json()
+  console.log('status', status)
+
+  let imageResponse = await fetch(`${printGeoServerURI}${status.downloadURL.substring(1)}`)
+  let blob = await imageResponse.blob()
+
+  downloadBlob({
+    blob,
+    filename: `${options.outputFilename}.${options.outputFormat}`,
+    type: `image/${options.outputFormat}`
+  })
 }
 
 export function requestBody (options) {
@@ -75,6 +75,7 @@ function legendItem ({ layer, style, title }) {
 }
 
 function formatMapLayers ({ layers, background }) {
+  // TODO; get the current map background and use that
   const baseLayer = background
     ? [{
       baseURL: 'http://geodata.nationaalgeoregister.nl/tiles/service/wmts',
@@ -91,11 +92,14 @@ function formatMapLayers ({ layers, background }) {
     }]
     : []
 
+  // TODO: make sure we show all relevant layers
   const resultLayers = layers
     .filter(layer => layer.type !== 'json')
     .map(mapLayerItem)
 
-  return [ ...resultLayers, ...baseLayer ]
+  // TODO: validate layers
+  let result = [ ...resultLayers, ...baseLayer ]
+  return result
 }
 
 function mapLayerItem ({ layer, style, type, namespace }) {
