@@ -54,6 +54,17 @@
         <!-- add these buttons to the button section of the layer panel -->
         <!-- use named slots after upgrading to Vue 2.6 -->
         <button
+          class="layer-panel__action"
+          @click="showExport = true"
+        >
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+            <path fill="none" d="M0 0h24v24H0z"/>
+            <path d="M18 17v2H6v-2H3v4c0 .6.4 1 1 1h16c.6 0 1-.4 1-1v-4h-3z"/>
+            <path d="M11 16.5a1.4 1.4 0 0 0 2 0l5.8-7.3a1.4 1.4 0 0 0-1.7-2l-3.1 2V3.4c0-1-1-1.4-2-1.4s-2 .3-2 1.4v5.8l-3-2a1.4 1.4 0 0 0-1.8 2l5.7 7.3z"/>
+          </svg>
+          Kaart exporteren
+        </button>
+        <button
           v-if="selectFeatureMode === 'multiple' && selectedFeatures.length"
           class="layer-panel__action"
           @click="showCombine = true"
@@ -63,7 +74,7 @@
         <button
           v-if="selectedFeatures.length"
           class="layer-panel__action"
-          @click="showExport = true"
+          @click="showExportCombine = true"
           >
           Selectie exporteren
         </button>
@@ -98,8 +109,8 @@
     <!-- shows the export url in multiple  mode-->
     <export-combine-popup
       :path="selectedScenarioIdsPath"
-      v-if="selectFeatureMode === 'multiple' && showExport"
-      @close="showExport = false"
+      v-if="selectFeatureMode === 'multiple' && showExportCombine"
+      @close="showExportCombine = false"
       />
     <!-- This import popup navigates to the the new url -->
     <import-combine-popup
@@ -198,6 +209,7 @@ export default {
 
       // menus
       showExport: false,
+      showExportCombine: false,
       showImportCombine: false,
       showCombine: false,
       showFilter: false,
