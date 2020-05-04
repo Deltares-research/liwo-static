@@ -179,7 +179,7 @@ export async function getFeatureIdByScenarioId (scenarioId) {
   let promise = fetch(`${services.WEBSERVICE_URL}/Maps.asmx/GetBreachLocationId`, {
     method: 'POST',
     headers,
-    body: JSON.stringify({ mapid: scenarioId })
+    body: JSON.stringify({ floodsimulationid: scenarioId })
   })
     .then(res => res.json())
     .then(data => JSON.parse(data.d))
