@@ -55,6 +55,7 @@
         <!-- use named slots after upgrading to Vue 2.6 -->
         <button
           class="layer-panel__action"
+          v-if="scenarioMode === 'compute'"
           @click="showExport = true"
         >
           <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
@@ -101,7 +102,7 @@
       ></combine-popup>
     <!-- This popup is shown in single mode -->
     <export-popup
-      v-if="selectFeatureMode === 'single' && showExport"
+      v-if="showExport"
       :map-object="mapObject"
       :map-layers="selectedLayers"
       @close="showExport = false"
