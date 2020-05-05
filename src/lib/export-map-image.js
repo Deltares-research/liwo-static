@@ -24,7 +24,6 @@ export default async function requestImage (options) {
 
   let statusResponse = await statusPolling(`${printGeoServerURI}/${data.statusURL}`)
   let status = await statusResponse.json()
-  console.log('status', status)
 
   let imageResponse = await fetch(`${printGeoServerURI}${status.downloadURL.substring(1)}`)
   let blob = await imageResponse.blob()
@@ -37,6 +36,7 @@ export default async function requestImage (options) {
 }
 
 export function requestBody (options) {
+  let layers = formatMapLayers(options)
   return {
     layout: 'A4 portrait',
     outputFormat: options.outputFormat,
@@ -51,7 +51,7 @@ export function requestBody (options) {
       map: {
         center: options.center,
         dpi: DEFAULT_DPI,
-        layers: formatMapLayers(options),
+        layers: layers,
         projection: rdConfig.crsType,
         rotation: 0,
         scale: getScale(options.map)
