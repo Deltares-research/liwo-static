@@ -22,7 +22,8 @@
             <span>Zip</span>
           </label>
         </li>
-        <li class="choice-cards__item">
+        <!-- disable for now -->
+        <li class="choice-cards__item" v-if="false">
           <input type="radio" name="export" v-model="exportType"
             id="export-print" value="print"
             class="sr-only choice-cards__item__radio export-popup__export-input"
@@ -94,7 +95,7 @@ export default {
     return {
       formErrors: [],
       exporting: false, // starts false and after form validates becomes true
-      exportType: undefined,
+      exportType: 'zip',
       exportName: '',
       layoutName: 'A4 portrait',
       formatName: 'pdf',
