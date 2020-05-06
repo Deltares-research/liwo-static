@@ -153,7 +153,6 @@ async function loadBreachesLayer (scenarioIds, band, layerSetId) {
           type: 'warning',
           show: true
         }
-        console.log('original msg', result.msg)
         store.commit('addNotificationById', { id: layerSetId, notification })
       }
       return result

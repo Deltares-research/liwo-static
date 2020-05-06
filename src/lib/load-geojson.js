@@ -44,6 +44,6 @@ export async function loadGeojson (jsonLayer, { filteredIds = [] } = {}) {
 
       return geojson
     })
-    .catch(error => console.log('Error:', error, jsonLayer))
+    .catch(error => console.warn(error, jsonLayer))
   return result
 }

@@ -24,9 +24,7 @@ import createMapConfig from '@/lib/leaflet-utils/mapconfig-factory'
 import { legendControl } from '@/lib/leaflet-utils/legend'
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
 
-console.log('legendControl', legendControl)
 // TODO: replace v-leaflet directive with vue2-leaflet package...
-
 export default {
   props: {
     projection: {
