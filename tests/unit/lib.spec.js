@@ -1,5 +1,8 @@
 import { expect } from 'chai'
+import L from 'leaflet'
+
 import renderVue from '@/lib/render-vue'
+import { legendControl } from '@/lib/leaflet-utils/legend'
 
 describe('the lib utlities contains a render vue', () => {
   it('renders component', () => {
@@ -10,5 +13,12 @@ describe('the lib utlities contains a render vue', () => {
       {}
     )
     expect(element.outerHTML).to.include('<div>')
+  })
+})
+
+describe('the lib utlities contains a utility to create a legend', () => {
+  it('creates a leaflet control', () => {
+    let control = legendControl()
+    expect(control).to.be.an.instanceof(L.Control)
   })
 })
