@@ -19,6 +19,15 @@ module.exports = {
               plugins: ['lodash']
             }
           }
+        },
+        {
+          test: require.resolve('leaflet'),
+          use: [
+            {
+              loader: 'expose-loader',
+              options: 'L'
+            }
+          ]
         }
       ]
     },
