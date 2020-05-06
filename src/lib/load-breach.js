@@ -153,7 +153,6 @@ async function loadBreachesLayer (scenarioIds, band, layerSetId) {
           type: 'warning',
           show: true
         }
-        console.log('original msg', result.msg)
         store.commit('addNotificationById', { id: layerSetId, notification })
       }
       return result
@@ -179,7 +178,7 @@ export async function getFeatureIdByScenarioId (scenarioId) {
   let promise = fetch(`${services.WEBSERVICE_URL}/Maps.asmx/GetBreachLocationId`, {
     method: 'POST',
     headers,
-    body: JSON.stringify({ mapid: scenarioId })
+    body: JSON.stringify({ floodsimulationid: scenarioId })
   })
     .then(res => res.json())
     .then(data => JSON.parse(data.d))

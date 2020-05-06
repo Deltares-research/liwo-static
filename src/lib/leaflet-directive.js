@@ -8,9 +8,9 @@ let layerGroup
 // see vue docs
 // https://vuejs.org/v2/guide/components-edge-cases.html#Accessing-the-Parent-Component-Instance
 export default {
-  bind (el, { value }) {
+  bind (el, { value }, vnode) {
     let { config, callbacks } = value
-    map = mapFactory(el, config)
+    map = mapFactory(el, vnode, config)
     layerGroup = L.layerGroup().addTo(map)
     callbacks.initMapObject(map)
   },

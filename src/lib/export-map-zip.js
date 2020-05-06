@@ -18,12 +18,11 @@ export default async function ({ layers, name }) {
     .then(res => res.blob())
   // TODO: don't download a blob when an error page is  returned.
     .then((blob) => {
-      console.log('length of blob', blob.size)
       downloadBlob({
         blob,
         filename: `${name}.zip`,
         type: 'application/zip'
       })
     })
-    .catch(error => console.log('ERROR', error))
+    .catch(error => console.warn(error))
 }

@@ -6,7 +6,14 @@
         :layers="selectedLayers"
         :clusterMarkers="false"
         @initMap="setMapObject"
-        />
+      >
+        <template v-slot:legend>
+          <legend-panel
+            :layer="selectedLayer"
+            v-if="selectedLayer"
+          />
+        </template>
+      </liwo-map>
       <notification-bar :notifications="currentNotifications"  />
       <layer-panel v-if="layerSet">
         <template v-slot:default>
@@ -34,10 +41,6 @@
         </template>
 
       </layer-panel>
-      <legend-panel
-        :layer="selectedLayer"
-        v-if="selectedLayer"
-        />
       <export-popup
         v-if="showExport"
         :map-object="mapObject"

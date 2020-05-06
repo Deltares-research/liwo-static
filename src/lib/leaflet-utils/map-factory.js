@@ -7,7 +7,7 @@ import createCrs from '../../lib/leaflet-utils/create-crs'
 
 const INITIAL_BASELAYER = mapConfig.tileLayers[0].title
 
-export default function (el, config) {
+export default function (el, vnode, config) {
   const tileLayerOptions = baseLayerOptions(config)
   const baseLayers = createBaseLayers(tileLayerOptions)
   const map = L.map(el, {
@@ -23,7 +23,16 @@ export default function (el, config) {
 
   map.addControl(geoCoderControl(map))
   map.addControl(L.control.zoom({ position: 'topright' }))
+
+  let printControl = L.control.browserPrint({position: 'topright'})
+  map.addControl(printControl)
+
   map.addControl(L.control.layers(baseLayers))
+
+  map.on('browser-print-start', function (e) {
+    // when printing starts emit an event to the containing element so that we can add a legend
+    vnode.context.$emit('browser-print-start', e)
+  })
 
   // Hack to make the map display
   setTimeout(() => { map.invalidateSize() }, 100)

@@ -1,22 +1,30 @@
 <template>
-  <div
-    ref="liwoMap"
-    class="liwo-map"
-    v-leaflet="{
+  <div>
+    <div
+      ref="liwoMap"
+      class="liwo-map"
+      v-leaflet="{
       callbacks: { onClick, initMapObject },
       config: mapConfig,
       layers: layers,
       cluster: clusterMarkers,
-    }"
-  ></div>
+      }"
+    ></div>
+    <div ref="legend">
+      <slot name="legend"></slot>
+    </div>
+
+  </div>
+
 </template>
 
 <script>
+
 import createMapConfig from '@/lib/leaflet-utils/mapconfig-factory'
+import { legendControl } from '@/lib/leaflet-utils/legend'
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
 
 // TODO: replace v-leaflet directive with vue2-leaflet package...
-
 export default {
   props: {
     projection: {
@@ -43,6 +51,10 @@ export default {
   },
   mounted () {
     this.mapRef = this.$refs.liwoMap
+    this.$on('browser-print-start', (evt) => {
+      let control = legendControl({position: 'bottomright', el: this.$refs.legend})
+      control.addTo(evt.printMap)
+    })
   },
   methods: {
     onClick (event) {

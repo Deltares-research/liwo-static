@@ -1,119 +1,136 @@
 <template>
-<div class="viewer" :class="{'viewer--has-notificaton': currentNotifications.length}">
-  <div class="viewer__map-wrapper">
-    <liwo-map
-      :projection="projection"
-      :clusterMarkers="true"
-      :layers="selectedLayers"
-      @click="selectFeature"
-      @initMap="setMapObject"
-      />
-    <notification-bar :notifications="currentNotifications"/>
-    <layer-panel>
-      <template v-slot:title>
-        <button @click="showFilter = true" class="layer-control__button">
-          <!-- icons are 32x32 but other icons don't fill up the space... -->
-          <!-- TODO: use iconfont -->
-          <svg class="icon" width="27" height="27" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="black" d="M487.976 0H24.028C2.71 0-8.047 25.866 7.058 40.971L192 225.941V432c0 7.831 3.821 15.17 10.237 19.662l80 55.98C298.02 518.69 320 507.493 320 487.98V225.941l184.947-184.97C520.021 25.896 509.338 0 487.976 0z"></path></svg>
-        </button>
-      </template>
-      <template v-slot:default>
-        <!-- These layers are set through the store, TODO: make consistent -->
-        <!-- layers can be updated in the panel item -->
-        <!-- possible updates: opacity, visiblity -->
-        <layer-panel-item
-          v-if="layerSet"
-          :layers="layerSet.layers"
-          @update:layers="updateLayersInLayerSet(layerSet, $event)"
-          @select:layer="selectLayer"
-          @select:variant="selectVariant({ ...$event, layerSet })"
-          :collapsed.sync="layerSetCollapsed"
-          :key="layerSet.id"
-          >
-        </layer-panel-item>
-
-        <div class="layer-control layer-control-list__item layerpanel-item__title" v-show="loading">
-          Scenario's worden geladen
-          <div class="lds-dual-ring"></div>
-        </div>
-        <!-- these correspond to the loaded scenarios based on the selected features -->
-        <layer-panel-item
-          v-for="(layerSet_, index) in scenarioLayerSets"
-          :layers="layerSet_.layers"
-          @update:layers="updateLayersInScenarioLayerSets(index, $event)"
-          @select:layer="selectLayer"
-          @select:variant="selectVariant({...$event, layerSet: layerSet_, scenarioLayerSetIndex: index})"
-          :title="layerSet_.title"
-          :key="(layerSet_.feature && layerSet_.feature.id) || layerSet_.id"
-          >
-          <!-- add scenario layer control options -->
-        </layer-panel-item>
-
-      </template>
-      <template v-slot:actions>
-        <!-- add these buttons to the button section of the layer panel -->
-        <!-- use named slots after upgrading to Vue 2.6 -->
-        <button
-          v-if="selectFeatureMode === 'multiple' && selectedFeatures.length"
-          class="layer-panel__action"
-          @click="showCombine = true"
-          >
-          Selectie combineren
-        </button>
-        <button
-          v-if="selectedFeatures.length"
-          class="layer-panel__action"
-          @click="showExport = true"
-          >
-          Selectie exporteren
-        </button>
-        <button
-          v-if="selectFeatureMode === 'multiple'"
-          class="layer-panel__action"
-          @click="showImportCombine = true"
-          >
-          Selectie importeren
-        </button>
-      </template>
-    </layer-panel>
-    <legend-panel
-      :layer="selectedLayer"
-      v-if="selectedLayer"
+  <div class="viewer" :class="{'viewer--has-notificaton': currentNotifications.length}">
+    <div class="viewer__map-wrapper">
+      <liwo-map
+        :projection="projection"
+        :clusterMarkers="true"
+        :layers="selectedLayers"
+        @click="selectFeature"
+        @initMap="setMapObject"
       >
-      <img :src="`legends/${band}.png`" v-if="band">
-    </legend-panel>
-    <combine-popup
-      :path="selectedScenarioIdsPath"
-      :layer-set-id="layerSetId"
-      @close="showCombine = false"
-      v-if="showCombine"
-      ></combine-popup>
-    <!-- This popup is shown in single mode -->
-    <export-popup
-      v-if="selectFeatureMode === 'single' && showExport"
-      :map-object="mapObject"
-      :map-layers="selectedLayers"
-      @close="showExport = false"
+        <template slot="legend">
+          <legend-panel
+            :layer="selectedLayer"
+            v-if="selectedLayer"
+          >
+            <img :src="`legends/${band}.png`" v-if="band">
+          </legend-panel>
+
+        </template>
+      </liwo-map>
+      <notification-bar :notifications="currentNotifications"/>
+      <layer-panel>
+        <template v-slot:title>
+          <button @click="showFilter = true" class="layer-control__button">
+            <!-- icons are 32x32 but other icons don't fill up the space... -->
+            <!-- TODO: use iconfont -->
+            <svg class="icon" width="27" height="27" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="black" d="M487.976 0H24.028C2.71 0-8.047 25.866 7.058 40.971L192 225.941V432c0 7.831 3.821 15.17 10.237 19.662l80 55.98C298.02 518.69 320 507.493 320 487.98V225.941l184.947-184.97C520.021 25.896 509.338 0 487.976 0z"></path></svg>
+          </button>
+        </template>
+        <template v-slot:default>
+          <!-- These layers are set through the store, TODO: make consistent -->
+          <!-- layers can be updated in the panel item -->
+          <!-- possible updates: opacity, visiblity -->
+          <layer-panel-item
+            v-if="layerSet"
+            :layers="layerSet.layers"
+            @update:layers="updateLayersInLayerSet(layerSet, $event)"
+            @select:layer="selectLayer"
+            @select:variant="selectVariant({ ...$event, layerSet })"
+            :collapsed.sync="layerSetCollapsed"
+            :key="layerSet.id"
+          >
+          </layer-panel-item>
+
+          <div class="layer-control layer-control-list__item layerpanel-item__title" v-show="loading">
+            Scenario's worden geladen
+            <div class="lds-dual-ring"></div>
+          </div>
+          <!-- these correspond to the loaded scenarios based on the selected features -->
+          <layer-panel-item
+            v-for="(layerSet_, index) in scenarioLayerSets"
+            :layers="layerSet_.layers"
+            @update:layers="updateLayersInScenarioLayerSets(index, $event)"
+            @select:layer="selectLayer"
+            @select:variant="selectVariant({...$event, layerSet: layerSet_, scenarioLayerSetIndex: index})"
+            :title="layerSet_.title"
+            :key="(layerSet_.feature && layerSet_.feature.id) || layerSet_.id"
+          >
+            <!-- add scenario layer control options -->
+          </layer-panel-item>
+
+        </template>
+        <template v-slot:actions>
+          <!-- add these buttons to the button section of the layer panel -->
+          <!-- use named slots after upgrading to Vue 2.6 -->
+          <!-- add this button once export of combined maps is working -->
+          <button
+            class="layer-panel__action"
+            v-if="false"
+            @click="showExport = true"
+          >
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+              <path fill="none" d="M0 0h24v24H0z"/>
+              <path d="M18 17v2H6v-2H3v4c0 .6.4 1 1 1h16c.6 0 1-.4 1-1v-4h-3z"/>
+              <path d="M11 16.5a1.4 1.4 0 0 0 2 0l5.8-7.3a1.4 1.4 0 0 0-1.7-2l-3.1 2V3.4c0-1-1-1.4-2-1.4s-2 .3-2 1.4v5.8l-3-2a1.4 1.4 0 0 0-1.8 2l5.7 7.3z"/>
+            </svg>
+            Kaart exporteren
+          </button>
+          <button
+            v-if="selectFeatureMode === 'multiple' && selectedFeatures.length"
+            class="layer-panel__action"
+            @click="showCombine = true"
+          >
+            Selectie combineren
+          </button>
+          <button
+            v-if="selectedFeatures.length"
+            class="layer-panel__action"
+            @click="showExportCombine = true"
+          >
+            Selectie exporteren
+          </button>
+          <button
+            v-if="selectFeatureMode === 'multiple'"
+            class="layer-panel__action"
+            @click="showImportCombine = true"
+          >
+            Selectie importeren
+          </button>
+        </template>
+      </layer-panel>
+      <combine-popup
+        :path="selectedScenarioIdsPath"
+        :layer-set-id="layerSetId"
+        @close="showCombine = false"
+        v-if="showCombine"
+        ></combine-popup>
+      <!-- This popup is shown in single mode -->
+      <export-popup
+        v-if="showExport"
+        :map-object="mapObject"
+        :map-layers="selectedLayers"
+        @close="showExport = false"
       />
-    <!-- shows the export url in multiple  mode-->
-    <export-combine-popup
-      :path="selectedScenarioIdsPath"
-      v-if="selectFeatureMode === 'multiple' && showExport"
-      @close="showExport = false"
+      <!-- shows the export url in multiple  mode-->
+      <export-combine-popup
+        :path="selectedScenarioIdsPath"
+        v-if="selectFeatureMode === 'multiple' && showExportCombine"
+        @close="showExportCombine = false"
       />
-    <!-- This import popup navigates to the the new url -->
-    <import-combine-popup
-      v-if="showImportCombine"
-      @close="showImportCombine = false"
-      @update="loadScenarioLayerSetsByRoute"
+      <!-- This import popup navigates to the the new url -->
+      <import-combine-popup
+        v-if="showImportCombine"
+        @close="showImportCombine = false"
+        @update="loadScenarioLayerSetsByRoute"
       />
-    <filter-popup
-      v-if="showFilter"
-      @close="showFilter = false"
-      :probability.sync="selectedProbability">
-    </filter-popup>
+      <filter-popup
+        v-if="showFilter"
+        @close="showFilter = false"
+        :probability.sync="selectedProbability">
+      </filter-popup>
+    </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -198,6 +215,7 @@ export default {
 
       // menus
       showExport: false,
+      showExportCombine: false,
       showImportCombine: false,
       showCombine: false,
       showFilter: false,
@@ -629,7 +647,7 @@ export default {
 </script>
 
 <style>
-@import '../components/variables.css';
-@import './viewer.css';
-@import './loading.css';
+  @import '../components/variables.css';
+  @import './viewer.css';
+  @import './loading.css';
 </style>
