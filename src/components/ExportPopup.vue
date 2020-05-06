@@ -40,38 +40,6 @@
       <input type="text" name="name"
         id="export-name" autocomplete="off" v-model="exportName"
         class="export-popup__form-column-item export-popup__textfield">
-      <fieldset v-if="exportType === 'print'">
-        <div class="export-popup__form-columns">
-          <legend>Print opties</legend>
-          <!--
-          <label for="layoutname" class="export-popup__form-column-item">
-            Layout:
-          </label>
-          <select name="layoutname" id="layoutname" v-model="layoutName"
-            class="export-popup__form-column-item"
-          >
-            <option value="A4 portrait">A4 landscape</option>
-            <option value="A4 portrait">A4 portrait</option>
-          </select> -->
-          <label class="export-popup__form-column-item">
-            Formaat:
-          </label>
-          <select name="formatname" id="format-name" v-model="formatName"
-            class="export-popup__form-column-item"
-          >
-            <option value="gif">gif</option>
-            <option value="pdf">pdf</option>
-            <option value="png">png</option>
-            <option value="tiff">tif</option>
-            <option value="tiff">tiff</option>
-          </select>
-          <label class="export-popup__form-column-item">
-            Achtergrondkaart:
-          </label>
-          <input type="checkbox" name="achtergrond" v-model="background"
-            id="achtergrond" class="export-popup__form-column-item">
-        </div>
-      </fieldset>
       <footer class="export-popup__footer">
         <button class="btn primary" @click.prevent="exportMap">Exporteer</button>
         <button class="btn secondary" type="reset" @click="$emit('close')">Annuleer</button>
@@ -84,7 +52,6 @@
 import PopUp from '@/components/PopUp'
 
 import exportZip from '@/lib/export-map-zip'
-import exportImage from '@/lib/export-map-image'
 
 export default {
   props: {
@@ -96,10 +63,7 @@ export default {
       formErrors: [],
       exporting: false, // starts false and after form validates becomes true
       exportType: 'zip',
-      exportName: '',
-      layoutName: 'A4 portrait',
-      formatName: 'pdf',
-      background: true
+      exportName: ''
     }
   },
   components: { PopUp },
@@ -118,22 +82,8 @@ export default {
             return layer.layer
           }).join()
         exportZip({ name: this.exportName, layers })
-      }
-      if (this.exportType === 'print') {
-        const { x, y } = this.mapObject.options.crs.project(this.mapObject.getCenter())
-        exportImage({
-          layers: this.mapLayers,
-          outputFormat: this.formatName,
-          outputFilename: this.exportName,
-          title: this.exportName,
-          description: this.exportName,
-          center: [ x, y ],
-          map: this.mapObject,
-          scale: this.mapObject.options.crs.scale(this.mapObject.getZoom()) * 1000000000,
-          zoom: Number(this.mapObject.getZoom()),
-          latLng: this.mapObject.getCenter(),
-          background: this.background
-        })
+      } else {
+        console.warn('export type not supported', this.exportType)
       }
     }
   }
