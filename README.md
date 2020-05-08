@@ -6,6 +6,10 @@ Static frontend for LIWO (https://www.basisinformatie-overstromingen.nl/liwo/)
 
 [![BCH compliance](https://bettercodehub.com/edge/badge/Deltares/liwo-static?branch=master)](https://bettercodehub.com/)
 
+![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/deltares/liwo-static)
+
+![Website](https://img.shields.io/website?url=https%3A%2F%2Fbasisinformatie-overstromingen.nl%2Fliwo%2F)
+
 ## Build Setup
 
 See the [docs](https://github.com/vuejs/vue-cli/blob/dev/docs/README.md) of the build environment for further details.
