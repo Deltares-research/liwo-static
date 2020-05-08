@@ -19,9 +19,9 @@
   "_comment5": "// URL for combining scenario's",
   "HYDRO_ENGINE_URL": "https://hydro-engine.ey.r.appspot.com/v2",
   "_comment6": "// application version (whole set)",
-  "VERSION": "2020.1.1",
+  "VERSION": "FILL IN DURING DEPLOY",
   "_comment7": "// dataset version (GEE)",
-  "DATASET_VERSION": "projects/deltares-rws/liwo/production/2020.1.1",
+  "DATASET_VERSION": "FILL IN DURING DEPLOY",
   "_comment8": "// backend version",
-  "BACKEND_VERSION": "LWB/trunk@2696"
+  "BACKEND_VERSION": "FILL IN DURING DEPLOY"
 }
