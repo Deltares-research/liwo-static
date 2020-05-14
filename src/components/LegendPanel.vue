@@ -32,7 +32,7 @@ export default {
       if (!url) {
         return ''
       }
-      return `${url}/${namespace}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=${layerId}&STYLE=${styleName}&HEIGHT=16&WIDTH=84`
+      return `${url}/${namespace}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=${layerId}&STYLE=${styleName}&HEIGHT=16&WIDTH=16&LEGEND_OPTIONS=fontAntiAliasing:true;fontSize:14;mx:0;dx:10;`
     },
     unit () {
       return extractUnit(this.layer.legend.title)
@@ -65,7 +65,7 @@ export default {
   }
   .legend-panel__caption {
     text-align: center;
-    margin-bottom: 1rem;
+    margin-bottom: 0.25rem;
   }
   .legend-panel__legend {
     padding: 1rem;
