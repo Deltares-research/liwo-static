@@ -28,7 +28,6 @@ export function showLayerInfoPopup ({ map, activeLayer, unit, selectedLayer, pos
         // We need to lookup the band and present the correct property based on the current band
 
         // multiple properties but we don't know what they contain
-        console.log(selectedLayer, data.properties)
         // lookup selected band
         let parts = selectedLayer.breachBandId.split('_')
         // pick the last element
