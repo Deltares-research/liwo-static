@@ -41,9 +41,7 @@ pushd ${backend_dir}
 # download relevant sources
 svn export https://repos.deltares.nl/repos/LWB/trunk/sources/liwo.GeoServerTools
 svn export https://repos.deltares.nl/repos/LWB/trunk/sources/liwo.GeoServerToolsTest
-svn export https://repos.deltares.nl/repos/LWB/trunk/sources/liwo.collectmatroosdata
 svn export https://repos.deltares.nl/repos/LWB/trunk/sources/liwo.postgisclient
-svn export https://repos.deltares.nl/repos/LWB/trunk/sources/liwo.print
 svn export https://repos.deltares.nl/repos/LWB/trunk/sources/liwo.run
 svn export https://repos.deltares.nl/repos/LWB/trunk/sources/liwo.ws
 svn export https://repos.deltares.nl/repos/LWB/trunk/sources/liwo.ws.tests
@@ -57,4 +55,4 @@ rm -r ${backend_dir}
 
 echo -e "\nNow upload ${zip_name} to https://portal.sig.eu\n"
 
-scp ${zip_name} deltares-liwo@portal.sig.eu:/home/deltares-liwo
+scp -i ~/.ssh/sig ${zip_name} deltares-liwo@portal.sig.eu:/home/deltares-liwo
