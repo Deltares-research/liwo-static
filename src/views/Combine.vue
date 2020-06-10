@@ -637,6 +637,7 @@ export default {
           map: mapObject,
           activeLayer: this.selectedVariantId,
           unit: unit,
+          selectedLayer: this.selectedLayer,
           position: event.containerPoint,
           latlng: event.latlng
         })
