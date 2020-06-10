@@ -15,7 +15,7 @@
 }
 
 .cluster-icon__gebiedsindeling_doorbraaklocaties_regionaal {
-  background-color: hsl(120, 34%, 44%);
+  background-color: hsl(90, 34%, 44%);
 }
 
 .cluster-icon__gebiedsindeling_doorbraaklocaties_wateroverlast {
@@ -23,9 +23,9 @@
 }
 
 .cluster-icon__gebiedsindeling_doorbraaklocaties_regionaalwatersysteem {
-  background-color: hsl(180, 34%, 44%);
+  background-color: hsl(0, 34%, 44%);
 }
 
 .cluster-icon__gebiedsindeling_doorbraaklocaties_buitendijks {
-  background-color: hsl(300, 34%, 44%);
+  background-color: hsl(270, 34%, 44%);
 }
