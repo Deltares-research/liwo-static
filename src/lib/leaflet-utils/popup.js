@@ -1,7 +1,7 @@
 import L from '@/lib/leaflet-utils/leaf'
 import getFeatureInfo from '@/lib/get-feature-info'
 
-export function showLayerInfoPopup ({ map, activeLayer, unit, selectedLayer, position, latlng }) {
+export function showLayerInfoPopup ({ map, layerId, unit, selectedLayer, position, latlng }) {
   const bounds = map.getBounds()
 
   getFeatureInfo({
@@ -10,17 +10,18 @@ export function showLayerInfoPopup ({ map, activeLayer, unit, selectedLayer, pos
     y: position.y,
     width: map._size.x,
     height: map._size.y,
-    layer: activeLayer
+    layer: layerId
   })
     .then(data => {
       let value = null
 
+      // we have three variants of how the properties can be returned
+      // as a value in gray_index
       if (data && data.properties && data.properties.GRAY_INDEX) {
         value = data.properties.GRAY_INDEX
-      }
-
-      if (data && data.properties && data.properties[activeLayer]) {
-        value = data.properties[activeLayer]
+      } else if (data && data.properties && data.properties[layerId]) {
+        // as a value in the layer property
+        value = data.properties[layerId]
       } else if (data && data.properties) {
         // This is the case where featureInfo returns information on multiple bands at once.
 

@@ -635,7 +635,7 @@ export default {
         }
         showLayerInfoPopup({
           map: mapObject,
-          activeLayer: this.selectedVariantId,
+          layerId: this.selectedVariantId,
           unit: unit,
           selectedLayer: this.selectedLayer,
           position: event.containerPoint,

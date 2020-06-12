@@ -150,8 +150,9 @@ export default {
         showLayerInfoPopup({
           map: mapObject,
           // TODO: make consistent, here we mix up two types of layers.
-          activeLayer: this.selectedVariantId,
+          layerId: this.selectedVariantId,
           unit: unit,
+          selectedLayer: this.selectedLayer,
           position: event.containerPoint,
           latlng: event.latlng
         })
