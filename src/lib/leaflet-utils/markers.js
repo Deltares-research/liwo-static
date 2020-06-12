@@ -15,16 +15,30 @@ import redRetinaIconUrl from '../../img/markers/marker-icon-2x-red.png'
 // See the markers.svg source in the src/img/design folder
 
 /* eslint camelcase: 0 */
+import icon_0_60_60_url from '../../img/markers/1x/0-60-60.png'
 import icon_30_60_60_url from '../../img/markers/1x/30-60-60.png'
+import icon_60_60_60_url from '../../img/markers/1x/60-60-60.png'
+import icon_90_60_60_url from '../../img/markers/1x/90-60-60.png'
 import icon_120_60_60_url from '../../img/markers/1x/120-60-60.png'
+import icon_150_60_60_url from '../../img/markers/1x/150-60-60.png'
 import icon_180_60_60_url from '../../img/markers/1x/180-60-60.png'
 import icon_210_60_60_url from '../../img/markers/1x/210-60-60.png'
+import icon_240_60_60_url from '../../img/markers/1x/240-60-60.png'
+import icon_270_60_60_url from '../../img/markers/1x/270-60-60.png'
 import icon_300_60_60_url from '../../img/markers/1x/300-60-60.png'
+import icon_330_60_60_url from '../../img/markers/1x/330-60-60.png'
+import icon_0_60_60_retinaUrl from '../../img/markers/2x/0-60-60@2x.png'
 import icon_30_60_60_retinaUrl from '../../img/markers/2x/30-60-60@2x.png'
+import icon_60_60_60_retinaUrl from '../../img/markers/2x/60-60-60@2x.png'
+import icon_90_60_60_retinaUrl from '../../img/markers/2x/90-60-60@2x.png'
 import icon_120_60_60_retinaUrl from '../../img/markers/2x/120-60-60@2x.png'
+import icon_150_60_60_retinaUrl from '../../img/markers/2x/150-60-60@2x.png'
 import icon_180_60_60_retinaUrl from '../../img/markers/2x/180-60-60@2x.png'
 import icon_210_60_60_retinaUrl from '../../img/markers/2x/210-60-60@2x.png'
+import icon_240_60_60_retinaUrl from '../../img/markers/2x/240-60-60@2x.png'
+import icon_270_60_60_retinaUrl from '../../img/markers/2x/270-60-60@2x.png'
 import icon_300_60_60_retinaUrl from '../../img/markers/2x/300-60-60@2x.png'
+import icon_330_60_60_retinaUrl from '../../img/markers/2x/330-60-60@2x.png'
 /* eslint camelcase: 2 */
 
 export const defaultIcon = new L.Icon.Default()
@@ -57,9 +71,26 @@ export const redIcon = L.icon({
 })
 
 /* eslint camelcase: 0 */
+export const icon_0_60_60 = L.icon({
+  iconUrl: icon_0_60_60_url,
+  iconRetinaUrl: icon_0_60_60_retinaUrl,
+  ...iconDefaults
+})
 export const icon_30_60_60 = L.icon({
   iconUrl: icon_30_60_60_url,
   iconRetinaUrl: icon_30_60_60_retinaUrl,
+  ...iconDefaults
+})
+
+export const icon_60_60_60 = L.icon({
+  iconUrl: icon_60_60_60_url,
+  iconRetinaUrl: icon_60_60_60_retinaUrl,
+  ...iconDefaults
+})
+
+export const icon_90_60_60 = L.icon({
+  iconUrl: icon_90_60_60_url,
+  iconRetinaUrl: icon_90_60_60_retinaUrl,
   ...iconDefaults
 })
 
@@ -68,6 +99,13 @@ export const icon_120_60_60 = L.icon({
   iconRetinaUrl: icon_120_60_60_retinaUrl,
   ...iconDefaults
 })
+
+export const icon_150_60_60 = L.icon({
+  iconUrl: icon_150_60_60_url,
+  iconRetinaUrl: icon_150_60_60_retinaUrl,
+  ...iconDefaults
+})
+
 export const icon_180_60_60 = L.icon({
   iconUrl: icon_180_60_60_url,
   iconRetinaUrl: icon_180_60_60_retinaUrl,
@@ -78,18 +116,38 @@ export const icon_210_60_60 = L.icon({
   iconRetinaUrl: icon_210_60_60_retinaUrl,
   ...iconDefaults
 })
+
+export const icon_240_60_60 = L.icon({
+  iconUrl: icon_240_60_60_url,
+  iconRetinaUrl: icon_240_60_60_retinaUrl,
+  ...iconDefaults
+})
+
+export const icon_270_60_60 = L.icon({
+  iconUrl: icon_270_60_60_url,
+  iconRetinaUrl: icon_270_60_60_retinaUrl,
+  ...iconDefaults
+})
+
 export const icon_300_60_60 = L.icon({
   iconUrl: icon_300_60_60_url,
   iconRetinaUrl: icon_300_60_60_retinaUrl,
   ...iconDefaults
 })
+
+export const icon_330_60_60 = L.icon({
+  iconUrl: icon_330_60_60_url,
+  iconRetinaUrl: icon_330_60_60_retinaUrl,
+  ...iconDefaults
+})
+
 /* eslint no-use-before-define: 2 */
 
 export const iconsByLayerType = {
   [BREACH_PRIMARY]: icon_210_60_60,
-  [BREACH_REGIONAL]: icon_120_60_60,
+  [BREACH_REGIONAL]: icon_90_60_60,
   [BREACH_FLOODING]: icon_30_60_60,
-  [BREACH_WATERSYSTEM]: icon_180_60_60,
-  [BREACH_OUTSIDE_DIKE]: icon_300_60_60,
+  [BREACH_WATERSYSTEM]: icon_0_60_60,
+  [BREACH_OUTSIDE_DIKE]: icon_270_60_60,
   default: defaultIcon
 }
