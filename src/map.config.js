@@ -62,7 +62,7 @@ const tileLayers = [
     }
   },
   {
-    title: 'Satelliet',
+    title: 'Luchtfoto',
     [EPSG_28992]: {
       url: 'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/tms/1.0.0/Actueel_ortho25/EPSG:28992/{z}/{x}/{y}.png',
       tms: true
