@@ -55,4 +55,4 @@ rm -r ${backend_dir}
 
 echo -e "\nNow upload ${zip_name} to https://portal.sig.eu\n"
 
-scp -i ~/.ssh/sig ${zip_name} deltares-liwo@portal.sig.eu:/home/deltares-liwo
+scp -i ~/.ssh/sig2 ${zip_name} deltares-liwo@portal.sig.eu:/home/deltares-liwo
