@@ -84,11 +84,18 @@
             Selectie combineren
           </button>
           <button
-            v-if="selectedFeatures.length"
+            v-if="selectedFeatures.length && selectFeatureMode === 'multiple' "
             class="layer-panel__action"
             @click="showExportCombine = true"
           >
             Selectie exporteren
+          </button>
+          <button
+            v-if="selectedFeatures.length && selectFeatureMode === 'single'"
+            class="layer-panel__action"
+            @click="showExport = true"
+          >
+            Scenario exporteren
           </button>
           <button
             v-if="selectFeatureMode === 'multiple'"
