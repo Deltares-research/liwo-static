@@ -34,17 +34,22 @@ wget $url -O ${zip_name}
 backend_dir="backend-dist-${date_yymmdd}"
 mkdir ${backend_dir}
 
+echo "listing content of working directory"
+ls -alh
+
+echo "filling ${backend_dir}"
+
 # go to new directory
 pushd ${backend_dir}
 
 # download relevant sources
-cp -r ../LWB/trunk/sources/liwo.GeoServerToolss
-cp -r ../LWB/trunk/sources/liwo.GeoServerToolsTests
-cp -r ../LWB/trunk/sources/liwo.postgisclients
-cp -r ../LWB/trunk/sources/liwo.runs
-cp -r ../LWB/trunk/sources/liwo.wss
-cp -r ../LWB/trunk/sources/liwo.ws.testss
-cp -r ../LWB/trunk/etl/ETL-data/Datamodel
+cp -r ../LWB/trunk/sources/liwo.GeoServerTools  .
+cp -r ../LWB/trunk/sources/liwo.GeoServerToolsTest .
+cp -r ../LWB/trunk/sources/liwo.postgisclient .
+cp -r ../LWB/trunk/sources/liwo.run .
+cp -r ../LWB/trunk/sources/liwo.ws .
+cp -r ../LWB/trunk/sources/liwo.ws.tests .
+cp -r ../LWB/trunk/etl/ETL-data/Datamodel .
 popd
 
 # add the whole directory
