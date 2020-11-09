@@ -40,6 +40,8 @@ ls -alh
 echo "environment variables"
 env
 
+ls $HOME/.BuildServer
+ls $HOME/.BuildServer/config/projects/LIWO/pluginData/ssh_keys
 
 echo "filling ${backend_dir}"
 
