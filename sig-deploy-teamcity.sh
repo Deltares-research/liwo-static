@@ -37,19 +37,23 @@ mkdir ${backend_dir}
 echo "listing content of working directory"
 ls -alh
 
+echo "environment variables"
+env
+
+
 echo "filling ${backend_dir}"
 
 # go to new directory
 pushd ${backend_dir}
 
 # download relevant sources
-cp -r ../LWB/trunk/sources/liwo.GeoServerTools  .
-cp -r ../LWB/trunk/sources/liwo.GeoServerToolsTest .
-cp -r ../LWB/trunk/sources/liwo.postgisclient .
-cp -r ../LWB/trunk/sources/liwo.run .
-cp -r ../LWB/trunk/sources/liwo.ws .
-cp -r ../LWB/trunk/sources/liwo.ws.tests .
-cp -r ../LWB/trunk/etl/ETL-data/Datamodel .
+cp -r ../LWB/sources/liwo.GeoServerTools  .
+cp -r ../LWB/sources/liwo.GeoServerToolsTest .
+cp -r ../LWB/sources/liwo.postgisclient .
+cp -r ../LWB/sources/liwo.run .
+cp -r ../LWB/sources/liwo.ws .
+cp -r ../LWB/sources/liwo.ws.tests .
+cp -r ../LWB/etl/ETL-data/Datamodel .
 popd
 
 # add the whole directory
