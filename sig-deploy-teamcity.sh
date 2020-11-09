@@ -34,15 +34,6 @@ wget $url -O ${zip_name}
 backend_dir="backend-dist-${date_yymmdd}"
 mkdir ${backend_dir}
 
-echo "listing content of working directory"
-ls -alh
-
-echo "environment variables"
-env
-
-ls -al $HOME
-ls $HOME/.BuildServer/config/projects/LIWO/pluginData/ssh_keys
-
 echo "filling ${backend_dir}"
 
 # go to new directory
