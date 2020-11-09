@@ -64,5 +64,5 @@ zip -r ${zip_name} ${backend_dir}
 rm -r ${backend_dir}
 
 echo -e "\nNow upload ${zip_name} to https://portal.sig.eu\n"
-
-scp -i ~/.ssh/sig2 ${zip_name} deltares-liwo@portal.sig.eu:/home/deltares-liwo
+# Do this in a build runner
+# scp -i ~/.ssh/sig2 ${zip_name} deltares-liwo@portal.sig.eu:/home/deltares-liwo
