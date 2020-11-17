@@ -99,6 +99,7 @@ export default {
     },
     async getScenarioInfo (scenarioIds) {
       let services = await mapConfig.getServices()
+      /* get the url of the hydro engine */
       const hydroEngine = services.HYDRO_ENGINE_URL
 
       let url = `${hydroEngine}/get_liwo_scenarios_info`
