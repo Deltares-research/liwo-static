@@ -6,7 +6,7 @@
   <form class="combine-popup__form">
     <fieldset>
       <fieldset class="control-group">
-        <legend class="control-label">Kies het thema waarvoor u scenario's wilt combineren:</legend>
+        <legend class="control-label">Kies het thema waarvoor u scenario's <span v-if="bandCounts">(n={{ featureCount }})</span> wilt combineren:</legend>
         <div class="controls">
           <label
             class="radio block"
@@ -17,10 +17,11 @@
               name="field-radio"
               v-model="selected"
               :value="option.id"
+              :disabled="bandCounts && !bandCounts[option.name]"
               type="radio"
               required
               >
-            {{ option.name }}
+            {{ option.name }} <span title="aantal beschikbare scenario's" v-if="bandCounts">(n={{ bandCounts[option.name] || 0}})</span>
           </label>
         </div>
       </fieldset>
@@ -53,6 +54,8 @@
 import _ from 'lodash'
 import PopUp from './PopUp'
 import { BREACH_LAYERS_EN } from '@/lib/liwo-identifiers'
+import mapConfig from '@/map.config.js'
+
 export default {
   components: {
     PopUp
@@ -75,11 +78,53 @@ export default {
     })
     return {
       selected: null,
-      options: options
+      options: options,
+      bandCounts: null,
+      featureCount: 0
     }
   },
-  mounted () {
+  async mounted () {
+    let scenarioIds = this.path.split(',').map(_.toNumber)
+    let scenarioInfo = await this.getScenarioInfo(scenarioIds)
+    /* extract number of features and bands per layer */
+    this.$set(this, 'bandCounts', scenarioInfo.properties.bandCounts)
+    this.$set(this, 'featureCount', scenarioInfo.features.length)
+
+    /* select first option (waterlevel) by default */
     this.selected = this.options[0].id
+  },
+  methods: {
+    getBandCount (option) {
+      return _.get(this.bandCounts, option.name, '')
+    },
+    async getScenarioInfo (scenarioIds) {
+      let services = await mapConfig.getServices()
+      const hydroEngine = services.HYDRO_ENGINE_URL
+
+      let url = `${hydroEngine}/get_liwo_scenarios_info`
+      /* pass scenario ids under the name liwo_ids */
+      let body = {liwo_ids: scenarioIds}
+      let resp = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      })
+      let data = await resp.json()
+      if (!data) {
+        console.warn('no data received', resp, data)
+        return
+      }
+
+      let bandCounts = _.countBy(data.features.flatMap((x) => x.properties['system:band_names']))
+
+      let featureCollectionProperties = _.get(data, 'properties', {})
+      featureCollectionProperties.bandCounts = bandCounts
+      data.properties = featureCollectionProperties
+
+      return data
+    }
   }
 }
 </script>
