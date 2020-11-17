@@ -83,6 +83,8 @@ export default {
         let newIds = match[0].split(',')
         let currentIds = this.currentSelectedIds.split(',')
         if (this.combineWithCurrentSelectedIds) {
+          /* TODO: make sure this works for id == 0 */
+          /* create a combined list of current scenarios and imported scenarios */
           newIds = _.uniq([...currentIds, ...newIds].filter(x => x))
         }
 
