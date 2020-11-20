@@ -16,6 +16,9 @@ export function getLayerType (feature) {
   let match = feature.id.match(re)
   // if we have match return the matched part
   let result = match ? match[0] : ''
+  if (feature.properties.missing) {
+    result = 'missing'
+  }
   return result
 }
 
