@@ -24,6 +24,12 @@
           <p>U kunt hier een LIWO-Link invoeren die u eerder heeft opgevraagd of die u van iemand hebt ontvangen. Door op importeren te klikken worden de scenario's aan uw bestaande selectie toegevoegd.</p>
         </div>
 
+        <div class="combine-popup__combine-selected" v-if="currentSelectedIds">
+          <label>
+            <input type="checkbox" v-model="combineWithCurrentSelectedIds"> Samenvoegen met bestaande selectie?
+          </label>
+        </div>
+
         <footer class="control-group combine-popup__footer">
           <div class="controls">
             <button
@@ -46,9 +52,16 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import PopUp from './PopUp'
 
 export default {
+  props: {
+    currentSelectedIds: {
+      type: String,
+      default: ''
+    }
+  },
   components: {
     PopUp
   },
@@ -56,7 +69,8 @@ export default {
     return {
       url: '',
       showError: false,
-      errorText: 'Geen valide URL'
+      errorText: 'Geen valide URL',
+      combineWithCurrentSelectedIds: true
     }
   },
   methods: {
@@ -66,9 +80,17 @@ export default {
       if (!match) {
         this.showError = true
       } else {
+        let newIds = match[0].split(',')
+        let currentIds = this.currentSelectedIds.split(',')
+        if (this.combineWithCurrentSelectedIds) {
+          /* TODO: make sure this works for id == 0 */
+          /* create a combined list of current scenarios and imported scenarios */
+          newIds = _.uniq([...currentIds, ...newIds].filter(x => x))
+        }
+
         this.$emit('close')
         // go to the new page
-        this.$router.push({ params: { ids: match[0] } })
+        this.$router.push({ params: { ids: newIds.join(',') } })
         this.$emit('update')
       }
     }
@@ -98,5 +120,14 @@ export default {
 
   .combine-popup__form .url-box {
     margin-bottom: 1rem;
+  }
+
+  .combine-popup__combine-selected {
+    margin-bottom: 1rem;
+  }
+
+  .combine-popup__combine-selected label {
+    display: flex;
+    align-items: center;
   }
 </style>

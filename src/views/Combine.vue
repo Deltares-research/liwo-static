@@ -128,6 +128,7 @@
       <!-- This import popup navigates to the the new url -->
       <import-combine-popup
         v-if="showImportCombine"
+        :current-selected-ids="selectedScenarioIdsPath"
         @close="showImportCombine = false"
         @update="loadScenarioLayerSetsByRoute"
       />
