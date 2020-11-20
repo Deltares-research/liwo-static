@@ -247,7 +247,7 @@ export default {
       id: layerSetId
     }
     await this.$store.dispatch('loadLayerSetById', options)
-    // now we can load  the scenario layerSets (which will  look for the id's in the url
+    // now we can load the scenario layerSets (which will look for the ids in the url)
     this.loadScenarioLayerSetsByRoute()
   },
   computed: {
@@ -349,14 +349,12 @@ export default {
               let bandNeeded = BREACH_LAYERS_EN[this.band]
               let availableBands = extraInfo.properties['system:band_names']
               let bandMissing = availableBands && !availableBands.includes(bandNeeded)
-              console.log('check', feature, bandNeeded, availableBands, 'is', bandMissing)
               if (bandMissing) {
                 feature.properties.missing = true
               } else {
                 feature.properties.missing = false
               }
               Object.assign(feature.properties, extraInfo.properties)
-              console.log('feature got extra info', feature)
             }
 
             /* TODO: set scenario info to missing */
@@ -446,7 +444,7 @@ export default {
       } else {
         // store the index in all layers, because layers in the scenario
         // are actually bands that share the same variant....
-        // TODO: move band selection to more logic location, now it's magic...
+        // TODO: move band selection to more logic location, now it is magic...
         _.each(layerSet.layers, (layer) => {
           this.$set(layer.properties, 'selectedVariant', index)
         })
@@ -458,11 +456,11 @@ export default {
     },
     async loadScenarioLayerSetsByRoute () {
       // A bit long function name but it gets a bit complex here
-      // We have two conditions that can cause the list of scenario's to load to change
+      // We have two conditions that can cause the list of scenario is to load to change
       // - features, selected  on the map
       // - ids,  changes in the url
       // Currently the ids in the url are changed after the features are loaded
-      // we could use the url as the source of truth,  but that's not the case at the moment.
+      // we could use the url as the source of truth,  but that is not the case at the moment.
 
       // Set the loading icon
       this.loading = true
@@ -485,11 +483,11 @@ export default {
         let layerSets = await this.loadScenarioLayerSetsByFeatures(features)
         this.scenarioLayerSets = layerSets
       }
-      // we're done, hide the loading icon
+      // we are done, hide the loading icon
       this.loading = false
     },
     async loadScenarioLayerSetsByFeatures (features) {
-      // load all  scenario's
+      // load all  scenarios
       this.scenarioLayerSets = []
 
       if (_.isEmpty(features)) {

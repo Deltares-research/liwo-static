@@ -87,7 +87,6 @@ function onEachFeature (feature, marker, layer, onClick) {
     event.target.closeTooltip()
   })
   // color selected feature as red
-  console.log('setting color', marker)
   if (marker.feature.properties.missing) {
     marker.setIcon(greyIcon)
   } else if (marker.feature.properties.selected) {

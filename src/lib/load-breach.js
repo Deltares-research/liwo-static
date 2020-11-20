@@ -135,7 +135,7 @@ export async function getScenarioInfo (scenarioIds, featureInfoByScenarioId) {
     data.features.forEach(
       (feature) => {
         let extraProperties = _.get(featureInfoByScenarioId, feature.properties.Scenario_ID, {})
-        console.log('updating', feature, 'with', extraProperties)
+        // store the extra properties in the feature
         Object.assign(feature.properties, extraProperties)
       }
     )
