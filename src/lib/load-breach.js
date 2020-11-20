@@ -100,6 +100,50 @@ export async function computeCombinedScenario (scenarioIds, band, layerSetId) {
   return layerSet
 }
 
+export async function getScenarioInfo (scenarioIds, featureInfoByScenarioId) {
+  let services = await mapConfig.getServices()
+  /* get the url of the hydro engine */
+  const hydroEngine = services.HYDRO_ENGINE_URL
+
+  let url = `${hydroEngine}/get_liwo_scenarios_info`
+
+  /* pass scenario ids under the name liwo_ids */
+  let body = {liwo_ids: scenarioIds}
+
+  let resp = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  })
+
+  let data = await resp.json()
+
+  if (!data) {
+    console.warn('no data received', resp, data)
+    return
+  }
+
+  let bandCounts = _.countBy(data.features.flatMap((x) => x.properties['system:band_names']))
+
+  let featureCollectionProperties = _.get(data, 'properties', {})
+  featureCollectionProperties.bandCounts = bandCounts
+  data.properties = featureCollectionProperties
+
+  if (featureInfoByScenarioId) {
+    data.features.forEach(
+      (feature) => {
+        let extraProperties = _.get(featureInfoByScenarioId, feature.properties.Scenario_ID, {})
+        console.log('updating', feature, 'with', extraProperties)
+        Object.assign(feature.properties, extraProperties)
+      }
+    )
+  }
+
+  return data
+}
+
 async function loadBreachLayer (breachId, layerName) {
   // Load the dataset  for a breach
   let services = await mapConfig.getServices()
@@ -195,11 +239,9 @@ export async function getFeatureIdsByScenarioIds (scenarioIds) {
   let promises = scenarioIds.map(getFeatureIdByScenarioId)
   let responses = await Promise.all(promises)
   let results = {}
+  // TODO: return more info (featureIdsByScenarioIds)
   _.each(responses, (response) => {
     results[response.scenarioId] = response
   })
-  let featureIds = _.filter(_.map(results, 'breachlocationid'))
-  // get all uniq ids
-  featureIds = _.uniq(featureIds)
-  return featureIds
+  return results
 }

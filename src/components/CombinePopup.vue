@@ -54,7 +54,7 @@
 import _ from 'lodash'
 import PopUp from './PopUp'
 import { BREACH_LAYERS_EN } from '@/lib/liwo-identifiers'
-import mapConfig from '@/map.config.js'
+import { getScenarioInfo } from '@/lib/load-breach'
 
 export default {
   components: {
@@ -85,7 +85,7 @@ export default {
   },
   async mounted () {
     let scenarioIds = this.path.split(',').map(_.toNumber)
-    let scenarioInfo = await this.getScenarioInfo(scenarioIds)
+    let scenarioInfo = await getScenarioInfo(scenarioIds)
     /* extract number of features and bands per layer */
     this.$set(this, 'bandCounts', scenarioInfo.properties.bandCounts)
     this.$set(this, 'featureCount', scenarioInfo.features.length)
@@ -96,35 +96,6 @@ export default {
   methods: {
     getBandCount (option) {
       return _.get(this.bandCounts, option.name, '')
-    },
-    async getScenarioInfo (scenarioIds) {
-      let services = await mapConfig.getServices()
-      /* get the url of the hydro engine */
-      const hydroEngine = services.HYDRO_ENGINE_URL
-
-      let url = `${hydroEngine}/get_liwo_scenarios_info`
-      /* pass scenario ids under the name liwo_ids */
-      let body = {liwo_ids: scenarioIds}
-      let resp = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body)
-      })
-      let data = await resp.json()
-      if (!data) {
-        console.warn('no data received', resp, data)
-        return
-      }
-
-      let bandCounts = _.countBy(data.features.flatMap((x) => x.properties['system:band_names']))
-
-      let featureCollectionProperties = _.get(data, 'properties', {})
-      featureCollectionProperties.bandCounts = bandCounts
-      data.properties = featureCollectionProperties
-
-      return data
     }
   }
 }
