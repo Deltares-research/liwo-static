@@ -12,6 +12,9 @@
           <p>
             Is er sprake van een technische storing? Bel dan de landelijke informatielijn van Rijkswaterstaat (0800-8002). Meer achtergrondinformatie over LIWO vindt u op de website van de <a href="https://www.helpdeskwater.nl/onderwerpen/applicaties-modellen/applicaties-per/watermanagement/watermanagement/liwo/">Helpdesk Water</a>.
           </p>
+          <p>
+            <router-link :to="{name: 'toegankelijkheid'}">Toegankelijkheid</router-link>
+          </p>
         </div>
       </section>
     </div>
