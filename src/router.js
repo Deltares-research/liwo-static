@@ -7,6 +7,7 @@ import Home from './views/Home'
 import Maps from './views/Maps'
 import Viewer from './views/Viewer'
 import Combine from './views/Combine'
+import Toegankelijkheid from './views/Toegankelijkheid'
 
 Vue.use(Router)
 
@@ -104,6 +105,14 @@ const router = new Router({
       component: Contact,
       meta: {
         title: 'LIWO - Contact'
+      }
+    },
+    {
+      path: '/toegankelijkheid',
+      name: 'toegankelijkheid',
+      component: Toegankelijkheid,
+      meta: {
+        title: 'LIWO - Toegankelijkheid'
       }
     }
   ]
