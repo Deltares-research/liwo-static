@@ -1,5 +1,5 @@
 <template>
-  <div class="accessibility site-main">
+  <div class="accessibility-view site-main">
     <div>
       <section class="section">
         <h2 data-class="section-head">Toegankelijkheid</h2>
@@ -40,7 +40,7 @@ export default {
 </script>
 
 <style>
-.accessibility {
+.accessibility-view {
   padding: 1rem;
   max-width: 1200px;
   width: calc(100% - 2rem);
