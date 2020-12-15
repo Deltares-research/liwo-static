@@ -1,8 +1,9 @@
 <template>
   <header class="app-header">
     <div role="banner" class="site-header">
-      <nav>
+      <nav class="app-header__top-nav">
         <router-link :to="{name: 'contact'}">Contact</router-link>
+        <router-link :to="{name: 'accessibility'}">Toegankelijkheid</router-link>
       </nav>
       <a href="/" class="logo"><img src="https://staticresources.rijkswaterstaat.nl/assets/img/logo.png?v=2.19.2" width="270" height="72" alt="Rijkswaterstaat Ministerie van Infrastructuur en Waterstaat." class="accessibility"></a>
   </div>
@@ -55,6 +56,13 @@ export default {
     padding: .25rem;
     font-size: 1.2em;
   }
+
+  .site-header .app-header__top-nav {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+  }
+
   .app-header__nav {
     margin-left: -1em;
     padding-right: 1em;
