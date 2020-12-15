@@ -86,6 +86,13 @@ export default {
           /* TODO: make sure this works for id == 0 */
           /* create a combined list of current scenarios and imported scenarios */
           newIds = _.uniq([...currentIds, ...newIds].filter(x => x))
+        } else {
+          // start with a fresh page
+          // replacing ids is not working properly at the moment
+          // The update scenarios from from the update is not working properly (the existing layers (which contain the selection are not reloaded)).
+          // For now just do a fresh reload.
+          window.location.assign(this.url)
+          window.location.reload()
         }
 
         this.$emit('close')

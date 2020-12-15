@@ -158,10 +158,10 @@ import FilterPopup from '@/components/FilterPopup'
 
 import { flattenLayerSet, normalizeLayerSet, cleanLayerSet, selectVariantsInLayerSet } from '@/lib/layer-parser'
 import buildLayerSetNotifications from '@/lib/build-layerset-notifications'
-import { loadBreach, computeCombinedScenario, getFeatureIdsByScenarioIds } from '@/lib/load-breach'
+import { loadBreach, getScenarioInfo, computeCombinedScenario, getFeatureIdsByScenarioIds } from '@/lib/load-breach'
 import { extractUnit } from '@/lib/load-layersets'
 
-import { getLayerType } from '@/lib/liwo-identifiers'
+import { getLayerType, BREACH_LAYERS_EN } from '@/lib/liwo-identifiers'
 import { iconsByLayerType, redIcon, defaultIcon } from '@/lib/leaflet-utils/markers'
 import { EPSG_3857 } from '@/lib/leaflet-utils/projections'
 import { showLayerInfoPopup } from '@/lib/leaflet-utils/popup'
@@ -208,6 +208,8 @@ export default {
 
       // the scenario layerSets
       scenarioLayerSets: [],
+      // this is information about computed scenarios
+      scenarioInfo: {},
       // the main layerSet collapse
       layerSetCollapsed: false,
       selectedProbability: 'no_filter',
@@ -245,7 +247,7 @@ export default {
       id: layerSetId
     }
     await this.$store.dispatch('loadLayerSetById', options)
-    // now we can load  the scenario layerSets (which will  look for the id's in the url
+    // now we can load the scenario layerSets (which will look for the ids in the url)
     this.loadScenarioLayerSetsByRoute()
   },
   computed: {
@@ -333,12 +335,29 @@ export default {
         // replace markers by circle markers and add classes so we can style this
         let geojson = layer.geojson
         if (this.filterByIds) {
+          // this is true for the combined scenario
           geojson.features = _.filter(geojson.features, (feature) => {
             // if we are filtering by Id
             return (this.featureIds.includes(feature.properties.id))
           })
           geojson.features = _.map(geojson.features, (feature) => {
             feature.properties.selected = true
+            // find extra info from the loaded scenarioInfo
+            if (this.scenarioInfo.features) {
+              let extraInfo = this.scenarioInfo.features.find((f) => f.properties.breachlocationid === feature.properties.id)
+              // english band name
+              let bandNeeded = BREACH_LAYERS_EN[this.band]
+              let availableBands = extraInfo.properties['system:band_names']
+              let bandMissing = availableBands && !availableBands.includes(bandNeeded)
+              if (bandMissing) {
+                feature.properties.missing = true
+              } else {
+                feature.properties.missing = false
+              }
+              Object.assign(feature.properties, extraInfo.properties)
+            }
+
+            /* TODO: set scenario info to missing */
             return feature
           })
         }
@@ -425,7 +444,7 @@ export default {
       } else {
         // store the index in all layers, because layers in the scenario
         // are actually bands that share the same variant....
-        // TODO: move band selection to more logic location, now it's magic...
+        // TODO: move band selection to more logic location, now it is magic...
         _.each(layerSet.layers, (layer) => {
           this.$set(layer.properties, 'selectedVariant', index)
         })
@@ -437,33 +456,38 @@ export default {
     },
     async loadScenarioLayerSetsByRoute () {
       // A bit long function name but it gets a bit complex here
-      // We have two conditions that can cause the list of scenario's to load to change
+      // We have two conditions that can cause the list of scenario is to load to change
       // - features, selected  on the map
       // - ids,  changes in the url
       // Currently the ids in the url are changed after the features are loaded
-      // we could use the url as the source of truth,  but that's not the case at the moment.
+      // we could use the url as the source of truth,  but that is not the case at the moment.
 
       // Set the loading icon
       this.loading = true
 
       // we need to get the features first as we are filtering the layer using these
-      this.featureIds = await getFeatureIdsByScenarioIds(this.scenarioIds)
+      let featureInfoByScenarioId = await getFeatureIdsByScenarioIds(this.scenarioIds)
+      let featureIds = _.filter(_.map(featureInfoByScenarioId, 'breachlocationid'))
+      // get all uniq ids
+      this.featureIds = _.uniq(featureIds)
 
       if (this.scenarioMode === 'compute') {
         // if we are  computing, we can pass them on
         let layerSet = await this.computeScenario(this.scenarioIds)
+        let scenarioInfo = await getScenarioInfo(this.scenarioIds, featureInfoByScenarioId)
         this.scenarioLayerSets = [layerSet]
+        this.scenarioInfo = scenarioInfo
       } else {
         // If we are interacting we need to lookup the corresponding features
         let features = _.map(this.featureIds, this.getFeatureById)
         let layerSets = await this.loadScenarioLayerSetsByFeatures(features)
         this.scenarioLayerSets = layerSets
       }
-      // we're done, hide the loading icon
+      // we are done, hide the loading icon
       this.loading = false
     },
     async loadScenarioLayerSetsByFeatures (features) {
-      // load all  scenario's
+      // load all  scenarios
       this.scenarioLayerSets = []
 
       if (_.isEmpty(features)) {
@@ -617,6 +641,7 @@ export default {
       layerSet = normalizeLayerSet(layerSet)
       // and clean
       layerSet = cleanLayerSet(layerSet)
+
       // Set the first layer as visible
       _.each(layerSet.layers, layer => {
         layer.properties.visible = false

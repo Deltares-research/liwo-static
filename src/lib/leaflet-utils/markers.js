@@ -15,6 +15,7 @@ import redRetinaIconUrl from '../../img/markers/marker-icon-2x-red.png'
 // See the markers.svg source in the src/img/design folder
 
 /* eslint camelcase: 0 */
+import icon_0_0_60_url from '../../img/markers/1x/0-0-60.png'
 import icon_0_60_60_url from '../../img/markers/1x/0-60-60.png'
 import icon_30_60_60_url from '../../img/markers/1x/30-60-60.png'
 import icon_60_60_60_url from '../../img/markers/1x/60-60-60.png'
@@ -27,6 +28,7 @@ import icon_240_60_60_url from '../../img/markers/1x/240-60-60.png'
 import icon_270_60_60_url from '../../img/markers/1x/270-60-60.png'
 import icon_300_60_60_url from '../../img/markers/1x/300-60-60.png'
 import icon_330_60_60_url from '../../img/markers/1x/330-60-60.png'
+import icon_0_0_60_retinaUrl from '../../img/markers/2x/0-0-60@2x.png'
 import icon_0_60_60_retinaUrl from '../../img/markers/2x/0-60-60@2x.png'
 import icon_30_60_60_retinaUrl from '../../img/markers/2x/30-60-60@2x.png'
 import icon_60_60_60_retinaUrl from '../../img/markers/2x/60-60-60@2x.png'
@@ -70,7 +72,19 @@ export const redIcon = L.icon({
   ...iconDefaults
 })
 
+export const greyIcon = L.icon({
+  iconUrl: icon_0_0_60_url,
+  iconRetinaUrl: icon_0_0_60_retinaUrl,
+  ...iconDefaults
+})
+
 /* eslint camelcase: 0 */
+// same as grey icon
+export const icon_0_0_60 = L.icon({
+  iconUrl: icon_0_0_60_url,
+  iconRetinaUrl: icon_0_0_60_retinaUrl,
+  ...iconDefaults
+})
 export const icon_0_60_60 = L.icon({
   iconUrl: icon_0_60_60_url,
   iconRetinaUrl: icon_0_60_60_retinaUrl,
