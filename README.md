@@ -2,7 +2,7 @@
 Static frontend for LIWO (https://www.basisinformatie-overstromingen.nl/liwo/)
 
 # Info
-[![Build Status](https://travis-ci.org/Deltares/liwo-static.svg?branch=master)](https://travis-ci.org/Deltares/liwo-static)
+[![Build Status](https://travis-ci.com/Deltares/liwo-static.svg?branch=master)](https://travis-ci.com/Deltares/liwo-static)
 
 [![BCH compliance](https://bettercodehub.com/edge/badge/Deltares/liwo-static?branch=master)](https://bettercodehub.com/)
 
