@@ -1,15 +1,18 @@
 <template>
 <div class="site-outer-wrapper">
+  <vue-skip-to class="skip-link" to="#content" label="Direct naar hoofdinhoud" />
+  <vue-skip-to class="skip-link" to="#nav" label="Direct naar hoofdnavigatie" />
+
   <div class="site-container" id="app">
     <app-header :page-title="title" />
-    <div id="content" role="main">
+    <main id="content" role="main">
       <!-- main content goes here, based on router view -->
       <!-- make sure we  reload when changing the route name -->
       <router-view :key="$route.name" />
-    </div>
+    </main>
 
     <footer class="site-footer noindex">
-      <img src="https://staticresources.rijkswaterstaat.nl/assets/img/footer-logo.png?v=2.19.2" width="500" height="24" alt="Rijkswaterstaat Ministerie van Infrastructuur en Waterstaat. Water. Wegen. Werken." class="accessibility">
+      <img src="https://staticresources.rijkswaterstaat.nl/assets/img/footer-logo.png?v=2.19.2" width="500" height="24" alt="Water. Wegen. Werken. Rijkswaterstaat." class="accessibility">
       <div class="site-footer__content">
         <!-- nothing here for now -->
       </div>
@@ -48,6 +51,7 @@ export default {
 /* overwrites font-face with location from https://staticresources.rijkswaterstaat.nl/ */
 @import './styles/rws-embedded.css';
 @import './styles/liwo.css';
+@import './styles/skip-links.css';
 
 .sr-only {
   position: absolute;
