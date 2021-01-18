@@ -18,7 +18,7 @@ const router = new Router({
       name: 'home',
       component: Home,
       meta: {
-        title: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
+        title: null
       }
     },
     {
@@ -26,7 +26,7 @@ const router = new Router({
       name: 'maps',
       component: Maps,
       meta: {
-        title: 'LIWO - Kaarten'
+        title: 'Kaarten'
       }
     },
     {
@@ -34,7 +34,7 @@ const router = new Router({
       name: 'viewer',
       component: Viewer,
       meta: {
-        title: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
+        title: null
       },
       // pass id to component
       props: (route) => {
@@ -96,7 +96,7 @@ const router = new Router({
       name: 'about',
       component: About,
       meta: {
-        title: 'LIWO - Over LIWO'
+        title: 'Over LIWO'
       }
     },
     {
@@ -104,7 +104,7 @@ const router = new Router({
       name: 'contact',
       component: Contact,
       meta: {
-        title: 'LIWO - Contact'
+        title: 'Contact'
       }
     },
     {
@@ -112,16 +112,10 @@ const router = new Router({
       name: 'accessibility',
       component: Accessibility,
       meta: {
-        title: 'LIWO - Toegankelijkheid'
+        title: 'Toegankelijkheid'
       }
     }
   ]
-})
-
-// change title for blind people
-router.beforeEach((to, from, next) => {
-  document.title = to.meta.title
-  next()
 })
 
 export default router
