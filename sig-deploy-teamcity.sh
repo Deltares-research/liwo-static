@@ -8,11 +8,11 @@ date_yymmdd=$(date +%Y%m%d)
 
 zip_name=liwo-static-${date_yymmdd}.zip
 
-echo -e  "Downloading $url to ${zip_name}\n"
-wget $url -O ${zip_name}
+# echo -e  "Downloading $url to ${zip_name}\n"
+# wget $url -O ${zip_name}
 
-# List the files in the zipfile
-dir_name=$(zipinfo -1 liwo-static.zip | head -n 1)
+# # List the files in the zipfile
+# dir_name=$(zipinfo -1 liwo-static.zip | head -n 1)
 # TODO: how to rename this dir in the zip? Without extracting it?
 
 # add
