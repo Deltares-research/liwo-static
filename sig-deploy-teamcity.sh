@@ -1,19 +1,10 @@
 #!/bin/bash
 echo -e "This scripts downloads the latest zip url of a release zip to https://portal.sig.eu\n"
-# get the url of the latest release
-url=$(curl -s https://api.github.com/repos/deltares/liwo-static/releases/latest | grep zipball | grep -o -e "https.*v[0-9]\+\.[0-9]\+\.[0-9]\+")
 
 # get the current date
 date_yymmdd=$(date +%Y%m%d)
 
 zip_name=liwo-static-${date_yymmdd}.zip
-
-# echo -e  "Downloading $url to ${zip_name}\n"
-# wget $url -O ${zip_name}
-
-# # List the files in the zipfile
-# dir_name=$(zipinfo -1 liwo-static.zip | head -n 1)
-# TODO: how to rename this dir in the zip? Without extracting it?
 
 # add
 # https://repos.deltares.nl/repos/LWB/trunk/sources
@@ -53,6 +44,7 @@ cp -r ../LWB/sources/liwo.ws.tests .
 cp -r ../LWB/etl/ETL-data/Datamodel .
 popd
 
+# Use the latest source code in master
 frontend_dir="frontend-dist"
 mkdir ${frontend_dir}
 pushd ${frontend_dir}
