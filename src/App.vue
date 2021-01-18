@@ -1,7 +1,7 @@
 <template>
 <div class="site-outer-wrapper">
-  <vue-skip-to to="#content" label="Direct naar hoofdinhoud" />
-  <vue-skip-to to="#nav" label="Direct naar hoofdnavigatie" />
+  <vue-skip-to class="skip-link" to="#content" label="Direct naar hoofdinhoud" />
+  <vue-skip-to class="skip-link" to="#nav" label="Direct naar hoofdnavigatie" />
 
   <div class="site-container" id="app">
     <app-header :page-title="title" />
@@ -51,6 +51,7 @@ export default {
 /* overwrites font-face with location from https://staticresources.rijkswaterstaat.nl/ */
 @import './styles/rws-embedded.css';
 @import './styles/liwo.css';
+@import './styles/skip-links.css';
 
 .sr-only {
   position: absolute;
