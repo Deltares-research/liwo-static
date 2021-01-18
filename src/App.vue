@@ -9,7 +9,7 @@
     </div>
 
     <footer class="site-footer noindex">
-      <img src="https://staticresources.rijkswaterstaat.nl/assets/img/footer-logo.png?v=2.19.2" width="500" height="24" alt="Rijkswaterstaat Ministerie van Infrastructuur en Waterstaat. Water. Wegen. Werken." class="accessibility">
+      <img src="https://staticresources.rijkswaterstaat.nl/assets/img/footer-logo.png?v=2.19.2" width="500" height="24" alt="Water. Wegen. Werken. Rijkswaterstaat." class="accessibility">
       <div class="site-footer__content">
         <!-- nothing here for now -->
       </div>
