@@ -6,7 +6,7 @@ url=$(curl -s https://api.github.com/repos/deltares/liwo-static/releases/latest 
 # get the current date
 date_yymmdd=$(date +%Y%m%d)
 
-zip_name=deltares_liwo-static_${date_yymmdd}.zip
+zip_name=liwo-static.zip
 
 echo -e  "Downloading $url to ${zip_name}\n"
 wget $url -O ${zip_name}
@@ -31,7 +31,7 @@ wget $url -O ${zip_name}
 # etl/ETL-data/Datamodel/*
 
 # lookup version number of backend
-backend_dir="backend-dist-${date_yymmdd}"
+backend_dir="backend-dist"
 mkdir ${backend_dir}
 
 echo "filling ${backend_dir}"
