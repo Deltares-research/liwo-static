@@ -6,10 +6,14 @@ url=$(curl -s https://api.github.com/repos/deltares/liwo-static/releases/latest 
 # get the current date
 date_yymmdd=$(date +%Y%m%d)
 
-zip_name=liwo-static.zip
+zip_name=liwo-static-${date_yymmdd}.zip
 
 echo -e  "Downloading $url to ${zip_name}\n"
 wget $url -O ${zip_name}
+
+# List the files in the zipfile
+dir_name=$(zipinfo -1 liwo-static.zip | head -n 1)
+# TODO: how to rename this dir in the zip? Without extracting it?
 
 # add
 # https://repos.deltares.nl/repos/LWB/trunk/sources
@@ -49,10 +53,19 @@ cp -r ../LWB/sources/liwo.ws.tests .
 cp -r ../LWB/etl/ETL-data/Datamodel .
 popd
 
+frontend_dir="frontend-dist"
+mkdir ${frontend_dir}
+pushd ${frontend_dir}
+cp -r ../liwo-static .
+popd
+
+
 # add the whole directory
 zip -r ${zip_name} ${backend_dir}
+zip -r ${zip_name} ${frontend_dir}
 # cleanup
 rm -r ${backend_dir}
+rm -r ${frontend_dir}
 
 echo -e "\nNow upload ${zip_name} to https://portal.sig.eu\n"
 # Do this in a build runner
