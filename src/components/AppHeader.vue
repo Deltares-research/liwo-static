@@ -12,7 +12,7 @@
         <div class="app-header__app-title"><strong>LIWO</strong></div>
         <!-- <div class="app-header__login"><span>(Guest)</span>&nbsp;<a href="/liwo/#/login">Inloggen</a> </div> -->
     </div>
-      <nav role="navigation" class="app-header__nav">
+      <nav role="navigation" class="app-header__nav" id="nav">
         <ul class="container">
           <li><router-link :to="{name: 'home'}" exact>Home</router-link></li>
           <li><router-link :to="{name: 'maps'}">Kaarten</router-link></li>
