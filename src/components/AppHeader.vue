@@ -92,5 +92,6 @@ export default {
     font-size: 2.2em;
     margin: .25rem 0;
     text-align: left;
+    min-height: 45px;
   }
 </style>
