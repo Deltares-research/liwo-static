@@ -61,7 +61,9 @@ function baseLayerOptions (config) {
 }
 
 function geoCoderControl (map) {
-  return L.Control.geocoder({ position: 'topright', defaultMarkGeocode: false })
+  let containerListenerInitialized = false
+
+  const Control = L.Control.geocoder({ position: 'topright', defaultMarkGeocode: false })
     .on('markgeocode', function (e) {
       const bbox = e.geocode.bbox
       const poly = L.polygon([
@@ -72,4 +74,23 @@ function geoCoderControl (map) {
       ])
       map.fitBounds(poly.getBounds())
     })
+
+  function addListeners (el) {
+    const button = el.querySelector('button')
+    button.addEventListener('click', () => {
+      Control._expand()
+    })
+  }
+
+  return new Proxy(Control, {
+    set (target, key, value) {
+      if (key === '_container' && !containerListenerInitialized) {
+        addListeners(value)
+        containerListenerInitialized = true
+      }
+
+      target[key] = value
+      return true
+    }
+  })
 }
