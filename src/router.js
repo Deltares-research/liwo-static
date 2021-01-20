@@ -34,6 +34,7 @@ const router = new Router({
       name: 'viewer',
       component: Viewer,
       meta: {
+        // Title will be filled in once `LayerSet` is loaded.
         title: null
       },
       // pass id to component
