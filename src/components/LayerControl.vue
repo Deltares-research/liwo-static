@@ -9,9 +9,9 @@
            :id="`layer-${id}-vis`"
            value="zichtbaar"
            :checked="layer.properties.visible"
+           @change="(event) => toggleLayer(event)"
            >
     <label
-      @click.stop.prevent="(event) => toggleLayer(event)"
       class="layer-control__vis-label"
       :for="`layer-${id}-vis`"
       >

@@ -24,9 +24,10 @@
   margin-bottom: 0;
 }
 
-.layer-control__vis-label>.icon {
+.layer-control__vis-label {
   position: absolute;
   left: .5rem;
+  border: 2px solid transparent;
 }
 
 .layer-control__range input {
@@ -52,9 +53,16 @@
   border: none;
   background: none;
 }
+
+.layer-control__vis-checkbox:focus + .layer-control__vis-label {
+  outline: 2px auto #0073bf;
+  outline: 5px auto -webkit-focus-ring-color;
+}
+
 .layer-control__vis-checkbox + .layer-control__vis-label svg {
   fill: var(--medium-gray);
 }
+
 .layer-control__vis-checkbox:checked + .layer-control__vis-label svg {
   fill: var(--black);
 }
@@ -62,6 +70,7 @@
 .layer-control--active {
   background-color: var(--light-yellow);
 }
+
 .layer-control--active .layer-control__options {
   display: block;
   display: flex;
