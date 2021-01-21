@@ -10,7 +10,7 @@
       <fieldset class="export-popup__notification export-popup__notification--loading" v-if="exporting">
         <b>Uw export wordt gegenereerd.</b>
       </fieldset>
-      <label class="export-popup__form-column-item">Exporteer als:</label>
+      <p class="export-popup__form-column-item">Exporteer als:</p>
       <ul class="export-popup__form-column-item choice-cards export-popup__radio-group">
         <li class="choice-cards__item">
           <input type="radio" name="export" v-model="exportType"
@@ -34,7 +34,7 @@
           </label>
         </li>
       </ul>
-      <label class="export-popup__form-column-item">
+      <label class="export-popup__form-column-item" for="export-name">
         Naam:<br><small class="help">De naam van het uitvoerbestand</small>
       </label>
       <input type="text" name="name"
