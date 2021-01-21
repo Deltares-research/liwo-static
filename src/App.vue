@@ -23,10 +23,36 @@
 
 <script>
 import { mapGetters } from 'vuex'
-
 import AppHeader from '../src/components/AppHeader.vue'
 
 export default {
+  components: {
+    AppHeader
+  },
+  head: {
+    title () {
+      if (!this.title) {
+        return {
+          inner: '',
+          separator: ' '
+        }
+      }
+
+      return {
+        inner: this.title
+      }
+    }
+  },
+  watch: {
+    title: {
+      immediate: true,
+      handler () {
+        // emit this event to let vue-head know it should update the title element
+        // https://www.npmjs.com/package/vue-head#update-elements-with-asynchronous-data-or-after-page-loaded
+        this.$emit('updateHead')
+      }
+    }
+  },
   computed: {
     ...mapGetters([
       'layerSet'
@@ -37,11 +63,9 @@ export default {
           return this.layerSet.title
         }
       }
+
       return this.$route.meta.title
     }
-  },
-  components: {
-    AppHeader
   }
 }
 </script>
