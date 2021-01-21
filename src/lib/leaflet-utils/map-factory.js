@@ -24,8 +24,7 @@ export default function (el, vnode, config) {
   map.addControl(geoCoderControl(map))
   map.addControl(L.control.zoom({ position: 'topright' }))
 
-  let printControl = L.control.browserPrint({position: 'topright'})
-  map.addControl(printControl)
+  map.addControl(printControl())
 
   map.addControl(L.control.layers(baseLayers))
 
@@ -60,6 +59,19 @@ function baseLayerOptions (config) {
   return options
 }
 
+function whenReady (Control, cb) {
+  return new Proxy(Control, {
+    set (target, key, value) {
+      if (key === '_container') {
+        cb(value)
+      }
+
+      target[key] = value
+      return true
+    }
+  })
+}
+
 function geoCoderControl (map) {
   let containerListenerInitialized = false
 
@@ -76,21 +88,37 @@ function geoCoderControl (map) {
     })
 
   function addListeners (el) {
-    const button = el.querySelector('button')
-    button.addEventListener('click', () => {
-      Control._expand()
-    })
+    if (!containerListenerInitialized) {
+      const button = el.querySelector('button')
+      button.addEventListener('click', () => {
+        Control._expand()
+      })
+
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Escape' || e.keyCode === 27) {
+          button.focus()
+        }
+      })
+
+      containerListenerInitialized = true
+    }
   }
 
-  return new Proxy(Control, {
-    set (target, key, value) {
-      if (key === '_container' && !containerListenerInitialized) {
-        addListeners(value)
-        containerListenerInitialized = true
-      }
+  return whenReady(Control, el => {
+    addListeners(el)
+  })
+}
 
-      target[key] = value
-      return true
-    }
+function printControl () {
+  let Control = L.control.browserPrint({position: 'topright', printModes: ['auto']})
+
+  function makeFocusable (el) {
+    const trigger = el.querySelector('.leaflet-browser-print')
+
+    trigger.setAttribute('href', '#')
+  }
+
+  return whenReady(Control, el => {
+    makeFocusable(el)
   })
 }
