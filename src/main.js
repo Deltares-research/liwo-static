@@ -10,6 +10,7 @@ import VueHead from 'vue-head'
 import '@babel/polyfill'
 import 'whatwg-fetch'
 import 'url-polyfill'
+import 'proxy-polyfill'
 
 Vue.config.productionTip = false
 Vue.directive('leaflet', leafletDirective)

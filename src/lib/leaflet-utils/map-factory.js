@@ -24,8 +24,7 @@ export default function (el, vnode, config) {
   map.addControl(geoCoderControl(map))
   map.addControl(L.control.zoom({ position: 'topright' }))
 
-  let printControl = L.control.browserPrint({position: 'topright'})
-  map.addControl(printControl)
+  map.addControl(printControl())
 
   map.addControl(L.control.layers(baseLayers))
 
@@ -60,8 +59,30 @@ function baseLayerOptions (config) {
   return options
 }
 
+// because leaflet provides no way of telling if the controls have rendered,
+// we watch the control object until the dom element is created
+function whenReady (Control, cb) {
+  return new Proxy(Control, {
+    set (target, key, value) {
+      if (key === '_container') {
+        cb(value)
+      }
+
+      target[key] = value
+      return true
+    }
+  })
+}
+
 function geoCoderControl (map) {
-  return L.Control.geocoder({ position: 'topright', defaultMarkGeocode: false })
+  let containerListenerInitialized = false
+
+  const Control = L.Control.geocoder({
+    position: 'topright',
+    defaultMarkGeocode: false,
+    iconLabel: 'Start een nieuwe zoekopdracht',
+    placeholder: 'Zoeken'
+  })
     .on('markgeocode', function (e) {
       const bbox = e.geocode.bbox
       const poly = L.polygon([
@@ -72,4 +93,46 @@ function geoCoderControl (map) {
       ])
       map.fitBounds(poly.getBounds())
     })
+
+  // add listeners for a11y
+  function addListeners (el) {
+    // make sure the listeners are only set once
+    if (!containerListenerInitialized) {
+      const button = el.querySelector('button')
+
+      // the control does not expand when programmatically clicking the trigger button (with keyboard e.g.),
+      // so we add a listener that expands the control on click
+      button.addEventListener('click', () => {
+        Control._expand()
+      })
+
+      // when the control is closed using the escape key, the focus should go back to the trigger button
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Escape' || e.keyCode === 27) {
+          button.focus()
+        }
+      })
+
+      containerListenerInitialized = true
+    }
+  }
+
+  return whenReady(Control, el => {
+    addListeners(el)
+  })
+}
+
+function printControl () {
+  let Control = L.control.browserPrint({position: 'topright', printModes: ['auto']})
+
+  function makeFocusable (el) {
+    const trigger = el.querySelector('.leaflet-browser-print')
+
+    // add a href attribute, otherwise the browser will nog recognize it as focusable
+    trigger.setAttribute('href', '#')
+  }
+
+  return whenReady(Control, el => {
+    makeFocusable(el)
+  })
 }
