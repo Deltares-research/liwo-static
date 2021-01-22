@@ -26,7 +26,7 @@ export default function (el, vnode, config) {
 
   map.addControl(printControl())
 
-  map.addControl(L.control.layers(baseLayers))
+  map.addControl(layerControl(baseLayers))
 
   map.on('browser-print-start', function (e) {
     // when printing starts emit an event to the containing element so that we can add a legend
@@ -134,5 +134,21 @@ function printControl () {
 
   return whenReady(Control, el => {
     makeFocusable(el)
+  })
+}
+
+function layerControl (layers) {
+  const Control = L.control.layers(layers)
+
+  function addListener (el) {
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Escape' || e.keyCode === 27) {
+        Control.collapse()
+      }
+    })
+  }
+
+  return whenReady(Control, (el) => {
+    addListener(el)
   })
 }
