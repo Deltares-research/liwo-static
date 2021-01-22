@@ -1,6 +1,6 @@
 <template>
     <transition name="popup-fade">
-      <div class="pop-up">
+      <div class="pop-up" @keydown.esc="$emit('close')">
         <div class="pop-up__backdrop" @click="$emit('close')"></div>
         <div class="pop-up__modal" ref="popUp">
           <header class="pop-up__header">
