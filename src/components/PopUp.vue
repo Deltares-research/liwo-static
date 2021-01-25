@@ -1,8 +1,8 @@
 <template>
     <transition name="popup-fade">
-      <div class="pop-up">
+      <div class="pop-up" @keydown.esc="$emit('close')">
         <div class="pop-up__backdrop" @click="$emit('close')"></div>
-        <div class="pop-up__modal">
+        <div class="pop-up__modal" ref="popUp">
           <header class="pop-up__header">
             <h1 class="pop-up__title">
               <slot name="icon"><!-- Icon to inject before title --></slot>
@@ -21,11 +21,31 @@
 </template>
 
 <script>
+import * as focusTrap from 'focus-trap'
+
 export default {
   props: {
     title: {
       Type: String
     }
+  },
+  data () {
+    return {
+      focusElBeforeOpen: null,
+      trap: null
+    }
+  },
+  mounted () {
+    this.focusElBeforeOpen = document.activeElement
+    this.trap = focusTrap.createFocusTrap(this.$refs.popUp)
+    this.trap.activate()
+  },
+  beforeDestroy () {
+    if (this.focusElBeforeOpen) {
+      this.focusElBeforeOpen.focus()
+    }
+
+    this.trap.deactivate()
   }
 }
 </script>
