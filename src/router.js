@@ -18,7 +18,7 @@ const router = new Router({
       name: 'home',
       component: Home,
       meta: {
-        title: null
+        title: 'Home'
       }
     },
     {
