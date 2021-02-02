@@ -19,6 +19,7 @@ import icon_0_0_60_url from '../../img/markers/1x/0-0-60.png'
 import icon_0_60_60_url from '../../img/markers/1x/0-60-60.png'
 import icon_30_60_60_url from '../../img/markers/1x/30-60-60.png'
 import icon_60_60_60_url from '../../img/markers/1x/60-60-60.png'
+import icon_90_60_38_url from '../../img/markers/1x/90-60-38.png'
 import icon_90_60_60_url from '../../img/markers/1x/90-60-60.png'
 import icon_120_60_60_url from '../../img/markers/1x/120-60-60.png'
 import icon_150_60_60_url from '../../img/markers/1x/150-60-60.png'
@@ -32,6 +33,7 @@ import icon_0_0_60_retinaUrl from '../../img/markers/2x/0-0-60@2x.png'
 import icon_0_60_60_retinaUrl from '../../img/markers/2x/0-60-60@2x.png'
 import icon_30_60_60_retinaUrl from '../../img/markers/2x/30-60-60@2x.png'
 import icon_60_60_60_retinaUrl from '../../img/markers/2x/60-60-60@2x.png'
+import icon_90_60_38_retinaUrl from '../../img/markers/2x/90-60-38@2x.png'
 import icon_90_60_60_retinaUrl from '../../img/markers/2x/90-60-60@2x.png'
 import icon_120_60_60_retinaUrl from '../../img/markers/2x/120-60-60@2x.png'
 import icon_150_60_60_retinaUrl from '../../img/markers/2x/150-60-60@2x.png'
@@ -102,6 +104,12 @@ export const icon_60_60_60 = L.icon({
   ...iconDefaults
 })
 
+export const icon_90_60_38 = L.icon({
+  iconUrl: icon_90_60_38_url,
+  iconRetinaUrl: icon_90_60_38_retinaUrl,
+  ...iconDefaults
+})
+
 export const icon_90_60_60 = L.icon({
   iconUrl: icon_90_60_60_url,
   iconRetinaUrl: icon_90_60_60_retinaUrl,
@@ -159,7 +167,7 @@ export const icon_330_60_60 = L.icon({
 
 export const iconsByLayerType = {
   [BREACH_PRIMARY]: icon_210_60_60,
-  [BREACH_REGIONAL]: icon_90_60_60,
+  [BREACH_REGIONAL]: icon_90_60_38,
   [BREACH_FLOODING]: icon_30_60_60,
   [BREACH_WATERSYSTEM]: icon_0_60_60,
   [BREACH_OUTSIDE_DIKE]: icon_270_60_60,
