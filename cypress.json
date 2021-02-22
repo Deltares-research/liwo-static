@@ -1,4 +1,5 @@
 {
   "pluginsFile": "tests/e2e/plugins/index.js",
-  "reporter": "mochawesome"
+  "reporter": "mochawesome",
+  "projectId": "h5f19q"
 }
