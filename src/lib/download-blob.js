@@ -10,7 +10,6 @@ export default function ({ blob, filename, type }) {
     anchor.style = 'display: none'
     anchor.setAttribute('href', url)
     anchor.setAttribute('download', filename)
-    document.body.appendChild(anchor)
     anchor.click()
   }
 }
