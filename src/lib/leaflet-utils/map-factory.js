@@ -40,13 +40,15 @@ export default function (el, vnode, config) {
 }
 
 function createBaseLayers (options) {
-  return mapConfig.tileLayers.reduce((baseLayers, layer) => ({
-    ...baseLayers, [ layer.title ]: L.tileLayer(layer[options.projection].url, options)
-  }), {})
+  let baseLayers = {}
+  mapConfig.tileLayers.forEach(layer => {
+    baseLayers[ layer.title ] = L.tileLayer(layer[options.projection].url, options)
+  })
+  return baseLayers
 }
 
 function baseLayerOptions (config) {
-  const tms = config.baseLayer.tms || mapConfig.baseLayer[config.projection].tms
+  const tms = config.baseLayer.tms
   let options = {
     attribution: config.attribution || mapConfig.attribution,
     maxZoom: config.maxZoom || mapConfig.maxZoom[config.projection],
