@@ -64,11 +64,11 @@ const tileLayers = [
   {
     title: 'Luchtfoto',
     [EPSG_28992]: {
-      url: 'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/Actueel_ortho25/EPSG:28992/{z}/{x}/{y}.png',
+      url: 'https://service.pdok.nl/hwh/luchtfotorgb/wmts/v1_0/Actueel_ortho25/EPSG:28992/{z}/{x}/{y}.jpeg',
       tms: false
     },
     [EPSG_3857]: {
-      url: 'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/Actueel_ortho25/EPSG:3857/{z}/{x}/{y}.png',
+      url: 'https://service.pdok.nl/hwh/luchtfotorgb/wmts/v1_0/Actueel_ortho25/EPSG:3857/{z}/{x}/{y}.jpeg',
       tms: true
     }
   },

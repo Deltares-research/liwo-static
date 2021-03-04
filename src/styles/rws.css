@@ -5529,11 +5529,23 @@ only screen and (min-width:651px) and (min-resolution:2.1dppx) {
     background: #154273
 }
 
+
+/* if we have space, show the high res image */
+@media only screen and (min-width:500px) {
+  .site-footer:before {
+    margin-left: -250px;
+    width: 500px;
+    background: url(./img/footer-logo@2x.png) no-repeat;
+    background-size: 500px 24px
+  }
+}
+
+
 @media only screen and (min-width:651px) {
     .site-footer:before {
         margin-left: -250px;
         width: 500px;
-        background: url(./img/footer-logo.png) no-repeat;
+        background: url(./img/footer-logo@2x.png) no-repeat;
         background-size: 500px 24px
     }
 }
