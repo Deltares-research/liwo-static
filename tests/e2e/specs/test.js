@@ -7,7 +7,6 @@ describe('Content of the page', () => {
     cy.get('.landing-body a')
       .should('have.prop', 'href')
       .and('equal', 'https://www.overstroomik.nl/')
-
   })
 })
 
@@ -23,6 +22,5 @@ describe('Maps', () => {
       .click()
 
     cy.screenshot()
-
   })
 })

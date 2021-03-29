@@ -12,7 +12,6 @@ describe('Maps content', () => {
     cy.get('.layerpanel-item--collapsed > .layerpanel-item__title > .layerpanel-item__collapse > .layerpanel-item__collapse-icon')
       .click()
 
-
     cy.get('#gebiedsindeling_doorbraaklocaties_buitendijks__LIWO_Basis_Doorbraaklocaties_Buitendijks .layer-control__vis-label')
       .click()
 
@@ -27,7 +26,5 @@ describe('Maps content', () => {
 
     cy.get('#infrastructuur_dijkringen__LIWO_Basis_Dijkringen .layer-control__vis-label')
       .click()
-
-
   })
 })

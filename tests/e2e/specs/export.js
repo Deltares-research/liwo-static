@@ -5,7 +5,6 @@ describe('Exporting', () => {
     cy.intercept('DownloadZipFileDataLayers')
       .as('apiCheck')
 
-
     cy.get('.layer-panel footer > button')
       .click()
     cy.get('#export-name')
@@ -17,6 +16,5 @@ describe('Exporting', () => {
     // cy.wait('@apiCheck').then((interception) => {
     //   assert.isNotNull(interception.response.body, '1st API call has data')
     // })
-
   })
 })
