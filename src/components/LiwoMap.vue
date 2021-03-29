@@ -3,11 +3,12 @@
     <div
       ref="liwoMap"
       class="liwo-map"
+      @marker:mouseover="$emit('marker:mouseover', $event)"
       v-leaflet="{
-      callbacks: { onClick, initMapObject },
-      config: mapConfig,
-      layers: layers,
-      cluster: clusterMarkers,
+        callbacks: { onClick, initMapObject },
+        config: mapConfig,
+        layers: layers,
+        cluster: clusterMarkers,
       }"
     ></div>
     <div ref="legend">

@@ -6,6 +6,7 @@
         :clusterMarkers="true"
         :layers="selectedLayers"
         @click="selectFeature"
+        @marker:mouseover="handleMouseOver"
         @initMap="setMapObject"
       >
         <template slot="legend">
@@ -675,6 +676,12 @@ export default {
           latlng: event.latlng
         })
       })
+    },
+    handleMouseOver ({ feature, marker }) {
+      const variantIndex = this.selectedLayer.properties.selectedVariant || 0
+      const variant = this.selectedLayer.variants[variantIndex]
+
+      marker.setTooltipContent(`${feature.properties.name} - ${variant.title}`)
     }
   }
 }
