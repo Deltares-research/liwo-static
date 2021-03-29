@@ -84,14 +84,14 @@ function createCluster (layer, onClick) {
 
 // set custom  style for selected features
 function onEachFeature (feature, marker, layer, onClick) {
-  const { name, selectedVariant } = feature.properties
+  const { name } = feature.properties
   // TODO: implement is  controllable
   marker.on('click', (evt) => {
     evt.layer = layer
     onClick(evt)
   })
   marker.on('mouseover', (event) => {
-    marker.bindTooltip(`${name}${selectedVariant ? ` - ${selectedVariant}` : ''}`)
+    marker.bindTooltip(name)
 
     // emit properties so e.g. state can be used to set tooltip text
     emit(vnode, 'marker:mouseover', { feature, marker })

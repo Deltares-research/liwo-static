@@ -678,10 +678,11 @@ export default {
       })
     },
     handleMouseOver ({ feature, marker }) {
-      const variantIndex = this.selectedLayer.properties.selectedVariant || 0
+      const variantIndex = this.selectedLayer.properties.selectedVariant
       const variant = this.selectedLayer.variants[variantIndex]
-
-      marker.setTooltipContent(`${feature.properties.name} - ${variant.title}`)
+      if (!variant.iscontrollayer) {
+        marker.setTooltipContent(`${feature.properties.name} - ${variant.title}`)
+      }
     }
   }
 }
