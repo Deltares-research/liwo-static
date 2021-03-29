@@ -93,10 +93,8 @@ function onEachFeature (feature, marker, layer, onClick) {
   marker.on('mouseover', (event) => {
     marker.bindTooltip(`${name}${selectedVariant ? ` - ${selectedVariant}` : ''}`)
 
-    if (vnode) {
-      // emit properties so e.g. state can be used to set tooltip text
-      emit(vnode, 'marker:mouseover', { feature, marker })
-    }
+    // emit properties so e.g. state can be used to set tooltip text
+    emit(vnode, 'marker:mouseover', { feature, marker })
 
     event.target.openTooltip()
   })
