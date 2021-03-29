@@ -13,6 +13,8 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    env:
+      BASE_URL: /liwo/
 
     strategy:
       matrix:
