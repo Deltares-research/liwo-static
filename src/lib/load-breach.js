@@ -5,16 +5,16 @@ import store from '@/store'
 import { BREACH_LAYERS_EN, BREACH_LAYERS_NL, BREACH_PRIMARY, getLayerType } from '@/lib/liwo-identifiers'
 import mapConfig from '../map.config'
 
-const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
+const headers = { Accept: 'application/json', 'Content-Type': 'application/json' }
 
 export async function loadBreach (feature) {
   // Load breach data from the geoserver
 
   // the breach id is hidden here
-  let breachId = feature.properties.id
+  const breachId = feature.properties.id
 
   // TODO: there's also a code PRIM, should we not use that?
-  let layerType = getLayerType(feature)
+  const layerType = getLayerType(feature)
 
   // we have different breach layers, depending on the type
   let breachLayers = []
@@ -24,7 +24,7 @@ export async function loadBreach (feature) {
     breachLayers = [`${layerType}.${breachId}`]
   }
 
-  let promises = breachLayers.map(
+  const promises = breachLayers.map(
     layerName => loadBreachLayer(breachId, layerName)
   )
 
@@ -36,8 +36,8 @@ export async function loadBreach (feature) {
 
   // merge layers of all unorganized sets
   // and use the feature name
-  let layers = _.flatten(_.map(bands, 'layers'))
-  let layerSet = {
+  const layers = _.flatten(_.map(bands, 'layers'))
+  const layerSet = {
     id: breachId,
     feature: feature,
     name: feature.properties.name,
@@ -53,9 +53,9 @@ export async function computeCombinedScenario (scenarioIds, band, layerSetId) {
   // The computation is done in Google Earth Engine / HydroEngine
   // the breach id is hidden here
 
-  let selectedLayers = [ band ]
+  const selectedLayers = [band]
   // load  all the variants
-  let promises = selectedLayers.map(
+  const promises = selectedLayers.map(
     // pass along  layerSetId for notifications
     bandName => loadBreachesLayer(scenarioIds, bandName, layerSetId)
   )
@@ -67,18 +67,18 @@ export async function computeCombinedScenario (scenarioIds, band, layerSetId) {
   bands = _.filter(bands)
 
   // convert bands to layerlike objects
-  let layers = _.map(bands, (band) => {
+  const layers = _.map(bands, (band) => {
     // if it looks like a layer, then it is a layer
     // lookup the translation
-    let bandNl = _.get(BREACH_LAYERS_EN, band.band)
-    let title = bandNl
+    const bandNl = _.get(BREACH_LAYERS_EN, band.band)
+    const title = bandNl
     band.title = title
     band.metadata = _.clone(band)
     band.map = {
       type: 'tile',
       url: band.url
     }
-    let layer = {
+    const layer = {
       id: band.mapid,
       variants: [band],
       title: title,
@@ -89,8 +89,8 @@ export async function computeCombinedScenario (scenarioIds, band, layerSetId) {
     }
     return layer
   })
-  let title = 'Gecombineerd scenario'
-  let layerSet = {
+  const title = 'Gecombineerd scenario'
+  const layerSet = {
     id: scenarioIds.join(','),
     scenarioIds,
     name: title,
@@ -101,16 +101,16 @@ export async function computeCombinedScenario (scenarioIds, band, layerSetId) {
 }
 
 export async function getScenarioInfo (scenarioIds, featureInfoByScenarioId) {
-  let services = await mapConfig.getServices()
+  const services = await mapConfig.getServices()
   /* get the url of the hydro engine */
   const hydroEngine = services.HYDRO_ENGINE_URL
 
-  let url = `${hydroEngine}/get_liwo_scenarios_info`
+  const url = `${hydroEngine}/get_liwo_scenarios_info`
 
   /* pass scenario ids under the name liwo_ids */
-  let body = {liwo_ids: scenarioIds}
+  const body = { liwo_ids: scenarioIds }
 
-  let resp = await fetch(url, {
+  const resp = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -118,23 +118,23 @@ export async function getScenarioInfo (scenarioIds, featureInfoByScenarioId) {
     body: JSON.stringify(body)
   })
 
-  let data = await resp.json()
+  const data = await resp.json()
 
   if (!data) {
     console.warn('no data received', resp, data)
     return
   }
 
-  let bandCounts = _.countBy(data.features.flatMap((x) => x.properties['system:band_names']))
+  const bandCounts = _.countBy(data.features.flatMap((x) => x.properties['system:band_names']))
 
-  let featureCollectionProperties = _.get(data, 'properties', {})
+  const featureCollectionProperties = _.get(data, 'properties', {})
   featureCollectionProperties.bandCounts = bandCounts
   data.properties = featureCollectionProperties
 
   if (featureInfoByScenarioId) {
     data.features.forEach(
       (feature) => {
-        let extraProperties = _.get(featureInfoByScenarioId, feature.properties.Scenario_ID, {})
+        const extraProperties = _.get(featureInfoByScenarioId, feature.properties.Scenario_ID, {})
         // store the extra properties in the feature
         Object.assign(feature.properties, extraProperties)
       }
@@ -146,11 +146,11 @@ export async function getScenarioInfo (scenarioIds, featureInfoByScenarioId) {
 
 async function loadBreachLayer (breachId, layerName) {
   // Load the dataset  for a breach
-  let services = await mapConfig.getServices()
+  const services = await mapConfig.getServices()
   const BREACHES_BASE_URL = services.WEBSERVICE_URL
   const BREACHES_API_URL = `${BREACHES_BASE_URL}/Tools/FloodImage.asmx/GetScenariosPerBreachGeneric`
 
-  let resp = await fetch(BREACHES_API_URL, {
+  const resp = await fetch(BREACHES_API_URL, {
     method: 'POST',
     mode: 'cors',
     credentials: 'omit',
@@ -161,8 +161,8 @@ async function loadBreachLayer (breachId, layerName) {
     })
   })
 
-  let d = await resp.json()
-  let data = JSON.parse(d.d)
+  const d = await resp.json()
+  const data = JSON.parse(d.d)
   // get  the first layerset  if available,  otherwise return null
   let result = null
   // if this layerset is not available layerset can be null
@@ -175,24 +175,24 @@ async function loadBreachLayer (breachId, layerName) {
 async function loadBreachesLayer (scenarioIds, band, layerSetId) {
   // TODO: choose appropriate reducer for the band
   // The band here relates to  quantitites
-  let reducer = 'max'
+  const reducer = 'max'
   const requestOptions = {
     method: 'POST',
     mode: 'cors',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ liwo_ids: scenarioIds, band, reducer })
   }
-  let services = await mapConfig.getServices()
+  const services = await mapConfig.getServices()
   const HYDRO_ENGINE_URL = services.HYDRO_ENGINE_URL
-  let url = `${HYDRO_ENGINE_URL}/get_liwo_scenarios`
+  const url = `${HYDRO_ENGINE_URL}/get_liwo_scenarios`
   return fetch(url, requestOptions)
     .then(resp => {
       return resp.json()
     })
     .then(json => {
-      let result = { ...json, type: 'tile' }
+      const result = { ...json, type: 'tile' }
       if (result.msg) {
-        let notification = {
+        const notification = {
           message: 'Het door u gevraagde gecombineerde resultaat kan niet gemaakt worden. Er zijn kaarlagen beschikbaar voor de gevraagde combinatie.',
           type: 'warning',
           show: true
@@ -202,8 +202,8 @@ async function loadBreachesLayer (scenarioIds, band, layerSetId) {
       return result
     })
     .catch((error) => {
-      let notification = {
-        message: `Het door u gevraagde gecombineerde resultaat kon niet gemaakt worden.`,
+      const notification = {
+        message: 'Het door u gevraagde gecombineerde resultaat kon niet gemaakt worden.',
         type: 'warning',
         show: true
       }
@@ -218,8 +218,8 @@ export async function getFeatureIdByScenarioId (scenarioId) {
   // to know which feature corresponds to a scenario we have to call a webservice.
   // TODO: store scenario info in the features...
 
-  let services = await mapConfig.getServices()
-  let promise = fetch(`${services.WEBSERVICE_URL}/Maps.asmx/GetBreachLocationId`, {
+  const services = await mapConfig.getServices()
+  const promise = fetch(`${services.WEBSERVICE_URL}/Maps.asmx/GetBreachLocationId`, {
     method: 'POST',
     headers,
     body: JSON.stringify({ floodsimulationid: scenarioId })
@@ -228,7 +228,7 @@ export async function getFeatureIdByScenarioId (scenarioId) {
     .then(data => JSON.parse(data.d))
     .then(data => {
       // add the scenarioId to the result
-      let result = { ...data, scenarioId }
+      const result = { ...data, scenarioId }
       return result
     })
   return promise
@@ -236,9 +236,9 @@ export async function getFeatureIdByScenarioId (scenarioId) {
 
 export async function getFeatureIdsByScenarioIds (scenarioIds) {
   // This is very ackward logic to get back the list of feature ids that corresponds to a list of scenario's
-  let promises = scenarioIds.map(getFeatureIdByScenarioId)
-  let responses = await Promise.all(promises)
-  let results = {}
+  const promises = scenarioIds.map(getFeatureIdByScenarioId)
+  const responses = await Promise.all(promises)
+  const results = {}
   // TODO: return more info (featureIdsByScenarioIds)
   _.each(responses, (response) => {
     results[response.scenarioId] = response

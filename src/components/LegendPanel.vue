@@ -27,7 +27,7 @@ export default {
     legendImageSrc () {
       const namespace = this.layer.legend.namespace
       const styleName = this.layer.legend.style
-      let layerId = this.layer.legend.layer
+      const layerId = this.layer.legend.layer
       const url = this.services && this.services.LEGEND_URL
       if (!url) {
         return ''

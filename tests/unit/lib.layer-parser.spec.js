@@ -9,7 +9,7 @@ chai.use(chaiThings)
 
 describe('the layer parser', () => {
   it('normalizes layerSets', () => {
-    let normalizedLayerSet = normalizeLayerSet(layerSet)
+    const normalizedLayerSet = normalizeLayerSet(layerSet)
     expect(normalizedLayerSet).to.have.property('layers')
     expect(normalizedLayerSet).to.have.property('id')
     expect(normalizedLayerSet).to.have.nested.property('layers[0].properties')
@@ -17,14 +17,14 @@ describe('the layer parser', () => {
     expect(normalizedLayerSet).to.have.nested.property('layers[0].legend')
   })
   it('cleans a layerSet', () => {
-    let normalizedLayerSet = normalizeLayerSet(layerSet)
-    let cleanedLayerSet = cleanLayerSet(normalizedLayerSet)
+    const normalizedLayerSet = normalizeLayerSet(layerSet)
+    const cleanedLayerSet = cleanLayerSet(normalizedLayerSet)
     expect(cleanedLayerSet.layers).to.all.have.nested.property('properties.title')
   })
   it('flattens a layerSet', () => {
-    let normalizedLayerSet = normalizeLayerSet(layerSet)
-    let cleanedLayerSet = cleanLayerSet(normalizedLayerSet)
-    let flatLayers = flattenLayerSet(cleanedLayerSet)
+    const normalizedLayerSet = normalizeLayerSet(layerSet)
+    const cleanedLayerSet = cleanLayerSet(normalizedLayerSet)
+    const flatLayers = flattenLayerSet(cleanedLayerSet)
     // the original layer
     expect(flatLayers).to.all.have.nested.property('layerObj.properties.title')
     // the layer id

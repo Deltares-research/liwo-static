@@ -13,7 +13,7 @@ export default function (el, vnode, config) {
   const map = L.map(el, {
     ...config,
     crs: createCrs(config.projection),
-    layers: [ baseLayers[INITIAL_BASELAYER] ]
+    layers: [baseLayers[INITIAL_BASELAYER]]
   })
 
   // When we change the baselayer we want it to be in the back
@@ -40,16 +40,16 @@ export default function (el, vnode, config) {
 }
 
 function createBaseLayers (options) {
-  let baseLayers = {}
+  const baseLayers = {}
   mapConfig.tileLayers.forEach(layer => {
-    baseLayers[ layer.title ] = L.tileLayer(layer[options.projection].url, options)
+    baseLayers[layer.title] = L.tileLayer(layer[options.projection].url, options)
   })
   return baseLayers
 }
 
 function baseLayerOptions (config) {
   const tms = config.baseLayer.tms
-  let options = {
+  const options = {
     attribution: config.attribution || mapConfig.attribution,
     maxZoom: config.maxZoom || mapConfig.maxZoom[config.projection],
     minZoom: config.minZoom || mapConfig.minZoom[config.projection],
@@ -125,7 +125,7 @@ function geoCoderControl (map) {
 }
 
 function printControl () {
-  let Control = L.control.browserPrint({position: 'topright', printModes: ['auto']})
+  const Control = L.control.browserPrint({ position: 'topright', printModes: ['auto'] })
 
   function makeFocusable (el) {
     const trigger = el.querySelector('.leaflet-browser-print')

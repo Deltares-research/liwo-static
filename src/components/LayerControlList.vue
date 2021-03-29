@@ -57,7 +57,7 @@ export default {
   methods: {
     updateLayer (layer, index) {
       // update layer at index index in the layers list and emit the update event
-      let layers = _.clone(this.layers)
+      const layers = _.clone(this.layers)
       layers[index] = layer
       this.$emit('update:layers', layers)
     },
@@ -76,7 +76,7 @@ export default {
     }
   },
   mounted () {
-    let firstLayer = _.first(this.layers)
+    const firstLayer = _.first(this.layers)
     if (firstLayer) {
       this.selectLayer(firstLayer)
     }
