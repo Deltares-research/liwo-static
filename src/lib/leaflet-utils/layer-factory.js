@@ -7,7 +7,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 
 import mapConfig from '@/map.config'
 import { getLayerType } from '@/lib/liwo-identifiers'
-import { greyIcon, redIcon, defaultIcon, iconsByLayerType } from '@/lib/leaflet-utils/markers'
+import { greyIcon, yellowIcon, defaultIcon, iconsByLayerType } from '@/lib/leaflet-utils/markers'
 
 import './cluster-icon.css'
 
@@ -90,7 +90,7 @@ function onEachFeature (feature, marker, layer, onClick) {
   if (marker.feature.properties.missing) {
     marker.setIcon(greyIcon)
   } else if (marker.feature.properties.selected) {
-    marker.setIcon(redIcon)
+    marker.setIcon(yellowIcon)
   } else {
     let layerType = getLayerType(feature)
     let icon = _.get(iconsByLayerType, layerType, defaultIcon)
