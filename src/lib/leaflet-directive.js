@@ -14,7 +14,7 @@ export default {
     layerGroup = L.layerGroup().addTo(map)
     callbacks.initMapObject(map)
   },
-  update (_, { value, oldValue }) {
+  update (_, { value, oldValue }, vnode) {
     if (value === oldValue) {
       return
     }
@@ -31,7 +31,7 @@ export default {
 
     let promises = leafletLayers
       .map(layer => {
-        let promise = createLayer(layer, callbacks, cluster)
+        let promise = createLayer(layer, callbacks, cluster, vnode)
         return promise
       })
 

@@ -11,7 +11,19 @@ import { greyIcon, redIcon, defaultIcon, iconsByLayerType } from '@/lib/leaflet-
 
 import './cluster-icon.css'
 
-export default async function createLayer (layer, { onClick }) {
+let vnode
+
+function emit (vnode, name, data) {
+  var handlers = (vnode.data && vnode.data.on) ||
+    (vnode.componentOptions && vnode.componentOptions.listeners)
+
+  if (handlers && handlers[name]) {
+    handlers[name].fns(data)
+  }
+}
+
+export default async function createLayer (layer, { onClick }, _, vnodeRef) {
+  vnode = vnodeRef
   if (layer.type === 'json' && layer.geojson) {
     return createGeoJson(layer)
   } else if (layer.type === 'cluster') {
@@ -73,18 +85,24 @@ function createCluster (layer, onClick) {
 // set custom  style for selected features
 function onEachFeature (feature, marker, layer, onClick) {
   const { name, selectedVariant } = feature.properties
-  // TODO: move this out of here...
-  marker.bindTooltip(`${name}${selectedVariant ? ` - ${selectedVariant}` : ''}`)
   // TODO: implement is  controllable
   marker.on('click', (evt) => {
     evt.layer = layer
     onClick(evt)
   })
   marker.on('mouseover', (event) => {
+    marker.bindTooltip(`${name}${selectedVariant ? ` - ${selectedVariant}` : ''}`)
+
+    if (vnode) {
+      // emit properties so e.g. state can be used to set tooltip text
+      emit(vnode, 'marker:mouseover', { feature, marker })
+    }
+
     event.target.openTooltip()
   })
   marker.on('mouseout', (event) => {
     event.target.closeTooltip()
+    marker.unbindTooltip()
   })
   // color selected feature as red
   if (marker.feature.properties.missing) {
