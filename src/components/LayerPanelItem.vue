@@ -11,11 +11,12 @@
   </h3>
   <layer-control-list
     :layers="layers"
+    :activeLayer="activeLayer"
     @update:layers="updateLayers"
     @select:layer="selectLayer"
     @select:variant="selectVariant"
     v-show="!isCollapsed"
-    >
+  >
     <slot></slot>
   </layer-control-list>
 
@@ -40,6 +41,10 @@ export default {
     collapsed: {
       type: Boolean,
       default: false
+    },
+    activeLayer: {
+      type: String,
+      defuault: ''
     }
   },
   data () {
