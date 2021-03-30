@@ -11,8 +11,12 @@ import { greyIcon, redIcon, defaultIcon, iconsByLayerType } from '@/lib/leaflet-
 
 import './cluster-icon.css'
 
+// store vnode so we can use it to interact with the component using the directive using events
+// TODO: rewrite directive as component so we can handle this is clearer way
 let vnode
 
+// emit custom events to the component implementing the directive
+// when vnode.context.$emit does not workd
 function emit (vnode, name, data) {
   var handlers = (vnode.data && vnode.data.on) ||
     (vnode.componentOptions && vnode.componentOptions.listeners)
