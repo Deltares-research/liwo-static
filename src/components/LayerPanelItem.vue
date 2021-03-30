@@ -11,7 +11,7 @@
   </h3>
   <layer-control-list
     :layers="layers"
-    :activeLayer="activeLayer"
+    :selectedLayer="selectedLayer"
     @update:layers="updateLayers"
     @select:layer="selectLayer"
     @select:variant="selectVariant"
@@ -42,9 +42,9 @@ export default {
       type: Boolean,
       default: false
     },
-    activeLayer: {
-      type: String,
-      defuault: ''
+    selectedLayer: {
+      type: Object,
+      default: () => ({})
     }
   },
   data () {

@@ -40,14 +40,9 @@ export default {
       type: Boolean,
       default: true
     },
-    activeLayer: {
-      type: String,
-      default: ''
-    }
-  },
-  data () {
-    return {
-      activeLayerId: null
+    selectedLayer: {
+      type: Object,
+      default: () => ({})
     }
   },
   computed: {
@@ -72,7 +67,11 @@ export default {
       this.$emit('select:variant', evt)
     },
     isActive (layer) {
-      return this.activeLayer === layer.breachBandId
+      if (!this.selectedLayer) {
+        return false
+      }
+
+      return this.selectedLayer.breachBandId === layer.breachBandId
     }
   },
   mounted () {
