@@ -1,7 +1,7 @@
 <template>
   <pop-up class="export-popup" title="Exporteer" @close="$emit('close')">
     <form class="export-popup__content export-popup__form-columns">
-      <fieldset class="export-popup__notification export-popup__notification--loading" v-if="exporting">
+      <fieldset class="export-popup__notification export-popup__notification--loading" v-if="!eeLayer">
         <b>Uw export wordt gegenereerd.</b>
       </fieldset>
       <p class="export-popup__form-column-item">Exporteer als:</p>
@@ -33,8 +33,8 @@
 
 <script>
 import PopUp from '@/components/PopUp'
-
-import exportZip from '@/lib/export-map-zip'
+import mapConfig from '../map.config'
+import store from '@/store'
 
 export default {
   props: {
@@ -48,11 +48,82 @@ export default {
     }
   },
   components: { PopUp },
+  computed: {
+    eeLayer () {
+      let eeLayers = this.mapLayers.filter(layer => layer.metadata.mapid)
+      if (eeLayers.length < 1) {
+        return null
+      }
+      const eeLayer = eeLayers[0]
+      return eeLayer
+    },
+    otherLayers () {
+      let otherLayers = this.mapLayers.filter(layer => !(layer.metadata.mapid))
+      return otherLayers
+    }
+  },
   methods: {
-    exportMap: function () {
+    async exportMap () {
       // exportGEE({liwoIds: [], scale: thiis.exportScale})
-      const opts = exportGEE({liwoIds: [], scale: thiis.exportScale})
-      console.log(opts)
+      console.log('layers', this.mapLayers)
+
+      let eeLayer = this.eeLayer
+      let body = {
+        liwo_ids: eeLayer.metadata.liwo_ids,
+        band: eeLayer.metadata.band,
+        scale: parseFloat(this.exportScale),
+        'export': true
+      }
+      const requestOptions = {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      }
+
+      let services = await mapConfig.getServices()
+      const HYDRO_ENGINE_URL = services.HYDRO_ENGINE_URL
+      let url = `${HYDRO_ENGINE_URL}/get_liwo_scenarios`
+
+      /* get the id of the layerSet */
+      let layerSetId = this.otherLayers[0].layerSet.id
+
+      let promise = fetch(url, requestOptions)
+        .then(resp => {
+          return resp.json()
+        })
+        .then(json => {
+          let result = json
+          if (result.error) {
+            let notification = {
+              message: 'Het door u gevraagde gecombineerde resultaat kan niet geëxporteerd worden. Probeer de schaal te vergroten.',
+              type: 'warning',
+              show: true
+            }
+            store.commit('addNotificationById', { id: layerSetId, notification })
+          }
+          return result
+        })
+        .catch((error) => {
+          let notification = {
+            message: `Het door u gevraagde gecombineerde resultaat kon niet worden geëxporteerd. Probeer de schaal te vergroten.`,
+            type: 'warning',
+            show: true
+          }
+          console.warn('Combined result failed:', error)
+          // notifiy of failure
+          store.commit('addNotificationById', { id: layerSetId, notification })
+          return null
+        })
+
+      promise.then(
+        result => {
+          if (result.export_url) {
+            window.location = result.export_url
+          }
+          this.$emit('close')
+        }
+      )
     }
   }
 }
