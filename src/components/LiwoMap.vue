@@ -19,7 +19,7 @@
 </template>
 
 <script>
-
+import debounce from 'lodash/debounce'
 import createMapConfig from '@/lib/leaflet-utils/mapconfig-factory'
 import { legendControl } from '@/lib/leaflet-utils/legend'
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
@@ -38,10 +38,6 @@ export default {
     clusterMarkers: {
       type: Boolean,
       default: true
-    }
-  },
-  data () {
-    return {
     }
   },
   created () {
@@ -68,6 +64,34 @@ export default {
         // pass the  map click event on up
         this.$emit('map:click', event)
       })
+      this.setPosition(mapObject)
+      this.addPositionListeners(mapObject)
+    },
+    setPosition (map) {
+      const { zoom, center } = this.$route.query
+
+      if (zoom) {
+        map.setZoom(zoom)
+      }
+
+      if (center) {
+        const [lat, lng] = center.split(',')
+        map.setView([lat, lng])
+      }
+    },
+    addPositionListeners (map) {
+      map.on('move', debounce((e) => {
+        const { lat, lng } = e.target.getCenter()
+        const zoom = e.target.getZoom()
+        this.$router.replace({
+          ...this.$route,
+          query: {
+            ...this.$route.query,
+            center: `${lat.toFixed(3)},${lng.toFixed(3)}`,
+            zoom
+          }
+        })
+      }, 100))
     }
   }
 }
