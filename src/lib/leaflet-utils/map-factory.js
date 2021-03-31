@@ -4,6 +4,7 @@ import '@/lib/leaflet-hack'
 import mapConfig from '@/map.config'
 import { EPSG_3857 } from '../../lib/leaflet-utils/projections'
 import createCrs from '../../lib/leaflet-utils/create-crs'
+import northIcon from '../../img/north-arrow-2.svg'
 
 const INITIAL_BASELAYER = mapConfig.tileLayers[0].title
 
@@ -21,6 +22,7 @@ export default function (el, vnode, config) {
   // map.addLayer(baseLayers[INITIAL_BASELAYER])
   map.setZoom(config.zoom || mapConfig.zoom)
 
+  map.addControl(roseControl(map))
   map.addControl(geoCoderControl(map))
   map.addControl(L.control.zoom({ position: 'topright' }))
 
@@ -152,5 +154,23 @@ function layerControl (layers) {
 
   return whenReady(Control, (el) => {
     addListener(el)
+  })
+}
+
+function roseControl (map) {
+  var Control = L.control({position: 'topright'})
+
+  Control.onAdd = function (map) {
+    var div = L.DomUtil.create('div', '')
+
+    div.innerHTML = `<img width="34" style="padding:4px" src="${northIcon}" alt="">`
+
+    return div
+  }
+
+  Control.addTo(map)
+
+  return whenReady(Control, (el) => {
+    console.log(el)
   })
 }
