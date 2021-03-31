@@ -25,6 +25,7 @@ export default function (el, vnode, config) {
   map.addControl(roseControl(map))
   map.addControl(geoCoderControl(map))
   map.addControl(L.control.zoom({ position: 'topright' }))
+  map.addControl(L.control.scale({ position: 'bottomleft' }))
 
   map.addControl(printControl())
 
