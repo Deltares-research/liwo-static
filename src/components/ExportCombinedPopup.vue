@@ -44,7 +44,7 @@ export default {
   data () {
     return {
       exportType: 'zip',
-      exportScale: 5
+      exportScale: 50
     }
   },
   components: { PopUp },
