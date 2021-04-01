@@ -21,6 +21,7 @@ export default function (el, vnode, config) {
   // map.addLayer(baseLayers[INITIAL_BASELAYER])
   map.setZoom(config.zoom || mapConfig.zoom)
 
+  map.addControl(fillWindowControl(map))
   map.addControl(geoCoderControl(map))
   map.addControl(L.control.zoom({ position: 'topright' }))
 
@@ -153,4 +154,18 @@ function layerControl (layers) {
   return whenReady(Control, (el) => {
     addListener(el)
   })
+}
+
+function fillWindowControl (map) {
+  const control = L.control({position: 'topright'})
+
+  control.onAdd = function (map) {
+    var div = L.DomUtil.create('div', '')
+
+    div.innerHTML = `<button>fill window</button>`
+
+    return div
+  }
+
+  return control
 }
