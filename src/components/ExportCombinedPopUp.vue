@@ -4,7 +4,7 @@
       <div class="export-popup__notification export-popup__notification--loading" v-if="!eeLayer">
         <b>Wacht tot de data geladen is.</b>
       </div>
-      <div class="export-popup__notification export-popup__notification--loading" v-if="!eeLayer">
+      <div class="export-popup__notification export-popup__notification--loading" v-if="exporting">
         <b>Uw export wordt gegenereerd.</b>
       </div>
       <p class="export-popup__form-column-item">Exporteer als:</p>
@@ -93,6 +93,7 @@ export default {
 
       let promise = fetch(url, requestOptions)
         .then(resp => {
+          this.exporting = false
           return resp.json()
         })
         .then(json => {
@@ -122,7 +123,6 @@ export default {
 
       promise.then(
         result => {
-          this.exporting = false
           if (result.export_url) {
             window.location = result.export_url
           }
