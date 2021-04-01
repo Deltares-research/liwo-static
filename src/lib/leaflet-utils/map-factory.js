@@ -4,7 +4,7 @@ import '@/lib/leaflet-hack'
 import mapConfig from '@/map.config'
 import { EPSG_3857 } from '../../lib/leaflet-utils/projections'
 import createCrs from '../../lib/leaflet-utils/create-crs'
-import northIcon from '../../img/north-arrow-2.svg'
+import northIcon from '../../img/north-arrow.svg'
 
 const INITIAL_BASELAYER = mapConfig.tileLayers[0].title
 
@@ -66,8 +66,8 @@ function baseLayerOptions (config) {
 
 // because leaflet provides no way of telling if the controls have rendered,
 // we watch the control object until the dom element is created
-function whenReady (Control, cb) {
-  return new Proxy(Control, {
+function whenReady (control, cb) {
+  return new Proxy(control, {
     set (target, key, value) {
       if (key === '_container') {
         cb(value)
