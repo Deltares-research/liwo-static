@@ -4,6 +4,9 @@
       <div class="export-popup__notification export-popup__notification--loading" v-if="!eeLayer">
         <b>Wacht tot de data geladen is.</b>
       </div>
+      <div class="export-popup__notification export-popup__notification--loading" v-if="!eeLayer">
+        <b>Uw export wordt gegenereerd.</b>
+      </div>
       <p class="export-popup__form-column-item">Exporteer als:</p>
       <ul class="export-popup__form-column-item choice-cards export-popup__radio-group">
         <li class="choice-cards__item">
@@ -44,7 +47,8 @@ export default {
   data () {
     return {
       exportType: 'zip',
-      exportScale: 50
+      exportScale: 50,
+      exporting: false
     }
   },
   components: { PopUp },
@@ -65,6 +69,7 @@ export default {
   methods: {
     async exportMap () {
 
+      this.exporting = true
       let eeLayer = this.eeLayer
       let body = {
         liwo_ids: eeLayer.metadata.liwo_ids,
@@ -104,6 +109,7 @@ export default {
           return result
         })
         .catch((error) => {
+          this.exporting = false
           let notification = {
             message: `Het door u gevraagde gecombineerde resultaat kon niet worden geëxporteerd. Probeer de schaal te vergroten.`,
             type: 'warning',
@@ -117,6 +123,7 @@ export default {
 
       promise.then(
         result => {
+          this.exporting = false
           if (result.export_url) {
             window.location = result.export_url
           }
