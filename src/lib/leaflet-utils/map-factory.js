@@ -4,6 +4,8 @@ import '@/lib/leaflet-hack'
 import mapConfig from '@/map.config'
 import { EPSG_3857 } from '../../lib/leaflet-utils/projections'
 import createCrs from '../../lib/leaflet-utils/create-crs'
+import fullscreenIcon from '../../img/fullscreen.svg'
+import exitFullscreenIcon from '../../img/fullscreen_exit.svg'
 
 const INITIAL_BASELAYER = mapConfig.tileLayers[0].title
 
@@ -157,12 +159,37 @@ function layerControl (layers) {
 }
 
 function fillWindowControl (map) {
+  const container = map.getContainer()
   const control = L.control({position: 'topright'})
+  let activated = false
+  let originalStyles = map.getContainer().style.cssText
 
   control.onAdd = function (map) {
-    var div = L.DomUtil.create('div', '')
+    const div = L.DomUtil.create('div', '')
+    const button = L.DomUtil.create('button', '')
+    button.classList.add('leaflet-bar')
+    button.style.cssText = 'width:30px;height:30px;box-sizing:content-box;padding:0;background-color:#fff;'
+    button.innerHTML = `<img src="${fullscreenIcon}" alt="" />`
 
-    div.innerHTML = `<button>fill window</button>`
+    div.appendChild(button)
+
+    // button.textContent = 'fill window'
+    button.addEventListener('click', event => {
+      event.preventDefault()
+      event.stopPropagation()
+
+      if (activated) {
+        container.style.cssText = originalStyles
+        button.innerHTML = `<img src="${fullscreenIcon}" alt="" />`
+      } else {
+        container.style.cssText = 'position:fixed;left:0;top:0;height:100%;width:100%;z-index:3000;background-color:#fff;'
+        button.innerHTML = `<img src="${exitFullscreenIcon}" alt="" />`
+      }
+
+      map.invalidateSize()
+
+      activated = !activated
+    })
 
     return div
   }
