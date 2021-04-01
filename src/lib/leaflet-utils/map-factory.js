@@ -82,7 +82,7 @@ function whenReady (Control, cb) {
 function geoCoderControl (map) {
   let containerListenerInitialized = false
 
-  const Control = L.Control.geocoder({
+  const control = L.Control.geocoder({
     position: 'topright',
     defaultMarkGeocode: false,
     iconLabel: 'Start een nieuwe zoekopdracht',
@@ -108,7 +108,7 @@ function geoCoderControl (map) {
       // the control does not expand when programmatically clicking the trigger button (with keyboard e.g.),
       // so we add a listener that expands the control on click
       button.addEventListener('click', () => {
-        Control._expand()
+        control._expand()
       })
 
       // when the control is closed using the escape key, the focus should go back to the trigger button
@@ -122,13 +122,13 @@ function geoCoderControl (map) {
     }
   }
 
-  return whenReady(Control, el => {
+  return whenReady(control, el => {
     addListeners(el)
   })
 }
 
 function printControl () {
-  let Control = L.control.browserPrint({position: 'topright', printModes: ['auto']})
+  const control = L.control.browserPrint({position: 'topright', printModes: ['auto']})
 
   function makeFocusable (el) {
     const trigger = el.querySelector('.leaflet-browser-print')
@@ -137,31 +137,31 @@ function printControl () {
     trigger.setAttribute('href', '#')
   }
 
-  return whenReady(Control, el => {
+  return whenReady(control, el => {
     makeFocusable(el)
   })
 }
 
 function layerControl (layers) {
-  const Control = L.control.layers(layers)
+  const control = L.control.layers(layers)
 
   function addListener (el) {
     el.addEventListener('keydown', e => {
       if (e.key === 'Escape' || e.keyCode === 27) {
-        Control.collapse()
+        control.collapse()
       }
     })
   }
 
-  return whenReady(Control, (el) => {
+  return whenReady(control, (el) => {
     addListener(el)
   })
 }
 
 function roseControl (map) {
-  var Control = L.control({position: 'topright'})
+  const control = L.control({position: 'topright'})
 
-  Control.onAdd = function (map) {
+  control.onAdd = function (map) {
     var div = L.DomUtil.create('div', '')
 
     div.innerHTML = `<img width="34" style="padding:4px" src="${northIcon}" alt="">`
@@ -169,9 +169,7 @@ function roseControl (map) {
     return div
   }
 
-  Control.addTo(map)
+  control.addTo(map)
 
-  return whenReady(Control, (el) => {
-    console.log(el)
-  })
+  return control
 }
