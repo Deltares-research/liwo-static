@@ -173,7 +173,6 @@ function fillWindowControl (map) {
 
     div.appendChild(button)
 
-    // button.textContent = 'fill window'
     button.addEventListener('click', event => {
       event.preventDefault()
       event.stopPropagation()
