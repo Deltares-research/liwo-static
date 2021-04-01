@@ -68,7 +68,6 @@ export default {
   },
   methods: {
     async exportMap () {
-
       this.exporting = true
       let eeLayer = this.eeLayer
       let body = {
