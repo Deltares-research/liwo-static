@@ -22,7 +22,7 @@ export default function (el, vnode, config) {
   // map.addLayer(baseLayers[INITIAL_BASELAYER])
   map.setZoom(config.zoom || mapConfig.zoom)
 
-  map.addControl(roseControl(map))
+  map.addControl(roseControl())
   map.addControl(geoCoderControl(map))
   map.addControl(L.control.zoom({ position: 'topright' }))
   map.addControl(L.control.scale({ position: 'bottomleft' }))
@@ -158,18 +158,16 @@ function layerControl (layers) {
   })
 }
 
-function roseControl (map) {
+function roseControl () {
   const control = L.control({position: 'topright'})
 
-  control.onAdd = function (map) {
+  control.onAdd = function () {
     var div = L.DomUtil.create('div', '')
 
     div.innerHTML = `<img width="34" style="padding:4px" src="${northIcon}" alt="">`
 
     return div
   }
-
-  control.addTo(map)
 
   return control
 }
