@@ -1,15 +1,15 @@
 <template>
   <pop-up class="export-popup" title="Exporteer" @close="$emit('close')">
     <form class="export-popup__content export-popup__form-columns">
-      <fieldset class="export-popup__notification export-popup__notification--error" v-if="formErrors.length">
+      <div class="export-popup__notification export-popup__notification--error" v-if="formErrors.length">
         <b>Graag de volgende velden aanvullen:</b>
         <ul>
           <li v-for="(error, index) in formErrors" :key="index">{{ error }}</li>
         </ul>
-      </fieldset>
-      <fieldset class="export-popup__notification export-popup__notification--loading" v-if="exporting">
+      </div>
+      <div class="export-popup__notification export-popup__notification--loading" v-if="exporting">
         <b>Uw export wordt gegenereerd.</b>
-      </fieldset>
+      </div>
       <p class="export-popup__form-column-item">Exporteer als:</p>
       <ul class="export-popup__form-column-item choice-cards export-popup__radio-group">
         <li class="choice-cards__item">

@@ -1,9 +1,9 @@
 <template>
   <pop-up class="export-popup" title="Exporteer" @close="$emit('close')">
     <form class="export-popup__content export-popup__form-columns">
-      <fieldset class="export-popup__notification export-popup__notification--loading" v-if="!eeLayer">
-        <b>Uw export wordt gegenereerd.</b>
-      </fieldset>
+      <div class="export-popup__notification export-popup__notification--loading" v-if="!eeLayer">
+        <b>Wacht tot de data geladen is.</b>
+      </div>
       <p class="export-popup__form-column-item">Exporteer als:</p>
       <ul class="export-popup__form-column-item choice-cards export-popup__radio-group">
         <li class="choice-cards__item">
@@ -23,7 +23,7 @@
       <input type="number" name="scale"
         id="export-scale" autocomplete="off" v-model="exportScale"
         class="export-popup__form-column-item export-popup__textfield">
-      <footer class="export-popup__footer">
+      <footer class="export-popup__footer" v-if="eeLayer">
         <button class="btn primary" @click.prevent="exportMap">Exporteer</button>
         <button class="btn secondary" type="reset" @click="$emit('close')">Annuleer</button>
       </footer>
@@ -64,8 +64,6 @@ export default {
   },
   methods: {
     async exportMap () {
-      // exportGEE({liwoIds: [], scale: thiis.exportScale})
-      console.log('layers', this.mapLayers)
 
       let eeLayer = this.eeLayer
       let body = {
@@ -81,6 +79,7 @@ export default {
         body: JSON.stringify(body)
       }
 
+      // Lookup the hydro engine url
       let services = await mapConfig.getServices()
       const HYDRO_ENGINE_URL = services.HYDRO_ENGINE_URL
       let url = `${HYDRO_ENGINE_URL}/get_liwo_scenarios`
