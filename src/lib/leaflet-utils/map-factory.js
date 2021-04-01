@@ -6,6 +6,7 @@ import { EPSG_3857 } from '../../lib/leaflet-utils/projections'
 import createCrs from '../../lib/leaflet-utils/create-crs'
 import fullscreenIcon from '../../img/fullscreen.svg'
 import exitFullscreenIcon from '../../img/fullscreen_exit.svg'
+import saveIcon from '../../img/save_alt.svg'
 
 const INITIAL_BASELAYER = mapConfig.tileLayers[0].title
 
@@ -23,11 +24,12 @@ export default function (el, vnode, config) {
   // map.addLayer(baseLayers[INITIAL_BASELAYER])
   map.setZoom(config.zoom || mapConfig.zoom)
 
-  map.addControl(fillWindowControl(map))
+  map.addControl(fillWindowControl())
   map.addControl(geoCoderControl(map))
   map.addControl(L.control.zoom({ position: 'topright' }))
 
   map.addControl(printControl())
+  map.addControl(imageControl())
 
   map.addControl(layerControl(baseLayers))
 
@@ -158,13 +160,13 @@ function layerControl (layers) {
   })
 }
 
-function fillWindowControl (map) {
-  const container = map.getContainer()
+function fillWindowControl () {
   const control = L.control({position: 'topright'})
   let activated = false
-  let originalStyles = map.getContainer().style.cssText
 
   control.onAdd = function (map) {
+    const originalStyles = map.getContainer().style.cssText
+    const container = map.getContainer()
     const div = L.DomUtil.create('div', '')
     const button = L.DomUtil.create('button', '')
     button.classList.add('leaflet-bar')
@@ -189,6 +191,24 @@ function fillWindowControl (map) {
 
       activated = !activated
     })
+
+    return div
+  }
+
+  return control
+}
+
+function imageControl () {
+  const control = L.control({position: 'topright'})
+
+  control.onAdd = function () {
+    const div = L.DomUtil.create('div', '')
+    const button = L.DomUtil.create('button', '')
+    button.classList.add('leaflet-bar')
+    button.style.cssText = 'width:30px;height:30px;box-sizing:content-box;padding:0;background-color:#fff;'
+    button.innerHTML = `<img src="${saveIcon}" alt="" />`
+
+    div.appendChild(button)
 
     return div
   }
