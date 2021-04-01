@@ -1,3 +1,5 @@
+import domToImage from 'dom-to-image'
+import { saveAs } from 'file-saver'
 import L from '@/lib/leaflet-utils/leaf'
 
 import '@/lib/leaflet-hack'
@@ -7,6 +9,7 @@ import createCrs from '../../lib/leaflet-utils/create-crs'
 import fullscreenIcon from '../../img/fullscreen.svg'
 import exitFullscreenIcon from '../../img/fullscreen_exit.svg'
 import saveIcon from '../../img/save_alt.svg'
+console.log(domToImage)
 
 const INITIAL_BASELAYER = mapConfig.tileLayers[0].title
 
@@ -201,7 +204,7 @@ function fillWindowControl () {
 function imageControl () {
   const control = L.control({position: 'topright'})
 
-  control.onAdd = function () {
+  control.onAdd = function (map) {
     const div = L.DomUtil.create('div', '')
     const button = L.DomUtil.create('button', '')
     button.classList.add('leaflet-bar')
@@ -209,6 +212,11 @@ function imageControl () {
     button.innerHTML = `<img src="${saveIcon}" alt="" />`
 
     div.appendChild(button)
+
+    button.addEventListener('click', async () => {
+      const blob = await domToImage.toBlob(map.getContainer())
+      saveAs(blob, 'export.png')
+    })
 
     return div
   }
