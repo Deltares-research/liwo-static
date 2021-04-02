@@ -68,21 +68,12 @@ export default {
   },
   data () {
     return {
-      editableNotifications: [],
       publicPath: process.env.BASE_URL
     }
   },
-  watch: {
-    notifications (val) {
-      this.setNotifications()
-    }
-  },
-  mounted () {
-    this.editableNotifications = this.setNotifications()
-  },
-  methods: {
-    setNotifications () {
-      this.editableNotifications = _.map(this.notifications, (notification) => {
+  computed: {
+    editableNotifications () {
+      return _.map(this.notifications, (notification) => {
         let result = { ...notification }
         // use default type
         if (!['error', 'warning', 'info', 'confirm'].includes(notification.type)) {
@@ -92,6 +83,5 @@ export default {
       })
     }
   }
-
 }
 </script>
