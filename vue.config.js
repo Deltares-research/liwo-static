@@ -45,7 +45,8 @@ module.exports = {
       })
     ],
     entry: {
-      // TODO: check if we can replace this unfetch with whatwg fetch
+      // We can not replace this unfetch with whatwg fetch, because whatwg fetch is browser only
+      // so we have 2 fetches in this project
       vendor: [
         '@babel/polyfill',
         'unfetch/polyfill',
