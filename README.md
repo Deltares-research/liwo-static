@@ -2,7 +2,7 @@
 Static frontend for LIWO (https://www.basisinformatie-overstromingen.nl/liwo/)
 
 # Info
-[![Build Status](https://travis-ci.com/Deltares/liwo-static.svg?branch=master)](https://travis-ci.com/Deltares/liwo-static)
+[![Build status](https://github.com/Deltares/liwo-static/actions/workflows/node.js.yml/badge.svg)](https://github.com/Deltares/liwo-static/actions/workflows/node.js.yml)
 
 [![BCH compliance](https://bettercodehub.com/edge/badge/Deltares/liwo-static?branch=master)](https://bettercodehub.com/)
 
@@ -22,10 +22,10 @@ npm install
 npm run serve
 
 # run unit tests
-npm run test
+npm run test:unit
 
 # run e2e tests
-npm run e2e
+npm run test:e2e
 
 # security audit
 npm audit
