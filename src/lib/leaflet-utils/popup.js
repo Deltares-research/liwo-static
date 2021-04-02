@@ -30,9 +30,9 @@ export function showLayerInfoPopup ({ map, layerId, unit, selectedLayer, positio
 
         // multiple properties but we don't know what they contain
         // lookup selected band
-        let parts = selectedLayer.breachBandId.split('_')
+        const parts = selectedLayer.breachBandId.split('_')
         // pick the last element
-        let band = parts.pop()
+        const band = parts.pop()
         if (band.toLowerCase().startsWith('band')) {
           // we have a band
           let key

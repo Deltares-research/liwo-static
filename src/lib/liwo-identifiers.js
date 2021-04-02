@@ -13,7 +13,7 @@ export function getLayerType (feature) {
   // get the layer type based on the feature id (assuming the format BREACH_LAYER.ID)
   // the breach prefix followed by a number of letters and or underscores
   const re = new RegExp(`${BREACH_PREFIX}[\\w_]+`)
-  let match = feature.id.match(re)
+  const match = feature.id.match(re)
   // if we have match return the matched part
   let result = match ? match[0] : ''
   if (feature.properties.missing) {
@@ -24,20 +24,20 @@ export function getLayerType (feature) {
 
 export function hasProbabilities (layer) {
   // return true if  layer type matches BREACH_PREFIX
-  let layerType = getLayerType(layer)
-  let result = layerType.startsWith(BREACH_PREFIX)
+  const layerType = getLayerType(layer)
+  const result = layerType.startsWith(BREACH_PREFIX)
   return result
 }
 
 // translation table for breach layers
 export const BREACH_LAYERS_EN = {
-  'waterdepth': 'waterdiepte',
-  'velocity': 'stroomsnelheid',
-  'riserate': 'stijgsnelheid',
-  'damage': 'schade',
-  'fatalities': 'slachtoffers',
-  'affected': 'getroffenen',
-  'arrivaltime': 'aankomsttijd'
+  waterdepth: 'waterdiepte',
+  velocity: 'stroomsnelheid',
+  riserate: 'stijgsnelheid',
+  damage: 'schade',
+  fatalities: 'slachtoffers',
+  affected: 'getroffenen',
+  arrivaltime: 'aankomsttijd'
 
 }
 

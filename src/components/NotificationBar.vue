@@ -1,6 +1,6 @@
 <template>
-<ul class="viewer__notifications" v-if="editableNotifications && editableNotifications.length">
-  <li class="viewer__notification" v-for="(notification, index) in editableNotifications"
+<ul class="viewer__notifications" v-if="cleanNotifications && cleanNotifications.length">
+  <li class="viewer__notification" v-for="(notification, index) in cleanNotifications"
       :key="index"
       @click="notification.show = false"
       v-show="notification.show"
@@ -72,9 +72,9 @@ export default {
     }
   },
   computed: {
-    editableNotifications () {
+    cleanNotifications () {
       return _.map(this.notifications, (notification) => {
-        let result = { ...notification }
+        const result = { ...notification }
         // use default type
         if (!['error', 'warning', 'info', 'confirm'].includes(notification.type)) {
           result.type = 'info'

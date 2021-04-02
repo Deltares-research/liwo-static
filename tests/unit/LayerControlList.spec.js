@@ -9,18 +9,18 @@ const expect = chai.expect
 
 describe('the LayerControlList', () => {
   it('should have the layer-control-list class', () => {
-    let propsData = { layers: [] }
-    let { vm } = mount(LayerControlList, {
+    const propsData = { layers: [] }
+    const { vm } = mount(LayerControlList, {
       propsData
     })
     expect(vm.$el).to.have.class('layer-control-list')
   })
   it('should have load layers', () => {
-    let layers = [
+    const layers = [
       { id: 3, properties: {}, variants: [] },
       { id: 5, properties: {}, variants: [] }
     ]
-    let propsData = { layers }
+    const propsData = { layers }
     const { vm } = mount(LayerControlList, { propsData: propsData })
 
     vm.$nextTick(() => {
