@@ -67,18 +67,6 @@
           <!-- use named slots after upgrading to Vue 2.6 -->
           <!-- add this button once export of combined maps is working -->
           <button
-            class="layer-panel__action"
-            v-if="false"
-            @click="showExport = true"
-          >
-            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
-              <path fill="none" d="M0 0h24v24H0z"/>
-              <path d="M18 17v2H6v-2H3v4c0 .6.4 1 1 1h16c.6 0 1-.4 1-1v-4h-3z"/>
-              <path d="M11 16.5a1.4 1.4 0 0 0 2 0l5.8-7.3a1.4 1.4 0 0 0-1.7-2l-3.1 2V3.4c0-1-1-1.4-2-1.4s-2 .3-2 1.4v5.8l-3-2a1.4 1.4 0 0 0-1.8 2l5.7 7.3z"/>
-            </svg>
-            Kaart exporteren
-          </button>
-          <button
             v-if="selectFeatureMode === 'multiple' && selectedFeatures.length"
             class="layer-panel__action"
             @click="showCombine = true"
@@ -98,6 +86,18 @@
             @click="showExport = true"
           >
             Scenario exporteren
+          </button>
+          <button
+            class="layer-panel__action"
+            v-if="scenarioMode === 'compute'"
+            @click="showExportCombined = true"
+          >
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+              <path fill="none" d="M0 0h24v24H0z"/>
+              <path d="M18 17v2H6v-2H3v4c0 .6.4 1 1 1h16c.6 0 1-.4 1-1v-4h-3z"/>
+              <path d="M11 16.5a1.4 1.4 0 0 0 2 0l5.8-7.3a1.4 1.4 0 0 0-1.7-2l-3.1 2V3.4c0-1-1-1.4-2-1.4s-2 .3-2 1.4v5.8l-3-2a1.4 1.4 0 0 0-1.8 2l5.7 7.3z"/>
+            </svg>
+            Kaart exporteren
           </button>
           <button
             v-if="selectFeatureMode === 'multiple'"
@@ -127,6 +127,13 @@
         v-if="selectFeatureMode === 'multiple' && showExportCombine"
         @close="showExportCombine = false"
       />
+      <!-- shows the export url in combined  mode-->
+      <export-combined-popup
+        :map-object="mapObject"
+        :map-layers="selectedLayers"
+        v-if="showExportCombined"
+        @close="showExportCombined = false"
+      />
       <!-- This import popup navigates to the the new url -->
       <import-combine-popup
         v-if="showImportCombine"
@@ -154,7 +161,10 @@ import LayerPanelItem from '@/components/LayerPanelItem'
 import LegendPanel from '@/components/LegendPanel'
 import CombinePopup from '@/components/CombinePopup'
 import ExportPopup from '@/components/ExportPopup'
+/* note that there are some minor casing inconsistencies here  */
+/* pop up is the correct spelling, but I'm sticking to the pattern below */
 import ExportCombinePopup from '@/components/ExportCombinePopUp'
+import ExportCombinedPopup from '@/components/ExportCombinedPopUp'
 import ImportCombinePopup from '@/components/ImportCombinePopUp'
 import FilterPopup from '@/components/FilterPopup'
 
@@ -173,6 +183,7 @@ export default {
   components: {
     CombinePopup,
     ExportCombinePopup,
+    ExportCombinedPopup,
     ImportCombinePopup,
     ExportPopup,
     FilterPopup,
@@ -226,8 +237,10 @@ export default {
       loading: false,
 
       // menus
+      /* we have three different export menus (regular maps, the combine view and in the combine*d* view, with the results ) */
       showExport: false,
       showExportCombine: false,
+      showExportCombined: false,
       showImportCombine: false,
       showCombine: false,
       showFilter: false,
