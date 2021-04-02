@@ -112,7 +112,7 @@ export default new Vuex.Store({
     },
     currentNotifications (state) {
       const { layerSetId, notificationsById } = state
-      let notifications = notificationsById[layerSetId] || []
+      const notifications = notificationsById[layerSetId] || []
 
       return notifications
     }

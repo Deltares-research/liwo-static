@@ -128,7 +128,7 @@ function geoCoderControl (map) {
 }
 
 function printControl () {
-  const control = L.control.browserPrint({position: 'topright', printModes: ['auto']})
+  const control = L.control.browserPrint({ position: 'topright', printModes: ['auto'] })
 
   function makeFocusable (el) {
     const trigger = el.querySelector('.leaflet-browser-print')
@@ -159,7 +159,7 @@ function layerControl (layers) {
 }
 
 function roseControl () {
-  const control = L.control({position: 'topright'})
+  const control = L.control({ position: 'topright' })
 
   control.onAdd = function () {
     var div = L.DomUtil.create('div', '')

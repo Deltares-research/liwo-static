@@ -74,7 +74,7 @@ export default {
   computed: {
     cleanNotifications () {
       return _.map(this.notifications, (notification) => {
-        let result = { ...notification }
+        const result = { ...notification }
         // use default type
         if (!['error', 'warning', 'info', 'confirm'].includes(notification.type)) {
           result.type = 'info'
