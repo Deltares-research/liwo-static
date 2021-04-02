@@ -2,7 +2,7 @@ import _ from 'lodash'
 
 import store from '@/store'
 
-import { BREACH_LAYERS_EN, BREACH_LAYERS_NL, BREACH_PRIMARY, getLayerType } from '@/lib/liwo-identifiers'
+import { BREACH_LAYERS_EN, BREACH_LAYERS_NL, BREACH_REGIONAL, BREACH_PRIMARY, getLayerType } from '@/lib/liwo-identifiers'
 import mapConfig from '../map.config'
 
 const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
@@ -18,7 +18,7 @@ export async function loadBreach (feature) {
 
   // we have different breach layers, depending on the type
   let breachLayers = []
-  if (layerType === BREACH_PRIMARY) {
+  if (layerType === BREACH_PRIMARY || layerType === BREACH_REGIONAL) {
     breachLayers = BREACH_LAYERS_NL
   } else {
     breachLayers = [`${layerType}.${breachId}`]

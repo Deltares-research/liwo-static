@@ -38,6 +38,7 @@
             @select:layer="selectLayer"
             @select:variant="selectVariant({ ...$event, layerSet })"
             :collapsed.sync="layerSetCollapsed"
+            :selectedLayer="selectedLayer"
             :key="layerSet.id"
           >
           </layer-panel-item>
@@ -54,6 +55,7 @@
             @select:layer="selectLayer"
             @select:variant="selectVariant({...$event, layerSet: layerSet_, scenarioLayerSetIndex: index})"
             :title="layerSet_.title"
+            :selectedLayer="selectedLayer"
             :key="(layerSet_.feature && layerSet_.feature.id) || layerSet_.id"
           >
             <!-- add scenario layer control options -->
