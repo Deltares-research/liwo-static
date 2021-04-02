@@ -39,11 +39,10 @@ export default {
     active: {
       type: Boolean,
       default: true
-    }
-  },
-  data () {
-    return {
-      activeLayerId: null
+    },
+    selectedLayer: {
+      type: Object,
+      default: () => ({})
     }
   },
   computed: {
@@ -62,17 +61,17 @@ export default {
       this.$emit('update:layers', layers)
     },
     selectLayer (layer) {
-      this.activeLayerId = layer.id
       this.$emit('select:layer', layer)
     },
     selectVariant (evt) {
       this.$emit('select:variant', evt)
     },
     isActive (layer) {
-      if (this.activeLayerId === layer.id) {
-        return true
+      if (!this.selectedLayer) {
+        return false
       }
-      return false
+
+      return this.selectedLayer.breachBandId === layer.breachBandId
     }
   },
   mounted () {

@@ -51,8 +51,17 @@ export default new Vuex.Store({
     addNotificationById (state, { id, notification }) {
       // store a notification
       const notifications = state.notificationsById[id] || []
-      notifications.push(notification)
-      state.notificationsById[id] = notifications
+
+      state.notificationsById = {
+        ...state.notificationsById,
+        [id]: [
+          ...notifications,
+          notification
+        ]
+      }
+    },
+    clearNotifications (state) {
+      state.notificationsById = {}
     }
   },
   actions: {
@@ -103,8 +112,8 @@ export default new Vuex.Store({
     },
     currentNotifications (state) {
       const { layerSetId, notificationsById } = state
-      let notifications = _.get(notificationsById, layerSetId, [])
-      notifications = _.uniqWith(notifications, _.isEqual)
+      let notifications = notificationsById[layerSetId] || []
+
       return notifications
     }
   }

@@ -38,6 +38,7 @@
             @select:layer="selectLayer"
             @select:variant="selectVariant({ ...$event, layerSet })"
             :collapsed.sync="layerSetCollapsed"
+            :selectedLayer="selectedLayer"
             :key="layerSet.id"
           >
           </layer-panel-item>
@@ -54,6 +55,7 @@
             @select:layer="selectLayer"
             @select:variant="selectVariant({...$event, layerSet: layerSet_, scenarioLayerSetIndex: index})"
             :title="layerSet_.title"
+            :selectedLayer="selectedLayer"
             :key="(layerSet_.feature && layerSet_.feature.id) || layerSet_.id"
           >
             <!-- add scenario layer control options -->
@@ -621,8 +623,13 @@ export default {
       // and clean
       layerSet = cleanLayerSet(layerSet)
       layerSet = selectVariantsInLayerSet(layerSet, this.scenarioIds)
+
+      // before showing new notifications, clear existing ones
+      this.$store.commit('clearNotifications')
+
       const layers = flattenLayerSet(layerSet)
       const notifications = buildLayerSetNotifications(layers)
+
       _.each(
         notifications,
         (notification) => {
