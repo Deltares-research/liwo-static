@@ -623,8 +623,13 @@ export default {
       // and clean
       layerSet = cleanLayerSet(layerSet)
       layerSet = selectVariantsInLayerSet(layerSet, this.scenarioIds)
+
+      // before showing new notifications, clear existing ones
+      this.$store.commit('clearNotifications')
+
       const layers = flattenLayerSet(layerSet)
       const notifications = buildLayerSetNotifications(layers)
+
       _.each(
         notifications,
         (notification) => {
