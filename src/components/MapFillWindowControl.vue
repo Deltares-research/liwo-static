@@ -23,7 +23,9 @@ export default {
       active: false,
       originalStyles: '',
       fullscreenIcon,
-      exitFullscreenIcon
+      exitFullscreenIcon,
+      windowWidth: 0,
+      windowHeight: 0
     }
   },
   computed: {
@@ -31,9 +33,33 @@ export default {
       return this.active ? this.exitFullscreenIcon : this.fullscreenIcon
     }
   },
+  watch: {
+    windowWidth () {
+      if (this.active) {
+        const container = this.map.getContainer()
+        container.style.cssText = `position:fixed;left:0;top:0;height:${this.windowHeight}px;width:${this.windowWidth}px;z-index:3000;background-color:#fff;`
+      }
+    },
+    windowHeight () {
+      if (this.active) {
+        const container = this.map.getContainer()
+        container.style.cssText = `position:fixed;left:0;top:0;height:${this.windowHeight}px;width:${this.windowWidth}px;z-index:3000;background-color:#fff;`
+      }
+    }
+  },
   mounted () {
     const container = this.map.getContainer()
     this.originalStyles = container.style.cssText
+
+    this.windowWidth = window.innerWidth
+    this.windowHeight = window.innerHeight
+
+    console.log(this.windowWidth)
+
+    window.addEventListener('resize', () => {
+      this.windowWidth = container.innerWidth
+      this.windowHeight = container.innerHeight
+    })
   },
   methods: {
     toggle () {
@@ -42,7 +68,8 @@ export default {
       if (this.active) {
         container.style.cssText = this.originalStyles
       } else {
-        container.style.cssText = 'position:fixed;left:0;top:0;height:100%;width:100%;z-index:3000;background-color:#fff;'
+        // width & height need to be numbers, because otherwise leaflet-easyprint does not co-oparate well (height can not be determined)
+        container.style.cssText = `position:fixed;left:0;top:0;height:${this.windowHeight}px;width:${this.windowWidth}px;z-index:3000;background-color:#fff;`
       }
 
       this.map.invalidateSize()
