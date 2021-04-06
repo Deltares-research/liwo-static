@@ -7,7 +7,10 @@ import router from './router'
 import store from './store'
 import VueHead from 'vue-head'
 
-import '@babel/polyfill'
+// Babel JS switched to core-js
+import 'core-js/stable'
+import 'regenerator-runtime/runtime'
+
 import 'whatwg-fetch'
 import 'url-polyfill'
 import 'proxy-polyfill'

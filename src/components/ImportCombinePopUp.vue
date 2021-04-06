@@ -75,13 +75,13 @@ export default {
   },
   methods: {
     onSubmit () {
-      let re = /(\d+)(,\d+)*$/
-      let match = this.url.match(re)
+      const re = /(\d+)(,\d+)*$/
+      const match = this.url.match(re)
       if (!match) {
         this.showError = true
       } else {
         let newIds = match[0].split(',')
-        let currentIds = this.currentSelectedIds.split(',')
+        const currentIds = this.currentSelectedIds.split(',')
         if (this.combineWithCurrentSelectedIds) {
           /* TODO: make sure this works for id == 0 */
           /* create a combined list of current scenarios and imported scenarios */

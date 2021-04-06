@@ -39,7 +39,7 @@ const router = new Router({
       },
       // pass id to component
       props: (route) => {
-        let id = _.toNumber(route.params.id)
+        const id = _.toNumber(route.params.id)
         return {
           id
         }

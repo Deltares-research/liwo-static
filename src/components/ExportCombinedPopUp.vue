@@ -1,11 +1,8 @@
 <template>
   <pop-up class="export-popup" title="Exporteer" @close="$emit('close')">
     <form class="export-popup__content export-popup__form-columns">
-      <div class="export-popup__notification export-popup__notification--error" v-if="formErrors.length">
-        <b>Graag de volgende velden aanvullen:</b>
-        <ul>
-          <li v-for="(error, index) in formErrors" :key="index">{{ error }}</li>
-        </ul>
+      <div class="export-popup__notification export-popup__notification--loading" v-if="!eeLayer">
+        <b>Wacht tot de data geladen is.</b>
       </div>
       <div class="export-popup__notification export-popup__notification--loading" v-if="exporting">
         <b>Uw export wordt gegenereerd.</b>
@@ -22,25 +19,14 @@
             <span>Zip</span>
           </label>
         </li>
-        <!-- disable for now -->
-        <li class="choice-cards__item" v-if="false">
-          <input type="radio" name="export" v-model="exportType"
-            id="export-print" value="print"
-            class="sr-only choice-cards__item__radio export-popup__export-input"
-          >
-          <label class="choice-cards__item__label export-popup__export-label" for="export-print">
-            <span aria-hidden="true" class="icon icon-file-pdf icon-2x"></span>
-            <span>Afbeelding</span>
-          </label>
-        </li>
       </ul>
       <label class="export-popup__form-column-item" for="export-name">
-        Naam:<br><small class="help">De naam van het uitvoerbestand</small>
+        Schaal:<br><small class="help">Schaal in meters</small>
       </label>
-      <input type="text" name="name"
-        id="export-name" autocomplete="off" v-model="exportName"
+      <input type="number" name="scale"
+        id="export-scale" autocomplete="off" v-model="exportScale"
         class="export-popup__form-column-item export-popup__textfield">
-      <footer class="export-popup__footer">
+      <footer class="export-popup__footer" v-if="eeLayer">
         <button class="btn primary" @click.prevent="exportMap">Exporteer</button>
         <button class="btn secondary" type="reset" @click="$emit('close')">Annuleer</button>
       </footer>
@@ -50,8 +36,8 @@
 
 <script>
 import PopUp from '@/components/PopUp'
-
-import exportZip from '@/lib/export-map-zip'
+import mapConfig from '../map.config'
+import store from '@/store'
 
 export default {
   props: {
@@ -60,31 +46,89 @@ export default {
   },
   data () {
     return {
-      formErrors: [],
-      exporting: false, // starts false and after form validates becomes true
       exportType: 'zip',
-      exportName: ''
+      exportScale: 50,
+      exporting: false
     }
   },
   components: { PopUp },
-  methods: {
-    exportMap: function () {
-      if (!this.exportType) this.formErrors.push('Kies export type')
-      if (!this.exportName) this.formErrors.push('Export naam is verplicht')
-
-      if (this.formErrors && this.formErrors.length === 0) { this.exporting = true }
-
-      if (this.exportType === 'zip') {
-        const layers = this.mapLayers.map(
-          layer => {
-            // TODO: make this consistent
-            // this is actually the id of the variant
-            return layer.layer
-          }).join()
-        exportZip({ name: this.exportName, layers })
-      } else {
-        console.warn('export type not supported', this.exportType)
+  computed: {
+    eeLayer () {
+      let eeLayers = this.mapLayers.filter(layer => layer.metadata.mapid)
+      if (eeLayers.length < 1) {
+        return null
       }
+      const eeLayer = eeLayers[0]
+      return eeLayer
+    },
+    otherLayers () {
+      let otherLayers = this.mapLayers.filter(layer => !(layer.metadata.mapid))
+      return otherLayers
+    }
+  },
+  methods: {
+    async exportMap () {
+      this.exporting = true
+      let eeLayer = this.eeLayer
+      let body = {
+        liwo_ids: eeLayer.metadata.liwo_ids,
+        band: eeLayer.metadata.band,
+        scale: parseFloat(this.exportScale),
+        'export': true
+      }
+      const requestOptions = {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      }
+
+      // Lookup the hydro engine url
+      let services = await mapConfig.getServices()
+      const HYDRO_ENGINE_URL = services.HYDRO_ENGINE_URL
+      let url = `${HYDRO_ENGINE_URL}/get_liwo_scenarios`
+
+      /* get the id of the layerSet */
+      let layerSetId = this.otherLayers[0].layerSet.id
+
+      let promise = fetch(url, requestOptions)
+        .then(resp => {
+          this.exporting = false
+          return resp.json()
+        })
+        .then(json => {
+          let result = json
+          if (result.error) {
+            let notification = {
+              message: 'Het door u gevraagde gecombineerde resultaat kan niet geëxporteerd worden. Probeer de schaal te vergroten.',
+              type: 'warning',
+              show: true
+            }
+            store.commit('addNotificationById', { id: layerSetId, notification })
+          }
+          return result
+        })
+        .catch((error) => {
+          this.exporting = false
+          let notification = {
+            message: `Het door u gevraagde gecombineerde resultaat kon niet worden geëxporteerd. Probeer de schaal te vergroten.`,
+            type: 'warning',
+            show: true
+          }
+          console.warn('Combined result failed:', error)
+          // notifiy of failure
+          store.commit('addNotificationById', { id: layerSetId, notification })
+          return null
+        })
+
+      promise.then(
+        result => {
+          if (result.export_url) {
+            window.location = result.export_url
+          }
+          this.$emit('close')
+        }
+      )
     }
   }
 }

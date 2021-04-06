@@ -2,15 +2,14 @@ export default function ({ blob, filename, type }) {
   if (window.navigator && window.navigator.msSaveOrOpenBlob) { // for IE
     window.navigator.msSaveOrOpenBlob(blob, filename)
   } else {
-    let windowUrl = window.URL || window.webkitURL
-    let blobject = new Blob([blob], { type })
-    let url = windowUrl.createObjectURL(blobject)
-    let anchor = document.createElement('a')
+    const windowUrl = window.URL || window.webkitURL
+    const blobject = new Blob([blob], { type })
+    const url = windowUrl.createObjectURL(blobject)
+    const anchor = document.createElement('a')
 
     anchor.style = 'display: none'
     anchor.setAttribute('href', url)
     anchor.setAttribute('download', filename)
-    document.body.appendChild(anchor)
     anchor.click()
   }
 }

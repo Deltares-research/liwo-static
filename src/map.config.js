@@ -31,8 +31,8 @@ const tileLayers = [
   {
     title: 'Topografie - water',
     [EPSG_28992]: {
-      url: 'https://geodata.nationaalgeoregister.nl/tiles/service/tms/1.0.0/brtachtergrondkaartwater/EPSG:28992/{z}/{x}/{y}.png',
-      tms: true
+      url: 'https://geodata.nationaalgeoregister.nl/tiles/service/wmts/brtachtergrondkaartwater/EPSG:28992/{z}/{x}/{y}.png',
+      tms: false
     },
     [EPSG_3857]: {
       url: 'https://geodata.nationaalgeoregister.nl/tiles/service/wmts/brtachtergrondkaartwater/EPSG:3857/{z}/{x}/{y}.png',
@@ -42,8 +42,8 @@ const tileLayers = [
   {
     title: 'Topografie - grijs',
     [EPSG_28992]: {
-      url: 'https://geodata.nationaalgeoregister.nl/tiles/service/tms/1.0.0/brtachtergrondkaartgrijs/EPSG:28992/{z}/{x}/{y}.png',
-      tms: true
+      url: 'https://geodata.nationaalgeoregister.nl/tiles/service/wmts/brtachtergrondkaartgrijs/EPSG:28992/{z}/{x}/{y}.png',
+      tms: false
     },
     [EPSG_3857]: {
       url: 'https://geodata.nationaalgeoregister.nl/tiles/service/wmts/brtachtergrondkaartgrijs/EPSG:3857/{z}/{x}/{y}.png',
@@ -53,8 +53,8 @@ const tileLayers = [
   {
     title: 'Topografie',
     [EPSG_28992]: {
-      url: 'https://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png',
-      tms: true
+      url: 'https://geodata.nationaalgeoregister.nl/tiles/service/wmts/brtachtergrondkaart/EPSG:28992/{z}/{x}/{y}.png',
+      tms: false
     },
     [EPSG_3857]: {
       url: 'https://geodata.nationaalgeoregister.nl/tiles/service/wmts/brtachtergrondkaart/EPSG:3857/{z}/{x}/{y}.png',
@@ -64,11 +64,11 @@ const tileLayers = [
   {
     title: 'Luchtfoto',
     [EPSG_28992]: {
-      url: 'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/tms/1.0.0/Actueel_ortho25/EPSG:28992/{z}/{x}/{y}.png',
-      tms: true
+      url: 'https://service.pdok.nl/hwh/luchtfotorgb/wmts/v1_0/Actueel_ortho25/EPSG:28992/{z}/{x}/{y}.jpeg',
+      tms: false
     },
     [EPSG_3857]: {
-      url: 'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/Actueel_ortho25/EPSG:3857/{z}/{x}/{y}.png',
+      url: 'https://service.pdok.nl/hwh/luchtfotorgb/wmts/v1_0/Actueel_ortho25/EPSG:3857/{z}/{x}/{y}.jpeg',
       tms: true
     }
   },
@@ -76,7 +76,7 @@ const tileLayers = [
     title: 'Geen Achtergrondkaart',
     [EPSG_28992]: {
       url: '',
-      tms: true
+      tms: false
     },
     [EPSG_3857]: {
       url: '',
@@ -93,12 +93,12 @@ async function getServices () {
   if (services) {
     return services
   }
-  let url = 'config/webconfig.json'
+  const url = 'config/webconfig.json'
   // TODO: how shall we configure this? Discuss with Peter
   // url = 'config/webconfig-rws.json'
 
-  let resp = await fetch(url)
-  let result = await resp.json()
+  const resp = await fetch(url)
+  const result = await resp.json()
   services = result
   return result
 }

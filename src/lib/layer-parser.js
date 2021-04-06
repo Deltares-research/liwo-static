@@ -12,11 +12,11 @@ export function flattenLayerSet (layerSet) {
   // You can pass this to leaflet.
 
   // get all the layerSet properties
-  let layerSetProperties = _.omit(layerSet, ['layers'])
+  const layerSetProperties = _.omit(layerSet, ['layers'])
   // loop over all layers
-  let layers = _.map(layerSet.layers, layer => {
+  const layers = _.map(layerSet.layers, layer => {
     // get all layer properties
-    let layerProperties = _.omit(layer, ['variants'])
+    const layerProperties = _.omit(layer, ['variants'])
     // get all variants
     let variantIndex = _.get(layer.properties, 'selectedVariant', null)
 
@@ -29,9 +29,9 @@ export function flattenLayerSet (layerSet) {
       variantIndex = 0
     }
     // select the variant
-    let variant = layer.variants[variantIndex]
+    const variant = layer.variants[variantIndex]
     // make a copy of the variant as a basis for the flattened layer
-    let newLayer = _.clone(variant)
+    const newLayer = _.clone(variant)
     // copy layer properties in variant
     newLayer.layerObj = layerProperties
     newLayer.layerSet = layerSetProperties
@@ -51,10 +51,10 @@ export function normalizeLayer (layer) {
   // - Take the properties of the map and move them to the variant (drop the map)
   // - Set move layer properties  to .properties
   // - Add the namespace to the layer legend
-  let firstVariant = _.first(layer.variants)
+  const firstVariant = _.first(layer.variants)
   // namespace should be available to legend
-  let namespace = _.get(firstVariant, 'map.namespace', '')
-  let variants = layer.variants.map(variant => ({
+  const namespace = _.get(firstVariant, 'map.namespace', '')
+  const variants = layer.variants.map(variant => ({
     ...variant.map,
     metadata: variant.metadata,
     title: variant.title,
@@ -65,13 +65,13 @@ export function normalizeLayer (layer) {
   let id = _.get(layer, 'legend.layer', layer.id)
 
   // Create an extra id of the combination with bands (referenced by style in geoserver)
-  let breachBandId = id + '__' + layer.legend.style
+  const breachBandId = id + '__' + layer.legend.style
 
   // for  google earth layers take the mapid  of the layer
   if (variants.length === 1 && _.has(layer.variants[0], 'mapid')) {
     id = layer.variants[0].mapid
   }
-  let result = {
+  const result = {
     // TODO: check why  we are  getting the layer from the legend...
 
     id: id,
@@ -142,8 +142,8 @@ export function cleanLayerSet (layerSet) {
 }
 
 export function selectFirstVariantsByLayerId (layerSet) {
-  let layersWithVariants = layerSet.layers.filter(layer => layer.variants.length > 0)
-  let result = {}
+  const layersWithVariants = layerSet.layers.filter(layer => layer.variants.length > 0)
+  const result = {}
   // set the first layer as active
   layersWithVariants.forEach((layer) => {
     result[layer.id] = 0

@@ -3,7 +3,7 @@ import _ from 'lodash'
 function buildFeatureNotifications (layers) {
   // create a list of notifications based on the features
 
-  let featureNotificationsTree = layers
+  const featureNotificationsTree = layers
   // for all layers that have geojson
     .filter(layer => layer.geojson)
     .map(
@@ -28,13 +28,13 @@ function buildFeatureNotifications (layers) {
           }
         )
     )
-  let featureNotifications = _.flatten(featureNotificationsTree)
+  const featureNotifications = _.flatten(featureNotificationsTree)
   return featureNotifications
 }
 
 function buildLayerNotifications (layers) {
   // create a list of notifications based on the layers
-  let layerNotifications = layers
+  const layerNotifications = layers
     .filter(layer => layer.layerObj.properties.notify)
     .map(layer => {
       return {
@@ -72,7 +72,7 @@ function buildLayerSetFeatureNotifications (layers) {
 
 function buildLayerSetNotifications (layers) {
   // the list of notifications  on layerSet level
-  let layerSetNotifications = layers
+  const layerSetNotifications = layers
     .filter(layer => layer.layerSet.notify)
     .map(layer => {
       return {
@@ -87,10 +87,10 @@ function buildLayerSetNotifications (layers) {
 export default function buildNotifications (layers) {
   // this method expects a flattened list of layers
   // create a list of all the  notifications from the layers
-  let featureNotifications = buildFeatureNotifications(layers)
-  let layerNotifications = buildLayerNotifications(layers)
-  let layerSetFeatureNotifications = buildLayerSetFeatureNotifications(layers)
-  let layerSetNotifications = buildLayerSetNotifications(layers)
+  const featureNotifications = buildFeatureNotifications(layers)
+  const layerNotifications = buildLayerNotifications(layers)
+  const layerSetFeatureNotifications = buildLayerSetFeatureNotifications(layers)
+  const layerSetNotifications = buildLayerSetNotifications(layers)
 
   // concatenate all features
   let result = [
