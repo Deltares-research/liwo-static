@@ -30,8 +30,15 @@
                 {{ size.name }}
               </label>
             </div>
-
           </div>
+
+          <div class="control-group">
+            <h3 class="control-label">Locatie</h3>
+
+            <p class="map-image-control__location">Coördinaten linksboven: {{ origin.join(', ') }}</p>
+            <p>Zoomniveau: {{ zoomLevel }}</p>
+          </div>
+
           <button class="btn primary" @click.prevent.stop="exportAsImage">Exporteren als afbeelding</button>
         </form>
 
@@ -67,6 +74,15 @@ export default {
   computed: {
     sizes () {
       return this.map.printPlugin.options.sizeModes
+    },
+    zoomLevel () {
+      return this.map.getZoom()
+    },
+    origin () {
+      const originPoint = this.map.getPixelOrigin()
+      const { lat, lng } = this.map.unproject(originPoint)
+
+      return [lat.toFixed(4), lng.toFixed(4)]
     }
   },
   methods: {
@@ -106,6 +122,10 @@ export default {
 
 .map-image-control__form h3 {
   color: #000;
+}
+
+.map-image-control__location {
+  margin-bottom: 0;
 }
 
 /* hide easyPrint control, because we want to use our custom button */
