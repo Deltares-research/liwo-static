@@ -62,11 +62,11 @@ jobs:
         with:
           # we have already installed all dependencies above
           install: false
-          start: npm run serve
+          start: npx http-server dist
           wait-on: "http://localhost:8080"
           wait-on-timeout: 120
           browser: chrome
-          record: true
+          record: false
           parallel: true
           group: "UI - Chrome"
           spec: tests/e2e/specs/*
@@ -116,7 +116,7 @@ jobs:
           wait-on: "http://localhost:8080"
           wait-on-timeout: 120
           browser: firefox
-          record: true
+          record: false
           parallel: true
           group: "UI - Firefox"
           spec: tests/e2e/specs/*
