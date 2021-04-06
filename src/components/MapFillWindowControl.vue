@@ -31,19 +31,23 @@ export default {
   computed: {
     imgSrc () {
       return this.active ? this.exitFullscreenIcon : this.fullscreenIcon
+    },
+    activeStyles () {
+      // width & height need to be numbers, because otherwise leaflet-easyprint does not co-oparate well (height can not be determined)
+      return `position:fixed;left:0;top:0;height:${this.windowHeight}px;width:${this.windowWidth}px;z-index:3000;background-color:#fff;`
     }
   },
   watch: {
     windowWidth () {
       if (this.active) {
         const container = this.map.getContainer()
-        container.style.cssText = `position:fixed;left:0;top:0;height:${this.windowHeight}px;width:${this.windowWidth}px;z-index:3000;background-color:#fff;`
+        container.style.cssText = this.activeStyles
       }
     },
     windowHeight () {
       if (this.active) {
         const container = this.map.getContainer()
-        container.style.cssText = `position:fixed;left:0;top:0;height:${this.windowHeight}px;width:${this.windowWidth}px;z-index:3000;background-color:#fff;`
+        container.style.cssText = this.activeStyles
       }
     }
   },
@@ -54,12 +58,13 @@ export default {
     this.windowWidth = window.innerWidth
     this.windowHeight = window.innerHeight
 
-    console.log(this.windowWidth)
-
-    window.addEventListener('resize', () => {
-      this.windowWidth = container.innerWidth
-      this.windowHeight = container.innerHeight
+    this.listener = window.addEventListener('resize', () => {
+      this.windowWidth = window.innerWidth
+      this.windowHeight = window.innerHeight
     })
+  },
+  beforeDestroy () {
+    window.removeEventListener(this.listener)
   },
   methods: {
     toggle () {
@@ -69,7 +74,7 @@ export default {
         container.style.cssText = this.originalStyles
       } else {
         // width & height need to be numbers, because otherwise leaflet-easyprint does not co-oparate well (height can not be determined)
-        container.style.cssText = `position:fixed;left:0;top:0;height:${this.windowHeight}px;width:${this.windowWidth}px;z-index:3000;background-color:#fff;`
+        container.style.cssText = this.activeStyles
       }
 
       this.map.invalidateSize()

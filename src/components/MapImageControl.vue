@@ -7,6 +7,7 @@
     >
       <img :src="saveIcon" />
     </button>
+    <!-- TODO: add comment -->
     <portal to="portal-target">
       <pop-up v-if="showPopUp" @close="showPopUp = false">
         <form action="" submit.prevent class="map-image-control__form">
@@ -44,6 +45,8 @@
           </div>
             <button class="btn primary" @click.prevent.stop="exportAsImage">Exporteren als afbeelding</button>
         </form>
+
+        <!-- TODO: add coordinates of top left corner -->
       </pop-up>
     </portal>
   </div>
