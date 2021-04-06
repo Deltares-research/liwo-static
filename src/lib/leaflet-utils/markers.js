@@ -9,6 +9,8 @@ import greenRetinaIconUrl from '../../img/markers/marker-icon-2x-green.png'
 import iconShadowUrl from '../../img/markers/marker-shadow.png'
 import redIconUrl from '../../img/markers/marker-icon-red.png'
 import redRetinaIconUrl from '../../img/markers/marker-icon-2x-red.png'
+import yellowIconUrl from '../../img/markers/marker-icon-yellow.png'
+import yellowRetinaIconUrl from '../../img/markers/marker-icon-2x-yellow.png'
 
 // disable camelcase warning because we want to separate numbers
 // The numbers refer to hue saturation and  lightness.
@@ -71,6 +73,12 @@ export const greenIcon = L.icon({
 export const redIcon = L.icon({
   iconUrl: redIconUrl,
   iconRetinaUrl: redRetinaIconUrl,
+  ...iconDefaults
+})
+
+export const yellowIcon = L.icon({
+  iconUrl: yellowIconUrl,
+  iconRetinaUrl: yellowRetinaIconUrl,
   ...iconDefaults
 })
 

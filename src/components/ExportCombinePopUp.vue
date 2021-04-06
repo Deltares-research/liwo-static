@@ -55,7 +55,7 @@ export default {
   computed: {
     url () {
       // lookup the route
-      let route = this.$router.resolve(this.path)
+      const route = this.$router.resolve(this.path)
       // return absolute path
       return `${location.origin}/${route.href}`
     }

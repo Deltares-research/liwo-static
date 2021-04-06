@@ -39,6 +39,7 @@
             @select:layer="selectLayer"
             @select:variant="selectVariant({ ...$event, layerSet })"
             :collapsed.sync="layerSetCollapsed"
+            :selectedLayer="selectedLayer"
             :key="layerSet.id"
           >
           </layer-panel-item>
@@ -55,6 +56,7 @@
             @select:layer="selectLayer"
             @select:variant="selectVariant({...$event, layerSet: layerSet_, scenarioLayerSetIndex: index})"
             :title="layerSet_.title"
+            :selectedLayer="selectedLayer"
             :key="(layerSet_.feature && layerSet_.feature.id) || layerSet_.id"
           >
             <!-- add scenario layer control options -->
@@ -65,18 +67,6 @@
           <!-- add these buttons to the button section of the layer panel -->
           <!-- use named slots after upgrading to Vue 2.6 -->
           <!-- add this button once export of combined maps is working -->
-          <button
-            class="layer-panel__action"
-            v-if="false"
-            @click="showExport = true"
-          >
-            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
-              <path fill="none" d="M0 0h24v24H0z"/>
-              <path d="M18 17v2H6v-2H3v4c0 .6.4 1 1 1h16c.6 0 1-.4 1-1v-4h-3z"/>
-              <path d="M11 16.5a1.4 1.4 0 0 0 2 0l5.8-7.3a1.4 1.4 0 0 0-1.7-2l-3.1 2V3.4c0-1-1-1.4-2-1.4s-2 .3-2 1.4v5.8l-3-2a1.4 1.4 0 0 0-1.8 2l5.7 7.3z"/>
-            </svg>
-            Kaart exporteren
-          </button>
           <button
             v-if="selectFeatureMode === 'multiple' && selectedFeatures.length"
             class="layer-panel__action"
@@ -97,6 +87,18 @@
             @click="showExport = true"
           >
             Scenario exporteren
+          </button>
+          <button
+            class="layer-panel__action"
+            v-if="scenarioMode === 'compute'"
+            @click="showExportCombined = true"
+          >
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+              <path fill="none" d="M0 0h24v24H0z"/>
+              <path d="M18 17v2H6v-2H3v4c0 .6.4 1 1 1h16c.6 0 1-.4 1-1v-4h-3z"/>
+              <path d="M11 16.5a1.4 1.4 0 0 0 2 0l5.8-7.3a1.4 1.4 0 0 0-1.7-2l-3.1 2V3.4c0-1-1-1.4-2-1.4s-2 .3-2 1.4v5.8l-3-2a1.4 1.4 0 0 0-1.8 2l5.7 7.3z"/>
+            </svg>
+            Kaart exporteren
           </button>
           <button
             v-if="selectFeatureMode === 'multiple'"
@@ -126,6 +128,13 @@
         v-if="selectFeatureMode === 'multiple' && showExportCombine"
         @close="showExportCombine = false"
       />
+      <!-- shows the export url in combined  mode-->
+      <export-combined-popup
+        :map-object="mapObject"
+        :map-layers="selectedLayers"
+        v-if="showExportCombined"
+        @close="showExportCombined = false"
+      />
       <!-- This import popup navigates to the the new url -->
       <import-combine-popup
         v-if="showImportCombine"
@@ -153,7 +162,10 @@ import LayerPanelItem from '@/components/LayerPanelItem'
 import LegendPanel from '@/components/LegendPanel'
 import CombinePopup from '@/components/CombinePopup'
 import ExportPopup from '@/components/ExportPopup'
+/* note that there are some minor casing inconsistencies here  */
+/* pop up is the correct spelling, but I'm sticking to the pattern below */
 import ExportCombinePopup from '@/components/ExportCombinePopUp'
+import ExportCombinedPopup from '@/components/ExportCombinedPopUp'
 import ImportCombinePopup from '@/components/ImportCombinePopUp'
 import FilterPopup from '@/components/FilterPopup'
 
@@ -172,6 +184,7 @@ export default {
   components: {
     CombinePopup,
     ExportCombinePopup,
+    ExportCombinedPopup,
     ImportCombinePopup,
     ExportPopup,
     FilterPopup,
@@ -225,8 +238,10 @@ export default {
       loading: false,
 
       // menus
+      /* we have three different export menus (regular maps, the combine view and in the combine*d* view, with the results ) */
       showExport: false,
       showExportCombine: false,
+      showExportCombined: false,
       showImportCombine: false,
       showCombine: false,
       showFilter: false,
@@ -244,7 +259,7 @@ export default {
     this.$store.commit('setLayerSetId', layerSetId)
 
     // load the corresponding layerSet
-    let options = {
+    const options = {
       id: layerSetId
     }
     await this.$store.dispatch('loadLayerSetById', options)
@@ -260,7 +275,7 @@ export default {
     ]),
     layerSetId () {
       // this id is passed on from the Maps page.
-      let layerSetId = _.toNumber(this.$route.params.id)
+      const layerSetId = _.toNumber(this.$route.params.id)
       return layerSetId
     },
     scenarioIds () {
@@ -285,7 +300,7 @@ export default {
       // we have to scan all layerSets
       // in the layerSets we have to get all layers (should be one per layerSet)
       // for each layer select the variant that is selected or the first if none is selected.
-      let ids = []
+      const ids = []
       // TODO: restructure backend
       // here we have a confusion between different types
       // a scenario can contain multiple layers (e.g. waterdepth, damage)
@@ -293,17 +308,17 @@ export default {
       this.scenarioLayerSets.forEach(layerSet => {
         // Only select first layer
         // multiple layers in scenarios are bands
-        let layer = _.first(layerSet.layers)
-        let variantIndex = _.get(layer, 'properties.selectedVariant', 0)
-        let variant = layer.variants[variantIndex]
+        const layer = _.first(layerSet.layers)
+        const variantIndex = _.get(layer, 'properties.selectedVariant', 0)
+        const variant = layer.variants[variantIndex]
         // this is the scenario (breach + return period) id in the form scenario_number
-        let scenario = variant.layer
-        let scenarioRe = /^scenario_(\d+)$/
-        let match = scenario.match(scenarioRe)
+        const scenario = variant.layer
+        const scenarioRe = /^scenario_(\d+)$/
+        const match = scenario.match(scenarioRe)
         if (!(match && match.length === 2)) {
           console.warn('got back  unexpected scenario id from backend', scenario)
         }
-        let scenarioId = parseInt(match[1])
+        const scenarioId = parseInt(match[1])
         ids.push(scenarioId)
       })
       return ids
@@ -319,7 +334,7 @@ export default {
 
       layers = layers.filter(layer => {
         // toss  out the invisible layers
-        let layerVisible = _.get(layer.layerObj.properties, 'visible', true)
+        const layerVisible = _.get(layer.layerObj.properties, 'visible', true)
         return layerVisible
       })
 
@@ -334,7 +349,7 @@ export default {
         }
         // TODO: do this using stylesheet
         // replace markers by circle markers and add classes so we can style this
-        let geojson = layer.geojson
+        const geojson = layer.geojson
         if (this.filterByIds) {
           // this is true for the combined scenario
           geojson.features = _.filter(geojson.features, (feature) => {
@@ -345,11 +360,11 @@ export default {
             feature.properties.selected = true
             // find extra info from the loaded scenarioInfo
             if (this.scenarioInfo.features) {
-              let extraInfo = this.scenarioInfo.features.find((f) => f.properties.breachlocationid === feature.properties.id)
+              const extraInfo = this.scenarioInfo.features.find((f) => f.properties.breachlocationid === feature.properties.id)
               // english band name
-              let bandNeeded = BREACH_LAYERS_EN[this.band]
-              let availableBands = extraInfo.properties['system:band_names']
-              let bandMissing = availableBands && !availableBands.includes(bandNeeded)
+              const bandNeeded = BREACH_LAYERS_EN[this.band]
+              const availableBands = extraInfo.properties['system:band_names']
+              const bandMissing = availableBands && !availableBands.includes(bandNeeded)
               if (bandMissing) {
                 feature.properties.missing = true
               } else {
@@ -365,12 +380,12 @@ export default {
         // if  feature is not selected, filter by probability
         if (this.selectedProbability !== 'no_filter') {
           geojson.features = _.filter(geojson.features, (feature) => {
-            let featureSelected = feature.properties[this.selectedProbability] > 0
+            const featureSelected = feature.properties[this.selectedProbability] > 0
             return featureSelected
           })
         }
 
-        let selectedFeatureIds = _.map(this.selectedFeatures, 'properties.id')
+        const selectedFeatureIds = _.map(this.selectedFeatures, 'properties.id')
         geojson.features = _.map(geojson.features, (feature) => {
           // set feature selected to true
           if (selectedFeatureIds.includes(feature.properties.id)) {
@@ -394,19 +409,19 @@ export default {
 
       // also filter these by visibility
       scenarioLayers = scenarioLayers.filter(layer => {
-        let layerVisible = _.get(layer.layerObj.properties, 'visible', true)
+        const layerVisible = _.get(layer.layerObj.properties, 'visible', true)
         return layerVisible
       })
 
       // Now  that we have all layers combine  them
-      let selectedLayers = [...scenarioLayers, ...layers]
+      const selectedLayers = [...scenarioLayers, ...layers]
 
       return selectedLayers
     },
     selectedVariantId () {
-      let variantIndex = _.get(this.selectedLayer, 'properties.selectedVariant', 0)
-      let variant = _.get(this.selectedLayer, ['variants', variantIndex])
-      let id = _.get(variant, 'layer')
+      const variantIndex = _.get(this.selectedLayer, 'properties.selectedVariant', 0)
+      const variant = _.get(this.selectedLayer, ['variants', variantIndex])
+      const id = _.get(variant, 'layer')
       return id
     }
   },
@@ -424,7 +439,7 @@ export default {
     updatePath () {
       // replace the url with the ids of the currently loaded scenarios
       // don't put this in a watch because scenario's are loaded asynchronously
-      let path = this.selectedScenarioIdsPath
+      const path = this.selectedScenarioIdsPath
       this.$router.replace({
         params: {
           ids: path
@@ -467,21 +482,21 @@ export default {
       this.loading = true
 
       // we need to get the features first as we are filtering the layer using these
-      let featureInfoByScenarioId = await getFeatureIdsByScenarioIds(this.scenarioIds)
-      let featureIds = _.filter(_.map(featureInfoByScenarioId, 'breachlocationid'))
+      const featureInfoByScenarioId = await getFeatureIdsByScenarioIds(this.scenarioIds)
+      const featureIds = _.filter(_.map(featureInfoByScenarioId, 'breachlocationid'))
       // get all uniq ids
       this.featureIds = _.uniq(featureIds)
 
       if (this.scenarioMode === 'compute') {
         // if we are  computing, we can pass them on
-        let layerSet = await this.computeScenario(this.scenarioIds)
-        let scenarioInfo = await getScenarioInfo(this.scenarioIds, featureInfoByScenarioId)
+        const layerSet = await this.computeScenario(this.scenarioIds)
+        const scenarioInfo = await getScenarioInfo(this.scenarioIds, featureInfoByScenarioId)
         this.scenarioLayerSets = [layerSet]
         this.scenarioInfo = scenarioInfo
       } else {
         // If we are interacting we need to lookup the corresponding features
-        let features = _.map(this.featureIds, this.getFeatureById)
-        let layerSets = await this.loadScenarioLayerSetsByFeatures(features)
+        const features = _.map(this.featureIds, this.getFeatureById)
+        const layerSets = await this.loadScenarioLayerSetsByFeatures(features)
         this.scenarioLayerSets = layerSets
       }
       // we are done, hide the loading icon
@@ -506,7 +521,7 @@ export default {
       // If we  selected something we have to load the scenario
       // now that we have selected the features, we can load the corresponding maps
       let layerSets = []
-      let promises = features.map(feature => this.loadFeature(feature))
+      const promises = features.map(feature => this.loadFeature(feature))
       layerSets = await Promise.all(promises)
       // store the scenario layerset
       return layerSets
@@ -514,23 +529,23 @@ export default {
     getFeatureById (id) {
       // get a feature by an id
       // get layes  with a geojson attribute
-      let flatLayers = flattenLayerSet(this.layerSet)
-      let layers = _.filter(flatLayers, 'geojson')
-      let features = _.flatten(_.map(layers, 'geojson.features'))
-      let feature = _.find(features, ['properties.id', id])
+      const flatLayers = flattenLayerSet(this.layerSet)
+      const layers = _.filter(flatLayers, 'geojson')
+      const features = _.flatten(_.map(layers, 'geojson.features'))
+      const feature = _.find(features, ['properties.id', id])
       return feature
     },
     async selectFeature (evt) {
       if (this.selectFeatureMode === 'disabled') {
         return
       }
-      let feature = evt.target.feature
+      const feature = evt.target.feature
       // this is the code to enable/disable the markers
       // TODO: check if we need to use properties.id or feature.id
-      let selectedFeatureIds = _.map(this.selectedFeatures, 'properties.id')
-      let selected = !_.includes(selectedFeatureIds, feature.properties.id)
+      const selectedFeatureIds = _.map(this.selectedFeatures, 'properties.id')
+      const selected = !_.includes(selectedFeatureIds, feature.properties.id)
       // this looks a bit double, but it's easier to read
-      let wasSelected = !selected
+      const wasSelected = !selected
 
       // set feature properties for reactive components
       if (this.selectFeatureMode === 'single') {
@@ -554,9 +569,9 @@ export default {
           return otherFeature.properties.id === feature.properties.id
         })
         // get rid of scenarioLayers that are not  currently selected
-        let scenarioLayerSets = this.scenarioLayerSets.filter((layerSet) => {
+        const scenarioLayerSets = this.scenarioLayerSets.filter((layerSet) => {
           // if  this layerSet was  created based on our feature, remove it
-          let selectedIds = _.map(this.selectedFeatures, 'id')
+          const selectedIds = _.map(this.selectedFeatures, 'id')
           return selectedIds.includes(layerSet.feature.id)
         })
         this.scenarioLayerSets = scenarioLayerSets
@@ -569,7 +584,7 @@ export default {
         }
       }
       // set the markers, based on the current selected feature
-      let marker = evt.target
+      const marker = evt.target
       this.setMarkers(feature, marker)
 
       if (wasSelected) {
@@ -579,7 +594,7 @@ export default {
         }
       }
       // now manually load the layerSets that correspond to the current selection
-      let layerSets = await this.loadScenarioLayerSetsByFeatures(this.selectedFeatures)
+      const layerSets = await this.loadScenarioLayerSetsByFeatures(this.selectedFeatures)
       this.scenarioLayerSets = layerSets
       // and update the path
       this.updatePath()
@@ -591,15 +606,15 @@ export default {
         // feature is no longer selected
         // get the old marker and reset it
         // TODO: use old icon.
-        let layerType = getLayerType(feature)
-        let icon = _.get(iconsByLayerType, layerType, defaultIcon)
+        const layerType = getLayerType(feature)
+        const icon = _.get(iconsByLayerType, layerType, defaultIcon)
         marker.setIcon(icon)
         delete this.selectedMarkersById[feature.id]
       } else {
         // we are setting a marker
         if (this.selectFeatureMode === 'single') {
           // clear old markers
-          let markersToReset = _.values(this.selectedMarkersById)
+          const markersToReset = _.values(this.selectedMarkersById)
           _.each(
             markersToReset,
             (marker) => {
@@ -622,8 +637,13 @@ export default {
       // and clean
       layerSet = cleanLayerSet(layerSet)
       layerSet = selectVariantsInLayerSet(layerSet, this.scenarioIds)
+
+      // before showing new notifications, clear existing ones
+      this.$store.commit('clearNotifications')
+
       const layers = flattenLayerSet(layerSet)
       const notifications = buildLayerSetNotifications(layers)
+
       _.each(
         notifications,
         (notification) => {
@@ -662,7 +682,7 @@ export default {
         if (_.has(this.selectedLayer, 'legend.title')) {
           unit = extractUnit(this.selectedLayer.legend.title)
         }
-        let activeLayer = _.get(this.selectedLayer, 'legend.layer')
+        const activeLayer = _.get(this.selectedLayer, 'legend.layer')
         if (_.isNil(activeLayer)) {
           console.warn('clicking on layer not supported for layer', this.selectedLayer.id)
           return

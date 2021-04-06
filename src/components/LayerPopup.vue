@@ -9,9 +9,8 @@
     <template>
       <table class="layer-meta__table">
         <tr
-          v-for="(value, key) in metadata"
+          v-for="(value, key) in noIdMetadata"
           :key="key"
-          v-if="(key !== 'id')"
         >
           <th>{{titleCase(key)}}</th>
           <td v-html="value"></td>
@@ -34,6 +33,18 @@ export default {
     titleCase (string) {
       const s = string.replace(/_/g, ' ').trim()
       return `${s[0].toUpperCase()}${s.substring(1)}`
+    }
+  },
+  computed: {
+    noIdMetadata () {
+      const asArray = Object.entries(this.metadata)
+
+      // filter values
+      const nonId = asArray.filter(([key, value]) => (key !== 'id'))
+
+      // Convert the key/value array back to an object:
+      const result = Object.fromEntries(nonId)
+      return result
     }
   },
   components: {
