@@ -23,22 +23,10 @@
           <div class="control-group">
             <h3 class="control-label">Formaat</h3>
 
-            <div>
+            <div v-for="size in sizes" :key="size.name">
               <label>
-                <input type="radio" id="CurrentSize" value="CurrentSize" v-model="exportSize">
-                Current size
-              </label>
-            </div>
-            <div>
-              <label>
-                <input type="radio" id="A4Landscape" value="A4Landscape page" v-model="exportSize">
-                A4 landscape
-              </label>
-            </div>
-            <div>
-              <label>
-                <input type="radio" id="A4Portrait" value="A4Portrait page" v-model="exportSize">
-                A4 Portrait
+                <input type="radio" :value="size.className" v-model="exportSize">
+                {{ size.name }}
               </label>
             </div>
 
@@ -73,6 +61,11 @@ export default {
       exporting: false,
       showPopUp: false,
       saveIcon
+    }
+  },
+  computed: {
+    sizes () {
+      return this.map.printPlugin.options.sizeModes
     }
   },
   methods: {
@@ -112,5 +105,10 @@ export default {
 
 .map-image-control__form h3 {
   color: #000;
+}
+
+/* hide easyPrint control, because we want to use our custom button */
+.leaflet-control-easyPrint {
+  display: none;
 }
 </style>

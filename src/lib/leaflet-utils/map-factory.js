@@ -33,15 +33,6 @@ export default function (el, vnode, config) {
 
   map.addControl(layerControl(baseLayers))
 
-  map.printPlugin = L.easyPrint({
-    hidden: true,
-    exportOnly: true,
-    hideControlContainer: false,
-    position: 'topright',
-    filename: 'export',
-    sizeModes: ['A4Portrait', 'A4Landscape', 'Current']
-  }).addTo(map)
-
   map.on('browser-print-start', function (e) {
     // when printing starts emit an event to the containing element so that we can add a legend
     vnode.context.$emit('browser-print-start', e)
@@ -194,6 +185,15 @@ function imageControl () {
   const control = L.control({position: 'topright'})
 
   control.onAdd = function (map) {
+    map.printPlugin = L.easyPrint({
+      hidden: true,
+      exportOnly: true,
+      hideControlContainer: false,
+      position: 'topright',
+      filename: 'export',
+      sizeModes: ['Current', 'A4Landscape', 'A4Portrait']
+    }).addTo(map)
+
     const div = L.DomUtil.create('div', '')
 
     // mount vue component as control
