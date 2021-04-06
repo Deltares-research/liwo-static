@@ -42,7 +42,7 @@
             </div>
 
           </div>
-            <button @click.prevent.stop="exportAsImage">export</button>
+            <button class="btn primary" @click.prevent.stop="exportAsImage">Exporteren als afbeelding</button>
         </form>
       </pop-up>
     </portal>
