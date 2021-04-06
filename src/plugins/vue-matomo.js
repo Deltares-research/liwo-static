@@ -53,7 +53,7 @@ Vue.use(VueMatomo, {
 
   // UserID passed to Matomo (see https://developer.matomo.org/guides/tracking-javascript-guide#user-id)
   // Default: undefined
-  userId: '25ca6aa4-502e-43e2-b058-12201f1c452b',
+  userId: process.env.VUE_APP_MATOMO_ID,
 
   // Share the tracking cookie across subdomains (see https://developer.matomo.org/guides/tracking-javascript-guide#measuring-domains-andor-sub-domains)
   // Default: undefined, example '*.example.com'
