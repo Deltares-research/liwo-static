@@ -1,9 +1,10 @@
 <template>
   <button
+    title="Enlarge map"
     class="map-fill-screen-control leaflet-bar"
     @click="toggle"
   >
-    <img :src="imgSrc" />
+    <img :src="imgSrc" alt="" />
   </button>
 </template>
 

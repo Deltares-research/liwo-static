@@ -1,11 +1,12 @@
 <template>
   <div class="map-image-control">
     <button
+      title="Export as image"
       class="map-image-control__button leaflet-bar"
       :disabled="exporting"
       @click.prevent.stop="showPopUp = true"
     >
-      <img :src="saveIcon" />
+      <img :src="saveIcon" alt="" />
     </button>
     <!-- the modal needs to be rendered outside of the map, the portal takes care of that -->
     <portal to="portal-target">
@@ -31,7 +32,7 @@
             </div>
 
           </div>
-            <button class="btn primary" @click.prevent.stop="exportAsImage">Exporteren als afbeelding</button>
+          <button class="btn primary" @click.prevent.stop="exportAsImage">Exporteren als afbeelding</button>
         </form>
 
         <!-- TODO: add coordinates of top left corner -->
