@@ -54,7 +54,7 @@ export default {
   components: { PopUp },
   computed: {
     eeLayer () {
-      let eeLayers = this.mapLayers.filter(layer => layer.metadata.mapid)
+      const eeLayers = this.mapLayers.filter(layer => layer.metadata.mapid)
       if (eeLayers.length < 1) {
         return null
       }
@@ -62,19 +62,19 @@ export default {
       return eeLayer
     },
     otherLayers () {
-      let otherLayers = this.mapLayers.filter(layer => !(layer.metadata.mapid))
+      const otherLayers = this.mapLayers.filter(layer => !(layer.metadata.mapid))
       return otherLayers
     }
   },
   methods: {
     async exportMap () {
       this.exporting = true
-      let eeLayer = this.eeLayer
-      let body = {
+      const eeLayer = this.eeLayer
+      const body = {
         liwo_ids: eeLayer.metadata.liwo_ids,
         band: eeLayer.metadata.band,
         scale: parseFloat(this.exportScale),
-        'export': true
+        export: true
       }
       const requestOptions = {
         method: 'POST',
@@ -84,22 +84,22 @@ export default {
       }
 
       // Lookup the hydro engine url
-      let services = await mapConfig.getServices()
+      const services = await mapConfig.getServices()
       const HYDRO_ENGINE_URL = services.HYDRO_ENGINE_URL
-      let url = `${HYDRO_ENGINE_URL}/get_liwo_scenarios`
+      const url = `${HYDRO_ENGINE_URL}/get_liwo_scenarios`
 
       /* get the id of the layerSet */
-      let layerSetId = this.otherLayers[0].layerSet.id
+      const layerSetId = this.otherLayers[0].layerSet.id
 
-      let promise = fetch(url, requestOptions)
+      const promise = fetch(url, requestOptions)
         .then(resp => {
           this.exporting = false
           return resp.json()
         })
         .then(json => {
-          let result = json
+          const result = json
           if (result.error) {
-            let notification = {
+            const notification = {
               message: 'Het door u gevraagde gecombineerde resultaat kan niet geëxporteerd worden. Probeer de schaal te vergroten.',
               type: 'warning',
               show: true
@@ -110,8 +110,8 @@ export default {
         })
         .catch((error) => {
           this.exporting = false
-          let notification = {
-            message: `Het door u gevraagde gecombineerde resultaat kon niet worden geëxporteerd. Probeer de schaal te vergroten.`,
+          const notification = {
+            message: 'Het door u gevraagde gecombineerde resultaat kon niet worden geëxporteerd. Probeer de schaal te vergroten.',
             type: 'warning',
             show: true
           }

@@ -164,7 +164,7 @@ function layerControl (layers) {
 }
 
 function fillWindowControl () {
-  const control = L.control({position: 'topright'})
+  const control = L.control({ position: 'topright' })
 
   control.onAdd = function (map) {
     const div = L.DomUtil.create('div', '')
@@ -185,7 +185,7 @@ function fillWindowControl () {
 }
 
 function imageControl () {
-  const control = L.control({position: 'topright'})
+  const control = L.control({ position: 'topright' })
 
   control.onAdd = function (map) {
     map.printPlugin = L.easyPrint({
@@ -210,6 +210,8 @@ function imageControl () {
 
     return button.$el
   }
+
+  return control
 }
 
 function roseControl () {
