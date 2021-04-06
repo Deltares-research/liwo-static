@@ -7,7 +7,7 @@ describe('Maps content', () => {
     cy.get('.leaflet-control-layers label:nth-child(5) > div > input')
       .click()
 
-    cy.wait(8000)
+    cy.wait(15000)
 
     cy.get('.layerpanel-item--collapsed > .layerpanel-item__title > .layerpanel-item__collapse > .layerpanel-item__collapse-icon')
       .click()
