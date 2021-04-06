@@ -55,6 +55,8 @@ jobs:
           key: npm-${{ hashFiles('package-lock.json') }}
           restore-keys: npm-
 
+      - name: Install dependencies
+        run: npm ci
       - name: "UI Tests - Chrome"
         uses: cypress-io/github-action@v2
         with:
@@ -96,17 +98,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - uses: actions/cache@v2
-        id: yarn-and-build-cache
+      - name: Cache dependencies
+        uses: actions/cache@v2
         with:
-          path: |
-            ~/.cache/Cypress
-            build
-            node_modules
-          key: ${{ runner.os }}-node_modules-build-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-node_modules-build-
+          path: ~/.npm
+          key: npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-
 
+      - name: Install dependencies
+        run: npm ci
       - name: "UI Tests - Firefox"
         uses: cypress-io/github-action@v2
         with:
