@@ -72,8 +72,8 @@ export default {
   },
   data () {
     // fill the options based on the english translations
-    let breachLayers = BREACH_LAYERS_EN
-    let options = _.map(breachLayers, (val, key) => {
+    const breachLayers = BREACH_LAYERS_EN
+    const options = _.map(breachLayers, (val, key) => {
       return { id: key, name: val }
     })
     return {
@@ -84,8 +84,8 @@ export default {
     }
   },
   async mounted () {
-    let scenarioIds = this.path.split(',').map(_.toNumber)
-    let scenarioInfo = await getScenarioInfo(scenarioIds)
+    const scenarioIds = this.path.split(',').map(_.toNumber)
+    const scenarioInfo = await getScenarioInfo(scenarioIds)
     /* extract number of features and bands per layer */
     this.$set(this, 'bandCounts', scenarioInfo.properties.bandCounts)
     this.$set(this, 'featureCount', scenarioInfo.features.length)

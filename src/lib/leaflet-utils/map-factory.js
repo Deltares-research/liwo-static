@@ -7,6 +7,7 @@ import { EPSG_3857 } from '../../lib/leaflet-utils/projections'
 import createCrs from '../../lib/leaflet-utils/create-crs'
 import MapFillWindowControl from '../../components/MapFillWindowControl'
 import MapImageControl from '../../components/MapImageControl'
+import northIcon from '../../img/north-arrow.svg'
 
 const INITIAL_BASELAYER = mapConfig.tileLayers[0].title
 
@@ -16,7 +17,7 @@ export default function (el, vnode, config) {
   const map = L.map(el, {
     ...config,
     crs: createCrs(config.projection),
-    layers: [ baseLayers[INITIAL_BASELAYER] ]
+    layers: [baseLayers[INITIAL_BASELAYER]]
   })
 
   // When we change the baselayer we want it to be in the back
@@ -24,9 +25,11 @@ export default function (el, vnode, config) {
   // map.addLayer(baseLayers[INITIAL_BASELAYER])
   map.setZoom(config.zoom || mapConfig.zoom)
 
+  map.addControl(roseControl())
   map.addControl(fillWindowControl())
   map.addControl(geoCoderControl(map))
   map.addControl(L.control.zoom({ position: 'topright' }))
+  map.addControl(L.control.scale({ position: 'bottomleft' }))
 
   map.addControl(printControl())
   map.addControl(imageControl())
@@ -45,16 +48,16 @@ export default function (el, vnode, config) {
 }
 
 function createBaseLayers (options) {
-  let baseLayers = {}
+  const baseLayers = {}
   mapConfig.tileLayers.forEach(layer => {
-    baseLayers[ layer.title ] = L.tileLayer(layer[options.projection].url, options)
+    baseLayers[layer.title] = L.tileLayer(layer[options.projection].url, options)
   })
   return baseLayers
 }
 
 function baseLayerOptions (config) {
   const tms = config.baseLayer.tms
-  let options = {
+  const options = {
     attribution: config.attribution || mapConfig.attribution,
     maxZoom: config.maxZoom || mapConfig.maxZoom[config.projection],
     minZoom: config.minZoom || mapConfig.minZoom[config.projection],
@@ -68,8 +71,8 @@ function baseLayerOptions (config) {
 
 // because leaflet provides no way of telling if the controls have rendered,
 // we watch the control object until the dom element is created
-function whenReady (Control, cb) {
-  return new Proxy(Control, {
+function whenReady (control, cb) {
+  return new Proxy(control, {
     set (target, key, value) {
       if (key === '_container') {
         cb(value)
@@ -84,7 +87,7 @@ function whenReady (Control, cb) {
 function geoCoderControl (map) {
   let containerListenerInitialized = false
 
-  const Control = L.Control.geocoder({
+  const control = L.Control.geocoder({
     position: 'topright',
     defaultMarkGeocode: false,
     iconLabel: 'Start een nieuwe zoekopdracht',
@@ -110,7 +113,7 @@ function geoCoderControl (map) {
       // the control does not expand when programmatically clicking the trigger button (with keyboard e.g.),
       // so we add a listener that expands the control on click
       button.addEventListener('click', () => {
-        Control._expand()
+        control._expand()
       })
 
       // when the control is closed using the escape key, the focus should go back to the trigger button
@@ -124,13 +127,13 @@ function geoCoderControl (map) {
     }
   }
 
-  return whenReady(Control, el => {
+  return whenReady(control, el => {
     addListeners(el)
   })
 }
 
 function printControl () {
-  let Control = L.control.browserPrint({position: 'topright', printModes: ['auto']})
+  const control = L.control.browserPrint({ position: 'topright', printModes: ['auto'] })
 
   function makeFocusable (el) {
     const trigger = el.querySelector('.leaflet-browser-print')
@@ -139,23 +142,23 @@ function printControl () {
     trigger.setAttribute('href', '#')
   }
 
-  return whenReady(Control, el => {
+  return whenReady(control, el => {
     makeFocusable(el)
   })
 }
 
 function layerControl (layers) {
-  const Control = L.control.layers(layers)
+  const control = L.control.layers(layers)
 
   function addListener (el) {
     el.addEventListener('keydown', e => {
       if (e.key === 'Escape' || e.keyCode === 27) {
-        Control.collapse()
+        control.collapse()
       }
     })
   }
 
-  return whenReady(Control, (el) => {
+  return whenReady(control, (el) => {
     addListener(el)
   })
 }
@@ -206,6 +209,18 @@ function imageControl () {
     }).$mount(div)
 
     return button.$el
+  }
+}
+
+function roseControl () {
+  const control = L.control({ position: 'topright' })
+
+  control.onAdd = function () {
+    var div = L.DomUtil.create('div', '')
+
+    div.innerHTML = `<img width="34" style="padding:4px" src="${northIcon}" alt="">`
+
+    return div
   }
 
   return control

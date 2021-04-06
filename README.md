@@ -2,7 +2,7 @@
 Static frontend for LIWO (https://www.basisinformatie-overstromingen.nl/liwo/)
 
 # Info
-[![Build Status](https://travis-ci.com/Deltares/liwo-static.svg?branch=master)](https://travis-ci.com/Deltares/liwo-static)
+[![Build status](https://github.com/Deltares/liwo-static/actions/workflows/node.js.yml/badge.svg)](https://github.com/Deltares/liwo-static/actions/workflows/node.js.yml)
 
 [![BCH compliance](https://bettercodehub.com/edge/badge/Deltares/liwo-static?branch=master)](https://bettercodehub.com/)
 
@@ -22,10 +22,10 @@ npm install
 npm run serve
 
 # run unit tests
-npm run test
+npm run test:unit
 
 # run e2e tests
-npm run e2e
+npm run test:e2e
 
 # security audit
 npm audit
@@ -80,7 +80,7 @@ If you want to change the servers that are used you can adapt the `public/config
 If you want to deploy under a different url you can use the environment variable `BASE_URL`, for example by building `BASE_URL=/liwo npm run build`. That is also the default build. You can change the default build in .travis.yml.
 
 ## Deploy using docker
-If you want to deploy the docker version, you can use the Dockerfile in the main directory. It will build the website and add it to a container with an nginx webserver.
+If you want to deploy the docker version, you can use the Dockerfile in the main directory. It will build the website and add it to a container with an nginx webserver. Make sure you check the nginx.conf settings for details about the security settings.
 
 ## Sig review
 Create a release with `npm run release` and then run `./sig-deploy.sh` to download the latest zip file to the format liwo-static-yyyymmdd.zip. Upload that file to sig.

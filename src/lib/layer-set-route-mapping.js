@@ -3,8 +3,8 @@ import first from 'lodash/fp/first'
 
 const defaultRouteName = 'viewer'
 const mapping = {
-  'combine': [33],
-  'combined': [34]
+  combine: [33],
+  combined: [34]
 }
 
 export function getRouteNameByLayerSet (setId) {

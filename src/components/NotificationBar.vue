@@ -1,6 +1,6 @@
 <template>
-<ul class="viewer__notifications" v-if="editableNotifications && editableNotifications.length">
-  <li class="viewer__notification" v-for="(notification, index) in editableNotifications"
+<ul class="viewer__notifications" v-if="cleanNotifications && cleanNotifications.length">
+  <li class="viewer__notification" v-for="(notification, index) in cleanNotifications"
       :key="index"
       @click="notification.show = false"
       v-show="notification.show"
@@ -68,22 +68,13 @@ export default {
   },
   data () {
     return {
-      editableNotifications: [],
       publicPath: process.env.BASE_URL
     }
   },
-  watch: {
-    notifications (val) {
-      this.setNotifications()
-    }
-  },
-  mounted () {
-    this.editableNotifications = this.setNotifications()
-  },
-  methods: {
-    setNotifications () {
-      this.editableNotifications = _.map(this.notifications, (notification) => {
-        let result = { ...notification }
+  computed: {
+    cleanNotifications () {
+      return _.map(this.notifications, (notification) => {
+        const result = { ...notification }
         // use default type
         if (!['error', 'warning', 'info', 'confirm'].includes(notification.type)) {
           result.type = 'info'
@@ -92,6 +83,5 @@ export default {
       })
     }
   }
-
 }
 </script>

@@ -22,13 +22,9 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import PopUp from './PopUp'
 import availableBands from '@/lib/available-bands'
 
 export default {
-  components: {
-    PopUp
-  },
   data () {
     return {
       selected: null,

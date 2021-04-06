@@ -7,7 +7,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 
 import mapConfig from '@/map.config'
 import { getLayerType } from '@/lib/liwo-identifiers'
-import { greyIcon, redIcon, defaultIcon, iconsByLayerType } from '@/lib/leaflet-utils/markers'
+import { greyIcon, yellowIcon, defaultIcon, iconsByLayerType } from '@/lib/leaflet-utils/markers'
 
 import './cluster-icon.css'
 
@@ -47,7 +47,7 @@ function createCluster (layer, onClick) {
     maxClusterRadius: 60
   })
   // create the markers
-  let geojsonLayer = createClusterGeoJson(layer, (evt) => {
+  const geojsonLayer = createClusterGeoJson(layer, (evt) => {
     evt.geojsonLayer = geojsonLayer
     onClick(evt)
     clusterGroup.refreshClusters()
@@ -57,7 +57,7 @@ function createCluster (layer, onClick) {
   // add  the cluster to the group
   layerGroup.addLayer(clusterGroup)
   // now create the selected markers
-  let selectedLayer = createSelectedGeojson(layer, (evt) => {
+  const selectedLayer = createSelectedGeojson(layer, (evt) => {
     evt.geojsonLayer = selectedLayer
     onClick(evt)
     clusterGroup.refreshClusters()
@@ -90,27 +90,27 @@ function onEachFeature (feature, marker, layer, onClick) {
   if (marker.feature.properties.missing) {
     marker.setIcon(greyIcon)
   } else if (marker.feature.properties.selected) {
-    marker.setIcon(redIcon)
+    marker.setIcon(yellowIcon)
   } else {
-    let layerType = getLayerType(feature)
-    let icon = _.get(iconsByLayerType, layerType, defaultIcon)
+    const layerType = getLayerType(feature)
+    const icon = _.get(iconsByLayerType, layerType, defaultIcon)
     marker.setIcon(icon)
   }
 }
 
 function pointToLayer (feature, latlng, options) {
   // TODO: consider using circleMarker to allow faster and css based styling
-  let layer = L.marker(latlng, options)
+  const layer = L.marker(latlng, options)
   return layer
 }
 
 export function createClusterGeoJson (layer, onClick) {
   // create the geojson layer used as 0 level for the clusters
-  let opacity = _.get(layer.layerObj, 'properties.opacity', 1)
-  let markerOptions = {
+  const opacity = _.get(layer.layerObj, 'properties.opacity', 1)
+  const markerOptions = {
     opacity
   }
-  let options = {
+  const options = {
     // set custom  style for selected features
     onEachFeature: (feature, marker) => onEachFeature(feature, marker, layer, onClick),
     pointToLayer: (feature, latlng) => pointToLayer(feature, latlng, markerOptions)
@@ -118,7 +118,7 @@ export function createClusterGeoJson (layer, onClick) {
   if (_.has(layer, 'filter')) {
     options.filter = layer.filter
   }
-  let unselectedGeoJson = {
+  const unselectedGeoJson = {
     ...layer.geojson
   }
   unselectedGeoJson.features = unselectedGeoJson.features.filter(feature => !feature.properties.selected)
@@ -127,14 +127,14 @@ export function createClusterGeoJson (layer, onClick) {
 
 export function createSelectedGeojson (layer, onClick) {
   // create the markers for the selected geojsons
-  let options = {
+  const options = {
     onEachFeature: (feature, marker) => onEachFeature(feature, marker, layer, onClick),
     pointToLayer: (feature, latlng) => pointToLayer(feature, latlng, {})
   }
   if (_.has(layer, 'filter')) {
     options.filter = layer.filter
   }
-  let selectedGeoJson = {
+  const selectedGeoJson = {
     ...layer.geojson
   }
   selectedGeoJson.features = selectedGeoJson.features.filter(feature => feature.properties.selected)
@@ -142,16 +142,16 @@ export function createSelectedGeojson (layer, onClick) {
 }
 
 export function createTile (layer) {
-  let opacity = _.get(layer.layerObj, 'properties.opacity', 1)
+  const opacity = _.get(layer.layerObj, 'properties.opacity', 1)
   return L.tileLayer(layer.url, { opacity })
 }
 
 export async function createWms (layer) {
   // these options come frome the vaiant properties of the layer
-  let { namespace, attribution, style } = layer
+  const { namespace, attribution, style } = layer
   // fully visible by default
-  let opacity = _.get(layer.layerObj, 'properties.opacity', 1)
-  let url = await getGeoServerURL(namespace)
+  const opacity = _.get(layer.layerObj, 'properties.opacity', 1)
+  const url = await getGeoServerURL(namespace)
   return L.tileLayer.wms(url, {
     // TODO: layer is now sometimes a string, sometimes an object. Clean this up
     layers: layer.layer,
@@ -164,7 +164,7 @@ export async function createWms (layer) {
 }
 
 async function getGeoServerURL (namespace) {
-  let services = await mapConfig.getServices()
+  const services = await mapConfig.getServices()
   const DYNAMIC_GEOSERVER_URL = services.DYNAMIC_GEOSERVER_URL
   const STATIC_GEOSERVER_URL = services.STATIC_GEOSERVER_URL
   return namespace === 'LIWO_Operationeel'
@@ -174,12 +174,12 @@ async function getGeoServerURL (namespace) {
 
 function clusterIconCreateFunction (layer) {
   return function (cluster) {
-    let childCount = cluster.getChildCount()
-    let opacity = _.get(layer.layerObj, 'properties.opacity', 1)
-    let type = layer.layer
-    let icon = L.divIcon({
+    const childCount = cluster.getChildCount()
+    const opacity = _.get(layer.layerObj, 'properties.opacity', 1)
+    const type = layer.layer
+    const icon = L.divIcon({
       html: `<div class="cluster-icon cluster-icon__${type}" style="opacity: ${opacity};"><span>${childCount}</span></div>`,
-      className: ``,
+      className: '',
       iconSize: new L.Point(45, 45)
     })
     return icon

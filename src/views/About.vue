@@ -56,7 +56,7 @@ export default {
     }
   },
   async mounted () {
-    let services = await mapConfig.getServices()
+    const services = await mapConfig.getServices()
     this.version = services.VERSION
     this.datasetVersion = services.DATASET_VERSION
     this.backendVersion = services.BACKEND_VERSION
