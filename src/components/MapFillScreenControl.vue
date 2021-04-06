@@ -39,7 +39,7 @@ export default {
     toggle () {
       const container = this.map.getContainer()
 
-      if (this.activated) {
+      if (this.active) {
         container.style.cssText = this.originalStyles
       } else {
         container.style.cssText = 'position:fixed;left:0;top:0;height:100%;width:100%;z-index:3000;background-color:#fff;'
@@ -47,7 +47,7 @@ export default {
 
       this.map.invalidateSize()
 
-      this.activated = !this.activated
+      this.active = !this.active
     }
   }
 }
