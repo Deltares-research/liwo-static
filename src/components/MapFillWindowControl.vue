@@ -21,7 +21,7 @@ export default {
   data () {
     return {
       active: false,
-      originalStyles: '',
+      initialStyles: '',
       fullscreenIcon,
       exitFullscreenIcon,
       windowWidth: 0,
@@ -33,7 +33,7 @@ export default {
       return this.active ? this.exitFullscreenIcon : this.fullscreenIcon
     },
     activeStyles () {
-      // width & height need to be numbers, because otherwise leaflet-easyprint does not co-oparate well (height can not be determined)
+      // width & height need to be numbers, otherwise leaflet-easyprint does not co-oparate well (height can not be determined)
       return `position:fixed;left:0;top:0;height:${this.windowHeight}px;width:${this.windowWidth}px;z-index:3000;background-color:#fff;`
     }
   },
@@ -53,7 +53,8 @@ export default {
   },
   mounted () {
     const container = this.map.getContainer()
-    this.originalStyles = container.style.cssText
+    // store initial styles so we use them when this.active is set to false
+    this.initialStyles = container.style.cssText
 
     this.windowWidth = window.innerWidth
     this.windowHeight = window.innerHeight
@@ -71,9 +72,8 @@ export default {
       const container = this.map.getContainer()
 
       if (this.active) {
-        container.style.cssText = this.originalStyles
+        container.style.cssText = this.initialStyles
       } else {
-        // width & height need to be numbers, because otherwise leaflet-easyprint does not co-oparate well (height can not be determined)
         container.style.cssText = this.activeStyles
       }
 

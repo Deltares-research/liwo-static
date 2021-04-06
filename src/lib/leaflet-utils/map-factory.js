@@ -175,6 +175,7 @@ function fillWindowControl () {
   control.onAdd = function (map) {
     const div = L.DomUtil.create('div', '')
 
+    // mount vue component as control
     const button = new Vue({
       render: h => h(MapFillWindowControl, {
         props: {
@@ -195,6 +196,7 @@ function imageControl () {
   control.onAdd = function (map) {
     const div = L.DomUtil.create('div', '')
 
+    // mount vue component as control
     const button = new Vue({
       render: h => h(MapImageControl, {
         props: {

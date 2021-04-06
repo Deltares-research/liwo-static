@@ -7,7 +7,7 @@
     >
       <img :src="saveIcon" />
     </button>
-    <!-- TODO: add comment -->
+    <!-- the modal needs to be rendered outside of the map, the portal takes care of that -->
     <portal to="portal-target">
       <pop-up v-if="showPopUp" @close="showPopUp = false">
         <form action="" submit.prevent class="map-image-control__form">
@@ -82,6 +82,7 @@ export default {
       this.map.printPlugin._toggleControls(this.showControls)
 
       // wait for modal to close
+      // when executed directly, the modal is visible in the export
       setTimeout(async () => {
         this.map.printPlugin.printMap(this.exportSize, 'export')
       }, 500)
