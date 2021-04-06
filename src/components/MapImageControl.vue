@@ -41,8 +41,6 @@
 
           <button class="btn primary" @click.prevent.stop="exportAsImage">Exporteren als afbeelding</button>
         </form>
-
-        <!-- TODO: add coordinates of top left corner -->
       </pop-up>
     </portal>
   </div>
