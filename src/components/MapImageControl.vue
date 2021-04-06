@@ -14,8 +14,8 @@
             <h3 class="control-label">Interface</h3>
 
             <label>
-              Toon controls
               <input type="checkbox" v-model="showControls" />
+              Toon controls
             </label>
           </div>
 
@@ -104,5 +104,9 @@ export default {
 .map-image-control__form {
   padding: 30px;
   margin-bottom: 0;
+}
+
+.map-image-control__form h3 {
+  color: #000;
 }
 </style>
