@@ -27,7 +27,7 @@ jobs:
       - run: npx cypress info
       - run: node -p 'os.cpus()'
       - run: npm ci
-      - run: npm build
+      - run: npm run build
 
 
   ui-chrome-tests:
@@ -43,7 +43,7 @@ jobs:
       fail-fast: false
       matrix:
         # run copies of the current job in parallel
-        containers: [1, 2, 3, 4, 5]
+        containers: [1]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -91,7 +91,7 @@ jobs:
       fail-fast: false
       matrix:
         # run copies of the current job in parallel
-        containers: [1, 2, 3, 4, 5]
+        containers: [1]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -112,8 +112,8 @@ jobs:
         with:
           # we have already installed all dependencies above
           install: false
-          start: yarn start:ci
-          wait-on: "http://localhost:3000"
+          start: npm run serve
+          wait-on: "http://localhost:5000"
           wait-on-timeout: 120
           browser: firefox
           record: true
