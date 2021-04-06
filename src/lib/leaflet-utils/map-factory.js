@@ -5,7 +5,7 @@ import '@/lib/leaflet-hack'
 import mapConfig from '@/map.config'
 import { EPSG_3857 } from '../../lib/leaflet-utils/projections'
 import createCrs from '../../lib/leaflet-utils/create-crs'
-import MapFillScreenControl from '../../components/MapFillScreenControl'
+import MapFillWindowControl from '../../components/MapFillWindowControl'
 import MapImageControl from '../../components/MapImageControl'
 
 const INITIAL_BASELAYER = mapConfig.tileLayers[0].title
@@ -34,7 +34,7 @@ export default function (el, vnode, config) {
   map.addControl(layerControl(baseLayers))
 
   map.printPlugin = L.easyPrint({
-    // hidden: true,
+    hidden: true,
     exportOnly: true,
     hideControlContainer: false,
     position: 'topright',
@@ -176,7 +176,7 @@ function fillWindowControl () {
     const div = L.DomUtil.create('div', '')
 
     const button = new Vue({
-      render: h => h(MapFillScreenControl, {
+      render: h => h(MapFillWindowControl, {
         props: {
           map
         }
