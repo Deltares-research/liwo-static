@@ -2,10 +2,14 @@
 node_modules
 dist/
 backend-dist*/
+
 tests/e2e/reports/
+tests/e2e/screenshots/
+tests/e2e/videos/
 
 # sig review files
 *.zip
+*.tar.gz
 
 selenium-debug.log
 
