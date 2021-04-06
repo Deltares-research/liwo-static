@@ -16,6 +16,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.npm
+          # TODO: also store  build cache...
           key: npm-${{ hashFiles('package-lock.json') }}
           restore-keys: npm-
 
@@ -68,7 +69,7 @@ jobs:
           wait-on: "http://localhost:8080"
           wait-on-timeout: 120
           browser: chrome
-          record: false
+          record: true
           parallel: true
           group: "UI - Chrome"
           spec: tests/e2e/specs/*
@@ -120,7 +121,7 @@ jobs:
           wait-on: "http://localhost:8080"
           wait-on-timeout: 120
           browser: firefox
-          record: false
+          record: true
           parallel: true
           group: "UI - Firefox"
           spec: tests/e2e/specs/*
