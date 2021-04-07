@@ -1,6 +1,7 @@
+import { isPromise } from '@/lib/utils'
+import L from '@/lib/leaflet-utils/leaf'
 import createLayer from './leaflet-utils/layer-factory'
 import mapFactory from './leaflet-utils/map-factory'
-import L from '@/lib/leaflet-utils/leaf'
 
 let map
 let layerGroup
@@ -29,19 +30,15 @@ export default {
     const leafletLayers = layers
       .filter(layer => !layer.hide)
 
-    const promises = leafletLayers
-      .map(layer => {
-        const promise = createLayer(layer, callbacks, cluster)
-        return promise
-      })
+    leafletLayers
+      .map(layer => createLayer(layer, callbacks, cluster))
+      .filter(layer => layer)
+      .forEach(async layer => {
+        if (isPromise(layer)) {
+          layer = await layer
+        }
 
-    // wait for all layers to be created and then add them to the group
-    Promise.all(promises)
-      .then((leafletLayers) => {
-        // add leafletLayers to the L.layerGroup
-        leafletLayers
-          .filter(layer => layer)
-          .forEach(layer => layerGroup.addLayer(layer))
+        layerGroup.addLayer(layer)
       })
   }
 }
