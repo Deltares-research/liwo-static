@@ -70,13 +70,13 @@ export default {
     setPosition (map) {
       const { zoom, center } = this.$route.query
 
-      if (zoom) {
-        map.setZoom(zoom)
-      }
-
       if (center) {
         const [lat, lng] = center.split(',')
-        map.setView([lat, lng])
+        map.panTo(new window.L.LatLng(lat, lng))
+      }
+
+      if (zoom) {
+        map.setZoom(zoom)
       }
     },
     addPositionListeners (map) {
@@ -87,7 +87,7 @@ export default {
           ...this.$route,
           query: {
             ...this.$route.query,
-            center: `${lat.toFixed(3)},${lng.toFixed(3)}`,
+            center: `${lat.toFixed(5)},${lng.toFixed(5)}`,
             zoom
           }
         })
