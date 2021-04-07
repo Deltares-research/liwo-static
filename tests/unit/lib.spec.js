@@ -6,7 +6,7 @@ import { legendControl } from '@/lib/leaflet-utils/legend'
 
 describe('the lib utlities contains a render vue', () => {
   it('renders component', () => {
-    let element = renderVue(
+    const element = renderVue(
       {
         render (createElement) { return createElement('div', this.$slots.default) }
       },
@@ -18,7 +18,7 @@ describe('the lib utlities contains a render vue', () => {
 
 describe('the lib utlities contains a utility to create a legend', () => {
   it('creates a leaflet control', () => {
-    let control = legendControl()
+    const control = legendControl()
     expect(control).to.be.an.instanceof(L.Control)
   })
 })

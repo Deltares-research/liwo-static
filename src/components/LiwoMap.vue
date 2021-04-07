@@ -53,7 +53,7 @@ export default {
   mounted () {
     this.mapRef = this.$refs.liwoMap
     this.$on('browser-print-start', (evt) => {
-      let control = legendControl({position: 'bottomright', el: this.$refs.legend})
+      const control = legendControl({ position: 'bottomright', el: this.$refs.legend })
       control.addTo(evt.printMap)
     })
   },

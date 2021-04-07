@@ -106,9 +106,9 @@ export default {
       'currentNotifications'
     ]),
     selectedVariantId () {
-      let variantIndex = _.get(this.selectedLayer, 'properties.selectedVariant', 0)
-      let variant = _.get(this.selectedLayer, ['variants', variantIndex])
-      let id = _.get(variant, 'layer')
+      const variantIndex = _.get(this.selectedLayer, 'properties.selectedVariant', 0)
+      const variant = _.get(this.selectedLayer, ['variants', variantIndex])
+      const id = _.get(variant, 'layer')
       return id
     },
     selectedLayers () {
@@ -117,7 +117,7 @@ export default {
       }
       let result = flattenLayerSet(this.layerSet)
       result = result.filter(layer => {
-        let result = _.get(layer.layerObj.properties, 'visible', true)
+        const result = _.get(layer.layerObj.properties, 'visible', true)
         return result
       })
       return result
@@ -133,7 +133,7 @@ export default {
         return null
       }
       // if we have both, search for the layer  and return it
-      let result = _.find(this.layerSet.layers, ['id', this.selectedLayerId])
+      const result = _.find(this.layerSet.layers, ['id', this.selectedLayerId])
 
       return result
     }

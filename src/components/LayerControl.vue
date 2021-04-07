@@ -83,7 +83,7 @@ export default {
   computed: {
     selectedVariantIndex () {
       // get the selectedVariant from the layer
-      let index = _.get(this.layer, 'properties.selectedVariant', 0)
+      const index = _.get(this.layer, 'properties.selectedVariant', 0)
       return index
     },
     id () {
@@ -107,15 +107,15 @@ export default {
       }))
     },
     metadata () {
-      let variant = _.get(this.layer.variants, this.selectedVariantIndex)
-      let result = _.get(variant, 'metadata')
+      const variant = _.get(this.layer.variants, this.selectedVariantIndex)
+      const result = _.get(variant, 'metadata')
       return result
     }
   },
   methods: {
     setTransparancy ({ target }) {
       // Create a copy of the layer with the new opacity
-      let layer = { ...this.layer }
+      const layer = { ...this.layer }
       let opacity = 1 - _.toNumber(target.value)
       if (opacity < 0) {
         opacity = 0
@@ -128,7 +128,7 @@ export default {
     },
     setLayerVariant ({ target }) {
       // inform everybody up the tree that a variant for this layer changed
-      let selectedVariantIndex = _.toNumber(target.value)
+      const selectedVariantIndex = _.toNumber(target.value)
       this.$emit('select:variant', {
         layer: this.layer,
         variant: this.layer.variants[selectedVariantIndex],
@@ -139,7 +139,7 @@ export default {
       this.$emit('select:layer', this.layer)
     },
     toggleLayer (event) {
-      let layer = _.clone(this.layer)
+      const layer = _.clone(this.layer)
       layer.properties.visible = !layer.properties.visible
       this.$emit('update:layer', this.layer)
     }

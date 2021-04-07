@@ -3,12 +3,12 @@ import _ from 'lodash'
 import mapConfig from '../map.config.js'
 import { loadGeojson } from './load-geojson'
 
-const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
+const headers = { Accept: 'application/json', 'Content-Type': 'application/json' }
 
 export async function loadLayerSetById (id, options) {
   const body = JSON.stringify({ id })
 
-  let services = await mapConfig.getServices()
+  const services = await mapConfig.getServices()
   const apiBase = services.WEBSERVICE_URL
   let layerSet = await fetch(`${apiBase}/Maps.asmx/GetLayerSet`, {
     method: 'POST',
@@ -41,7 +41,7 @@ export async function loadLayerSetById (id, options) {
   // TODO: Only load data, don't clean yet
   // TODO: check if we have a layerSet or layer
   //
-  let title = layerSet.name || layerSet.title
+  const title = layerSet.name || layerSet.title
   layerSet = {
     ...layerSet,
     title: title,
@@ -68,12 +68,12 @@ export async function loadLayerSetById (id, options) {
   // TODO: we could consider returning data without the promise.all
   // that would respond a bit faster but now we show all data at once.
 
-  let layers = await Promise.all(
+  const layers = await Promise.all(
     layerSet.layers.map(async (layer) => {
-      let variants = await Promise.all(
+      const variants = await Promise.all(
         layer.variants.map(async (variant) => {
           if (_.includes(['json', 'cluster'], variant.map.type)) {
-            let geojson = await loadGeojson(variant.map)
+            const geojson = await loadGeojson(variant.map)
             variant.map.geojson = geojson
           }
           return variant
@@ -96,7 +96,7 @@ export async function loadLayerSets () {
     password: '',
     mode: ''
   })
-  let services = await mapConfig.getServices()
+  const services = await mapConfig.getServices()
   const apiBase = services.WEBSERVICE_URL
   return fetch(`${apiBase}/Authentication.asmx/Login`, {
     method: 'POST',

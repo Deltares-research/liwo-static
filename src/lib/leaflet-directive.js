@@ -9,7 +9,7 @@ let layerGroup
 // https://vuejs.org/v2/guide/components-edge-cases.html#Accessing-the-Parent-Component-Instance
 export default {
   bind (el, { value }, vnode) {
-    let { config, callbacks } = value
+    const { config, callbacks } = value
     map = mapFactory(el, vnode, config)
     layerGroup = L.layerGroup().addTo(map)
     callbacks.initMapObject(map)
@@ -22,16 +22,16 @@ export default {
 
     const { callbacks, cluster } = value
     // TODO: why? remove falsy values?
-    let layers = value.layers.filter(value => value)
+    const layers = value.layers.filter(value => value)
 
     layerGroup.clearLayers()
 
-    let leafletLayers = layers
+    const leafletLayers = layers
       .filter(layer => !layer.hide)
 
-    let promises = leafletLayers
+    const promises = leafletLayers
       .map(layer => {
-        let promise = createLayer(layer, callbacks, cluster, vnode)
+        const promise = createLayer(layer, callbacks, cluster, vnode)
         return promise
       })
 

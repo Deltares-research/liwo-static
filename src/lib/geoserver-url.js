@@ -13,7 +13,7 @@ export default async function ({
   if (!service || !request) {
     return undefined
   }
-  let services = await mapConfig.getServices()
+  const services = await mapConfig.getServices()
   const params = stringify({
     service,
     request,
