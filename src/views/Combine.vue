@@ -678,10 +678,10 @@ export default {
       })
     },
     handleMouseOver ({ feature, marker }) {
-      const variantIndex = this.selectedLayer.properties.selectedVariant
-      const variant = this.selectedLayer.variants[variantIndex]
-      if (!variant.iscontrollayer) {
-        marker.setTooltipContent(`${feature.properties.name} - ${variant.title}`)
+      const selectedLayer = this.selectedLayers.find(layer => layer.layerSet.id === feature.properties.id)
+
+      if (marker.feature.properties.selected && selectedLayer) {
+        marker.setTooltipContent(`${feature.properties.name} - ${selectedLayer.title}`)
       }
     }
   }
