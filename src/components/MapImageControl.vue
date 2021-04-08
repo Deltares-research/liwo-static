@@ -13,6 +13,24 @@
       <pop-up v-if="showPopUp" @close="showPopUp = false">
         <form action="" submit.prevent class="map-image-control__form">
           <div class="control-group">
+            <label for="name" class="control-label">
+              Bestandsnaam
+            </label>
+            <div>
+              <input
+                type="text"
+                name="name"
+                id="name"
+                autocomplete="off"
+                v-model="name"
+                class="map-image-control__text-input"
+                ref="nameInput"
+                @click="selectNameText"
+              />
+            </div>
+          </div>
+
+          <div class="control-group">
             <h3 class="control-label">Interface</h3>
 
             <label>
@@ -26,7 +44,11 @@
 
             <div v-for="size in sizes" :key="size.name">
               <label>
-                <input type="radio" :value="size.className" v-model="exportSize">
+                <input
+                  type="radio"
+                  :value="size.className"
+                  v-model="exportSize"
+                />
                 {{ size.name }}
               </label>
             </div>
@@ -35,11 +57,15 @@
           <div class="control-group">
             <h3 class="control-label">Locatie</h3>
 
-            <p class="map-image-control__location">Coördinaten linksboven: {{ origin.join(', ') }}</p>
+            <p class="map-image-control__location">
+              Coördinaten linksboven: {{ origin.join(', ') }}
+            </p>
             <p>Zoomniveau: {{ zoomLevel }}</p>
           </div>
 
-          <button class="btn primary" @click.prevent.stop="exportAsImage">Exporteren als afbeelding</button>
+          <button class="btn primary" @click.prevent.stop="exportAsImage">
+            Exporteren als afbeelding
+          </button>
         </form>
       </pop-up>
     </portal>
@@ -62,6 +88,7 @@ export default {
   },
   data () {
     return {
+      name: 'export',
       showControls: true,
       exportSize: 'CurrentSize',
       exporting: false,
@@ -92,8 +119,11 @@ export default {
       // wait for modal to close
       // when executed directly, the modal is visible in the export
       setTimeout(async () => {
-        this.map.printPlugin.printMap(this.exportSize, 'export')
+        this.map.printPlugin.printMap(this.exportSize, this.name)
       }, 500)
+    },
+    selectNameText () {
+      this.$refs.nameInput.select()
     }
   }
 }
@@ -124,6 +154,11 @@ export default {
 
 .map-image-control__location {
   margin-bottom: 0;
+}
+
+.map-image-control__text-input {
+  display: block;
+  width: 20rem;
 }
 
 /* hide easyPrint control, because we want to use our custom button */
