@@ -9,13 +9,12 @@
       layers: layers,
       cluster: clusterMarkers,
       }"
-    ></div>
-    <div ref="legend">
-      <slot name="legend"></slot>
+    >
+      <div ref="legend">
+        <slot name="legend"></slot>
+      </div>
     </div>
-
   </div>
-
 </template>
 
 <script>
