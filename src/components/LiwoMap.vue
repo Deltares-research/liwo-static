@@ -40,6 +40,18 @@ export default {
       default: true
     }
   },
+  data () {
+    return {
+      map: null
+    }
+  },
+  watch: {
+    '$route.query' () {
+      if (this.map) {
+        this.setPosition()
+      }
+    }
+  },
   created () {
     this.mapConfig = createMapConfig({
       projection: this.projection
@@ -58,29 +70,30 @@ export default {
       this.$emit('click', event)
     },
     initMapObject (mapObject) {
+      this.map = mapObject
       this.$emit('initMap', mapObject)
       // pass along click to map objects
       mapObject.on('click', event => {
         // pass the  map click event on up
         this.$emit('map:click', event)
       })
-      this.setPosition(mapObject)
-      this.addPositionListeners(mapObject)
+      this.setPosition()
+      this.addPositionListeners()
     },
-    setPosition (map) {
+    setPosition () {
       const { zoom, center } = this.$route.query
 
       if (center) {
         const [lat, lng] = center.split(',')
-        map.panTo(new window.L.LatLng(lat, lng))
+        this.map.panTo(new window.L.LatLng(lat, lng))
       }
 
       if (zoom) {
-        map.setZoom(zoom)
+        this.map.setZoom(zoom)
       }
     },
-    addPositionListeners (map) {
-      map.on('move', debounce((e) => {
+    addPositionListeners () {
+      this.map.on('move', debounce((e) => {
         const { lat, lng } = e.target.getCenter()
         const zoom = e.target.getZoom()
         this.$router.replace({
