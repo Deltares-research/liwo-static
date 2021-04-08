@@ -2,7 +2,7 @@
   <button
     title="Enlarge map"
     class="map-fill-screen-control leaflet-bar"
-    @click="toggle"
+    @click.prevent.stop="toggle"
   >
     <img :src="imgSrc" alt="" />
   </button>
