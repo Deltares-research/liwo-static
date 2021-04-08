@@ -1,3 +1,4 @@
+import deepEqual from 'deep-equal'
 import { isPromise } from '@/lib/utils'
 import L from '@/lib/leaflet-utils/leaf'
 import createLayer from './leaflet-utils/layer-factory'
@@ -16,7 +17,7 @@ export default {
     callbacks.initMapObject(map)
   },
   update (_, { value, oldValue }) {
-    if (value === oldValue) {
+    if (deepEqual(value, oldValue)) {
       return
     }
     // TODO: use vue2-leaflet so we don't have to pass a magic  attribute
@@ -24,6 +25,7 @@ export default {
     const { callbacks, cluster } = value
     // TODO: why? remove falsy values?
     const layers = value.layers.filter(value => value)
+    console.log(layers)
 
     layerGroup.clearLayers()
 
