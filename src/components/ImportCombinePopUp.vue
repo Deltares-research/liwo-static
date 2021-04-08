@@ -97,7 +97,10 @@ export default {
 
         this.$emit('close')
         // go to the new page
-        this.$router.push({ params: { ids: newIds.join(',') } })
+        this.$router.push({
+          params: { ids: newIds.join(',') },
+          query: this.$route.query
+        })
         this.$emit('update')
       }
     }
