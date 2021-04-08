@@ -220,6 +220,8 @@ function roseControl () {
   control.onAdd = function () {
     var div = L.DomUtil.create('div', '')
 
+    div.classList.add('leaflet-control-map-rose')
+
     div.innerHTML = `<img width="34" style="padding:4px" src="${northIcon}" alt="">`
 
     return div

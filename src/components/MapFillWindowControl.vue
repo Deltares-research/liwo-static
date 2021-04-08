@@ -1,7 +1,7 @@
 <template>
   <button
     title="Enlarge map"
-    class="map-fill-screen-control leaflet-bar"
+    class="leaflet-control-fill-window leaflet-bar"
     @click.prevent.stop="toggle"
   >
     <img :src="imgSrc" alt="" />
@@ -87,7 +87,7 @@ export default {
 </script>
 
 <style>
-.map-fill-screen-control {
+.leaflet-control-fill-window {
   width:30px;
   height:30px;
   box-sizing:content-box;

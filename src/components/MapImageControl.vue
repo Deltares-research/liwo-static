@@ -2,7 +2,7 @@
   <div class="map-image-control">
     <button
       title="Export as image"
-      class="map-image-control__button leaflet-bar"
+      class="leaflet-control-image map-image-control__button leaflet-bar"
       :disabled="exporting"
       @click.prevent.stop="showPopUp = true"
     >
@@ -13,9 +13,7 @@
       <pop-up v-if="showPopUp" @close="showPopUp = false">
         <form action="" submit.prevent class="map-image-control__form">
           <div class="control-group">
-            <label for="name" class="control-label">
-              Bestandsnaam
-            </label>
+            <label for="name" class="control-label"> Bestandsnaam </label>
             <div>
               <input
                 type="text"
@@ -33,10 +31,12 @@
           <div class="control-group">
             <h3 class="control-label">Interface</h3>
 
-            <label>
-              <input type="checkbox" v-model="showControls" />
-              Toon controls
-            </label>
+            <div v-for="control in controls" :key="control.class">
+              <label>
+                <input type="checkbox" v-model="control.enabled" />
+                {{ control.name }}
+              </label>
+            </div>
           </div>
 
           <div class="control-group">
@@ -76,6 +76,21 @@
 import PopUp from './PopUp'
 import saveIcon from '../img/save_alt.svg'
 
+// hardcoded list of available controls in interface
+// used to hide controls in export
+// TODO: add control class to list if new control is added
+const allControls = [
+  'legend-panel',
+  'leaflet-control-map-rose',
+  'leaflet-control-fill-window',
+  'leaflet-control-geocoder',
+  'leaflet-control-zoom',
+  'leaflet-control-browser-print',
+  'leaflet-control-image',
+  'leaflet-control-layers',
+  'leaflet-control-scale'
+]
+
 export default {
   components: {
     PopUp
@@ -89,11 +104,27 @@ export default {
   data () {
     return {
       name: 'export',
-      showControls: true,
       exportSize: 'CurrentSize',
       exporting: false,
       showPopUp: false,
-      saveIcon
+      saveIcon,
+      controls: [
+        {
+          name: 'Noordpijl',
+          className: 'leaflet-control-map-rose',
+          enabled: false
+        },
+        {
+          name: 'Schaalindicator',
+          className: 'leaflet-control-scale',
+          enabled: false
+        },
+        {
+          name: 'Legenda',
+          className: 'legend-panel',
+          enabled: false
+        }
+      ]
     }
   },
   computed: {
@@ -112,14 +143,25 @@ export default {
   },
   methods: {
     exportAsImage () {
-      this.showPopUp = false
+      // get enabled controls
+      const enabledControlClasses = this.controls
+        .filter(({ enabled }) => enabled)
+        .map(({ className }) => className)
+      // exclude enabled controls from list of classes to hide
+      const disabledControlClasses = allControls.filter(controlClass => !enabledControlClasses.includes(controlClass))
 
-      this.map.printPlugin._toggleControls(this.showControls)
+      // hide all controls except the ones enabled
+      this.map.printPlugin._toggleClasses(disabledControlClasses)
 
       // wait for modal to close
       // when executed directly, the modal is visible in the export
+      this.showPopUp = false
       setTimeout(async () => {
         this.map.printPlugin.printMap(this.exportSize, this.name)
+
+        this.map.on('easyPrint-finished', () => {
+          this.map.printPlugin._toggleClasses(disabledControlClasses, true)
+        })
       }, 500)
     },
     selectNameText () {
