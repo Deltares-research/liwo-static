@@ -7,6 +7,9 @@ import router from './router'
 import store from './store'
 import VueHead from 'vue-head'
 
+// Plugin loads the matomo settings, available under $matomo
+import './plugins/vue-matomo.js'
+
 // Babel JS switched to core-js
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
