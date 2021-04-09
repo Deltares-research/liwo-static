@@ -4,6 +4,7 @@
       <nav class="app-header__top-nav">
         <router-link :to="{name: 'contact'}">Contact</router-link>
         <router-link :to="{name: 'accessibility'}">Toegankelijkheid</router-link>
+        <a  href="https://www.rijkswaterstaat.nl/cookies">Cookies</a>
       </nav>
       <a href="/" class="logo"><img src="https://staticresources.rijkswaterstaat.nl/assets/img/logo.png?v=2.19.2" width="270" height="72" alt="Rijkswaterstaat Ministerie van Infrastructuur en Waterstaat." class="accessibility"></a>
   </div>

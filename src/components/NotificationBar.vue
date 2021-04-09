@@ -10,7 +10,7 @@
            >
       <div class="container">
         <img class="notification-bar__icon" :src="`${publicPath}icons/baseline-${notification.type}-24px.svg`"  />
-        <p class="notification-bar__message">{{ notification.message }} </p>
+        <p class="notification-bar__message">{{ notification.message }}</p>
         <button class="pop-up__close icon-close-big panel-close"><span class="sr-only">Sluiten</span></button>
       </div>
     </aside>
@@ -68,12 +68,21 @@ export default {
   },
   data () {
     return {
-      publicPath: process.env.BASE_URL
+      publicPath: process.env.BASE_URL,
+      cleanNotifications: []
     }
   },
-  computed: {
-    cleanNotifications () {
-      return _.map(this.notifications, (notification) => {
+  watch: {
+    notifications () {
+      this.formatNotifications()
+    }
+  },
+  mounted () {
+    this.formatNotifications()
+  },
+  methods: {
+    formatNotifications () {
+      this.cleanNotifications = _.map(this.notifications, (notification) => {
         const result = { ...notification }
         // use default type
         if (!['error', 'warning', 'info', 'confirm'].includes(notification.type)) {

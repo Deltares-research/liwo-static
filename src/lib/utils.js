@@ -108,3 +108,5 @@ export const notNaN = negate(isNaN)
 export const wrapInProperty = curry((property, value) => ({ [property]: value }))
 
 export const apply = curry((fns, value) => fns.map(fn => fn(value)))
+
+export const isPromise = (value) => Boolean(value && typeof value.then === 'function')
