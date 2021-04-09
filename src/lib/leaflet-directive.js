@@ -25,7 +25,6 @@ export default {
     const { callbacks, cluster } = value
     // TODO: why? remove falsy values?
     const layers = value.layers.filter(value => value)
-    console.log(layers)
 
     layerGroup.clearLayers()
 
