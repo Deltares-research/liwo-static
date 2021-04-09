@@ -11,7 +11,7 @@ import { greyIcon, yellowIcon, defaultIcon, iconsByLayerType } from '@/lib/leafl
 
 import './cluster-icon.css'
 
-export default async function createLayer (layer, { onClick }) {
+export default function createLayer (layer, { onClick }) {
   if (layer.type === 'json' && layer.geojson) {
     return createGeoJson(layer)
   } else if (layer.type === 'cluster') {
