@@ -11,6 +11,7 @@ import { greyIcon, yellowIcon, defaultIcon, iconsByLayerType } from '@/lib/leafl
 
 import './cluster-icon.css'
 
+
 // store vnode so we can use it to interact with the component using the directive using events
 // TODO: rewrite directive as component so we can handle this is clearer way
 let vnode
@@ -26,7 +27,7 @@ function emit (vnode, name, data) {
   }
 }
 
-export default async function createLayer (layer, { onClick }, _, vnodeRef) {
+export default function createLayer (layer, { onClick }, _, vnodeRef) {
   vnode = vnodeRef
   if (layer.type === 'json' && layer.geojson) {
     return createGeoJson(layer)

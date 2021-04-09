@@ -19,11 +19,11 @@
         <template v-slot:default>
           <layer-panel-item
             :layers="layerSet.layers"
+            :selectedLayer="selectedLayer"
             @update:layers="updateLayers(layerSet, $event)"
             @select:layer="selectLayer"
             @select:variant="selectVariant"
-            />
-
+          />
         </template>
         <template v-slot:actions>
           <button

@@ -1,54 +1,26 @@
-// For authoring Nightwatch tests, see
-// http://nightwatchjs.org/guide#usage
+// https://docs.cypress.io/api/introduction/api.html
 
-module.exports = {
-  'home page': browser => {
-    browser
-      .url(process.env.VUE_DEV_SERVER_URL)
-      .waitForElementVisible('#app', 5000)
-      .assert.elementPresent('.home')
-      .end()
-  },
-  'about page': browser => {
-    browser
-      .url(process.env.VUE_DEV_SERVER_URL + '#/about')
-      .waitForElementVisible('#app', 5000)
-      .assert.elementPresent('.about')
-      .end()
-  },
-  'maps page': browser => {
-    browser
-      .url(process.env.VUE_DEV_SERVER_URL + '#/maps')
-      .waitForElementVisible('#app', 5000)
-      .assert.elementPresent('.maps')
-      .end()
-  },
-  'viewer page': browser => {
-    browser
-      .url(process.env.VUE_DEV_SERVER_URL + '#/viewer/1')
-      .waitForElementVisible('#app', 5000)
-      .assert.elementPresent('.viewer')
-      .end()
-  },
-  'scenarios page': browser => {
-    browser
-      .url(process.env.VUE_DEV_SERVER_URL + '#/scenarios')
-      .waitForElementVisible('#app', 5000)
-      .assert.elementPresent('.viewer')
-      .end()
-  },
-  'combine page': browser => {
-    browser
-      .url(process.env.VUE_DEV_SERVER_URL + '#/combine')
-      .waitForElementVisible('#app', 5000)
-      .assert.elementPresent('.viewer')
-      .end()
-  },
-  'combined page': browser => {
-    browser
-      .url(process.env.VUE_DEV_SERVER_URL + '#/combined/1,2/waterdepth')
-      .waitForElementVisible('#app', 5000)
-      .assert.elementPresent('.viewer')
-      .end()
-  }
-}
+describe('Content of the page', () => {
+  it('Visits the app root url', () => {
+    cy.visit('/')
+    cy.contains('h1', 'LIWO')
+    cy.get('.landing-body a')
+      .should('have.prop', 'href')
+      .and('equal', 'https://www.overstroomik.nl/')
+  })
+})
+
+describe('Maps', () => {
+  it('Opens the Bekijk Overstromingsscenario\'s map', () => {
+    cy.visit('#/scenarios/6')
+    cy.contains('h1', "Bekijken overstromingsscenario's")
+
+    cy.get('#gebiedsindeling_doorbraaklocaties_regionaal__LIWO_Basis_Doorbraaklocaties_Regionaal > .layer-control__main > .layer-control__vis-label')
+      .click()
+
+    cy.get('#gebiedsindeling_doorbraaklocaties_primair__LIWO_Basis_Doorbraaklocaties_Primair .layer-control__title')
+      .click()
+
+    cy.screenshot()
+  })
+})

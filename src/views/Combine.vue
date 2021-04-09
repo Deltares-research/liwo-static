@@ -548,12 +548,11 @@ export default {
       const wasSelected = !selected
 
       // set feature properties for reactive components
-      if (this.selectFeatureMode === 'single') {
-        // deselect all features
-        this.selectedFeatures.map(feature => {
-          feature.properties.selected = false
-        })
-      }
+      // deselect all features
+      this.selectedFeatures.map(feature => {
+        feature.properties.selected = false
+      })
+
       // select the feature
       feature.properties.selected = selected
 
