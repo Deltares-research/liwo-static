@@ -11,7 +11,6 @@ import { greyIcon, yellowIcon, defaultIcon, iconsByLayerType } from '@/lib/leafl
 
 import './cluster-icon.css'
 
-
 // store vnode so we can use it to interact with the component using the directive using events
 // TODO: rewrite directive as component so we can handle this is clearer way
 let vnode
