@@ -11,7 +11,23 @@ import { greyIcon, yellowIcon, defaultIcon, iconsByLayerType } from '@/lib/leafl
 
 import './cluster-icon.css'
 
-export default function createLayer (layer, { onClick }) {
+// store vnode so we can use it to interact with the component using the directive using events
+// TODO: rewrite directive as component so we can handle this is clearer way
+let vnode
+
+// emit custom events to the component implementing the directive
+// when vnode.context.$emit does not workd
+function emit (vnode, name, data) {
+  var handlers = (vnode.data && vnode.data.on) ||
+    (vnode.componentOptions && vnode.componentOptions.listeners)
+
+  if (handlers && handlers[name]) {
+    handlers[name].fns(data)
+  }
+}
+
+export default function createLayer (layer, { onClick }, _, vnodeRef) {
+  vnode = vnodeRef
   if (layer.type === 'json' && layer.geojson) {
     return createGeoJson(layer)
   } else if (layer.type === 'cluster') {
@@ -72,19 +88,23 @@ function createCluster (layer, onClick) {
 
 // set custom  style for selected features
 function onEachFeature (feature, marker, layer, onClick) {
-  const { name, selectedVariant } = feature.properties
-  // TODO: move this out of here...
-  marker.bindTooltip(`${name}${selectedVariant ? ` - ${selectedVariant}` : ''}`)
+  const { name } = feature.properties
   // TODO: implement is  controllable
   marker.on('click', (evt) => {
     evt.layer = layer
     onClick(evt)
   })
   marker.on('mouseover', (event) => {
+    marker.bindTooltip(name)
+
+    // emit properties so e.g. state can be used to set tooltip text
+    emit(vnode, 'marker:mouseover', { feature, marker })
+
     event.target.openTooltip()
   })
   marker.on('mouseout', (event) => {
     event.target.closeTooltip()
+    marker.unbindTooltip()
   })
   // color selected feature as red
   if (marker.feature.properties.missing) {

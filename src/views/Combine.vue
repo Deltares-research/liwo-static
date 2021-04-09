@@ -6,6 +6,7 @@
         :clusterMarkers="true"
         :layers="selectedLayers"
         @click="selectFeature"
+        @marker:mouseover="handleMouseOver"
         @initMap="setMapObject"
       >
         <template slot="legend">
@@ -694,6 +695,13 @@ export default {
           latlng: event.latlng
         })
       })
+    },
+    handleMouseOver ({ feature, marker }) {
+      const selectedLayer = this.selectedLayers.find(layer => layer.layerSet.id === feature.properties.id)
+
+      if (marker.feature.properties.selected && selectedLayer) {
+        marker.setTooltipContent(`${feature.properties.name} - ${selectedLayer.title}`)
+      }
     }
   }
 }

@@ -16,7 +16,7 @@ export default {
     layerGroup = L.layerGroup().addTo(map)
     callbacks.initMapObject(map)
   },
-  update (_, { value, oldValue }) {
+  update (_, { value, oldValue }, vnode) {
     if (deepEqual(value, oldValue)) {
       return
     }
