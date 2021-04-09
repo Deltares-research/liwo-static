@@ -18,6 +18,8 @@
       </div>
     </footer>
   </div>
+
+  <portal-target name="portal-target" />
 </div>
 </template>
 

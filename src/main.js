@@ -6,6 +6,7 @@ import VueSkipTo from '@vue-a11y/skip-to'
 import router from './router'
 import store from './store'
 import VueHead from 'vue-head'
+import PortalVue from 'portal-vue'
 
 // Plugin loads the matomo settings, available under $matomo
 import './plugins/vue-matomo.js'
@@ -22,6 +23,7 @@ Vue.config.productionTip = false
 Vue.directive('leaflet', leafletDirective)
 Vue.use(VueHead)
 Vue.use(VueSkipTo)
+Vue.use(PortalVue)
 
 new Vue({
   router,

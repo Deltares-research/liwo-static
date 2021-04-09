@@ -1,9 +1,12 @@
+import Vue from 'vue'
 import L from '@/lib/leaflet-utils/leaf'
 
 import '@/lib/leaflet-hack'
 import mapConfig from '@/map.config'
 import { EPSG_3857 } from '../../lib/leaflet-utils/projections'
 import createCrs from '../../lib/leaflet-utils/create-crs'
+import MapFillWindowControl from '../../components/MapFillWindowControl'
+import MapImageControl from '../../components/MapImageControl'
 import northIcon from '../../img/north-arrow.svg'
 
 const INITIAL_BASELAYER = mapConfig.tileLayers[0].title
@@ -23,11 +26,13 @@ export default function (el, vnode, config) {
   map.setZoom(config.zoom || mapConfig.zoom)
 
   map.addControl(roseControl())
+  map.addControl(fillWindowControl())
   map.addControl(geoCoderControl(map))
   map.addControl(L.control.zoom({ position: 'topright' }))
   map.addControl(L.control.scale({ position: 'bottomleft' }))
 
   map.addControl(printControl())
+  map.addControl(imageControl())
 
   map.addControl(layerControl(baseLayers))
 
@@ -158,11 +163,64 @@ function layerControl (layers) {
   })
 }
 
+function fillWindowControl () {
+  const control = L.control({ position: 'topright' })
+
+  control.onAdd = function (map) {
+    const div = L.DomUtil.create('div', '')
+
+    // mount vue component as control
+    const button = new Vue({
+      render: h => h(MapFillWindowControl, {
+        props: {
+          map
+        }
+      })
+    }).$mount(div)
+
+    return button.$el
+  }
+
+  return control
+}
+
+function imageControl () {
+  const control = L.control({ position: 'topright' })
+
+  control.onAdd = function (map) {
+    map.printPlugin = L.easyPrint({
+      hidden: true,
+      exportOnly: true,
+      hideControlContainer: false,
+      position: 'topright',
+      filename: 'export',
+      sizeModes: ['Current', 'A4Landscape', 'A4Portrait']
+    }).addTo(map)
+
+    const div = L.DomUtil.create('div', '')
+
+    // mount vue component as control
+    const button = new Vue({
+      render: h => h(MapImageControl, {
+        props: {
+          map
+        }
+      })
+    }).$mount(div)
+
+    return button.$el
+  }
+
+  return control
+}
+
 function roseControl () {
   const control = L.control({ position: 'topright' })
 
   control.onAdd = function () {
     var div = L.DomUtil.create('div', '')
+
+    div.classList.add('leaflet-control-map-rose')
 
     div.innerHTML = `<img width="34" style="padding:4px" src="${northIcon}" alt="">`
 

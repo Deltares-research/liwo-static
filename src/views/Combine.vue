@@ -443,7 +443,8 @@ export default {
       this.$router.replace({
         params: {
           ids: path
-        }
+        },
+        query: this.$route.query
       })
     },
     selectLayer (layer) {

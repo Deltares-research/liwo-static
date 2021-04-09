@@ -54,6 +54,8 @@ export default {
     max-width: 20rem;
     height: auto;
     background-color: var(--white);
+    font-family: "RijksoverheidSansText", Verdana, Arial, sans-serif;
+    font-size: 1rem;
   }
   .legend-panel__title {
     text-align: center;
