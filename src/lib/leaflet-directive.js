@@ -32,7 +32,7 @@ export default {
       .filter(layer => !layer.hide)
 
     leafletLayers
-      .map(layer => createLayer(layer, callbacks, cluster))
+      .map(layer => createLayer(layer, callbacks, cluster, vnode))
       .filter(layer => layer)
       .forEach(async layer => {
         if (isPromise(layer)) {
