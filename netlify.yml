@@ -1,0 +1,12 @@
+[[headers]]
+  # Define which paths this specific [[headers]] block will cover.
+  for = "/*"
+
+  [headers.values]
+    X-Frame-Options "SAMEORIGIN" always;
+    X-Content-Type-Options "nosniff" always;
+    # strip detailed information about the origin
+    Referrer-Policy "origin";
+    # allow for the map to move to the current location
+    Feature-Policy "geolocation 'self'";
+    Content-Security-Policy "default-src 'self' data: *.rijkswaterstaat.nl; form-action 'self'; script-src 'self' data: *.rijkswaterstaat.nl 'unsafe-eval'; connect-src 'self' data: *.rijkswaterstaat.nl *.deltares.nl *.deltares.nl:8080 *.appspot.com *.openstreetmap.org *.nationaalgeoregister.nl earthengine.googleapis.com *.toegankelijkheidsverklaring.nl *.pdok.nl; img-src 'self' data: *.rijkswaterstaat.nl *.deltares.nl *.deltares.nl:8080 *.appspot.com *.openstreetmap.org *.nationaalgeoregister.nl earthengine.googleapis.com *.toegankelijkheidsverklaring.nl *.pdok.nl; style-src 'self' data: *.rijkswaterstaat.nl 'unsafe-inline';"

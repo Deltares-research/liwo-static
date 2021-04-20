@@ -1,0 +1,334 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "https://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="generator" content="TextMate https://macromates.com/">
+	<meta name="author" content="Erik van Blokland">
+	<!-- Date: 2013-09-03 -->
+
+    		<title>Rijksoverheid Web Fonts GM v3.001, January 2014</title>
+    		<style type="text/css">
+				
+/*
+				Note to implementors of the Rijksoverheid webfonts:
+				
+				The following @font-face definitions are for this limited proof **only**.
+
+				These are NOT intended as templates or bulletproof examples on how these
+				fonts need to be deployed. Please follow best practice or established
+				rules for writing these rules. 
+				
+				For instance, it might be a good idea to shorten the font file names.
+				For support of some older platforms it might be necessary to also 
+				send .ttf files.
+				
+				For some more protection it might be a good idea to encode the fonts into 
+				base64 hex strings that can be embedded in a single css file. 
+
+*/
+				
+				
+    			@font-face {
+    				font-family: "Sans";
+    				src: url("ROsanswebtextregular.eot?") format("embedded-opentype"),
+    				     url("ROsanswebtextregular.woff") format("opentype");
+    				font-style: normal;
+    				font-weight: normal;
+    			}
+    			@font-face {
+    				font-family: "Sans";
+    				src: url("ROsanswebtextitalic.eot?") format("embedded-opentype"),
+    				     url("ROsanswebtextitalic.woff") format("opentype");
+    				font-style: italic;
+    				font-weight: normal;
+    			}
+    			@font-face {
+    				font-family: "Sans";
+    				src: url("ROsanswebtextbold.eot?") format("embedded-opentype"),
+    				     url("ROsanswebtextbold.woff") format("opentype");
+     				font-weight: bold;
+    				font-style: normal;
+    			}
+
+    			@font-face {
+    				font-family: "Serif";
+    				src: url("ROserifwebregular.eot?") format("embedded-opentype"),
+    				     url("ROserifwebregular.woff") format("opentype");
+    				font-style: normal;
+    				font-weight: normal;
+    			}
+    			@font-face {
+    				font-family: "Serif";
+    				src: url("ROserifwebitalic.eot?") format("embedded-opentype"),
+    				     url("ROserifwebitalic.woff") format("opentype");
+    				font-style: italic;
+    				font-weight: normal;
+    			}
+    			@font-face {
+    				font-family: "Serif";
+    				src: url("ROserifwebbold.eot?") format("embedded-opentype"),
+    				     url("ROserifwebbold.woff") format("opentype");
+     				font-weight: bold;
+    				font-style: normal;
+    			}
+
+    			body {
+    				margin: 30px 30px 0px 30px;
+    				font-family: "Sans";
+                    
+    			}
+
+    			table.controlWaterfall {
+    				margin-bottom: 30px;
+    				border-collapse: collapse;
+    				text-align: left;
+    			}
+
+    			table.controlWaterfall th {
+    				padding: 3px;
+    				color: black;
+    				background-color: #bfbfbf;
+    				border: 1px solid #7f7f7f;
+    				font-family: Helvetica, Verdana, Arial, sans-serif;
+    				font-weight: normal;
+    				font-size: 10px;
+    			}
+
+    			table.controlWaterfall td {
+    				padding-top: 3px;
+    				padding-bottom: 3px;
+    				padding-left: 5px;
+    				padding-right: 5px;
+    				border: 1px solid #7f7f7f;
+    			}
+
+    			table.controlWaterfall p {
+    				margin: .2em 0px .2em 0px;
+    				line-height: 130%;
+    			}
+
+        		.oldstyle2{
+                    font-feature-settings: "onum";
+                    -moz-font-feature-settings: "onum";
+                    -webkit-font-feature-settings: "onum";            
+        		}
+                
+                h1{
+                	background-color:rgba(51,51,51,0.62);
+                	color: white;
+    			    font-family: "Sans";
+    			    font-weight: normal; 
+    			    line-height: 1.4;
+    			    margin:0;
+    			    padding-left: 0.4em;
+                }
+                h1.title{
+    			    font-size: 90px;
+                }
+    			h1.sans{
+    			    font-family: "Sans";
+    			    font-size: 50px;
+    			    }
+    			h1.serif{
+    			    font-family: "Serif";
+    			    font-size: 50px;
+    			    }
+    			h2{
+                	background-color:rgba(124,124,124,0.62);
+                	color: white;
+                	font-weight: normal;
+    			    line-height: 1.4;
+    			    margin:0;
+    			    padding-left: 0.4em;
+    			}
+
+
+                span.sr {
+                	font-size: 50px;
+                	font-family: "Sans";
+    				line-height:120%
+                }
+                span.si {
+                	font-size: 50px;
+                	font-family: "Sans";
+                	font-style: italic;
+    				line-height:120%
+                }
+                span.sb {
+                	font-size: 50px;
+                	font-family: "Sans";
+                	font-weight: bold;
+    				line-height:120%
+                }
+                span.tr {
+                	font-size: 50px;
+                	font-family: "Serif";
+    				line-height:120%
+                }
+                span.ti {
+                	font-size: 50px;
+                	font-family: "Serif";
+                	font-style: italic;
+    				line-height:120%
+                }
+                span.tb {
+                	font-size: 50px;
+                	font-family: "Serif";
+                	font-weight: bold;
+    				line-height:120%
+                }
+
+                a{
+                	text-decoration: None;
+                }
+                a:link {
+                	color: #0e1d60
+                	background-color:rgba(161,168,247,0.28)
+					}
+                a:hover {
+                	color:#3b6ee6;
+                	background-color:rgba(161,197,248,0.28)
+                	}
+                a:visited {
+                	color:#3b6ee6;
+                	background-color:rgba(185,189,240,0.28)
+                	}
+                
+                li{list-style-type: none}
+                
+                div.box{
+	                background-color:rgba(85,85,85,0.10);
+	                padding: 0;
+	                margin: 0;
+                }
+                p{
+    			    line-height: 1.4;
+    			    padding-left: 0.4em;
+                }
+                
+
+    </style>
+    </head>
+<body>
+
+<div class="box">
+<h1 class="title">Rijksoverheid<br><em>Web</em>Fonts</h1>
+<h2>Gold Master, version 3.001</h2>
+
+<p>The <b>@font-face</b> definitions in this proof are for this limited proof <em>only</em>.</p>
+
+<p>These are <em>not</em> intended as templates or bulletproof examples on how these
+fonts need to be deployed. Please follow best practice or established
+rules for writing these rules. </p>
+
+<p>For instance, it might be a good idea to shorten the font file names.
+For support of some older platforms it might be necessary to also 
+send .ttf files. But note that the .ttf files are significantly larger than the .woff and .eot versions.
+For some more protection it might be a good idea to encode the fonts into 
+base64 hex strings that can be embedded in a single css file.</p>
+
+<h1 class="sans">History</h1>
+<p>Version 3.000: initial release</p>
+<p>Version 3.001: Changes to the name tables to make the fonts compatible (again) with tools as InDesign.</p>
+
+</div>
+
+<div class="box">
+<h1 class="sans">Sans</h1>
+<p>These are pages showing key characters of the fonts in different sizes. </p>
+
+    <ul>
+        <li><span class="sr"><a href="proof/RO_Sans_Regular.html">Rijksoverheid Sans Web Regular</a></span></li>
+        <li><span class="si"><a href="proof/RO_Sans_Italic.html">Rijksoverheid Sans Web Italic</a></span></li>
+        <li><span class="sb"><a href="proof/RO_Sans_Bold.html">Rijksoverheid Sans Web Bold</a></span></li>
+    </ul>
+
+    <h1 class="serif">Serif</h1>
+
+    <ul>
+        <li><span class="tr"><a href="proof/RO_Serif_Regular.html">Rijksoverheid Serif Web Regular</a></span></li>
+        <li><span class="ti"><a href="proof/RO_Serif_Italic.html">Rijksoverheid Serif Web Italic</a></span></li>
+        <li><span class="tb"><a href="proof/RO_Serif_Bold.html">Rijksoverheid Serif Web Bold</a></span></li>
+    </ul>
+</div>
+
+<div class="box">
+    <h1 class="serif">Figure styles</h1>
+        <h2>Default</h2>
+        <ul>
+        <li><span class="sr">Default Sans Regular 1234567890</span></li>
+        <li><span class="si">Default Sans Italic 1234567890</span></li>
+        <li><span class="sb">Default Sans Bold 1234567890</span></li>
+        <li><span class="tr">Default Serif Regular 1234567890</span></li>
+        <li><span class="ti">Default Serif Italic 1234567890</span></li>
+        <li><span class="tb">Default Serif Bold 1234567890</span></li>
+        </ul>
+        
+        <h2>Oldstyle</h2>
+        <p>Oldstyle figures are controlled by the <em>onum</em> feature. This is currently supported in Chrome, Firefox. Not in Safari</p>
+
+        <p class="oldstyle2">
+            <ul>
+                <li>
+                    <span class="sr oldstyle2">Oldstyle Sans Regular 1234567890</span>
+                </li>
+                <li>
+            <span class="si oldstyle2">Oldstyle Sans Italic 1234567890</span>
+        </li>
+            <li>
+            <span class="sb oldstyle2">Oldstyle Sans Bold 1234567890</span>
+        </li>
+            <li>
+            <span class="tr oldstyle2">Oldstyle Serif Regular 1234567890</span>
+        </li>
+            <li>
+            <span class="ti oldstyle2">Oldstyle Serif Italic 1234567890</span>
+        </li>
+            <li>
+            <span class="tb oldstyle2">Oldstyle Serif Bold 1234567890</span>
+        </li>
+        </ul>
+        </p>
+</div>
+
+<div class="box">
+
+        <h1 class="serif">Kerning</h1>
+            <p>Some kerning combinations, in case the browser supports it.</p>
+            <ul>
+            <li><span class="sr">Sans Regular Te To AVA AWA ÄVÁ</span></li>
+            <li><span class="si">Sans Italic Te To AVA AWA ÄVÁ</span></li>
+            <li><span class="sb">Sans Bold Te To AVA AWA ÄVÁ</span></li>
+            <li><span class="tr">Serif Regular Te To AVA AWA ÄVÁ</span></li>
+            <li><span class="ti">Serif Italic Te To AVA AWA ÄVÁ</span></li>
+            <li><span class="tb">Serif Bold Te To AVA AWA ÄVÁ</span></li>
+            </ul>
+</div>
+
+<div class="box">
+        
+        <h2>Special characters</h2>
+        <p>Each font contains a set of arrows.</p>
+        <ul>
+        <li><span class="sr">Sans Regular &#8592; &#8598; &#8593; &#8599; &#8594; &#8600; &#8595; &#8601; &#8596;</span></li>
+        <li><span class="si">Sans Italic &#8592; &#8598; &#8593; &#8599; &#8594; &#8600; &#8595; &#8601; &#8596;</span></li>
+        <li><span class="sb">Sans Bold &#8592; &#8598; &#8593; &#8599; &#8594; &#8600; &#8595; &#8601; &#8596;</span></li>
+        <li><span class="tr">Serif Regular &#8592; &#8598; &#8593; &#8599; &#8594; &#8600; &#8595; &#8601; &#8596;</span></li>
+        <li><span class="ti">Serif Italic &#8592; &#8598; &#8593; &#8599; &#8594; &#8600; &#8595; &#8601; &#8596;</span></li>
+        <li><span class="tb">Serif Bold &#8592; &#8598; &#8593; &#8599; &#8594; &#8600; &#8595; &#8601; &#8596;</span></li>
+		</ul>
+</div>        
+
+<div class="box">
+<h2>Copyright Notice</h2>
+<p>
+Rights: By ministerial order of 16 June 2008 (Government Gazette 2008, no. 115), the State of the Netherlands (Ministry of General Affairs) entered a copyright reservation, as referred to in section 15b of the Copyright Act 1912, concerning the use and application of central government's general purpose <b>Rijkslogo</b> and visual identity, including the fonts <b>Rijksoverheid Serif</b> and <b>Rijksoverheid Sans</b>.
+                This reservation does not apply to parties to whom central government has supplied the Rijkslogo and the visual identity for use in carrying out activities or services commissioned by central government. Any use in any form or by any means, electronic, mechanical, photocopying, recording or otherwise is prohibited unless prior written authorisation has been obtained from central government. To obtain authorisation, you should apply to the Government Information Service.
+        </p>
+</div>
+
+</body>
+
+</html>
