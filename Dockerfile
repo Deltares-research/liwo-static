@@ -8,7 +8,7 @@ COPY . .
 # build stage
 FROM develop-stage as build-stage
 # Custom build with / as the url
-ENV BASE_URL=/liwo/
+ENV BASE_URL=/
 RUN npm run build
 
 # production stage
