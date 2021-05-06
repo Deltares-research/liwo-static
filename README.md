@@ -8,7 +8,7 @@ Static frontend for LIWO (https://www.basisinformatie-overstromingen.nl/liwo/)
 
 ![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/deltares/liwo-static)
 
-![Website](https://img.shields.io/website?url=https%3A%2F%2Fbasisinformatie-overstromingen.nl%2Fliwo%2F)
+![Website](https://img.shields.io/website?url=https%3A%2F%2Fbasisinformatie-overstromingen.nl)
 
 ## Build Setup
 
