@@ -68,7 +68,7 @@ jobs:
           wait-on-timeout: 120
           browser: chrome
           record: true
-          parallel: true
+          parallel: false
           # group: "UI - Chrome"
           spec: tests/e2e/specs/*
         env:
@@ -118,7 +118,7 @@ jobs:
           wait-on-timeout: 120
           browser: firefox
           record: true
-          parallel: true
+          parallel: false
           # group: "UI - Firefox"
           spec: tests/e2e/specs/*
         env:
