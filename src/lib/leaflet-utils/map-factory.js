@@ -29,7 +29,7 @@ export default function (el, vnode, config) {
   map.addControl(fillWindowControl())
   map.addControl(geoCoderControl(map))
   map.addControl(L.control.zoom({ position: 'topright' }))
-  map.addControl(L.control.scale({ position: 'bottomleft' }))
+  map.addControl(L.control.scale({ position: 'bottomleft', imperial: false }))
 
   map.addControl(printControl())
   map.addControl(imageControl())
