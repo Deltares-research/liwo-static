@@ -32,7 +32,7 @@ export default {
       if (!url) {
         return ''
       }
-      return `${url}/${namespace}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=${layerId}&STYLE=${styleName}&HEIGHT=16&WIDTH=16&LEGEND_OPTIONS=fontAntiAliasing:true;fontSize:14;mx:0;dx:10;`
+      return `${url}/${namespace}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=${layerId}&STYLE=${styleName}&HEIGHT=16&WIDTH=16&LEGEND_OPTIONS=fontAntiAliasing:true;fontSize:14;mx:0;dx:10;fontName:Verdana;`
     },
     unit () {
       return extractUnit(this.layer.legend.title)
@@ -54,7 +54,7 @@ export default {
     max-width: 20rem;
     height: auto;
     background-color: var(--white);
-    font-family: "RijksoverheidSansText", Verdana, Arial, sans-serif;
+    font-family: Verdana, Arial, sans-serif;
     font-size: 1rem;
   }
   .legend-panel__title {
