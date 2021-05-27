@@ -58,7 +58,7 @@
             <h3 class="control-label">Locatie</h3>
 
             <p class="map-image-control__location">
-              Coördinaten linksboven: {{ origin.join(', ') }}
+              Coördinaten: {{ origin.join(', ') }}
             </p>
             <p>Zoomniveau: {{ zoomLevel }}</p>
           </div>
