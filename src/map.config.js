@@ -14,7 +14,7 @@ const zoom = {
 // This is the zoom limit of the map
 const maxZoom = {
   [EPSG_28992]: 12,
-  [EPSG_3857]: 20
+  [EPSG_3857]: 18
 }
 
 // The maximum zoom of the map
