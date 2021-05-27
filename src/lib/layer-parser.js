@@ -156,7 +156,9 @@ export function selectVariantsInLayerSet (layerSet, scenarioIds) {
   layerSet.layers.forEach(layer => {
     // loop until we found a scenarioId
     layer.variants.some((variant, i) => {
-      if (scenarioIds.includes(variant.map_id)) {
+      const variantScenarioId = Number(variant.layer.replace('scenario_', ''))
+
+      if (scenarioIds.includes(variant.map_id) || scenarioIds.includes(variantScenarioId)) {
         layer.properties.selectedVariant = i
         return true
       } else {
