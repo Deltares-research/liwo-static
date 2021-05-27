@@ -85,7 +85,10 @@ export default {
 
       if (center) {
         const [lat, lng] = center.split(',')
-        this.map.panTo(new window.L.LatLng(lat, lng))
+        this.map.panTo(new window.L.LatLng(lat, lng), {
+          animate: false,
+          noMoveStart: true
+        })
       }
 
       if (zoom) {
