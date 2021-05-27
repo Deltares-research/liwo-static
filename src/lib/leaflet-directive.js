@@ -17,6 +17,29 @@ export default {
     callbacks.initMapObject(map)
   },
   update (_, { value, oldValue }, vnode) {
+    // check if of one of the layers the opacity changed
+    const changedOpacityLayers = value.layers.filter((layer, index) => {
+      const oldLayer = oldValue.layers[index]
+      if (oldLayer) {
+        const opacity = layer.layerObj.properties.opacity
+        const oldOpacity = oldLayer.layerObj.properties.opacity
+        return opacity !== oldOpacity
+      }
+
+      return false
+    })
+
+    // manually change opacity of the layers where opacity changed
+    // (this is very specific behaviour, but it improves the UX so much that it's worth it)
+    if (changedOpacityLayers.length) {
+      changedOpacityLayers.forEach(layer => {
+        const mapLayer = layerGroup.getLayers().find(l => l.options.layers === layer.layer)
+        mapLayer.setOpacity(layer.layerObj.properties.opacity)
+      })
+
+      return
+    }
+
     if (deepEqual(value, oldValue)) {
       return
     }

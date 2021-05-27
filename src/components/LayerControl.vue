@@ -117,14 +117,22 @@ export default {
       // Create a copy of the layer with the new opacity
       const layer = { ...this.layer }
       let opacity = 1 - _.toNumber(target.value)
+
       if (opacity < 0) {
         opacity = 0
       }
+
       if (opacity > 1) {
         opacity = 1
       }
-      this.$set(layer.properties, 'opacity', opacity)
-      this.$emit('update:layer', layer)
+
+      this.$emit('update:layer', {
+        ...layer,
+        properties: {
+          ...layer.properties,
+          opacity
+        }
+      })
     },
     setLayerVariant ({ target }) {
       // inform everybody up the tree that a variant for this layer changed
