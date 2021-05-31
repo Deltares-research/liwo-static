@@ -4,8 +4,8 @@ import router from '../router'
 
 Vue.use(VueMatomo, {
   // Configure your matomo server and site by providing
-  host: 'https://statistiek.rijksoverheid.nl/piwik',
-  siteId: 5,
+  host: 'https://statistiek.rijksoverheid.nl/',
+  siteId: process.env.VUE_APP_MATOMO_SITE_ID,
 
   // Changes the default .js and .php endpoint's filename
   // Default: 'matomo'
@@ -50,10 +50,6 @@ Vue.use(VueMatomo, {
   // Whether or not to log debug information
   // Default: false
   debug: true,
-
-  // UserID passed to Matomo (see https://developer.matomo.org/guides/tracking-javascript-guide#user-id)
-  // Default: undefined
-  userId: process.env.VUE_APP_MATOMO_ID,
 
   // Share the tracking cookie across subdomains (see https://developer.matomo.org/guides/tracking-javascript-guide#measuring-domains-andor-sub-domains)
   // Default: undefined, example '*.example.com'
