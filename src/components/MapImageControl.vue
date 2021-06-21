@@ -156,11 +156,30 @@ export default {
       // wait for modal to close
       // when executed directly, the modal is visible in the export
       this.showPopUp = false
+
+      // was the width set on the container (if not we have  to set it temporary)
+      const container = this.map.getContainer()
+      // check if the width was not set
+      const widthSet = (container.style.width !== '')
       setTimeout(async () => {
+        if (!widthSet) {
+          // Fix some minor style issues in the export
+          container.style.width = container.clientWidth + 'px'
+          container.style.height = container.clientHeight + 'px'
+          container.style.marginLeft = 0
+        }
+
         this.map.printPlugin.printMap(this.exportSize, this.name)
 
         this.map.on('easyPrint-finished', () => {
           this.map.printPlugin._toggleClasses(disabledControlClasses, true)
+
+          if (!widthSet) {
+            // reset style width / height if needed
+            container.style.width = ''
+            container.style.height = ''
+            container.style.marginLeft = undefined
+          }
         })
       }, 500)
     },
