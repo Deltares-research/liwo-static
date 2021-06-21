@@ -162,8 +162,6 @@ export default {
       // check if the width was not set
       const widthSet = (container.style.width !== '')
       setTimeout(async () => {
-        console.log('this.map.printPlugin', this.map.printPlugin.printMap, this.map)
-
         if (!widthSet) {
           // Fix some minor style issues in the export
           container.style.width = container.clientWidth + 'px'
