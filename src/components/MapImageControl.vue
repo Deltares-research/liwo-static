@@ -160,7 +160,7 @@ export default {
       // was the width set on the container (if not we have  to set it temporary)
       const container = this.map.getContainer()
       // check if the width was not set
-      const widthSet = !(container.style.width === '')
+      const widthSet = (container.style.width !== '')
       setTimeout(async () => {
         console.log('this.map.printPlugin', this.map.printPlugin.printMap, this.map)
 
