@@ -26,4 +26,10 @@ describe('Menu', () => {
       })
     })
   })
+  it('Has correct page titles', () => {
+    pages.forEach(([title, url]) => {
+      cy.visit(url)
+      cy.get('header h1').contains(title)
+    })
+  })
 })
