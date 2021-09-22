@@ -1,7 +1,7 @@
 <template>
   <aside class="legend-panel">
     <h2 class="legend-panel__title">Legenda</h2>
-    <figure class="legend-panel__legend">
+    <figure class="legend-panel__legend" v-test="'legend'">
       <figcaption class="legend-panel__caption">{{ layer.legend.title }}</figcaption>
       <slot></slot>
       <!-- lookup legend if slot is empty -->

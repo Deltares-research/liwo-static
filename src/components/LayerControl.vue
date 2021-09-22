@@ -14,7 +14,8 @@
     <label
       class="layer-control__vis-label"
       :for="`layer-${id}-vis`"
-      >
+      v-test="'layer-control'"
+    >
       <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 64 64">
         <path fill="none" d="M0 0h64v64H0z"/>
         <path d="M59 28c-3-5-12-16-27-16S8 23 5 28v6c3 5 12 16 27 16s24-11 27-16v-6zm-27-7a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm0 24c-15 0-22-14-22-14s3-6 10-10l-2 4a14 14 0 1 0 28 3c0-5-4-8-9-10 12 2 17 13 17 13s-7 14-22 14z"/>
@@ -38,7 +39,7 @@
       />
   </div>
   <div class="layer-control__options">
-    <div class="layer-control__range">
+    <div class="layer-control__range" v-test="'transparancy-input'">
       <label for="`layer-${id}-trans`">Transparantie: </label>
       <input type="range" min="0" max="1" step="0.1" :name="`layer-${id}-trans`" value="0" @change.stop="setTransparancy">
     </div>
