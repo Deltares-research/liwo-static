@@ -6,7 +6,7 @@ describe('Layers', () => {
     // and are they not relevant for these tests
     cy.intercept(new RegExp(/GetMap/), '')
   })
-  
+
   it('Changes opacity of layer', () => {
     const url = '#/viewer/1?center=52.15382,4.88242&zoom=2'
     cy.visit(url)
