@@ -27,7 +27,7 @@ describe('Layers', () => {
     })
   })
 
-  it.only('Changes visibility of layer', () => {
+  it('Changes visibility of layer', () => {
     const url = '#/viewer/18?center=52.15382,4.88242&zoom=2'
     cy.visit(url)
 
