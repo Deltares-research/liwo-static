@@ -26,4 +26,19 @@ describe('Layers', () => {
       expect(opacityValues.some(value => value === '0.5')).to.be.true
     })
   })
+
+  it.only('Changes visibility of layer', () => {
+    const url = '#/viewer/18?center=52.15382,4.88242&zoom=2'
+    cy.visit(url)
+
+    cy.get(`${selector('legend')} img`).invoke('attr', 'src').then(initSrc => {
+      cy.get(`${selector('layer-toggle')} label`)
+        .eq(2)
+        .click()
+
+      cy.get(`${selector('legend')} img`).invoke('attr', 'src').then(newSrc => {
+        expect(initSrc).to.not.equal(newSrc)
+      })
+    })
+  })
 })

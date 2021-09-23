@@ -2,7 +2,7 @@
 <div
   :class="classData"
   >
-  <form class="layer-control__main">
+  <form class="layer-control__main" v-test="'layer-toggle'">
     <input type="checkbox"
            class="sr-only layer-control__vis-checkbox"
            :name="`layer-${id}-vis`"
