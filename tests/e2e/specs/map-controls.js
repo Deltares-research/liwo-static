@@ -9,6 +9,12 @@ function getParams (url) {
 }
 
 describe('Map', () => {
+  beforeEach(() => {
+    // skip loading of map layers since we can't rely on their loading times
+    // and are they not relevant for these tests
+    cy.intercept(new RegExp(/GetMap/), '')
+  })
+
   it('Zooms out', () => {
     cy.visit(url)
 
