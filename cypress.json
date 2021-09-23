@@ -4,5 +4,5 @@
   "projectId": "h5f19q",
   "baseUrl": "http://localhost:8080",
   "defaultCommandTimeout": 15000,
-  "pageLoadTimeout": 120000
+  "pageLoadTimeout": 300000
 }
