@@ -12,7 +12,7 @@
         </p>
 
         <h2 data-class="section-head">Onderbouwing bij de toegankelijkheidsverklaring</h2>
-        <p>De toegankelijkheidsverklaring voor Basisinformatie-overstromingen.nl (LIWO) is opgesteld op basis van onderzoek door een onafhankelijk toetsingsbureau. De bevindingen hiervan zijn opgenomen in het meest recente <a href="https://www.helpdeskwater.nl/publish/pages/184976/check_8472_auto_rapport.pdf" rel="noopener noreferrer" target="_blank">onderzoeksrapport</a>.</p>
+        <p>De toegankelijkheidsverklaring voor Basisinformatie-overstromingen.nl (LIWO) is opgesteld op basis van onderzoek door een onafhankelijk toetsingsbureau. De bevindingen hiervan zijn opgenomen in het meest recente <a href="https://www.helpdeskwater.nl/publish/pages/184976/check_8837_auto_rapport.pdf" rel="noopener noreferrer" target="_blank">onderzoeksrapport</a>.</p>
 
         <h2 data-class="section-head">Hoe werken wij aan toegankelijkheid?</h2>
         <p>Rijkswaterstaat zorgt voor een continue verbetering in toegankelijkheid door diverse maatregelen binnen onze (dagelijkse) processen:
