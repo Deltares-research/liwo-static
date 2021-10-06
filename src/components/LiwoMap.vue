@@ -10,6 +10,7 @@
         layers: layers,
         cluster: clusterMarkers,
       }"
+      v-test="'map'"
     >
       <div ref="legend">
         <slot name="legend"></slot>
