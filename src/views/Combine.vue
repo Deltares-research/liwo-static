@@ -684,7 +684,7 @@ export default {
         }
         const activeLayer = _.get(this.selectedLayer, 'legend.layer')
         if (_.isNil(activeLayer)) {
-          console.warn('clicking on layer not supported for layer', this.selectedLayer.id)
+          console.warn('clicking on layer not supported for layer:', this.selectedLayer ? this.selectedLayer.id : 'unknown')
           return
         }
         showLayerInfoPopup({
