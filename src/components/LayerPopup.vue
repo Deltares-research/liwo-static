@@ -7,7 +7,7 @@
       </svg>
     </template>
     <template>
-      <table class="layer-meta__table">
+      <table class="layer-meta__table" v-test="'meta-table'">
         <tr
           v-for="(value, key) in noIdMetadata"
           :key="key"
