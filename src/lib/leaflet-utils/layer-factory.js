@@ -87,11 +87,10 @@ function createCluster (layer, onClick) {
 }
 
 // set custom  style for selected features
-function onEachFeature (feature, marker, layer, onClick) {
+function onEachFeature (feature, marker, onClick) {
   const { name } = feature.properties
   // TODO: implement is  controllable
   marker.on('click', (evt) => {
-    evt.layer = layer
     onClick(evt)
   })
   marker.on('mouseover', (event) => {
@@ -132,7 +131,7 @@ export function createClusterGeoJson (layer, onClick) {
   }
   const options = {
     // set custom  style for selected features
-    onEachFeature: (feature, marker) => onEachFeature(feature, marker, layer, onClick),
+    onEachFeature: (feature, marker) => onEachFeature(feature, marker, onClick),
     pointToLayer: (feature, latlng) => pointToLayer(feature, latlng, markerOptions)
   }
   if (_.has(layer, 'filter')) {
@@ -148,7 +147,7 @@ export function createClusterGeoJson (layer, onClick) {
 export function createSelectedGeojson (layer, onClick) {
   // create the markers for the selected geojsons
   const options = {
-    onEachFeature: (feature, marker) => onEachFeature(feature, marker, layer, onClick),
+    onEachFeature: (feature, marker) => onEachFeature(feature, marker, onClick),
     pointToLayer: (feature, latlng) => pointToLayer(feature, latlng, {})
   }
   if (_.has(layer, 'filter')) {
