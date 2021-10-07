@@ -18,7 +18,9 @@
             <label
               v-test="'filter-item'"
               class="choice-cards__item__label"
-              :for="`probability-${item.identifier}`">
+              :for="`probability-${item.identifier}`"
+              v-test="'filter-item'"
+            >
               {{ item.title }}
               <span class="icon-check" aria-hidden="true"></span>
             </label>

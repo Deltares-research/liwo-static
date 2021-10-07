@@ -1,6 +1,13 @@
 import { generateSelector as selector } from '../../lib/generate-selector'
 
 const url = '#/combine/7'
+const filterMarkerCounts = {
+  'probability-lt30': 36,
+  'probability-f30t300': 58,
+  'probability-f300t3000': 59,
+  'probability-f3000t30k': 37,
+  'probability-gt30k': 24
+}
 
 describe('Combine: filters', () => {
   it('Changes marker image on click', () => {
@@ -21,10 +28,14 @@ describe('Combine: filters', () => {
       cy.get(selector('filter-item')).each(($el, index) => {
         if (index === 0) return
 
+        const id = $el[0].getAttribute('for')
+
         cy.wait(500).then(() => {
           $el.click()
 
-          cy.get('.leaflet-marker-icon').should('not.have.length', initCount)
+          cy.get('.leaflet-marker-icon')
+            .should('not.have.length', initCount)
+            .should('have.length', filterMarkerCounts[id])
         })
       })
     })
