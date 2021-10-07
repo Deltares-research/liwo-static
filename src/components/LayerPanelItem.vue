@@ -1,5 +1,5 @@
 <template>
-<div class="layerpanel-item" :class="{'layerpanel-item--collapsed': isCollapsed}">
+<div class="layerpanel-item" :class="{'layerpanel-item--collapsed': isCollapsed}" v-test="'layer-panel'">
   <h3
     class="layerpanel-item__title"
     @click="selectFirstLayer"
