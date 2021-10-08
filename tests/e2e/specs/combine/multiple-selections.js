@@ -58,7 +58,7 @@ describe('Combine multiple selections: marker selection', () => {
     cy.get(selector('layer-panel'))
       .parent()
       .children()
-      .should('have.length', 4)
+      .should('have.length', 3)
 
     cy.contains(location1)
       .parentsUntil(selector('layer-panel'))
@@ -105,6 +105,6 @@ describe('Combine multiple selections: marker selection', () => {
     cy.get(selector('layer-panel'))
       .parent()
       .children()
-      .should('have.length', 3)
+      .should('have.length', 2)
   })
 })
