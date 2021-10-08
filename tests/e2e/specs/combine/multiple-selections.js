@@ -107,4 +107,33 @@ describe('Combine multiple selections: marker selection', () => {
       .children()
       .should('have.length', 2)
   })
+
+  it('Changes legend graphic', () => {
+    cy.intercept(new RegExp(/GetLayerSet/), mockLayerSetData).as('layerset')
+    cy.intercept(new RegExp(/getFeature/), mockFeaturesData).as('features')
+
+    cy.visit(url)
+
+    cy.get('.leaflet-marker-icon')
+      .eq(3)
+      .click({ force: true })
+
+    cy.wait(5000)
+
+    cy.get(`${selector('legend')} img`)
+      .invoke('attr', 'src')
+      .then(initSrc => {
+        cy.get('.leaflet-marker-icon')
+          .eq(4)
+          .click({ force: true })
+
+        cy.wait(5000)
+
+        cy.get(`${selector('legend')} img`)
+          .invoke('attr', 'src')
+          .then(newSrc => {
+            expect(initSrc).to.not.equal(newSrc)
+          })
+      })
+  })
 })
