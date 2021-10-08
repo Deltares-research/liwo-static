@@ -5,6 +5,6 @@
   "baseUrl": "http://localhost:8080",
   "defaultCommandTimeout": 15000,
   "pageLoadTimeout": 300000,
-  "viewportWidth": 1280,
-  "viewportHeight": 800
+  "viewportWidth": 1920,
+  "viewportHeight": 1080
 }
