@@ -18,6 +18,7 @@ module.exports = (on, config) => {
   return Object.assign({}, config, {
     defaultCommandTimeout: 8000,
     fixturesFolder: 'tests/e2e/fixtures',
+    downloadsFolder: 'tests/e2e/downloads',
     integrationFolder: 'tests/e2e/specs',
     screenshotsFolder: 'tests/e2e/screenshots',
     videosFolder: 'tests/e2e/videos',

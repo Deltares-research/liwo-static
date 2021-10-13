@@ -8,7 +8,11 @@
               <slot name="icon"><!-- Icon to inject before title --></slot>
               {{title}}
             </h1>
-            <button @click="$emit('close')" class="pop-up__close icon-close-big panel-close">
+            <button
+              @click="$emit('close')"
+              class="pop-up__close icon-close-big panel-close"
+              v-test="'close-button'"
+            >
               <span class="sr-only">Sluiten</span>
             </button>
           </header>

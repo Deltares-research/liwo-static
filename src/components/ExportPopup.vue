@@ -39,9 +39,9 @@
       </label>
       <input type="text" name="name"
         id="export-name" autocomplete="off" v-model="exportName"
-        class="export-popup__form-column-item export-popup__textfield">
+        class="export-popup__form-column-item export-popup__textfield" v-test="'name-input'">
       <footer class="export-popup__footer">
-        <button class="btn primary" @click.prevent="exportMap">Exporteer</button>
+        <button class="btn primary" @click.prevent="exportMap" v-test="'export-button'">Exporteer</button>
         <button class="btn secondary" type="reset" @click="$emit('close')">Annuleer</button>
       </footer>
     </form>
