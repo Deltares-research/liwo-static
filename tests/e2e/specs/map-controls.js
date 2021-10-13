@@ -96,8 +96,8 @@ describe('Map', () => {
 
       const [lat, lng] = params.center.split(',')
 
-      expect(lat).to.include('52.3')
-      expect(lng).to.include('4.8')
+      expect(parseFloat(lat, 10)).to.be.within(52, 53)
+      expect(parseFloat(lng, 10)).to.be.within(4, 5)
     })
   })
 
