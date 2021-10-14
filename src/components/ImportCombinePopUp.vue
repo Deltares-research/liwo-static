@@ -17,6 +17,7 @@
               type="text"
               name="url"
               v-model="url"
+              v-test="'import-selection-url'"
             >
             <em v-if="showError" class="errortext">{{ errorText }}</em>
           </div>
@@ -34,6 +35,7 @@
           <div class="controls">
             <button
               class="btn primary"
+              v-test="'import-url-button'"
             >
               Importeren
             </button>

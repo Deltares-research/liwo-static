@@ -78,6 +78,7 @@
             v-if="selectedFeatures.length && selectFeatureMode === 'multiple' "
             class="layer-panel__action"
             @click="showExportCombine = true"
+            v-test="'export-selection-button'"
           >
             Selectie exporteren
           </button>
@@ -104,6 +105,7 @@
             v-if="selectFeatureMode === 'multiple'"
             class="layer-panel__action"
             @click="showImportCombine = true"
+            v-test="'import-selection-button'"
           >
             Selectie importeren
           </button>
