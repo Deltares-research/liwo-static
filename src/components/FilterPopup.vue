@@ -13,10 +13,13 @@
               :id="`probability-${item.identifier}`"
               :value="item.identifier"
               :checked="probability === item.identifier"
-              @change="setProbability(item.identifier)">
+              @change="setProbability(item.identifier)"
+            >
             <label
+              v-test="'filter-item'"
               class="choice-cards__item__label"
-              :for="`probability-${item.identifier}`">
+              :for="`probability-${item.identifier}`"
+            >
               {{ item.title }}
               <span class="icon-check" aria-hidden="true"></span>
             </label>

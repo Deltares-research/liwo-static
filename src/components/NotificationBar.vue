@@ -7,6 +7,7 @@
       >
     <aside class="notification-bar"
            :class="{[`notification-bar--${notification.type}`]:true}"
+           v-test="'notification'"
            >
       <div class="container">
         <img class="notification-bar__icon" :src="`${publicPath}icons/baseline-${notification.type}-24px.svg`"  />
