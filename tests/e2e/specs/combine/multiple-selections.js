@@ -5,12 +5,14 @@ import mockFeaturesData from '../../mock/multipleFeatureCollection.json'
 const url = '#/combine/7?center=52.32401,5.35995&zoom=10'
 
 describe('Combine multiple selections: marker selection', () => {
-  it('Changes marker image on click', () => {
+  before(() => {
     cy.intercept(new RegExp(/GetLayerSet/), mockLayerSetData).as('layerset')
     cy.intercept(new RegExp(/getFeature/), mockFeaturesData).as('features')
 
     cy.visit(url)
+  })
 
+  it('Changes marker image on click', () => {
     cy.get('.leaflet-marker-icon')
       .eq(0)
       .invoke('attr', 'src')
@@ -35,11 +37,6 @@ describe('Combine multiple selections: marker selection', () => {
   })
 
   it('Opens correct layers in panel', () => {
-    cy.intercept(new RegExp(/GetLayerSet/), mockLayerSetData).as('layerset')
-    cy.intercept(new RegExp(/getFeature/), mockFeaturesData).as('features')
-
-    cy.visit(url)
-
     const location1 = mockFeaturesData.features[0].properties.name
     const location2 = mockFeaturesData.features[1].properties.name
 
@@ -68,11 +65,6 @@ describe('Combine multiple selections: marker selection', () => {
   })
 
   it('Closes correct layers in panel', () => {
-    cy.intercept(new RegExp(/GetLayerSet/), mockLayerSetData).as('layerset')
-    cy.intercept(new RegExp(/getFeature/), mockFeaturesData).as('features')
-
-    cy.visit(url)
-
     const location1 = mockFeaturesData.features[0].properties.name
     const location2 = mockFeaturesData.features[1].properties.name
 
@@ -105,11 +97,6 @@ describe('Combine multiple selections: marker selection', () => {
   })
 
   it('Changes legend graphic', () => {
-    cy.intercept(new RegExp(/GetLayerSet/), mockLayerSetData).as('layerset')
-    cy.intercept(new RegExp(/getFeature/), mockFeaturesData).as('features')
-
-    cy.visit(url)
-
     cy.get('.leaflet-marker-icon')
       .eq(3)
       .click({ force: true })
