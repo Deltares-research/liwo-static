@@ -15,7 +15,7 @@
     @update:layers="updateLayers"
     @select:layer="selectLayer"
     @select:variant="selectVariant"
-    v-show="!isCollapsed"
+    v-if="!isCollapsed"
   >
     <slot></slot>
   </layer-control-list>

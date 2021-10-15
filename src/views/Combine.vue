@@ -44,7 +44,7 @@
           >
           </layer-panel-item>
 
-          <div class="layer-control layer-control-list__item layerpanel-item__title" v-show="loading">
+          <div class="layer-control layer-control-list__item layerpanel-item__title" v-if="loading">
             Scenario's worden geladen
             <div class="lds-dual-ring"></div>
           </div>
