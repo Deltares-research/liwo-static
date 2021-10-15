@@ -1,21 +1,25 @@
 <template>
 <ul class="viewer__notifications" v-if="cleanNotifications && cleanNotifications.length">
-  <li class="viewer__notification" v-for="(notification, index) in cleanNotifications"
+  <template v-for="(notification, index) in cleanNotifications">
+    <li
+      v-if="notification.show"
       :key="index"
+      class="viewer__notification"
       @click="notification.show = false"
-      v-show="notification.show"
+    >
+      <aside
+        class="notification-bar"
+        :class="{ [`notification-bar--${notification.type}`] : true }"
+        v-test="'notification'"
       >
-    <aside class="notification-bar"
-           :class="{[`notification-bar--${notification.type}`]:true}"
-           v-test="'notification'"
-           >
-      <div class="container">
-        <img class="notification-bar__icon" :src="`${publicPath}icons/baseline-${notification.type}-24px.svg`"  />
-        <p class="notification-bar__message">{{ notification.message }}</p>
-        <button class="pop-up__close icon-close-big panel-close"><span class="sr-only">Sluiten</span></button>
-      </div>
-    </aside>
-  </li>
+        <div class="container">
+          <img class="notification-bar__icon" :src="`${publicPath}icons/baseline-${notification.type}-24px.svg`" />
+          <p class="notification-bar__message">{{ notification.message }}</p>
+          <button class="pop-up__close icon-close-big panel-close"><span class="sr-only">Sluiten</span></button>
+        </div>
+      </aside>
+    </li>
+  </template>
 </ul>
 </template>
 

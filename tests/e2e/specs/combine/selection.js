@@ -5,12 +5,14 @@ import mockFeaturesData from '../../mock/featureCollection.json'
 const url = '#/combine/7'
 
 describe('Combine: marker selection', () => {
-  it('Changes marker image on click', () => {
+  before(() => {
     cy.intercept(new RegExp(/GetLayerSet/), mockLayersetData).as('layerset')
     cy.intercept(new RegExp(/getFeature/), mockFeaturesData).as('features')
 
     cy.visit(url)
+  })
 
+  it('Changes marker image on click', () => {
     cy.get('.leaflet-marker-icon')
       .eq(3)
       .invoke('attr', 'src')
@@ -24,11 +26,6 @@ describe('Combine: marker selection', () => {
   })
 
   it('Opens correct layers in panel', () => {
-    cy.intercept(new RegExp(/GetLayerSet/), mockLayersetData).as('layerset')
-    cy.intercept(new RegExp(/getFeature/), mockFeaturesData).as('features')
-
-    cy.visit(url)
-
     const name = mockFeaturesData.features[0].properties.name
 
     cy.get('.leaflet-marker-icon')
