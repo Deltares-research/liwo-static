@@ -27,7 +27,11 @@
 
         <div class="combine-popup__combine-selected" v-if="currentSelectedIds">
           <label>
-            <input type="checkbox" v-model="combineWithCurrentSelectedIds"> Samenvoegen met bestaande selectie?
+            <input
+              type="checkbox"
+              v-model="combineWithCurrentSelectedIds"
+              v-test="'import-url-checkbox'">
+              Samenvoegen met bestaande selectie?
           </label>
         </div>
 
