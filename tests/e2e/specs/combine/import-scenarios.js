@@ -4,12 +4,11 @@ import mockDoubleFeaturesData from '../../mock/doubleFeatureCollection.json'
 
 const url = '#/combine/7?center=52.32401,5.35995&zoom=10'
 const exportUrl = 'http://localhost:8081/#/combine/7/19422,19428'
+const location1 = mockDoubleFeaturesData.features[0].properties.name
+const location2 = mockDoubleFeaturesData.features[1].properties.name
 
 describe('Combine: Export and import combined scenarios', () => {
   it('Imports scenario', () => {
-    const location1 = mockDoubleFeaturesData.features[0].properties.name
-    const location2 = mockDoubleFeaturesData.features[1].properties.name
-
     cy.intercept(new RegExp(/GetLayerSet/), mockLayerSetData)
     cy.intercept(new RegExp(/getFeature/), mockDoubleFeaturesData).as('features')
     cy.visit(url)

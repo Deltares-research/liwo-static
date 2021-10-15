@@ -6,6 +6,8 @@ import mockMultipleFeaturesData from '../../mock/multipleFeatureCollection.json'
 const url = '#/combine/7?center=52.32401,5.35995&zoom=10'
 const exportUrl = 'http://localhost:8081/#/combine/7/19422,19428'
 const importUrl = 'http://localhost:8081/#/combine/7/19431,19435'
+const location1 = mockDoubleFeaturesData.features[0].properties.name
+const location2 = mockDoubleFeaturesData.features[1].properties.name
 
 describe('Combine: Export and import combined scenarios', () => {
   beforeEach(() => {
@@ -26,9 +28,6 @@ describe('Combine: Export and import combined scenarios', () => {
   })
 
   it('Replaces selection with import', () => {
-    const location1 = mockDoubleFeaturesData.features[0].properties.name
-    const location2 = mockDoubleFeaturesData.features[1].properties.name
-
     cy.url()
       .should('contain', '/combine/7/19428,19422', { timeout: 30000 })
       .then(() => {
@@ -64,9 +63,6 @@ describe('Combine: Export and import combined scenarios', () => {
   })
 
   it('Combines import with selection', () => {
-    const location1 = mockDoubleFeaturesData.features[0].properties.name
-    const location2 = mockDoubleFeaturesData.features[1].properties.name
-
     cy.url()
       .should('contain', '/combine/7/19428,19422', { timeout: 30000 })
       .then(() => {
