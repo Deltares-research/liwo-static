@@ -21,7 +21,7 @@ describe('Layers', () => {
       cy.get(layer).invoke('css', 'opacity').then(value => opacityValues.push(value))
     })
 
-    cy.wait(10).then(() => {
+    cy.wait(100).then(() => {
       // eslint-disable-next-line no-unused-expressions
       expect(opacityValues.some(value => value === '0.5')).to.be.true
     })
