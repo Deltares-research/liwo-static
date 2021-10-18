@@ -24,6 +24,7 @@
                 class="map-image-control__text-input"
                 ref="nameInput"
                 @click="selectNameText"
+                v-test="'name-input'"
               />
             </div>
           </div>
@@ -63,7 +64,7 @@
             <p>Zoomniveau: {{ zoomLevel }}</p>
           </div>
 
-          <button class="btn primary" @click.prevent.stop="exportAsImage">
+          <button class="btn primary" @click.prevent.stop="exportAsImage" v-test="'export-button'">
             Exporteren als afbeelding
           </button>
         </form>

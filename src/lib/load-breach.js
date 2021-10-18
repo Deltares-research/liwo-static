@@ -108,7 +108,10 @@ export async function getScenarioInfo (scenarioIds, featureInfoByScenarioId) {
   const url = `${hydroEngine}/get_liwo_scenarios_info`
 
   /* pass scenario ids under the name liwo_ids */
-  const body = { liwo_ids: scenarioIds }
+  const body = {
+    liwo_ids: scenarioIds,
+    collection: services.DATASET_VERSION
+  }
 
   const resp = await fetch(url, {
     method: 'POST',
@@ -175,14 +178,19 @@ async function loadBreachLayer (breachId, layerName) {
 async function loadBreachesLayer (scenarioIds, band, layerSetId) {
   // TODO: choose appropriate reducer for the band
   // The band here relates to  quantitites
+  const services = await mapConfig.getServices()
   const reducer = 'max'
   const requestOptions = {
     method: 'POST',
     mode: 'cors',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ liwo_ids: scenarioIds, band, reducer })
+    body: JSON.stringify({
+      liwo_ids: scenarioIds,
+      band,
+      reducer,
+      collection: services.DATASET_VERSION
+    })
   }
-  const services = await mapConfig.getServices()
   const HYDRO_ENGINE_URL = services.HYDRO_ENGINE_URL
   const url = `${HYDRO_ENGINE_URL}/get_liwo_scenarios`
   return fetch(url, requestOptions)

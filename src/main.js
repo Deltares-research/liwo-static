@@ -11,6 +11,9 @@ import PortalVue from 'portal-vue'
 // Plugin loads the matomo settings, available under $matomo
 import './plugins/vue-matomo.js'
 
+// Directives
+import './directives/test.js'
+
 // Babel JS switched to core-js
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'

@@ -1,5 +1,5 @@
 <template>
-<div class="layerpanel-item" :class="{'layerpanel-item--collapsed': isCollapsed}">
+<div class="layerpanel-item" :class="{'layerpanel-item--collapsed': isCollapsed}" v-test="'layer-panel'">
   <h3
     class="layerpanel-item__title"
     @click="selectFirstLayer"
@@ -15,7 +15,7 @@
     @update:layers="updateLayers"
     @select:layer="selectLayer"
     @select:variant="selectVariant"
-    v-show="!isCollapsed"
+    v-if="!isCollapsed"
   >
     <slot></slot>
   </layer-control-list>

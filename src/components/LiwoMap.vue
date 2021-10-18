@@ -10,6 +10,7 @@
         layers: layers,
         cluster: clusterMarkers,
       }"
+      v-test="'map'"
     >
       <div ref="legend">
         <slot name="legend"></slot>
@@ -19,7 +20,6 @@
 </template>
 
 <script>
-import debounce from 'lodash/debounce'
 import createMapConfig from '@/lib/leaflet-utils/mapconfig-factory'
 import { legendControl } from '@/lib/leaflet-utils/legend'
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
@@ -83,31 +83,37 @@ export default {
     setPosition () {
       const { zoom, center } = this.$route.query
 
-      if (center) {
-        const [lat, lng] = center.split(',')
-        this.map.panTo(new window.L.LatLng(lat, lng), {
+      if (zoom) {
+        this.map.setZoom(zoom, {
           animate: false,
           noMoveStart: true
         })
       }
 
-      if (zoom) {
-        this.map.setZoom(zoom)
+      if (center) {
+        const [lat, lng] = center.split(',')
+
+        this.map.panTo(new window.L.LatLng(lat, lng), {
+          animate: false,
+          noMoveStart: true
+        })
       }
     },
+    addPositionToRoute () {
+      const { lat, lng } = this.map.getCenter()
+      const zoom = this.map.getZoom()
+
+      this.$router.replace({
+        ...this.$route,
+        query: {
+          ...this.$route.query,
+          center: `${lat.toFixed(5)},${lng.toFixed(5)}`,
+          zoom
+        }
+      })
+    },
     addPositionListeners () {
-      this.map.on('move', debounce((e) => {
-        const { lat, lng } = e.target.getCenter()
-        const zoom = e.target.getZoom()
-        this.$router.replace({
-          ...this.$route,
-          query: {
-            ...this.$route.query,
-            center: `${lat.toFixed(5)},${lng.toFixed(5)}`,
-            zoom
-          }
-        })
-      }, 100))
+      this.map.on('moveend', this.addPositionToRoute)
     }
   }
 }
