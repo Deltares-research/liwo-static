@@ -3,7 +3,7 @@ import mockLayerSetData from '../../mock/layerset.json'
 import mockDoubleFeaturesData from '../../mock/doubleFeatureCollection.json'
 
 const url = '#/combine/7?center=52.32401,5.35995&zoom=10'
-const exportUrl = 'http://localhost:8081/#/combine/7/19422,19428'
+const exportUrl = '#/combine/7/19422,19428'
 
 describe('Combine: Export and import combined scenarios', () => {
   it('Exports scenario', () => {
@@ -30,7 +30,7 @@ describe('Combine: Export and import combined scenarios', () => {
 
     cy.get(selector('export-selection-url'))
       .then(($el) => {
-        expect($el[0].value).to.equal(exportUrl)
+        expect($el[0].value).to.contain(exportUrl)
       })
   })
 })
