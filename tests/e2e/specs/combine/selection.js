@@ -3,6 +3,7 @@ import mockLayersetData from '../../mock/layerset.json'
 import mockFeaturesData from '../../mock/featureCollection.json'
 
 const url = '#/combine/7'
+const name = mockFeaturesData.features[0].properties.name
 
 describe('Combine: marker selection', () => {
   before(() => {
@@ -26,8 +27,6 @@ describe('Combine: marker selection', () => {
   })
 
   it('Opens correct layers in panel', () => {
-    const name = mockFeaturesData.features[0].properties.name
-
     cy.get('.leaflet-marker-icon')
       .eq(3)
       .click()
