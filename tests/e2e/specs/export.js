@@ -32,7 +32,7 @@ describe('Maps export', () => {
     cy.get(selector('name-input'))
       .type(fileName)
 
-    cy.get(selector('export-button'))
+    cy.get(selector('export-file-button'))
       .click()
       .wait('@apiCheck')
       .should((xhr) => {
@@ -63,7 +63,7 @@ describe('Maps export', () => {
 
       cy.wait(1000)
 
-      cy.get(selector('export-button'))
+      cy.get(selector('export-image-button'))
         .click()
 
       cy.readFile(path.join(downloadsFolder, `${fileName}.png`))

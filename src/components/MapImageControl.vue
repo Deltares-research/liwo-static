@@ -64,7 +64,7 @@
             <p>Zoomniveau: {{ zoomLevel }}</p>
           </div>
 
-          <button class="btn primary" @click.prevent.stop="exportAsImage" v-test="'export-button'">
+          <button class="btn primary" @click.prevent.stop="exportAsImage" v-test="'export-image-button'">
             Exporteren als afbeelding
           </button>
         </form>
