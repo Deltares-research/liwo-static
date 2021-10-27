@@ -8,7 +8,8 @@
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
-    "release": "semantic-release"
+    "release": "semantic-release",
+    "docker": "docker run --rm -p8080:80 --name liwo-static -v $(pwd)/nginx.conf:/etc/nginx/nginx.conf:ro -v $(pwd)/dist:/usr/share/nginx/html nginx"
   },
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
