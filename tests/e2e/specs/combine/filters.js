@@ -10,7 +10,7 @@ const filterMarkerCounts = {
 }
 
 describe('Combine: filters', () => {
-  it('Changes marker image on click', () => {
+  it('Changes marker count when filtering', () => {
     cy.intercept(new RegExp(/getFeature/)).as('features')
 
     cy.visit(url)
