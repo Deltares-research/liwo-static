@@ -8,8 +8,8 @@
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
-    "release": "semantic-release",
-    "docker": "docker run --rm -p8080:80 --name liwo-static -v $(pwd)/nginx.conf:/etc/nginx/nginx.conf:ro -v $(pwd)/dist:/usr/share/nginx/html nginx"
+    "docker": "docker run --rm -p8080:80 --name liwo-static -v $(pwd)/nginx.conf:/etc/nginx/nginx.conf:ro -v $(pwd)/dist:/usr/share/nginx/html nginx",
+    "release": "semantic-release"
   },
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
@@ -52,11 +52,11 @@
     "@cypress/skip-test": "^2.6.1",
     "@semantic-release/git": "^9.0.0",
     "@vue/babel-preset-app": "4.5.15",
-    "@vue/cli-plugin-babel": "^4.5.12",
-    "@vue/cli-plugin-e2e-cypress": "^4.5.12",
-    "@vue/cli-plugin-eslint": "^4.5.12",
-    "@vue/cli-plugin-unit-mocha": "^4.5.12",
-    "@vue/cli-service": "^4.5.12",
+    "@vue/cli-plugin-babel": "~4.5.15",
+    "@vue/cli-plugin-e2e-cypress": "~4.5.15",
+    "@vue/cli-plugin-eslint": "~4.5.15",
+    "@vue/cli-plugin-unit-mocha": "~4.5.15",
+    "@vue/cli-service": "~4.5.15",
     "@vue/eslint-config-standard": "^5.1.2",
     "@vue/test-utils": "^1.0.0-beta.10",
     "babel-core": "^6.26.3",
@@ -89,7 +89,6 @@
     "sass-loader": "^7.3.1",
     "semantic-release": "^17.4.2",
     "unfetch": "^4.2.0",
-    "vue-cli-plugin-webpack-bundle-analyzer": "^4.0.0",
     "vue-template-compiler": "^2.6.10"
   },
   "eslintConfig": {
