@@ -11,8 +11,8 @@
       >
         <template slot="legend">
           <legend-panel
-            :layer="selectedLayer"
-            v-if="selectedLayer"
+            :layers="controlLayerSelected ? controlLayers : [selectedLayer]"
+            v-if="controlLayers.length || selectedLayer"
           >
             <img :src="`legends/${band}.png`" v-if="band">
           </legend-panel>
@@ -426,6 +426,18 @@ export default {
       const variant = _.get(this.selectedLayer, ['variants', variantIndex])
       const id = _.get(variant, 'layer')
       return id
+    },
+    controlLayerSelected () {
+      return this.selectedLayer && this.selectedLayer.iscontrollayer
+    },
+    controlLayers () {
+      if (!this.layers) {
+        return []
+      }
+
+      return this.layers
+        .filter(layer => layer.iscontrollayer)
+        .map(({ layerObj }) => layerObj)
     }
   },
   methods: {
