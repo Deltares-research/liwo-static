@@ -19,7 +19,8 @@ export default {
   update (_, { value, oldValue }, vnode) {
     // check if of one of the layers the opacity changed
     const changedOpacityLayers = value.layers.filter((layer) => {
-      const oldLayer = oldValue.layers.find(oldLayer => oldLayer.layerObj.id === layer.layerObj.id)
+      // lookup the old layer in the old values
+      const oldLayer = oldValue.layers.find(l => l.layerObj.id === layer.layerObj.id)
 
       if (oldLayer) {
         const opacity = layer.layerObj.properties.opacity
