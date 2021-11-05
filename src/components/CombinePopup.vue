@@ -3,7 +3,7 @@
   title="Selectie combineren"
   @close="$emit('close')"
   >
-  <form class="combine-popup__form">
+  <form class="combine-popup__form" v-test="'combine-form'">
     <fieldset>
       <fieldset class="control-group">
         <legend class="control-label">Kies het thema waarvoor u scenario's <span v-if="bandCounts">(n={{ featureCount }})</span> wilt combineren:</legend>
@@ -33,6 +33,7 @@
             target="_blank"
             @click="$emit('close')"
             class="btn primary"
+            v-test="'combine-trigger'"
             >
             Combineren
           </router-link>

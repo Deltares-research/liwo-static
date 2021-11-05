@@ -71,6 +71,7 @@
             v-if="selectFeatureMode === 'multiple' && selectedFeatures.length"
             class="layer-panel__action"
             @click="showCombine = true"
+            v-test="'combine-button'"
           >
             Selectie combineren
           </button>
