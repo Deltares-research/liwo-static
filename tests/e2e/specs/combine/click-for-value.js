@@ -8,7 +8,7 @@ describe('Combine: click for value', () => {
     cy.intercept(new RegExp(/getFeature/)).as('features')
 
     cy.wait('@features', {
-      timeout: 20000
+      timeout: 40000
     })
 
     cy.wait(8000)
