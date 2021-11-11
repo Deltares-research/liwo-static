@@ -10,7 +10,7 @@ const requestOptions = ({ namespace, layer }) => ({
   // get this info unprojected
   // formally geojson does not support CRS
   srsName: 'EPSG:4326',
-  maxFeatures: 2000
+  maxFeatures: 3000
 })
 
 export async function loadGeojson (jsonLayer, { filteredIds = [] } = {}) {
