@@ -84,3 +84,4 @@ If you want to deploy the docker version, you can use the Dockerfile in the main
 
 ## Sig review
 Create a release with `npm run release` and then run `./sig-deploy.sh` to download the latest zip file to the format liwo-static-yyyymmdd.zip. Upload that file to sig.
+
