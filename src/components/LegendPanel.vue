@@ -71,7 +71,6 @@ export default {
     color: var(--black);
   }
   .legend-panel__caption {
-    text-align: center;
     margin-bottom: 0.25rem;
   }
   .legend-panel__legend {
