@@ -716,7 +716,7 @@ export default {
       const selectedLayer = this.selectedLayers.find(layer => layer.layerSet.id === feature.properties.id)
 
       if (feature.properties.Overschrijdingsfrequentie) {
-        marker.setTooltipContent(`${feature.properties.name} - ${feature.properties.Overschrijdingsfrequentie}`)
+        marker.setTooltipContent(`${feature.properties.name} - Kans 1 op ${feature.properties.Overschrijdingsfrequentie}`)
       }
 
       if (marker.feature.properties.selected && selectedLayer) {
