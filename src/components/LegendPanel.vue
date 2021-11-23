@@ -59,7 +59,7 @@ export default {
     max-width: 20rem;
     height: auto;
     background-color: var(--white);
-    font-family: Verdana, Arial, sans-serif;
+    font-family:  RijksoverheidSansText, Verdana, Arial, sans-serif;
     font-size: 1rem;
   }
   .legend-panel__title {
@@ -74,7 +74,10 @@ export default {
     margin-bottom: 0.25rem;
   }
   .legend-panel__legend {
-    padding: 1rem;
+    padding: 0.1rem;
+    margin-bottom: 0;
+  }
+  .legend-panel figure img {
     margin-bottom: 0;
   }
 
