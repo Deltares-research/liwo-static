@@ -9,7 +9,7 @@
       >
         <template v-slot:legend>
           <legend-panel
-            :layer="selectedLayer"
+            :layers="[selectedLayer]"
             v-if="selectedLayer"
           />
         </template>

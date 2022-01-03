@@ -87,9 +87,11 @@ describe('Map', () => {
     cy.get('.leaflet-control-geocoder-form input')
       .type('Amsterdam')
       .trigger('keydown', { keyCode: 13 })
-    cy.get('.leaflet-control-geocoder-alternatives li a')
-      .first()
-      .click()
+      .then(() => {
+        cy.get('.leaflet-control-geocoder-alternatives li a')
+          .first()
+          .click()
+      })
 
     cy.location().should((loc) => {
       const params = getParams(loc.hash)

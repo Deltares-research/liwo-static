@@ -29,7 +29,7 @@
         <li><router-link :to="{name: 'about'}">Over LIWO</router-link></li>
       </ul>
     </nav>
-    <h1 class="app-header__page-title container">{{ this.pageTitle }}</h1>
+    <h1 class="app-header__page-title container" v-test="'page-title'">{{ this.pageTitle }}</h1>
   </div>
   </header>
 </template>

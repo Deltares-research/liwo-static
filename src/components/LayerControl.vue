@@ -36,7 +36,8 @@
       :options="variantsOptions"
       :selected="selectedVariantIndex"
       @change.stop="setLayerVariant"
-      />
+      v-test="'variant-select'"
+    />
   </div>
   <div class="layer-control__options">
     <div class="layer-control__range" v-test="'transparancy-input'">

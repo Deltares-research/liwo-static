@@ -1,5 +1,5 @@
 # develop stage
-FROM node:lts as develop-stage
+FROM node:14-alpine as develop-stage
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
@@ -12,7 +12,7 @@ ENV BASE_URL=/
 RUN npm run build
 
 # production stage
-FROM nginx:1.15.7-alpine as production-stage
+FROM nginx:stable-alpine as production-stage
 # Copy html files
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 # Use custom settings with hardened configuration

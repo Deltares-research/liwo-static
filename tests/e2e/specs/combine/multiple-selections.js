@@ -3,6 +3,8 @@ import mockLayerSetData from '../../mock/layerset.json'
 import mockFeaturesData from '../../mock/multipleFeatureCollection.json'
 
 const url = '#/combine/7?center=52.32401,5.35995&zoom=10'
+const location1 = mockFeaturesData.features[0].properties.name
+const location2 = mockFeaturesData.features[1].properties.name
 
 describe('Combine multiple selections: marker selection', () => {
   before(() => {
@@ -37,9 +39,6 @@ describe('Combine multiple selections: marker selection', () => {
   })
 
   it('Opens correct layers in panel', () => {
-    const location1 = mockFeaturesData.features[0].properties.name
-    const location2 = mockFeaturesData.features[1].properties.name
-
     cy.get('.leaflet-marker-icon')
       .eq(3)
       .click({ force: true })
@@ -65,9 +64,6 @@ describe('Combine multiple selections: marker selection', () => {
   })
 
   it('Closes correct layers in panel', () => {
-    const location1 = mockFeaturesData.features[0].properties.name
-    const location2 = mockFeaturesData.features[1].properties.name
-
     cy.get('.leaflet-marker-icon')
       .eq(3)
       .click({ force: true })
