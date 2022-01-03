@@ -66,6 +66,8 @@ describe('Maps export', () => {
       cy.get(selector('export-image-button'))
         .click()
 
+      cy.wait(5000)
+
       cy.readFile(path.join(downloadsFolder, `${fileName}.png`))
         .should('exist')
     })
