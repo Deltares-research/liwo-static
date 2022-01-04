@@ -10,8 +10,8 @@
         v-if="layer"
         :id="layer.breachBandId"
         :active="isActive(layer)"
-        :layer.sync="layer"
-        @update:layer="updateLayer(layer, index)"
+        :layer="layer"
+        @update:layer="layer => updateLayer(layer, index)"
         @select:layer="selectLayer"
         @select:variant="selectVariant"
         >

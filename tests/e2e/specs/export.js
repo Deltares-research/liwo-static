@@ -26,6 +26,8 @@ describe('Maps export', () => {
     cy.intercept(new RegExp(/DownloadZipFileDataLayers/))
       .as('apiCheck')
 
+    cy.wait(2000)
+
     cy.get(selector('init-export-button'))
       .click()
 
@@ -65,6 +67,8 @@ describe('Maps export', () => {
 
       cy.get(selector('export-image-button'))
         .click()
+
+      cy.wait(10000)
 
       cy.readFile(path.join(downloadsFolder, `${fileName}.png`))
         .should('exist')
