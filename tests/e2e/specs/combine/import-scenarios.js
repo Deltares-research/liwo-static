@@ -7,8 +7,8 @@ const exportUrl = 'http://localhost:8081/#/combine/7/19422,19428'
 const location1 = mockDoubleFeaturesData.features[0].properties.name
 const location2 = mockDoubleFeaturesData.features[1].properties.name
 
-describe('Combine: Export and import combined scenarios', () => {
-  it('Imports scenario', () => {
+describe('Combine: Import combined scenarios', () => {
+  beforeEach(() => {
     cy.intercept(new RegExp(/GetLayerSet/), mockLayerSetData)
     cy.intercept(new RegExp(/getFeature/), mockDoubleFeaturesData).as('features')
     cy.visit(url)
@@ -22,7 +22,9 @@ describe('Combine: Export and import combined scenarios', () => {
         cy.get(selector('import-url-button'))
           .click()
       })
+  })
 
+  it('Imports scenario', () => {
     cy.url()
       .should('contain', '/combine/7/19422,19428', { timeout: 30000 })
       .then(() => {
@@ -31,6 +33,18 @@ describe('Combine: Export and import combined scenarios', () => {
 
         cy.contains(location2)
           .parentsUntil(selector('layer-panel'))
+      })
+  })
+
+  it('Imports scenario and deselects a location', () => {
+    cy.url()
+      .should('contain', '/combine/7/19422,19428', { timeout: 30000 })
+      .then(() => {
+        cy.wait(5000)
+
+        cy.get('.leaflet-marker-icon')
+          .eq(1)
+          .click({ force: true })
       })
   })
 })
