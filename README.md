@@ -1,5 +1,5 @@
 # liwo-static
-Static frontend for LIWO (https://www.basisinformatie-overstromingen.nl/liwo/)
+Static frontend for LIWO ([www.basisinformatie-overstromingen.nl](https://www.basisinformatie-overstromingen.nl/))
 
 # Info
 [![Build status](https://github.com/Deltares/liwo-static/actions/workflows/node.js.yml/badge.svg)](https://github.com/Deltares/liwo-static/actions/workflows/node.js.yml)
@@ -55,9 +55,8 @@ npm run release
 # create a sig review file after a release (requires jq and wget)
 ./sig-deploy.sh
 # follow the instruction to upload the file
-
-
 ```
+
 ## API
 
 The api that is used to get map information can be found at [swagger](https://app.swaggerhub.com/apis/openearth/basisinformatie-overstromingen.nl).
