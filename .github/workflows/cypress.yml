@@ -78,7 +78,7 @@ jobs:
           # determine the unique run id necessary to re-run the checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # TODO: fix tests in firefox & enable again
+  # enable after all tests are working & this action doesn't time-out
   # ui-firefox-tests:
   #   timeout-minutes: 15
   #   runs-on: ubuntu-latest
