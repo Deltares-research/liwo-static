@@ -3,8 +3,8 @@ import { generateSelector as selector } from '../../lib/generate-selector'
 const url = '#/scenarios/7'
 const filterMarkerCounts = {
   'probability-lt30': 36,
-  'probability-f30t300': 58,
-  'probability-f300t3000': 59,
+  'probability-f30t300': 64,
+  'probability-f300t3000': 60,
   'probability-f3000t30k': 37,
   'probability-gt30k': 24
 }
