@@ -3,7 +3,7 @@
   "reporter": "mochawesome",
   "projectId": "h5f19q",
   "baseUrl": "http://localhost:8080",
-  "defaultCommandTimeout": 15000,
+  "defaultCommandTimeout": 100000,
   "pageLoadTimeout": 300000,
   "viewportWidth": 1920,
   "viewportHeight": 1080,
