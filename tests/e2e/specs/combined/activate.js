@@ -5,7 +5,7 @@ import mockFeaturesData from '../../mock/featureCollection.json'
 const url = '#/combine/7'
 
 describe('Combine: combine selection', () => {
-  before(() => {
+  beforeEach(() => {
     cy.intercept(new RegExp(/GetLayerSet/), mockLayersetData).as('layerset')
     cy.intercept(new RegExp(/getFeature/), mockFeaturesData).as('features')
   })
