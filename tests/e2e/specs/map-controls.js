@@ -44,7 +44,9 @@ describe('Map', () => {
   })
 
   it('Renders legend', () => {
+    cy.intercept('GetLegendGraphic').as('legend')
     cy.visit(url)
+    cy.wait('@legend')
     cy.get(selector('legend')).should('exist')
   })
 
@@ -107,6 +109,8 @@ describe('Map', () => {
     cy.visit(url)
 
     cy.viewport(800, 1000)
+
+    cy.wait(1000)
 
     // turn off layer so background is visible
     cy.get(selector('layer-control')).click()
