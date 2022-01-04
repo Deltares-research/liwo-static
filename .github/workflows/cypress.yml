@@ -70,7 +70,7 @@ jobs:
           record: true
           parallel: false
           # group: "UI - Chrome"
-          spec: tests/e2e/specs/*
+          spec: tests/e2e/specs/**/*
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
