@@ -1,6 +1,5 @@
 import { getLayers } from '../../lib/get-layers'
 import { generateSelector as selector } from '../../lib/generate-selector'
-import { skipOn } from '@cypress/skip-test'
 
 const layers = getLayers()
 

@@ -14,5 +14,6 @@ const layers = [
 ]
 
 export function getLayers () {
+  // for now we return mock data, but this should be replaced with real data from a CSV file
   return layers
 }
