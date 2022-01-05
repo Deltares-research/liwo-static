@@ -7,6 +7,7 @@ import Home from './views/Home'
 import Maps from './views/Maps'
 import Viewer from './views/Viewer'
 import Combine from './views/Combine'
+import NotFound from './views/NotFound'
 import Accessibility from './views/Accessibility'
 
 Vue.use(Router)
@@ -115,6 +116,13 @@ const router = new Router({
       meta: {
         title: 'Toegankelijkheid'
       }
+    },
+    {
+      path: '/404',
+      component: NotFound
+    },
+    {
+      path: '*', redirect: '/404'
     }
   ]
 })

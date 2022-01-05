@@ -2,10 +2,9 @@ import { generateSelector as selector } from '../../lib/generate-selector'
 import mockLayersetData from '../../mock/layerset.json'
 import mockFeaturesData from '../../mock/featureCollection.json'
 
-const url = '#/combine/7'
-const name = mockFeaturesData.features[0].properties.name
+const url = '#/scenarios/7'
 
-describe('Combine: marker selection', () => {
+describe('Scenarios: marker selection', () => {
   before(() => {
     cy.intercept(new RegExp(/GetLayerSet/), mockLayersetData).as('layerset')
     cy.intercept(new RegExp(/getFeature/), mockFeaturesData).as('features')
@@ -27,6 +26,8 @@ describe('Combine: marker selection', () => {
   })
 
   it('Opens correct layers in panel', () => {
+    const name = mockFeaturesData.features[0].properties.name
+
     cy.get('.leaflet-marker-icon')
       .eq(3)
       .click()

@@ -5,7 +5,7 @@ import mockFeaturesData from '../../mock/multipleFeatureCollection.json'
 const url = '#/combine/7?center=52.32401,5.35995&zoom=10'
 
 describe('Combine multiple selections: marker selection', () => {
-  before(() => {
+  beforeEach(() => {
     cy.intercept(new RegExp(/GetLayerSet/), mockLayerSetData).as('layerset')
     cy.intercept(new RegExp(/getFeature/), mockFeaturesData).as('features')
 
@@ -37,9 +37,6 @@ describe('Combine multiple selections: marker selection', () => {
   })
 
   it('Opens correct layers in panel', () => {
-    const location1 = mockFeaturesData.features[0].properties.name
-    const location2 = mockFeaturesData.features[1].properties.name
-
     cy.get('.leaflet-marker-icon')
       .eq(3)
       .click({ force: true })
@@ -53,21 +50,18 @@ describe('Combine multiple selections: marker selection', () => {
       .children()
       .should('have.length', 3)
 
-    cy.contains(location1)
+    cy.contains('OOSTVAARDERSDIJK_03.4')
       .parentsUntil(selector('layer-panel'))
       .next()
       .contains('Waterdiepte')
 
-    cy.contains(location2)
+    cy.contains('Lelystad')
       .parentsUntil(selector('layer-panel'))
       .next()
       .contains('Waterdiepte')
   })
 
   it('Closes correct layers in panel', () => {
-    const location1 = mockFeaturesData.features[0].properties.name
-    const location2 = mockFeaturesData.features[1].properties.name
-
     cy.get('.leaflet-marker-icon')
       .eq(3)
       .click({ force: true })
@@ -76,12 +70,12 @@ describe('Combine multiple selections: marker selection', () => {
       .eq(4)
       .click({ force: true })
 
-    cy.contains(location1)
+    cy.contains('OOSTVAARDERSDIJK_03.4')
       .parentsUntil(selector('layer-panel'))
       .next()
       .contains('Waterdiepte')
 
-    cy.contains(location2)
+    cy.contains('Lelystad')
       .parentsUntil(selector('layer-panel'))
       .next()
       .contains('Waterdiepte')

@@ -1,6 +1,6 @@
 import { generateSelector as selector } from '../../lib/generate-selector'
 
-const url = '#/combine/7'
+const url = '#/scenarios/7'
 const filterMarkerCounts = {
   'probability-lt30': 36,
   'probability-f30t300': 64,
@@ -9,7 +9,7 @@ const filterMarkerCounts = {
   'probability-gt30k': 24
 }
 
-describe('Combine: filters', () => {
+describe('Scenarios: filters', () => {
   it('Changes marker count when filtering', () => {
     cy.intercept(new RegExp(/getFeature/)).as('features')
 

@@ -1,14 +1,14 @@
 import { generateSelector as selector } from '../../lib/generate-selector'
-const url = '#/combine/7/19422?center=52.36134,5.38055&zoom=11'
+const url = '#/scenarios/7/19422?center=52.36134,5.38055&zoom=11'
 
-describe('Combine: click for value', () => {
+describe('Scenarios: click for value', () => {
   it('Shows info popup for specific point on different layers', () => {
     cy.viewport(1500, 1000)
     cy.visit(url)
     cy.intercept(new RegExp(/getFeature/)).as('features')
 
     cy.wait('@features', {
-      timeout: 40000
+      timeout: 20000
     })
 
     cy.wait(8000)

@@ -31,33 +31,33 @@ const tileLayers = [
   {
     title: 'Topografie - water',
     [EPSG_28992]: {
-      url: 'https://geodata.nationaalgeoregister.nl/tiles/service/wmts/brtachtergrondkaartwater/EPSG:28992/{z}/{x}/{y}.png',
+      url: 'https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/water/EPSG:28992/{z}/{x}/{y}.png',
       tms: false
     },
     [EPSG_3857]: {
-      url: 'https://geodata.nationaalgeoregister.nl/tiles/service/wmts/brtachtergrondkaartwater/EPSG:3857/{z}/{x}/{y}.png',
+      url: 'https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/water/EPSG:3857/{z}/{x}/{y}.png',
       tms: true
     }
   },
   {
     title: 'Topografie - grijs',
     [EPSG_28992]: {
-      url: 'https://geodata.nationaalgeoregister.nl/tiles/service/wmts/brtachtergrondkaartgrijs/EPSG:28992/{z}/{x}/{y}.png',
+      url: 'https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/grijs/EPSG:28992/{z}/{x}/{y}.png',
       tms: false
     },
     [EPSG_3857]: {
-      url: 'https://geodata.nationaalgeoregister.nl/tiles/service/wmts/brtachtergrondkaartgrijs/EPSG:3857/{z}/{x}/{y}.png',
+      url: 'https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/grijs/EPSG:3857/{z}/{x}/{y}.png',
       tms: true
     }
   },
   {
     title: 'Topografie',
     [EPSG_28992]: {
-      url: 'https://geodata.nationaalgeoregister.nl/tiles/service/wmts/brtachtergrondkaart/EPSG:28992/{z}/{x}/{y}.png',
+      url: 'https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/standaard/EPSG:28992/{z}/{x}/{y}.png',
       tms: false
     },
     [EPSG_3857]: {
-      url: 'https://geodata.nationaalgeoregister.nl/tiles/service/wmts/brtachtergrondkaart/EPSG:3857/{z}/{x}/{y}.png',
+      url: 'https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/standaard/EPSG:3857/{z}/{x}/{y}.png',
       tms: true
     }
   },
@@ -93,6 +93,7 @@ async function getServices () {
   if (services) {
     return services
   }
+
   const url = 'config/webconfig.json'
   // TODO: how shall we configure this? Discuss with Peter
   // url = 'config/webconfig-rws.json'

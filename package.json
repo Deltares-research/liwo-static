@@ -1,6 +1,6 @@
 {
   "name": "liwo-static",
-  "version": "2.30.1",
+  "version": "2.36.8",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --open",
@@ -8,6 +8,7 @@
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
+    "docker": "docker run --rm -p8080:80 --name liwo-static -v $(pwd)/nginx.conf:/etc/nginx/nginx.conf:ro -v $(pwd)/dist:/usr/share/nginx/html nginx",
     "release": "semantic-release"
   },
   "dependencies": {
@@ -28,7 +29,7 @@
     "mapbox.js": "^3.1.1",
     "portal-vue": "^2.1.7",
     "proj4leaflet": "^1.0.2",
-    "promise-polyfill": "7.1.2",
+    "promise-polyfill": "8.2.1",
     "proxy-polyfill": "^0.3.2",
     "query-string": "^5.1.1",
     "url-polyfill": "^1.1.5",
@@ -51,12 +52,12 @@
     "@babel/runtime-corejs3": "^7.13.10",
     "@cypress/skip-test": "^2.6.1",
     "@semantic-release/git": "^9.0.0",
-    "@vue/babel-preset-app": "3.5.0",
-    "@vue/cli-plugin-babel": "^4.5.12",
-    "@vue/cli-plugin-e2e-cypress": "^4.5.12",
-    "@vue/cli-plugin-eslint": "^4.5.12",
-    "@vue/cli-plugin-unit-mocha": "^4.5.12",
-    "@vue/cli-service": "^4.5.12",
+    "@vue/babel-preset-app": "4.5.15",
+    "@vue/cli-plugin-babel": "~4.5.15",
+    "@vue/cli-plugin-e2e-cypress": "~4.5.15",
+    "@vue/cli-plugin-eslint": "~4.5.15",
+    "@vue/cli-plugin-unit-mocha": "~4.5.15",
+    "@vue/cli-service": "~4.5.15",
     "@vue/eslint-config-standard": "^5.1.2",
     "@vue/test-utils": "^1.0.0-beta.10",
     "babel-core": "^6.26.3",
@@ -65,7 +66,7 @@
     "babel-plugin-lodash": "^3.3.4",
     "babel-preset-env": "^1.7.0",
     "caniuse-db": "^1.0.30000840",
-    "chai": "^4.1.2",
+    "chai": "^4.3.4",
     "chai-dom": "^1.8.1",
     "chai-things": "^0.2.0",
     "copy-webpack-plugin": "^4.6.0",
@@ -89,7 +90,6 @@
     "sass-loader": "^7.3.1",
     "semantic-release": "^17.4.2",
     "unfetch": "^4.2.0",
-    "vue-cli-plugin-webpack-bundle-analyzer": "^4.0.0",
     "vue-template-compiler": "^2.6.10"
   },
   "eslintConfig": {
