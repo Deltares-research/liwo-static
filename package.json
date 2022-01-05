@@ -12,7 +12,7 @@
     "release": "semantic-release"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.0.0",
+    "@babel/polyfill": "^7.12.1",
     "@vue-a11y/skip-to": "^2.1.2",
     "cypress": "^6.4.0",
     "deep-equal": "^1.1.1",
@@ -24,7 +24,7 @@
     "leaflet-control-geocoder": "^1.13.0",
     "leaflet-easyprint": "^2.1.9",
     "leaflet.browser.print": "^1.0.4",
-    "leaflet.markercluster": "^1.4.1",
+    "leaflet.markercluster": "^1.5.3",
     "lodash": "^4.17.11",
     "mapbox.js": "^3.1.1",
     "portal-vue": "^2.1.7",
