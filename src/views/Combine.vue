@@ -94,6 +94,7 @@
             class="layer-panel__action"
             v-if="scenarioMode === 'compute'"
             @click="showExportCombined = true"
+            v-test="'init-export-button'"
           >
             <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
               <path fill="none" d="M0 0h24v24H0z"/>
