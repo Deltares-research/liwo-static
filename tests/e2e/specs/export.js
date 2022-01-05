@@ -41,10 +41,11 @@ describe('Maps export', () => {
         const body = xhr.request.body
         expect(body.name).to.equal(fileName)
       })
-      .its('response')
-      .should('deep.include', {
-        statusCode: 200,
-        statusMessage: 'OK'
+      .then(({ response }) => {
+        // size in bytes
+        const size = Number(response.headers['content-length'])
+
+        expect(size).to.be.greaterThan(5000)
       })
 
     cy.get(selector('close-button')).click()
