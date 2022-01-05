@@ -46,7 +46,7 @@
   "devDependencies": {
     "@babel/cli": "7.16.7",
     "@babel/core": "7.3.4",
-    "@babel/plugin-transform-arrow-functions": "^7.0.0",
+    "@babel/plugin-transform-arrow-functions": "^7.16.7",
     "@babel/preset-env": "7.3.4",
     "@babel/runtime-corejs3": "^7.13.10",
     "@cypress/skip-test": "^2.6.1",
