@@ -44,7 +44,14 @@ describe('Combine: Import combined scenarios', () => {
 
         cy.get('.leaflet-marker-icon')
           .eq(1)
-          .click({ force: true })
+          .invoke('attr', 'src')
+          .then((srcVal) => {
+            cy.get('.leaflet-marker-icon')
+              .eq(1)
+              .click({ force: true })
+              .invoke('attr', 'src')
+              .should('not.eq', srcVal)
+          })
       })
   })
 })
