@@ -1,6 +1,7 @@
 <template>
 <div
   :class="classData"
+  :data-id="layer.id"
   >
   <form class="layer-control__main" v-test="'layer-toggle'">
     <input type="checkbox"
