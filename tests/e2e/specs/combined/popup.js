@@ -13,7 +13,7 @@ describe('Combined: popup', () => {
 
     cy.wait('@features')
 
-    cy.wait(2000)
+    cy.wait(5000)
   })
 
   it('Shows location tooltip on hover', () => {

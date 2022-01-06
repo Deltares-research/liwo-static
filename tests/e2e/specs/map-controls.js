@@ -110,14 +110,14 @@ describe('Map', () => {
 
     cy.viewport(800, 1000)
 
-    cy.wait(1000)
+    cy.wait(100)
 
     // turn off layer so background is visible
     cy.get(selector('layer-control')).click()
 
     cy.get('.leaflet-control-layers-toggle').click()
     cy.get('.leaflet-control-layers-list input').each($input => {
-      cy.wait(1000).then(() => {
+      cy.wait(100).then(() => {
         $input.click()
         $input[0].checked = true
 

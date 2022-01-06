@@ -11,7 +11,7 @@ describe('Scenarios: metadata is available', () => {
       timeout: 20000
     })
 
-    cy.wait(5000)
+    cy.wait(8000)
 
     cy.get(selector('layer-panel')).eq(1)
       .within(() => {

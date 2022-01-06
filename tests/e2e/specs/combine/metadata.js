@@ -11,7 +11,7 @@ describe('Combine: metadata is available', () => {
       timeout: 20000
     })
 
-    cy.wait(5000)
+    cy.wait(10000)
 
     cy.get(selector('layer-panel')).eq(1)
       .within(() => {
