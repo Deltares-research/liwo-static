@@ -5,7 +5,7 @@ const layers = getLayers()
 
 // selects specified layer in layer list
 // should at least be called on first test for layer
-function selectLayer(cy, layer) {
+function selectLayer (cy, layer) {
   cy.url().then((currentUrl) => {
     if (!currentUrl.includes(`${layer.url}?`)) {
       cy.intercept(new RegExp(/GetLayerSet/)).as('layerset')
@@ -62,6 +62,24 @@ describe('Layer functionalities', () => {
 
     it('Renders legend', () => {
       cy.get(selector('legend')).should('exist')
+    })
+
+    it.only('shows metadata modal', () => {
+      selectLayer(cy, layer)
+
+      cy.get(`[data-id="${layer.id}"]`)
+        .within(() => {
+          cy.get(selector('info-toggle')).first().click({ force: true })
+
+          cy.get(selector('meta-table'))
+            .contains('Title')
+            .next()
+            .should(($el) => {
+              expect($el.text().trim()).not.equal('')
+            })
+
+          cy.get(selector('close-button')).click()
+        })
     })
   })
 })
