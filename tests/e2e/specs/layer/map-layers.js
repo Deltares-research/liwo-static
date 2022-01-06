@@ -30,7 +30,7 @@ function selectLayer (cy, layer) {
 
 describe('Layer functionalities', () => {
   layers.forEach(layer => {
-    it('exports zip file', () => {
+    it('Exports zip file', () => {
       selectLayer(cy, layer)
 
       const fileName = 'test-filename'
