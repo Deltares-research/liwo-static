@@ -5,9 +5,7 @@
       :key="option.value"
       :value="option.value"
       :selected="selected && selected === option.value"
-    >
-      {{ option.title }}
-    </option>
+    >{{ option.title }}</option>
   </select>
 </template>
 
