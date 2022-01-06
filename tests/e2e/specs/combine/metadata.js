@@ -11,9 +11,12 @@ describe('Combine: metadata is available', () => {
 
     cy.wait(10000)
 
-    cy.get(selector('layer-panel')).eq(1)
+    cy.get(selector('layer-panel'))
+      .eq(1)
       .within(() => {
-        cy.get(selector('info-toggle')).first().click()
+        cy.get(selector('info-toggle'))
+          .first()
+          .click()
 
         cy.get(selector('meta-table'))
           .contains('Scenarionaam')
