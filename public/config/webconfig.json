@@ -24,5 +24,6 @@
   "_comment7": "// dataset version (GEE)",
   "DATASET_VERSION": "FILL IN DURING DEPLOY",
   "_comment8": "// backend version",
-  "BACKEND_VERSION": "FILL IN DURING DEPLOY"
+  "BACKEND_VERSION": "FILL IN DURING DEPLOY",
+  "COOKIE_BANNER": true
 }

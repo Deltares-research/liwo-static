@@ -23,5 +23,6 @@
   "_comment7": "// dataset version (GEE)",
   "DATASET_VERSION": "LIWO/trunk@2829",
   "_comment8": "// backend version",
-  "BACKEND_VERSION": "mei 2020"
+  "BACKEND_VERSION": "mei 2020",
+  "COOKIE_BANNER": true
 }
