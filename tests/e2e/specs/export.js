@@ -20,7 +20,7 @@ describe('Maps export', () => {
     cy.window().its('print').should('be.called')
   })
 
-  it('exports zip file', () => {
+  it('Exports zip file', () => {
     const fileName = 'test-filename'
 
     cy.intercept(new RegExp(/DownloadZipFileDataLayers/))

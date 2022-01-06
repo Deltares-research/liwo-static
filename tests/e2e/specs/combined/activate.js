@@ -10,7 +10,7 @@ describe('Combine: combine selection', () => {
     cy.intercept(new RegExp(/getFeature/), mockFeaturesData).as('features')
   })
 
-  it('triggers combine popup', () => {
+  it('Triggers combine popup', () => {
     cy.visit(url)
 
     cy.get('.leaflet-marker-icon')
@@ -24,7 +24,7 @@ describe('Combine: combine selection', () => {
       .contains('waterdiepte')
   })
 
-  it('combines results', () => {
+  it('Combines results', () => {
     cy.visit(url)
 
     cy.get('.leaflet-marker-icon')
