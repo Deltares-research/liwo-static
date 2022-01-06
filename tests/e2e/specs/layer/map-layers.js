@@ -1,5 +1,6 @@
 import { getLayers } from '../../lib/get-layers'
 import { generateSelector as selector } from '../../lib/generate-selector'
+import { getLayerInfoValue } from '../../../../src/lib/leaflet-utils/get-layer-info-value'
 
 const layers = getLayers()
 
@@ -60,11 +61,25 @@ describe('Layer functionalities', () => {
       cy.get(selector('close-button')).click()
     })
 
-    it('Renders legend', () => {
+    it('renders legend', () => {
       cy.get(selector('legend')).should('exist')
     })
 
-    it.only('shows metadata modal', () => {
+    it('shows popup on click', () => {
+      cy.intercept(new RegExp(/GetFeatureInfo/)).as('info')
+
+      cy.get(selector('map'))
+        .click('center')
+        .wait('@info', (res) => {
+          const value = getLayerInfoValue(res.response.body, layer.id)
+
+          if (value) {
+            cy.get('.leaflet-popup').should('exist')
+          }
+        })
+    })
+
+    it('shows metadata modal', () => {
       selectLayer(cy, layer)
 
       cy.get(`[data-id="${layer.id}"]`)
