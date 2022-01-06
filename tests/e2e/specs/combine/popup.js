@@ -11,6 +11,7 @@ describe('Combine: shows correct popup value', () => {
 
     cy.visit(url)
   })
+
   it('Opens correct layers in panel', () => {
     cy.get('.leaflet-marker-icon')
       .eq(3)
@@ -21,6 +22,8 @@ describe('Combine: shows correct popup value', () => {
     cy.get('.leaflet-marker-icon')
       .eq(3)
       .trigger('mouseover')
+
+    cy.wait(500)
 
     cy.get('.leaflet-tooltip')
       .then($tooltipEl => {
@@ -41,12 +44,18 @@ describe('Combine: shows correct popup value', () => {
       .eq(3)
       .click()
 
+    cy.wait(500)
+
     cy.get(selector('variant-select'))
       .select('1')
+
+    cy.wait(500)
 
     cy.get('.leaflet-marker-icon')
       .eq(3)
       .trigger('mouseover')
+
+    cy.wait(500)
 
     cy.get('.leaflet-tooltip')
       .then($tooltipEl => {

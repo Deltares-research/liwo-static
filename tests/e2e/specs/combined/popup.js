@@ -21,15 +21,19 @@ describe('Combined: popup', () => {
       .eq(6)
       .trigger('mouseover')
 
-    cy.get('.leaflet-marker-icon')
-      .eq(7)
-      .trigger('mouseover')
+    cy.wait(500)
 
     cy.get('.leaflet-tooltip')
       .then($tooltipEl => {
         const text = $tooltipEl[0].innerText
         expect(text).to.equal('OOSTVAARDERSDIJK_16.0')
       })
+
+    cy.get('.leaflet-marker-icon')
+      .eq(7)
+      .trigger('mouseover')
+
+    cy.wait(500)
 
     cy.get('.leaflet-tooltip')
       .then($tooltipEl => {
