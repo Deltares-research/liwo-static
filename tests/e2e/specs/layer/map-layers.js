@@ -78,5 +78,23 @@ describe('Layer functionalities', () => {
           }
         })
     })
+
+    it('shows metadata modal', () => {
+      selectLayer(cy, layer)
+
+      cy.get(`[data-id="${layer.id}"]`)
+        .within(() => {
+          cy.get(selector('info-toggle')).first().click({ force: true })
+
+          cy.get(selector('meta-table'))
+            .contains('Title')
+            .next()
+            .should(($el) => {
+              expect($el.text().trim()).not.equal('')
+            })
+
+          cy.get(selector('close-button')).click()
+        })
+    })
   })
 })

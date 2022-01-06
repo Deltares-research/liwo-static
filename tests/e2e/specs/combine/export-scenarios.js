@@ -5,7 +5,7 @@ import mockDoubleFeaturesData from '../../mock/doubleFeatureCollection.json'
 const url = '#/combine/7?center=52.32401,5.35995&zoom=10'
 const exportUrl = '#/combine/7/19422,19428'
 
-describe('Combine: Export and import combined scenarios', () => {
+describe('Combine: Export combined scenarios', () => {
   it('Exports scenario', () => {
     cy.intercept(new RegExp(/GetLayerSet/), mockLayerSetData)
     cy.intercept(new RegExp(/getFeature/), mockDoubleFeaturesData).as('features')
