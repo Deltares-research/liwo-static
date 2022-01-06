@@ -7,9 +7,7 @@ describe('Scenarios: click for value', () => {
     cy.visit(url)
     cy.intercept(new RegExp(/getFeature/)).as('features')
 
-    cy.wait('@features', {
-      timeout: 20000
-    })
+    cy.wait('@features', { timeout: 20000 })
 
     cy.wait(8000)
 

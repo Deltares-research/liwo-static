@@ -11,7 +11,7 @@ describe('Combined: popup', () => {
 
     cy.visit(url)
 
-    cy.wait('@features')
+    cy.wait('@features', { timeout: 20000 })
 
     cy.wait(5000)
   })

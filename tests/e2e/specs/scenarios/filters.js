@@ -15,9 +15,7 @@ describe('Scenarios: filters', () => {
 
     cy.visit(url)
 
-    cy.wait('@features', {
-      timeout: 20000
-    })
+    cy.wait('@features', { timeout: 20000 })
 
     cy.get(selector('filter-toggle'))
       .click()

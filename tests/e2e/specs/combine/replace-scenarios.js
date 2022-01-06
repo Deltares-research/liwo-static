@@ -16,7 +16,7 @@ describe('Combine: Export and import combined scenarios', () => {
 
     cy.visit(url)
 
-    cy.wait('@features')
+    cy.wait('@features', { timeout: 20000 })
 
     cy.get('.leaflet-marker-icon')
       .eq(0)
