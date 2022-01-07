@@ -45,57 +45,25 @@ describe('Combine multiple selections: marker selection', () => {
       .eq(4)
       .click({ force: true })
 
-    cy.get(selector('layer-panel'))
-      .parent()
-      .children()
-      .should('have.length', 3)
-
-    cy.contains('OOSTVAARDERSDIJK_03.4')
+    cy.contains('OOSTVAARDERSDIJK_03.4', {
+      timeout: 20000,
+    })
       .parentsUntil(selector('layer-panel'))
       .next()
       .contains('Waterdiepte')
 
-    cy.contains('Lelystad')
+    cy.contains('Lelystad', {
+      timeout: 20000,
+    })
       .parentsUntil(selector('layer-panel'))
       .next()
       .contains('Waterdiepte')
-  })
-
-  it('Closes correct layers in panel', () => {
-    cy.get('.leaflet-marker-icon')
-      .eq(3)
-      .click({ force: true })
-
-    cy.get('.leaflet-marker-icon')
-      .eq(4)
-      .click({ force: true })
-
-    cy.contains('OOSTVAARDERSDIJK_03.4')
-      .parentsUntil(selector('layer-panel'))
-      .next()
-      .contains('Waterdiepte')
-
-    cy.contains('Lelystad')
-      .parentsUntil(selector('layer-panel'))
-      .next()
-      .contains('Waterdiepte')
-
-    cy.get('.leaflet-marker-icon')
-      .eq(3)
-      .click({ force: true })
-
-    cy.get(selector('layer-panel'))
-      .parent()
-      .children()
-      .should('have.length', 2)
   })
 
   it('Changes legend graphic', () => {
     cy.get('.leaflet-marker-icon')
       .eq(3)
       .click({ force: true })
-
-    cy.wait(5000)
 
     cy.get(`${selector('legend')} img`)
       .invoke('attr', 'src')
@@ -109,7 +77,9 @@ describe('Combine multiple selections: marker selection', () => {
         cy.get(`${selector('legend')} img`)
           .invoke('attr', 'src')
           .then(newSrc => {
-            expect(initSrc).to.not.equal(newSrc)
+            expect(initSrc, {
+              timeout: 20000,
+            }).to.not.equal(newSrc)
           })
       })
   })
