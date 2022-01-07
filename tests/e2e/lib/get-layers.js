@@ -1,23 +1,9 @@
-const layers = [
-  {
-    url: '/#/viewer/18',
-    id: 'plaatsgebonden_kans_totaal_huidig_0'
-  },
-  {
-    url: '/#/viewer/18',
-    id: 'overstromingskansen_actueel_2019_faalkans_primair'
-  },
-  {
-    url: '/#/viewer/18',
-    id: 'overstromingskansen_actueel_faalkans_regionaal'
-  },
-  {
-    url: '/#/viewer/1',
-    id: 'MaximaleWaterdiepteNederland_Kaart5'
-  }
-]
+const fs = require('fs')
+const path = require('path')
+const csv2json = require('./csv-to-json')
 
-export function getLayers () {
-  // for now we return mock data, but this should be replaced with real data from a CSV file
-  return layers
+module.exports = function getLayers () {
+  const layersCsv = fs.readFileSync(path.join(__dirname, '../data/Kaartlagen_LIWO.csv'), 'utf8')
+  const layersJSon = csv2json(layersCsv)
+  return layersJSon
 }
