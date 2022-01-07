@@ -1,5 +1,5 @@
-import { generateSelector as selector } from '../../lib/generate-selector'
-import { getLayerInfoValue } from '../../../../src/lib/leaflet-utils/get-layer-info-value'
+import { generateSelector as selector } from '../../../lib/generate-selector'
+import { getLayerInfoValue } from '../../../../../src/lib/leaflet-utils/get-layer-info-value'
 
 // selects specified layer in layer list
 // should at least be called on first test for layer
