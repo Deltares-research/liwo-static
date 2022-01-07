@@ -14,6 +14,7 @@ describe('Menu', () => {
       })
     })
   })
+
   it('Navigates to the correct pages', () => {
     cy.visit('/')
 
@@ -26,6 +27,7 @@ describe('Menu', () => {
       })
     })
   })
+
   it('Has correct page titles', () => {
     pages.forEach(([title, url]) => {
       cy.visit(url)
