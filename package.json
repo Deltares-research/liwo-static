@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@babel/cli": "7.16.7",
-    "@babel/core": "7.3.4",
+    "@babel/core": "7.16.7",
     "@babel/plugin-transform-arrow-functions": "^7.16.7",
     "@babel/preset-env": "7.3.4",
     "@babel/runtime-corejs3": "^7.13.10",
@@ -83,7 +83,7 @@
     "lodash-webpack-plugin": "^0.11.5",
     "mocha": "^7.2.0",
     "mochawesome": "^6.2.1",
-    "node-sass": "^4.14.1",
+    "node-sass": "^7.0.1",
     "postcss-custom-properties": "7.0.0",
     "postcss-import": "^11.1.0",
     "sass-loader": "^7.3.1",
