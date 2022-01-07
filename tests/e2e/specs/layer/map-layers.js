@@ -4,32 +4,30 @@ import { getLayerInfoValue } from '../../../../src/lib/leaflet-utils/get-layer-i
 // selects specified layer in layer list
 // should at least be called on first test for layer
 function selectLayer (cy, layer) {
-  cy.url().then((currentUrl) => {
-    cy.intercept(new RegExp(/GetLayerSet/)).as('layerset')
+  cy.intercept(new RegExp(/GetLayerSet/)).as('layerset')
 
-    cy.visit('#/maps')
+  cy.visit('#/maps')
 
-    cy.contains(layer['Kaartenset']).click()
+  cy.contains(layer['Kaartenset']).click()
 
-    cy.wait('@layerset')
+  cy.wait('@layerset')
 
-    // disable all layers
-    cy.get('.layer-control__vis-checkbox').each(el => {
-      if (el[0].checked) {
-        el[0].click({ force: true })
-      }
-    })
-
-    // enable one specific layer that we want to test
-    cy.get(`[data-name="${layer['Kaartlaag']}"] input[type="checkbox"]`).click({ force: true })
-
-    if (layer['Variant']) {
-      cy.get(`[data-name="${layer['Kaartlaag']}"]`)
-        .within(() => {
-          cy.get(selector('variant-select')).select(layer['Variant'].trim())
-        })
+  // disable all layers
+  cy.get('.layer-control__vis-checkbox').each(el => {
+    if (el[0].checked) {
+      el[0].click({ force: true })
     }
   })
+
+  // enable one specific layer that we want to test
+  cy.get(`[data-name="${layer['Kaartlaag']}"] input[type="checkbox"]`).click({ force: true })
+
+  if (layer['Variant']) {
+    cy.get(`[data-name="${layer['Kaartlaag']}"]`)
+      .within(() => {
+        cy.get(selector('variant-select')).select(layer['Variant'].trim())
+      })
+  }
 }
 
 describe('Layer functionalities', () => {
@@ -42,7 +40,7 @@ describe('Layer functionalities', () => {
       cy.intercept(new RegExp(/DownloadZipFileDataLayers/))
         .as('apiCheck')
 
-      cy.get("body").then($body => {
+      cy.get('body').then($body => {
         // only run if export button exists
         if ($body.find(selector('init-export-button')).length) {   
           cy.get(selector('init-export-button'))

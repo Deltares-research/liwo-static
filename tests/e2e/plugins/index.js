@@ -1,7 +1,7 @@
 /* eslint-disable arrow-body-style */
 // https://docs.cypress.io/guides/guides/plugins-guide.html
 
-const getLayers = require("../lib/get-layers");
+const getLayers = require('../lib/get-layers')
 
 // if you need a custom webpack configuration you can uncomment the following import
 // and then use the `file:preprocessor` event
