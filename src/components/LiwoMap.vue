@@ -77,6 +77,9 @@ export default {
         // pass the  map click event on up
         this.$emit('map:click', event)
       })
+
+      window.liwoMap = mapObject
+
       this.setPosition()
       this.addPositionListeners()
     },
