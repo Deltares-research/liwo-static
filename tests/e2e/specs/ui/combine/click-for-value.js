@@ -1,4 +1,4 @@
-import { generateSelector as selector } from '../../lib/generate-selector'
+import { generateSelector as selector } from '../../../lib/generate-selector'
 const url = '#/combine/7/19422?center=52.36134,5.38055&zoom=11'
 
 describe('Combine: click for value', () => {

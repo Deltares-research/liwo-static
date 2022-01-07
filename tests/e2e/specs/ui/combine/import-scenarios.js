@@ -1,4 +1,4 @@
-import { generateSelector as selector } from '../../lib/generate-selector'
+import { generateSelector as selector } from '../../../lib/generate-selector'
 import mockLayerSetData from '../../mock/layerset.json'
 import mockDoubleFeaturesData from '../../mock/doubleFeatureCollection.json'
 

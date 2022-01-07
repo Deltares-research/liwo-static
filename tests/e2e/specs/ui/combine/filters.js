@@ -1,4 +1,4 @@
-import { generateSelector as selector } from '../../lib/generate-selector'
+import { generateSelector as selector } from '../../../lib/generate-selector'
 
 const url = '#/combine/7'
 const filterMarkerCounts = {

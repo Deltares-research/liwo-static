@@ -1,4 +1,4 @@
-import { generateSelector as selector } from '../../lib/generate-selector'
+import { generateSelector as selector } from '../../../lib/generate-selector'
 const url = '#/combined/7/19422,19428/waterdepth'
 
 describe('Combined: metadata is available', () => {

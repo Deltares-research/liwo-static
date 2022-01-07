@@ -1,4 +1,4 @@
-import { generateSelector as selector } from '../../lib/generate-selector'
+import { generateSelector as selector } from '../../../lib/generate-selector'
 const url = '#/scenarios/7/19422'
 
 describe('Scenarios: metadata is available', () => {
