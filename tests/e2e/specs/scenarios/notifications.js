@@ -1,4 +1,3 @@
-// TODO: check how we can do this consistently with absolute imports
 import { generateSelector as selector } from '../../lib/generate-selector'
 
 const mockDataScenarios = {
@@ -7,14 +6,47 @@ const mockDataScenarios = {
 }
 
 describe('Notifications', () => {
-  it('Allows to export maps', () => {
-    cy.visit('#/scenarios/6/18310')
+  beforeEach(() => {
     cy.intercept('GetScenariosPerBreachGeneric', mockDataScenarios).as('scenarios')
+  })
 
-    cy.wait('@scenarios', {
-      timeout: 120000
-    }).then(() => {
-      cy.get(selector('notification')).should('exist')
-    })
+  it('Are visible when needed', () => {
+    cy.visit('#/scenarios/6/18310')
+
+    cy.wait('@scenarios', { timeout: 120000 })
+      .then(() => {
+        cy.get(selector('notification'))
+          .should('exist')
+      })
+  })
+
+  it('Can be closed by clicking on them', () => {
+    cy.visit('#/scenarios/6/18310')
+
+    cy.wait('@scenarios', { timeout: 120000 })
+      .then(() => {
+        cy.get(selector('notification-button'))
+          .should('exist')
+          .click()
+      })
+      .then(() => {
+        cy.get(selector('notification-button'))
+          .should('not.exist')
+      })
+  })
+
+  it('Can be closed using the close button', () => {
+    cy.visit('#/scenarios/6/18310')
+
+    cy.wait('@scenarios', { timeout: 120000 })
+      .then(() => {
+        cy.get(selector('notification'))
+          .should('exist')
+          .click()
+      })
+      .then(() => {
+        cy.get(selector('notification-button'))
+          .should('not.exist')
+      })
   })
 })

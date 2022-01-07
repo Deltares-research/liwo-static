@@ -15,7 +15,11 @@
         <div class="container">
           <img class="notification-bar__icon" :src="`${publicPath}icons/baseline-${notification.type}-24px.svg`" />
           <p class="notification-bar__message">{{ notification.message }}</p>
-          <button class="pop-up__close icon-close-big panel-close"><span class="sr-only">Sluiten</span></button>
+          <button
+            class="pop-up__close icon-close-big panel-close"
+            v-test="'notification-button'">
+            <span class="sr-only">Sluiten</span>
+          </button>
         </div>
       </aside>
     </li>
