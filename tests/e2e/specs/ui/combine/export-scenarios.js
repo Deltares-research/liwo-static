@@ -20,6 +20,8 @@ describe('Combine: Export combined scenarios', () => {
     cy.get('.leaflet-marker-icon')
       .eq(4)
       .click({ force: true })
+    
+    cy.wait(5000)
 
     cy.url()
       .should('contain', '/combine/7/19422,19428', { timeout: 30000 })

@@ -28,10 +28,14 @@ describe('Combine: Import combined scenarios', () => {
     cy.url()
       .should('contain', '/combine/7/19422,19428', { timeout: 30000 })
       .then(() => {
-        cy.contains(location1)
+        cy.contains(location1, {
+          timeout: 20000
+        })
           .parentsUntil(selector('layer-panel'))
 
-        cy.contains(location2)
+        cy.contains(location2, {
+          timeout: 20000
+        })
           .parentsUntil(selector('layer-panel'))
       })
   })
