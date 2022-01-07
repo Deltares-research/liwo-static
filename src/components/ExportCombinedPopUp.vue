@@ -26,9 +26,21 @@
       <input type="number" name="scale"
         id="export-scale" autocomplete="off" v-model="exportScale"
         class="export-popup__form-column-item export-popup__textfield">
-      <footer class="export-popup__footer" v-if="eeLayer">
-        <button class="btn primary" @click.prevent="exportMap">Exporteer</button>
-        <button class="btn secondary" type="reset" @click="$emit('close')">Annuleer</button>
+      <footer v-if="eeLayer" class="export-popup__footer">
+        <button
+          class="btn primary"
+          @click.prevent="exportMap"
+          v-test="'export-combined-button'"
+        >
+          Exporteer
+        </button>
+        <button
+          class="btn secondary"
+          type="reset"
+          @click="$emit('close')"
+        >
+          Annuleer
+        </button>
       </footer>
     </form>
   </pop-up>

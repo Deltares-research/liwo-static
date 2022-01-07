@@ -22,6 +22,7 @@ describe('Maps export', () => {
 
   it('Exports zip file', () => {
     const fileName = 'test-filename'
+    const downloadsFolder = Cypress.config('downloadsFolder')
 
     cy.intercept(new RegExp(/DownloadZipFileDataLayers/))
       .as('apiCheck')
@@ -47,6 +48,9 @@ describe('Maps export', () => {
 
         expect(size).to.be.greaterThan(5000)
       })
+
+    cy.readFile(path.join(downloadsFolder, `${fileName}.zip`))
+      .should('exist')
 
     cy.get(selector('close-button')).click()
   })
