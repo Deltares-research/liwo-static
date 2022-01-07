@@ -89,9 +89,7 @@ describe('Layer functionalities', () => {
     })
 
     it('shows metadata modal', () => {
-      selectLayer(cy, layer)
-
-      cy.get(`[data-id="${layer.id}"]`)
+      cy.get(`[data-name="${layer['Kaartlaag']}"]`)
         .within(() => {
           cy.get(selector('info-toggle')).first().click({ force: true })
 
