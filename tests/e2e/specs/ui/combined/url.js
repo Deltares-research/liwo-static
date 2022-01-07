@@ -8,7 +8,7 @@ describe('Combine: combine selection', () => {
   it('Combines results', () => {
     cy.visit(url)
 
-    cy.get(selector('combine-button'))
+    cy.get(selector('combine-button'), { timeout: 20000 })
       .click()
 
     cy.contains('waterdiepte')
