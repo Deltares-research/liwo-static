@@ -1,11 +1,12 @@
 import { getLayers } from '../../lib/get-layers'
 import { generateSelector as selector } from '../../lib/generate-selector'
+import { getLayerInfoValue } from '../../../../src/lib/leaflet-utils/get-layer-info-value'
 
 const layers = getLayers()
 
 // selects specified layer in layer list
 // should at least be called on first test for layer
-function selectLayer(cy, layer) {
+function selectLayer (cy, layer) {
   cy.url().then((currentUrl) => {
     if (!currentUrl.includes(`${layer.url}?`)) {
       cy.intercept(new RegExp(/GetLayerSet/)).as('layerset')
@@ -29,7 +30,7 @@ function selectLayer(cy, layer) {
 
 describe('Layer functionalities', () => {
   layers.forEach(layer => {
-    it('exports zip file', () => {
+    it('Exports zip file', () => {
       selectLayer(cy, layer)
 
       const fileName = 'test-filename'
@@ -60,8 +61,40 @@ describe('Layer functionalities', () => {
       cy.get(selector('close-button')).click()
     })
 
-    it('Renders legend', () => {
+    it('renders legend', () => {
       cy.get(selector('legend')).should('exist')
+    })
+
+    it('shows popup on click', () => {
+      cy.intercept(new RegExp(/GetFeatureInfo/)).as('info')
+
+      cy.get(selector('map'))
+        .click('center')
+        .wait('@info', (res) => {
+          const value = getLayerInfoValue(res.response.body, layer.id)
+
+          if (value) {
+            cy.get('.leaflet-popup').should('exist')
+          }
+        })
+    })
+
+    it('shows metadata modal', () => {
+      selectLayer(cy, layer)
+
+      cy.get(`[data-id="${layer.id}"]`)
+        .within(() => {
+          cy.get(selector('info-toggle')).first().click({ force: true })
+
+          cy.get(selector('meta-table'))
+            .contains('Title')
+            .next()
+            .should(($el) => {
+              expect($el.text().trim()).not.equal('')
+            })
+
+          cy.get(selector('close-button')).click()
+        })
     })
   })
 })

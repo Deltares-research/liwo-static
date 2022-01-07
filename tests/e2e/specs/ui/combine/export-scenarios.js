@@ -11,7 +11,7 @@ describe('Combine: Export combined scenarios', () => {
     cy.intercept(new RegExp(/getFeature/), mockDoubleFeaturesData).as('features')
     cy.visit(url)
 
-    cy.wait('@features')
+    cy.wait('@features', { timeout: 20000 })
 
     cy.get('.leaflet-marker-icon')
       .eq(3)

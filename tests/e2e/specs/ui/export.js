@@ -20,13 +20,13 @@ describe('Maps export', () => {
     cy.window().its('print').should('be.called')
   })
 
-  it('exports zip file', () => {
+  it('Exports zip file', () => {
     const fileName = 'test-filename'
 
     cy.intercept(new RegExp(/DownloadZipFileDataLayers/))
       .as('apiCheck')
 
-    cy.wait(2000)
+    cy.wait(1000)
 
     cy.get(selector('init-export-button'))
       .click()
@@ -64,7 +64,7 @@ describe('Maps export', () => {
       cy.get(selector('name-input'))
         .type(fileName)
 
-      cy.wait(1000)
+      cy.wait(100)
 
       cy.get(selector('export-image-button'))
         .click()

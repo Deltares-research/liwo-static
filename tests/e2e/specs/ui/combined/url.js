@@ -5,7 +5,7 @@ const id = '20947'
 const url = `#/combine/7/${id}`
 
 describe('Combine: combine selection', () => {
-  it('combines results', () => {
+  it('Combines results', () => {
     cy.visit(url)
 
     cy.get(selector('combine-button'))

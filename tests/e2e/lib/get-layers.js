@@ -10,6 +10,10 @@ const layers = [
   {
     url: '/#/viewer/18',
     id: 'overstromingskansen_actueel_faalkans_regionaal'
+  },
+  {
+    url: '/#/viewer/1',
+    id: 'MaximaleWaterdiepteNederland_Kaart5'
   }
 ]
 

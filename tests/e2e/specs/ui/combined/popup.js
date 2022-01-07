@@ -11,9 +11,9 @@ describe('Combined: popup', () => {
 
     cy.visit(url)
 
-    cy.wait('@features')
+    cy.wait('@features', { timeout: 20000 })
 
-    cy.wait(2000)
+    cy.wait(5000)
   })
 
   it('Shows location tooltip on hover', () => {
@@ -21,15 +21,19 @@ describe('Combined: popup', () => {
       .eq(6)
       .trigger('mouseover')
 
-    cy.get('.leaflet-marker-icon')
-      .eq(7)
-      .trigger('mouseover')
+    cy.wait(500)
 
     cy.get('.leaflet-tooltip')
       .then($tooltipEl => {
         const text = $tooltipEl[0].innerText
         expect(text).to.equal('OOSTVAARDERSDIJK_16.0')
       })
+
+    cy.get('.leaflet-marker-icon')
+      .eq(7)
+      .trigger('mouseover')
+
+    cy.wait(500)
 
     cy.get('.leaflet-tooltip')
       .then($tooltipEl => {
