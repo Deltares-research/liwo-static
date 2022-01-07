@@ -1,4 +1,3 @@
-import { skipOn } from '@cypress/skip-test'
 import { generateSelector as selector } from '../../lib/generate-selector'
 
 describe('Layers', () => {
