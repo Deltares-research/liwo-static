@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import queryString from 'query-string'
-import { generateSelector as selector } from '../lib/generate-selector'
+import { generateSelector as selector } from '../../lib/generate-selector'
 
 const url = '#/viewer/1?center=52,5&zoom=4'
 

@@ -1,5 +1,5 @@
 // TODO: check how we can do this consistently with absolute imports
-import { generateSelector as selector } from '../../lib/generate-selector'
+import { generateSelector as selector } from '../../../lib/generate-selector'
 
 const mockDataScenarios = {
   // eslint-disable-next-line quote-props, quotes
