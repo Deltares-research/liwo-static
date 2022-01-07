@@ -22,6 +22,11 @@ describe('Combine: combine selection', () => {
 
     cy.get(selector('combine-form'))
       .contains('waterdiepte')
+
+    // check if input is disabled when n=0
+    cy.get('input[disabled="disabled"]')
+      .next()
+      .contains('n=0')
   })
 
   it('Combines results', () => {
