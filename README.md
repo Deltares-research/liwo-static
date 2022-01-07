@@ -1,5 +1,5 @@
 # liwo-static
-Static frontend for LIWO ([www.basisinformatie-overstromingen.nl](https://www.basisinformatie-overstromingen.nl/))
+Static frontend for LIWO ([basisinformatie-overstromingen.nl](https://basisinformatie-overstromingen.nl))
 
 # Info
 [![Build status](https://github.com/Deltares/liwo-static/actions/workflows/node.js.yml/badge.svg)](https://github.com/Deltares/liwo-static/actions/workflows/node.js.yml)
