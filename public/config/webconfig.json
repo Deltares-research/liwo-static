@@ -20,9 +20,9 @@
   "_comment5": "// URL for combining scenario's",
   "HYDRO_ENGINE_URL": "https://green-dot-hydro-engine.ey.r.appspot.com/v2",
   "_comment6": "// application version (whole set)",
-  "VERSION": "FILL IN DURING DEPLOY",
+  "VERSION": "v2.9.0-w1",
   "_comment7": "// dataset version (GEE)",
-  "DATASET_VERSION": "FILL IN DURING DEPLOY",
+  "DATASET_VERSION": "projects/deltares-rws/liwo/2021_0_3",
   "_comment8": "// backend version",
-  "BACKEND_VERSION": "FILL IN DURING DEPLOY"
+  "BACKEND_VERSION": "v0.1.1"
 }

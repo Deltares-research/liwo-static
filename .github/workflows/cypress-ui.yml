@@ -70,10 +70,7 @@ jobs:
           record: true
           parallel: false
           # group: "UI - Chrome"
-          spec: tests/e2e/specs/**/*
-          # layer tests take long, so we want them to execute in
-          # a context with different 'on' triggers
-          ignore-test-files: "**/layer/*.js"
+          spec: tests/e2e/specs/ui/**/*
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
@@ -122,7 +119,7 @@ jobs:
           record: true
           parallel: false
           # group: "UI - Firefox"
-          spec: tests/e2e/specs/**/*
+          spec: tests/e2e/specs/ui/**/*
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}

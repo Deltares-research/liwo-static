@@ -1,4 +1,4 @@
-import { generateSelector as selector } from '../../lib/generate-selector'
+import { generateSelector as selector } from '../../../lib/generate-selector'
 
 const id = '20947'
 
@@ -8,7 +8,7 @@ describe('Combine: combine selection', () => {
   it('Combines results', () => {
     cy.visit(url)
 
-    cy.get(selector('combine-button'))
+    cy.get(selector('combine-button'), { timeout: 20000 })
       .click()
 
     cy.contains('waterdiepte')

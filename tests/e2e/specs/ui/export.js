@@ -1,6 +1,6 @@
 import path from 'path'
 import { skipOn } from '@cypress/skip-test'
-import { generateSelector as selector } from '../lib/generate-selector'
+import { generateSelector as selector } from '../../lib/generate-selector'
 
 const url = '#/viewer/34'
 
@@ -20,39 +20,41 @@ describe('Maps export', () => {
     cy.window().its('print').should('be.called')
   })
 
-  it('Exports zip file', () => {
-    const fileName = 'test-filename'
-    const downloadsFolder = Cypress.config('downloadsFolder')
+  skipOn('firefox', () => {
+    it('Exports zip file', () => {
+      const fileName = 'test-filename'
+      const downloadsFolder = Cypress.config('downloadsFolder')
 
-    cy.intercept(new RegExp(/DownloadZipFileDataLayers/))
-      .as('apiCheck')
+      cy.intercept(new RegExp(/DownloadZipFileDataLayers/))
+        .as('apiCheck')
 
-    cy.wait(1000)
+      cy.wait(1000)
 
-    cy.get(selector('init-export-button'))
-      .click()
+      cy.get(selector('init-export-button'))
+        .click()
 
-    cy.get(selector('name-input'))
-      .type(fileName)
+      cy.get(selector('name-input'))
+        .type(fileName)
 
-    cy.get(selector('export-file-button'))
-      .click()
-      .wait('@apiCheck')
-      .should((xhr) => {
-        const body = xhr.request.body
-        expect(body.name).to.equal(fileName)
-      })
-      .then(({ response }) => {
-        // size in bytes
-        const size = Number(response.headers['content-length'])
+      cy.get(selector('export-file-button'))
+        .click()
+        .wait('@apiCheck')
+        .should((xhr) => {
+          const body = xhr.request.body
+          expect(body.name).to.equal(fileName)
+        })
+        .then(({ response }) => {
+          // size in bytes
+          const size = Number(response.headers['content-length'])
 
-        expect(size).to.be.greaterThan(5000)
-      })
+          expect(size).to.be.greaterThan(5000)
+        })
 
-    cy.readFile(path.join(downloadsFolder, `${fileName}.zip`))
-      .should('exist')
+      cy.readFile(path.join(downloadsFolder, `${fileName}.zip`))
+        .should('exist')
 
-    cy.get(selector('close-button')).click()
+      cy.get(selector('close-button')).click()
+    })
   })
 
   // checking for specific file does not work in firefox
