@@ -1,6 +1,6 @@
 import queryString from 'query-string'
-import mockLayerSetData from '../mock/layerset.json'
-import mockDoubleFeaturesData from '../mock/doubleFeatureCollection.json'
+import mockLayerSetData from '../../mock/layerset.json'
+import mockDoubleFeaturesData from '../../mock/doubleFeatureCollection.json'
 
 const url = '#/viewer/1?center=52,5&zoom=4'
 
