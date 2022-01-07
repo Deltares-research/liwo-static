@@ -1,6 +1,6 @@
 import { generateSelector as selector } from '../../../lib/generate-selector'
-import mockLayersetData from '../../mock/layerset.json'
-import mockFeaturesData from '../../mock/featureCollection.json'
+import mockLayersetData from '../../../mock/layerset.json'
+import mockFeaturesData from '../../../mock/featureCollection.json'
 
 const url = '#/combine/7'
 const name = mockFeaturesData.features[0].properties.name

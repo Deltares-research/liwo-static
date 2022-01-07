@@ -1,5 +1,5 @@
-import mockLayersetData from '../../mock/layerset.json'
-import mockDoubleFeaturesData from '../../mock/doubleFeatureCollection.json'
+import mockLayersetData from '../../../mock/layerset.json'
+import mockDoubleFeaturesData from '../../../mock/doubleFeatureCollection.json'
 
 const url = '#/combined/7/19422,19428/waterdepth'
 

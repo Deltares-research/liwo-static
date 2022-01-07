@@ -1,6 +1,6 @@
 import { generateSelector as selector } from '../../../lib/generate-selector'
-import mockLayerSetData from '../../mock/layerset.json'
-import mockFeaturesData from '../../mock/multipleFeatureCollection.json'
+import mockLayerSetData from '../../../mock/layerset.json'
+import mockFeaturesData from '../../../mock/multipleFeatureCollection.json'
 
 const url = '#/combine/7?center=52.32401,5.35995&zoom=10'
 

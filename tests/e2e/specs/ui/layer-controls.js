@@ -1,4 +1,4 @@
-import { generateSelector as selector } from '../lib/generate-selector'
+import { generateSelector as selector } from '../../lib/generate-selector'
 
 describe('Layers', () => {
   beforeEach(() => {
