@@ -8,30 +8,29 @@ describe('Layers', () => {
     cy.intercept(new RegExp(/GetMap/), '')
   })
 
-  skipOn('firefox', () => {
-    it.only('Changes opacity of layer', () => {
-      const url = '#/viewer/1?center=52.15382,4.88242&zoom=2'
-  
-      cy.intercept('GetLayerSet').as('layerSet')
-  
-      cy.visit(url)
-  
-      cy.wait('@layerSet')
-  
-      cy.get(`${selector('transparancy-input')} input`)
-        .invoke('val', 0.5)
-        .trigger('change')
-  
-      const opacityValues = []
-  
-      cy.get('.leaflet-layer').each(layer => {
-        cy.get(layer).invoke('css', 'opacity').then(value => opacityValues.push(value))
-      })
-  
-      cy.wait(100).then(() => {
-        // eslint-disable-next-line no-unused-expressions
-        expect(opacityValues.some(value => value === '0.5')).to.be.true
-      })
+  // disabled because of flaky behaviour, enable again when test is improved
+  it.skip('Changes opacity of layer', () => {
+    const url = '#/viewer/1?center=52.15382,4.88242&zoom=2'
+
+    cy.intercept('GetLayerSet').as('layerSet')
+
+    cy.visit(url)
+
+    cy.wait('@layerSet')
+
+    cy.get(`${selector('transparancy-input')} input`)
+      .invoke('val', 0.5)
+      .trigger('change')
+
+    const opacityValues = []
+
+    cy.get('.leaflet-layer').each(layer => {
+      cy.get(layer).invoke('css', 'opacity').then(value => opacityValues.push(value))
+    })
+
+    cy.wait(100).then(() => {
+      // eslint-disable-next-line no-unused-expressions
+      expect(opacityValues.some(value => value === '0.5')).to.be.true
     })
   })
 
