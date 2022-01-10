@@ -15,6 +15,7 @@
       <img src="https://staticresources.rijkswaterstaat.nl/assets/img/footer-logo.png?v=2.19.2" width="500" height="24" alt="Water. Wegen. Werken. Rijkswaterstaat." class="accessibility">
       <div class="site-footer__content">
         <cookie-law
+          v-if="cookieBanner"
           @accept="consentGiven()"
           message="Deze website gebruikt anonieme cookies."
           button-class="btn primary"
@@ -40,6 +41,8 @@ import CookieLaw from 'vue-cookie-law'
 import { mapGetters } from 'vuex'
 import AppHeader from '../src/components/AppHeader.vue'
 
+import mapConfig from './map.config.js'
+
 export default {
   components: {
     AppHeader,
@@ -58,6 +61,15 @@ export default {
         inner: this.title
       }
     }
+  },
+  data () {
+    return {
+      cookieBanner: false
+    }
+  },
+  async mounted () {
+    const services = await mapConfig.getServices()
+    this.cookieBanner = services.COOKIE_BANNER
   },
   methods: {
     consentGiven () {
