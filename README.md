@@ -37,7 +37,7 @@ npm outdated
 
 # build using a different url
 # Note that this should include a slash at the end
-BASE_URL=/liwo/ npm run build
+BASE_URL=/ npm run build
 
 # deploy to github (note that travis does this automatically)
 gh-pages -d dist
@@ -58,6 +58,10 @@ npm run release
 
 ## API
 The api that is used to get map information can be found at [swagger](https://app.swaggerhub.com/apis/openearth/basisinformatie-overstromingen.nl).
+
+## Options
+The application has an option to overwrite the BASE_URL. This was mainly needed when the application was deployed at [a /liwo](https://basisinformatie-overstromingen.nl/liwo) url. This is not in use at the moment. Old url's that refer to /liwo will get a 301 permanently moved http response to the appropriate url. This is implemented into the nginx configuration.
+
 
 ## Semantic releases
 If you specify fixes and features in your commit messages a new [semantic release](https://github.com/semantic-release/semantic-release) will be created, after a merge with master.
@@ -89,4 +93,3 @@ If you want to deploy the docker version, you can use the Dockerfile in the main
 
 ## Sig review
 Create a release with `npm run release` and then run `./sig-deploy.sh` to download the latest zip file to the format liwo-static-yyyymmdd.zip. Upload that file to sig.
-
