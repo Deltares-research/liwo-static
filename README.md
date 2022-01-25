@@ -60,7 +60,7 @@ npm run release
 The api that is used to get map information can be found at [swagger](https://app.swaggerhub.com/apis/openearth/basisinformatie-overstromingen.nl).
 
 ## Options
-The application has an option to overwrite the BASE_URL. This was mainly needed when the application was deployed at [a /liwo](https://basisinformatie-overstromingen.nl/liwo) url. This is not in use at the moment. Old url's that refer to /liwo will get a 301 permanently moved http response to the appropriate url. This is implemented into the nginx configuration.
+The application has an option to overwrite the BASE_URL. This was mainly needed when the application was deployed at [a /liwo](https://basisinformatie-overstromingen.nl/liwo) url. This is not in use at the moment. Old url's that refer to /liwo will get a 301 permanently moved http response to the appropriate url. This is implemented into the nginx configuration as a relative redirect.
 
 
 ## Semantic releases
