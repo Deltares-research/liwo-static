@@ -15,7 +15,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
     "@vue-a11y/skip-to": "^2.1.2",
-    "cypress": "^6.4.0",
+    "cypress": "^9.4.1",
     "deep-equal": "^1.1.1",
     "delay": "^4.0.1",
     "dom-to-image": "^2.6.0",
@@ -35,7 +35,7 @@
     "query-string": "^5.1.1",
     "url-polyfill": "^1.1.12",
     "url-search-params": "^0.10.0",
-    "url-search-params-polyfill": "^5.0.0",
+    "url-search-params-polyfill": "^8.1.1",
     "vue": "^2.6.10",
     "vue-head": "^2.2.0",
     "vue-matomo": "^3.14.0-0",
