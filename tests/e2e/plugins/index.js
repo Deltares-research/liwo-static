@@ -1,6 +1,8 @@
 /* eslint-disable arrow-body-style */
 // https://docs.cypress.io/guides/guides/plugins-guide.html
 
+const getLayers = require('../lib/get-layers')
+
 // if you need a custom webpack configuration you can uncomment the following import
 // and then use the `file:preprocessor` event
 // as explained in the cypress docs
@@ -15,6 +17,8 @@ module.exports = (on, config) => {
   //  watchOptions: {}
   // }))
 
+  config.env.MAP_LAYERS = getLayers();
+
   return Object.assign({}, config, {
     defaultCommandTimeout: 8000,
     fixturesFolder: 'tests/e2e/fixtures',
@@ -22,6 +26,6 @@ module.exports = (on, config) => {
     integrationFolder: 'tests/e2e/specs',
     screenshotsFolder: 'tests/e2e/screenshots',
     videosFolder: 'tests/e2e/videos',
-    supportFile: 'tests/e2e/support/index.js'
+    supportFile: 'tests/e2e/support/index.js',
   })
 }
