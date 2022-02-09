@@ -39,7 +39,7 @@
     "vue-head": "^2.2.0",
     "vue-matomo": "^4.1.0",
     "vue-router": "^3.5.3",
-    "vue2-leaflet": "^1.2.3",
+    "vue2-leaflet": "^2.7.1",
     "vuex": "^3.0.1",
     "whatwg-fetch": "2.0.4"
   },
