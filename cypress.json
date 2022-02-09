@@ -5,6 +5,7 @@
   "baseUrl": "http://localhost:8080",
   "defaultCommandTimeout": 100000,
   "pageLoadTimeout": 300000,
+  "requestTimeout": 10000,
   "viewportWidth": 1920,
   "viewportHeight": 1080,
   "retries": {
