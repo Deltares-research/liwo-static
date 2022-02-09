@@ -34,16 +34,16 @@
 </template>
 
 <script>
-  export default {
-    name: 'Accessibility'
-  }
+export default {
+  name: 'Accessibility'
+}
 </script>
 
 <style>
-  .accessibility-view {
-    padding: 1rem;
-    max-width: 1200px;
-    width: calc(100% - 2rem);
-    margin: 0 auto;
-  }
+.accessibility-view {
+  padding: 1rem;
+  max-width: 1200px;
+  width: calc(100% - 2rem);
+  margin: 0 auto;
+}
 </style>
