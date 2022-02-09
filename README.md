@@ -100,5 +100,5 @@ If you want to node version you have to do this in several locations at the same
 - .nvmrc, for netlify
 - Dockerfile, for the nginx container
 - .github/workflows/cypress-long-running.yml, for testing long running e2e tests
-- .github/workflows/cypress-ui.yml, for ui tests
-- .github/workflows/node.js.yml, for unit tests
+- .github/workflows/cypress-ui.yml, for ui tests (multiple places)
+- .github/workflows/node.js.yml, for unit tests (multiple places)
