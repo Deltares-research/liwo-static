@@ -105,12 +105,18 @@ export default {
     addPositionToRoute () {
       const { lat, lng } = this.map.getCenter()
       const zoom = this.map.getZoom()
+      const center = `${lat.toFixed(5)},${lng.toFixed(5)}`
+
+      if (this.$route.query.center === center && this.$route.query.zoom === zoom) {
+        /* location did not change, we're done */
+        return
+      }
 
       this.$router.replace({
         ...this.$route,
         query: {
           ...this.$route.query,
-          center: `${lat.toFixed(5)},${lng.toFixed(5)}`,
+          center: center,
           zoom
         }
       })

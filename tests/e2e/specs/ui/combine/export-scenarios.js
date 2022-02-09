@@ -20,7 +20,7 @@ describe('Combine: Export combined scenarios', () => {
     cy.get('.leaflet-marker-icon')
       .eq(4)
       .click({ force: true })
-    
+
     cy.wait(5000)
 
     cy.url()
