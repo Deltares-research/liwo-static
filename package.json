@@ -25,13 +25,13 @@
     "leaflet-easyprint": "^2.1.9",
     "leaflet.browser.print": "^1.0.4",
     "leaflet.markercluster": "^1.5.3",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "mapbox.js": "^3.1.1",
     "portal-vue": "^2.1.7",
     "proj4leaflet": "^1.0.2",
     "promise-polyfill": "^8.2.1",
     "proxy-polyfill": "^0.3.2",
-    "query-string": "^5.1.1",
+    "query-string": "^7.1.1",
     "url-polyfill": "^1.1.12",
     "url-search-params": "^0.10.0",
     "url-search-params-polyfill": "^8.1.1",
@@ -41,7 +41,7 @@
     "vue-router": "^3.5.3",
     "vue2-leaflet": "^2.7.1",
     "vuex": "^3.0.1",
-    "whatwg-fetch": "2.0.4"
+    "whatwg-fetch": "3.6.2"
   },
   "devDependencies": {
     "@babel/cli": "7.16.7",
