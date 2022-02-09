@@ -93,3 +93,12 @@ If you want to deploy the docker version, you can use the Dockerfile in the main
 
 ## Sig review
 Create a release with `npm run release` and then run `./sig-deploy.sh` to download the latest zip file to the format liwo-static-yyyymmdd.zip. Upload that file to sig.
+
+
+## Upgrade node version
+If you want to node version you have to do this in several locations at the same time.
+- .nvmrc, for netlify
+- Dockerfile, for the nginx container
+- .github/workflows/cypress-long-running.yml, for testing long running e2e tests
+- .github/workflows/cypress-ui.yml, for ui tests
+- .github/workflows/node.js.yml, for unit tests
