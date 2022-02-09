@@ -32,14 +32,14 @@
     "proxy-polyfill": "^0.3.2",
     "query-string": "^7.1.1",
     "url-polyfill": "^1.1.12",
-    "url-search-params": "^0.10.0",
+    "url-search-params": "^0.10.2",
     "url-search-params-polyfill": "^8.1.1",
     "vue": "^2.6.14",
     "vue-head": "^2.2.0",
     "vue-matomo": "^4.1.0",
     "vue-router": "^3.5.3",
     "vue2-leaflet": "^2.7.1",
-    "vuex": "^3.0.1",
+    "vuex": "^3.6.2",
     "whatwg-fetch": "3.6.2"
   },
   "devDependencies": {
