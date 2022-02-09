@@ -77,7 +77,8 @@ describe('Layer functionalities', () => {
 
       cy.get(selector('map'))
         .click('center')
-        .wait('@info', (res) => {
+        .wait('@info')
+        .then((res) => {
           const value = getLayerInfoValue(res.response.body, layer.id)
 
           if (value) {
