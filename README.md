@@ -91,6 +91,9 @@ The tests are conducted using [Cypress](https://www.cypress.io/) in the followin
 ## Deploy using docker
 If you want to deploy the docker version, you can use the Dockerfile in the main directory. It will build the website and add it to a container with an nginx webserver. Make sure you check the nginx.conf settings for details about the security settings.
 
+## Configuration
+The configuration that can be changed after build time is stored in webconfig.json. This contains the links to the backend servers. It also allows to enable/disable the cookie banner.
+
 ## Sig review
 Create a release with `npm run release` and then run `./sig-deploy.sh` to download the latest zip file to the format liwo-static-yyyymmdd.zip. Upload that file to sig.
 

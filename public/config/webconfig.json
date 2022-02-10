@@ -24,5 +24,6 @@
   "_comment7": "// dataset version (GEE)",
   "DATASET_VERSION": "projects/deltares-rws/liwo/2021_0_3",
   "_comment8": "// backend version",
-  "BACKEND_VERSION": "v0.1.1"
+  "BACKEND_VERSION": "FILL IN DURING DEPLOY",
+  "COOKIE_BANNER": true
 }
