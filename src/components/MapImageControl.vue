@@ -153,8 +153,8 @@ export default {
       const disabledControlClasses = allControls.filter(controlClass => !enabledControlClasses.includes(controlClass))
 
       // hide all controls except the ones enabled
-      /* TODO: reimplement this */
-      // this.map.printPlugin._toggleClasses(disabledControlClasses)
+      /* TODO: reimplement this for print component 2 */
+      this.map.printPlugin._toggleClasses(disabledControlClasses)
 
       // wait for modal to close
       // when executed directly, the modal is visible in the export
@@ -175,8 +175,8 @@ export default {
         this.map.printPlugin.printMap(this.exportSize, this.name)
 
         this.map.on('easyPrint-finished', () => {
-          /* TODO: reimplement this */
-          // this.map.printPlugin._toggleClasses(disabledControlClasses, true)
+          /* TODO: reimplement this for bumping print control */
+          this.map.printPlugin._toggleClasses(disabledControlClasses, true)
 
           if (!widthSet) {
             // reset style width / height if needed
