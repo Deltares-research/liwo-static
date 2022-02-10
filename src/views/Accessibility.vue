@@ -17,8 +17,8 @@
         <h2 data-class="section-head">Hoe werken wij aan toegankelijkheid?</h2>
         <p>Rijkswaterstaat zorgt voor een continue verbetering in toegankelijkheid door diverse maatregelen binnen onze (dagelijkse) processen:
           <ul>
-            <li>Toegankelijkheid ‘by design’: toegankelijkheid is vanaf de start onderdeel van alle stappen in het ontwerp-, bouw- en redactionele proces van onze website. Hierbij houden we ook nadrukkelijk rekening met gebruiksvriendelijkheid en vindbaarheid.<li>
-            <li>Onderzoek: onafhankelijke deskundigen toetsen regelmatig (onderdelen van) de website op toegankelijkheid. Gevonden knelpunten lossen wij duurzaam op.<li>
+            <li>Toegankelijkheid ‘by design’: toegankelijkheid is vanaf de start onderdeel van alle stappen in het ontwerp-, bouw- en redactionele proces van onze website. Hierbij houden we ook nadrukkelijk rekening met gebruiksvriendelijkheid en vindbaarheid.</li>
+            <li>Onderzoek: onafhankelijke deskundigen toetsen regelmatig (onderdelen van) de website op toegankelijkheid. Gevonden knelpunten lossen wij duurzaam op.</li>
             <li>Kennis medewerkers: onze medewerkers houden hun kennis over toegankelijkheid op peil en passen dit toe waar nodig.</li>
           </ul>
         </p>

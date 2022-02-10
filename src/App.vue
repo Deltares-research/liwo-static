@@ -12,9 +12,22 @@
     </main>
 
     <footer class="site-footer noindex">
-      <img src="https://staticresources.rijkswaterstaat.nl/assets/img/footer-logo.png?v=2.19.2" width="500" height="24" alt="Water. Wegen. Werken. Rijkswaterstaat." class="accessibility">
+      <img src="/assets/img/logo-footer.svg" width="500" height="24" alt="Water. Wegen. Werken. Rijkswaterstaat." class="accessibility">
       <div class="site-footer__content">
-        <!-- nothing here for now -->
+        <cookie-law
+          v-if="cookieBanner"
+          @accept="consentGiven()"
+          message="Deze website gebruikt anonieme cookies."
+          button-class="btn primary"
+          button-text="Accepteer"
+          :button-decline="true"
+          button-decline-text="Geen cookies"
+          button-decline-class="btn warning"
+          button-link="https://www.rijkswaterstaat.nl/cookies"
+          button-link-text="Meer info"
+          :button-link-new-tab="true"
+        >
+        </cookie-law>
       </div>
     </footer>
   </div>
@@ -24,12 +37,16 @@
 </template>
 
 <script>
+import CookieLaw from 'vue-cookie-law'
 import { mapGetters } from 'vuex'
 import AppHeader from '../src/components/AppHeader.vue'
 
+import mapConfig from './map.config.js'
+
 export default {
   components: {
-    AppHeader
+    AppHeader,
+    CookieLaw
   },
   head: {
     title () {
@@ -43,6 +60,20 @@ export default {
       return {
         inner: this.title
       }
+    }
+  },
+  data () {
+    return {
+      cookieBanner: false
+    }
+  },
+  async mounted () {
+    const services = await mapConfig.getServices()
+    this.cookieBanner = services.COOKIE_BANNER
+  },
+  methods: {
+    consentGiven () {
+      this.$matomo && this.$matomo.rememberConsentGiven()
     }
   },
   watch: {
@@ -116,5 +147,8 @@ ul > li::before {
 
 .site-footer__content {
   padding: 0.5em 0.5em;
+}
+.Cookie__buttons .btn {
+  margin-right: .9375rem;
 }
 </style>

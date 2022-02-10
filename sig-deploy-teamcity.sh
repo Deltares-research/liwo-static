@@ -35,13 +35,7 @@ echo "filling ${backend_dir}"
 pushd ${backend_dir}
 
 # download relevant sources
-cp -r ../LWB/sources/liwo.GeoServerTools  .
-cp -r ../LWB/sources/liwo.GeoServerToolsTest .
-cp -r ../LWB/sources/liwo.postgisclient .
-cp -r ../LWB/sources/liwo.run .
-cp -r ../LWB/sources/liwo.ws .
-cp -r ../LWB/sources/liwo.ws.tests .
-cp -r ../LWB/etl/ETL-data/Datamodel .
+cp -r ../liwo-services .
 popd
 
 # Use the latest source code in master

@@ -133,7 +133,7 @@ function geoCoderControl (map) {
 }
 
 function printControl () {
-  const control = L.control.browserPrint({ position: 'topright', printModes: ['landscape'] })
+  const control = L.control.browserPrint({ position: 'topright', printModes: ['Landscape'] })
 
   function makeFocusable (el) {
     const trigger = el.querySelector('.leaflet-browser-print')

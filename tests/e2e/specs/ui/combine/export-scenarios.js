@@ -1,6 +1,6 @@
-import { generateSelector as selector } from '../../lib/generate-selector'
-import mockLayerSetData from '../../mock/layerset.json'
-import mockDoubleFeaturesData from '../../mock/doubleFeatureCollection.json'
+import { generateSelector as selector } from '../../../lib/generate-selector'
+import mockLayerSetData from '../../../mock/layerset.json'
+import mockDoubleFeaturesData from '../../../mock/doubleFeatureCollection.json'
 
 const url = '#/combine/7?center=52.32401,5.35995&zoom=10'
 const exportUrl = '#/combine/7/19422,19428'
@@ -20,6 +20,8 @@ describe('Combine: Export combined scenarios', () => {
     cy.get('.leaflet-marker-icon')
       .eq(4)
       .click({ force: true })
+
+    cy.wait(5000)
 
     cy.url()
       .should('contain', '/combine/7/19422,19428', { timeout: 30000 })

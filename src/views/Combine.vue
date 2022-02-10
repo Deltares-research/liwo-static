@@ -456,6 +456,12 @@ export default {
       // replace the url with the ids of the currently loaded scenarios
       // don't put this in a watch because scenario's are loaded asynchronously
       const path = this.selectedScenarioIdsPath
+
+      if (this.$route.params.ids === path) {
+        /* location did not change, we're done */
+        return
+      }
+
       this.$router.replace({
         params: {
           ids: path
