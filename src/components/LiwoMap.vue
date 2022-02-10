@@ -107,7 +107,7 @@ export default {
       const zoom = this.map.getZoom()
       const center = `${lat.toFixed(5)},${lng.toFixed(5)}`
 
-      if (this.$route.query.center === center && this.$route.query.zoom === zoom) {
+      if (this.$route.query.center === center && this.$route.query.zoom.toString() === zoom.toString()) {
         /* location did not change, we're done */
         return
       }
