@@ -2,6 +2,8 @@
 FROM node:14-alpine as develop-stage
 WORKDIR /app
 COPY package*.json ./
+RUN apk add --update python2 make g++\
+    && rm -rf /var/cache/apk/*
 RUN npm install
 COPY . .
 
