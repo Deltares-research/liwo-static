@@ -1,8 +1,8 @@
 /* embedded stylesheets from rijkswaterstaat.nl */
 @font-face {
     font-family: 'icons';
-    src: url("https://staticresources.rijkswaterstaat.nl/assets/font/icons/icons.eot");
-    src: url("https://staticresources.rijkswaterstaat.nl/assets/font/icons/icons.eot?#iefix") format("embedded-opentype"), url("https://staticresources.rijkswaterstaat.nl/assets/font/icons/icons.woff") format("woff"), url("https://staticresources.rijkswaterstaat.nl/assets/font/icons/icons.ttf") format("truetype"), url("https://staticresources.rijkswaterstaat.nl/assets/font/icons/icons.svg#rws") format("svg");
+    src: url("/assets/font/icons/icons.eot");
+    src: url("/assets/font/icons/icons.eot?#iefix") format("embedded-opentype"), url("/assets/font/icons/icons.woff") format("woff"), url("/assets/font/icons/icons.ttf") format("truetype"), url("/assets/font/icons/icons.svg#rws") format("svg");
     font-weight: 400;
     font-style: normal
 }
@@ -439,32 +439,32 @@
 
 @font-face {
     font-family: 'RijksoverheidSansHeading';
-    src: url("https://staticresources.rijkswaterstaat.nl/assets/font/heading/regular/rijksoverheidsansheading-regular_2_0-webfont.eot");
-    src: url("https://staticresources.rijkswaterstaat.nl/assets/font/heading/regular/rijksoverheidsansheading-regular_2_0-webfont.eot?#iefix") format("embedded-opentype"), url("https://staticresources.rijkswaterstaat.nl/assets/font/heading/regular/rijksoverheidsansheading-regular_2_0-webfont.woff") format("woff"), url("https://staticresources.rijkswaterstaat.nl/assets/font/heading/regular/rijksoverheidsansheading-regular_2_0-webfont.ttf") format("truetype");
+    src: url("/assets/font/heading/regular/rijksoverheidsansheading-regular_2_0-webfont.eot");
+    src: url("/assets/font/heading/regular/rijksoverheidsansheading-regular_2_0-webfont.eot?#iefix") format("embedded-opentype"), url("/assets/font/heading/regular/rijksoverheidsansheading-regular_2_0-webfont.woff") format("woff"), url("/assets/font/heading/regular/rijksoverheidsansheading-regular_2_0-webfont.ttf") format("truetype");
     font-weight: 400;
     font-style: normal
 }
 
 @font-face {
     font-family: 'RijksoverheidSansText';
-    src: url("https://staticresources.rijkswaterstaat.nl/assets/font/text/italic/ROsanswebtextitalic.eot");
-    src: url("https://staticresources.rijkswaterstaat.nl/assets/font/text/italic/ROsanswebtextitalic.eot?#iefix") format("embedded-opentype"), url("https://staticresources.rijkswaterstaat.nl/assets/font/text/italic/ROsanswebtextitalic.woff") format("woff"), url("https://staticresources.rijkswaterstaat.nl/assets/font/text/italic/ROsanswebtextitalic.ttf") format("truetype");
+    src: url("/assets/font/text/italic/ROsanswebtextitalic.eot");
+    src: url("/assets/font/text/italic/ROsanswebtextitalic.eot?#iefix") format("embedded-opentype"), url("/assets/font/text/italic/ROsanswebtextitalic.woff") format("woff"), url("/assets/font/text/italic/ROsanswebtextitalic.ttf") format("truetype");
     font-weight: 400;
     font-style: italic
 }
 
 @font-face {
     font-family: 'RijksoverheidSansText';
-    src: url("https://staticresources.rijkswaterstaat.nl/assets/font/text/regular/ROsanswebtextregular.eot");
-    src: url("https://staticresources.rijkswaterstaat.nl/assets/font/text/regular/ROsanswebtextregular.eot?#iefix") format("embedded-opentype"), url("https://staticresources.rijkswaterstaat.nl/assets/font/text/regular/ROsanswebtextregular.woff") format("woff"), url("https://staticresources.rijkswaterstaat.nl/assets/font/text/regular/ROsanswebtextregular.ttf") format("truetype");
+    src: url("/assets/font/text/regular/ROsanswebtextregular.eot");
+    src: url("/assets/font/text/regular/ROsanswebtextregular.eot?#iefix") format("embedded-opentype"), url("/assets/font/text/regular/ROsanswebtextregular.woff") format("woff"), url("/assets/font/text/regular/ROsanswebtextregular.ttf") format("truetype");
     font-weight: 400;
     font-style: normal
 }
 
 @font-face {
     font-family: 'RijksoverheidSansText';
-    src: url("https://staticresources.rijkswaterstaat.nl/assets/font/text/bold/ROsanswebtextbold.eot");
-    src: url("https://staticresources.rijkswaterstaat.nl/assets/font/text/bold/ROsanswebtextbold.eot?#iefix") format("embedded-opentype"), url("https://staticresources.rijkswaterstaat.nl/assets/font/text/bold/ROsanswebtextbold.woff") format("woff"), url("https://staticresources.rijkswaterstaat.nl/assets/font/text/bold/ROsanswebtextbold.ttf") format("truetype");
+    src: url("/assets/font/text/bold/ROsanswebtextbold.eot");
+    src: url("/assets/font/text/bold/ROsanswebtextbold.eot?#iefix") format("embedded-opentype"), url("/assets/font/text/bold/ROsanswebtextbold.woff") format("woff"), url("/assets/font/text/bold/ROsanswebtextbold.ttf") format("truetype");
     font-weight: 700;
     font-style: normal
 }
