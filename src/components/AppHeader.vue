@@ -8,7 +8,7 @@
       </nav>
       <a href="/" class="logo">
         <img
-          src="https://staticresources.rijkswaterstaat.nl/assets/img/logo.png?v=2.19.2"
+          src="/assets/img/logo-nl.svg"
           width="270"
           height="72"
           alt="Rijkswaterstaat Ministerie van Infrastructuur en Waterstaat."

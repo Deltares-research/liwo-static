@@ -46,14 +46,14 @@ describe('Combine multiple selections: marker selection', () => {
       .click({ force: true })
 
     cy.contains('OOSTVAARDERSDIJK_03.4', {
-      timeout: 20000,
+      timeout: 20000
     })
       .parentsUntil(selector('layer-panel'))
       .next()
       .contains('Waterdiepte')
 
     cy.contains('Lelystad', {
-      timeout: 20000,
+      timeout: 20000
     })
       .parentsUntil(selector('layer-panel'))
       .next()
@@ -78,7 +78,7 @@ describe('Combine multiple selections: marker selection', () => {
           .invoke('attr', 'src')
           .then(newSrc => {
             expect(initSrc, {
-              timeout: 20000,
+              timeout: 20000
             }).to.not.equal(newSrc)
           })
       })

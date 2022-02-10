@@ -8,7 +8,7 @@ on:
 jobs:
   install:
     runs-on: ubuntu-latest
-    container: cypress/browsers:node12.18.3-chrome87-ff82
+    container: cypress/browsers:node16.5.0-chrome97-ff96
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -34,7 +34,7 @@ jobs:
   ui-chrome-tests:
     timeout-minutes: 15
     runs-on: ubuntu-latest
-    container: cypress/browsers:node12.18.3-chrome87-ff82
+    container: cypress/browsers:node16.5.0-chrome97-ff96
     needs: install
     strategy:
       # when one test fails, DO NOT cancel the other
@@ -82,7 +82,7 @@ jobs:
     timeout-minutes: 15
     runs-on: ubuntu-latest
     container:
-      image: cypress/browsers:node12.18.3-chrome87-ff82
+      image: cypress/browsers:node16.5.0-chrome97-ff96
       options: --user 1001
     needs: install
     strategy:
