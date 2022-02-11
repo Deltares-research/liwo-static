@@ -177,6 +177,7 @@ export async function createWms (layer) {
     format: 'image/png',
     transparent: true,
     attribution,
+    tiled: true,
     styles: style,
     opacity
   })
