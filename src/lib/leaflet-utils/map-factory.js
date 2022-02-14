@@ -192,6 +192,7 @@ function imageControl () {
       hidden: true,
       exportOnly: true,
       hideControlContainer: false,
+      hideClasses: ['.leaflet-control'],
       position: 'topright',
       filename: 'export',
       sizeModes: ['Current', 'A4Landscape', 'A4Portrait']
