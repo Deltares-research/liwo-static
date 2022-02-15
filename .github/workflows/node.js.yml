@@ -39,11 +39,13 @@ jobs:
     - name: Test
       run: npm run lint && npm run test:unit
     - name: Build
-      run: npm run build && tar -czf liwo.tar.gz dist && zip -r liwo.zip dist
+      run: npm run build 
     - name: Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run release
+    - name: Build again (to include updated) package.json
+      run: npm run build && tar -czf liwo.tar.gz dist && zip -r liwo.zip dist
     - name: Release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
