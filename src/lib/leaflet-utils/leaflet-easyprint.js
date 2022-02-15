@@ -190,7 +190,7 @@ L.Control.EasyPrint = L.Control.extend({
       widthForExport = this.originalState.mapWidth
     }
 
-    function resetPlugin() {
+    function resetPlugin(plugin) {
       plugin._toggleControls(true);
       plugin._toggleClasses(plugin.options.hideClasses, true);
 
