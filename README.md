@@ -64,7 +64,7 @@ The application has an option to overwrite the BASE_URL. This was mainly needed 
 
 
 ## Semantic releases
-If you specify fixes and features in your commit messages a new [semantic release](https://github.com/semantic-release/semantic-release) will be created, after a merge with master.
+If you specify fixes and features in your commit messages a new [semantic release](https://github.com/semantic-release/semantic-release) will be created, after a merge with master. Semantic release updates the package.json. So in the build process we build, release, and then build again (see the .github node.js actions configuration).
 
 ## Design
 Icon designs are stored under the folder src/img/design. They are stored in svg which can be  edited using illustrator.
