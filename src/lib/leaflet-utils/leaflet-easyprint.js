@@ -1,8 +1,6 @@
 /* eslint-disable */
 import domtoimage from 'dom-to-image';
 import fileSaver from 'file-saver'
-// var domtoimage = require('dom-to-image');
-// var fileSaver = require('file-saver');
 
 L.Control.EasyPrint = L.Control.extend({
   options: {
