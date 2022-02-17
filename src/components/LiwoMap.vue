@@ -64,9 +64,6 @@ export default {
       control.addTo(evt.printMap)
     })
   },
-  beforeDestroy () {
-    this.removePositionListeners()
-  },
   methods: {
     onClick (event) {
       // TODO: click on what
@@ -126,9 +123,6 @@ export default {
     },
     addPositionListeners () {
       this.map.on('moveend', this.addPositionToRoute)
-    },
-    removePositionListeners () {
-      this.map.off('moveend', this.addPositionToRoute)
     }
   }
 }
