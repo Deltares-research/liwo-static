@@ -3,7 +3,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import About from './views/About'
 import Contact from './views/Contact'
-import Home from './views/Home'
 import Maps from './views/Maps'
 import Viewer from './views/Viewer'
 import Combine from './views/Combine'
@@ -16,10 +15,8 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: Home,
-      meta: {
-        title: 'Home'
+      redirect: () => {
+        return 'maps'
       }
     },
     {
