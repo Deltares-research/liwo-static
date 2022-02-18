@@ -149,8 +149,7 @@
       <filter-popup
         v-if="showFilter"
         @close="showFilter = false"
-        :probability.sync="selectedProbability">
-      </filter-popup>
+      />
     </div>
   </div>
 </template>
