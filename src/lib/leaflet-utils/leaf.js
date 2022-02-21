@@ -7,7 +7,7 @@ import 'leaflet-control-geocoder/dist/Control.Geocoder.css'
 import 'leaflet.browser.print/dist/leaflet.browser.print'
 
 import 'leaflet.markercluster'
-import 'leaflet-easyprint'
+import './leaflet-easyprint'
 import 'proj4leaflet'
 
 export default L
