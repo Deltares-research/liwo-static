@@ -8,24 +8,10 @@
     </p>
   </header>
   <div>
-    <h2>Gebruik</h2>
-    <p>
-      Het juist duiden van beschikbare kaartlagen vereist specialistische kennis. Deze kennis is beschikbaar bij
-      waterbeheerders. Het wordt daarom aanbevolen om deze kennis te betrekken, zowel bij ruimtelijke adaptatie als bij
-      wateroverlast en (de voorbereiding op) overstromingen.
-    </p>
     <p>Voor niet-professionele gebruikers is er <a href="https://www.overstroomik.nl">www.overstroomik.nl</a>.</p>
     <p>
       Voor uitleg over het gebruik en de gebruikershandleiding kunt u terecht op de <a href="https://www.helpdeskwater.nl/onderwerpen/applicaties-modellen/applicaties-per/watermanagement/watermanagement/liwo/">Helpdesk Water</a>. Hier vindt u ook
       contactgegevens voor het aanvragen van LIWO-opleidingen.
-    </p>
-    <h2>Kaarten</h2>
-    <p>
-      Dit informatiesysteem bevat kaartlagen voor professionals, die nodig zijn voor de voorbereiding op wateroverlast en
-      overstromingen in Nederland. De ruimtelijke informatie is ondergebracht onder het kopje 'Kaarten' en is voor iedereen
-      toegankelijk. Het gaat hierbij om crisisbeheersing (preparatie en respons) maar het is ook bruikbaar
-      voor ruimtelijke adaptatie. Kaarten worden vanuit het LIWO ook beschikbaar gesteld aan andere systemen voor het
-      verhogen van het waterbewustzijn en de versterking van zelfredzaamheid.
     </p>
   </div>
   <div class="maps__sections">
