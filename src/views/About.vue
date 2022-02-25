@@ -29,12 +29,8 @@
       </p>
       <div class="panel soft" >
         <p>Applicatie versie: {{ version }}</p>
-        <p>User interface versie: {{ uiVersion }}</p>
-        <p>Backend versie: {{ backendVersion }}</p>
-        <p>Dataset versie: {{ datasetVersion }}</p>
       </div>
       <p>De broncode van deze software staat op <a href="https://github.com/deltares/liwo-static">github/deltares/liwo-static</a></p>
-
     </section>
   </div>
 </div>
@@ -47,19 +43,12 @@ export default {
   name: 'About',
   data () {
     return {
-      /* main version */
-      version: 'not set',
-      uiVersion: process.env.VUE_APP_VERSION,
-      datasetVersion: 'not set',
-      backendVersion: 'not set'
-
+      version: 'not set'
     }
   },
   async mounted () {
     const services = await mapConfig.getServices()
     this.version = services.VERSION
-    this.datasetVersion = services.DATASET_VERSION
-    this.backendVersion = services.BACKEND_VERSION
   }
 }
 
