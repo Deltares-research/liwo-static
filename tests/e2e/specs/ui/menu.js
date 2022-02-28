@@ -1,7 +1,6 @@
 const pages = [
   ['Contact', '#/contact'],
   ['Cookies', 'https://www.rijkswaterstaat.nl/cookies'],
-  ['Home', '#/'],
   ['Kaarten', '#/maps'],
   ['Over LIWO', '#/about'],
   ['Toegankelijkheid', '#/accessibility']
