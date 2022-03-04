@@ -84,7 +84,7 @@
     "lint-staged": "^6.1.1",
     "lodash-webpack-plugin": "^0.11.5",
     "mocha": "^7.2.0",
-    "mochawesome": "^6.2.1",
+    "mochawesome": "^7.1.1",
     "postcss-custom-properties": "7.0.0",
     "postcss-import": "^11.1.0",
     "sass": "^1.49.7",
