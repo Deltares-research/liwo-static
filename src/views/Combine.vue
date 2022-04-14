@@ -256,17 +256,12 @@ export default {
   },
   async mounted () {
     // If the url contains a list of scenarioIds
-
     // get the layerSet that corresponds to this map
     const layerSetId = this.layerSetId
     // store it
     this.$store.commit('setLayerSetId', layerSetId)
-
     // load the corresponding layerSet
-    const options = {
-      id: layerSetId
-    }
-    await this.$store.dispatch('loadLayerSetById', options)
+    await this.$store.dispatch('loadLayerSetById', { id: layerSetId })
     // now we can load the scenario layerSets (which will look for the ids in the url)
     this.loadScenarioLayerSetsByRoute()
   },
