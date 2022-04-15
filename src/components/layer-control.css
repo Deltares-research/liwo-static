@@ -30,6 +30,10 @@
   border: 2px solid transparent;
 }
 
+.layer-control__range {
+  display: flex;
+}
+
 .layer-control__range input {
   margin: .4rem;
 }
