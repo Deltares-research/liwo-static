@@ -5,8 +5,7 @@ import store from '@/store'
 import { BREACH_LAYERS_EN, BREACH_LAYERS_NL, BREACH_REGIONAL, BREACH_PRIMARY, getLayerType } from '@/lib/liwo-identifiers'
 import mapConfig from '../map.config'
 
-import properties from '../../public/mock/properties.json'
-import properties2 from '../../public/mock/properties-2.json'
+import mockData from '../../public/mock/mock-layerset-data.json'
 
 const headers = { Accept: 'application/json', 'Content-Type': 'application/json' }
 
@@ -40,18 +39,6 @@ export async function loadBreach (feature) {
   // merge layers of all unorganized sets
   // and use the feature name
   const layers = _.flatten(_.map(bands, 'layers'))
-
-  layers.map((layer) => {
-    const variants = layer.variants.map((variant, index) => {
-      return {
-        ...variant,
-        properties: index % 2 === 0 ? properties : properties2
-      }
-    })
-    layer.variants = variants
-    return layer
-  })
-
   const layerSet = {
     id: breachId,
     feature: feature,
@@ -59,7 +46,6 @@ export async function loadBreach (feature) {
     title: feature.properties.name,
     layers: layers
   }
-
   return layerSet
 }
 
@@ -181,7 +167,9 @@ async function loadBreachLayer (breachId, layerName) {
   })
 
   const d = await resp.json()
-  const data = JSON.parse(d.d)
+  let data = JSON.parse(d.d)
+  // Use mock data for now.
+  data = mockData
   // get  the first layerset  if available,  otherwise return null
   let result = null
   // if this layerset is not available layerset can be null
