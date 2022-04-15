@@ -57,6 +57,7 @@ export function normalizeLayer (layer) {
   const variants = layer.variants.map(variant => ({
     ...variant.map,
     metadata: variant.metadata,
+    properties: variant.properties,
     title: variant.title,
     iscontrollayer: layer.iscontrollayer
   }))

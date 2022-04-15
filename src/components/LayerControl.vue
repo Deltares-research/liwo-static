@@ -32,13 +32,17 @@
   <!-- TODO: this is not a layer setting. Move this to an application settings pane. -->
   <div v-if="variantsOptions.length" class="layer-control__options">
     <!-- TODO: this now  shows up for each band reorganize -->
-    <layer-control-select
-      name="layer-variant"
-      :options="variantsOptions"
-      :selected="selectedVariantIndex"
-      @change.stop="setLayerVariant"
-      v-test="'variant-select'"
-    />
+    <label v-for="(variant, index) in variantsOptions" :key="index">
+      <span>{{ variant.title }}</span>
+      <layer-control-select
+        :key="index"
+        name="layer-variant"
+        :options="variant.options"
+        v-model="selectedVariantIndex[variant.title]"
+        @change="(e) => setLayerVariant(e, variant.title)"
+        v-test="'variant-select'"
+      />
+    </label>
   </div>
   <div class="layer-control__options">
     <div class="layer-control__range" v-test="'transparancy-input'">
@@ -80,11 +84,15 @@ export default {
   },
   data () {
     return {
-      popupIsOpen: false
+      popupIsOpen: false,
+      selectedVariantIndex: {
+        Overschrijdingsfrequentie: 0,
+        'Status SVK': 0
+      }
     }
   },
   computed: {
-    selectedVariantIndex () {
+    selectedIndex () {
       // get the selectedVariant from the layer
       const index = _.get(this.layer, 'properties.selectedVariant', 0)
       return index
@@ -99,20 +107,51 @@ export default {
       }
     },
     variantsOptions () {
+      const uniqueFields = []
       const variantsLength = this.layer.variants.length
+
       if (!variantsLength || variantsLength === 1) {
         return []
       }
 
-      return this.layer.variants.map((variant, index) => ({
-        value: Number(index),
+      this.layer.variants.map(variant => (Object.keys(variant.properties)
+        .find((key) => {
+          const keyIsAllowed = key === 'Overschrijdingsfrequentie' || key === 'Status SVK'
+
+          if (!keyIsAllowed) { return false }
+
+          const existingField = uniqueFields.find(field => field.title === key)
+          const existingValue = existingField?.options.includes(variant.properties[key])
+
+          if (!existingField) {
+            uniqueFields.push({ title: key, options: [variant.properties[key]] })
+          }
+
+          if (existingField && !existingValue) {
+            existingField.options.push(variant.properties[key])
+          }
+        })
+      ))
+
+      return uniqueFields.map((variant) => ({
+        options: variant.options.map((value, index) => ({ value: index, title: value })),
         title: variant.title
       }))
     },
     metadata () {
-      const variant = _.get(this.layer.variants, this.selectedVariantIndex)
+      const variant = _.get(this.layer.variants, this.selectedIndex)
       const result = _.get(variant, 'metadata')
       return result
+    },
+    selectedOptions () {
+      return Object.entries(this.selectedVariantIndex).map(([key, value]) => {
+        const variantsOptions = this.variantsOptions.find(options => options.title === key)
+
+        return {
+          name: key,
+          value: variantsOptions.options[value].title
+        }
+      })
     }
   },
   methods: {
@@ -137,14 +176,22 @@ export default {
         }
       })
     },
-    setLayerVariant ({ target }) {
+    setLayerVariant () {
+
+      const variant = this.layer.variants
+        .find(variant => this.selectedOptions
+          .every(option => variant.properties[option.name] === option.value)
+        )
+
+      const variantIndex = this.layer.variants.findIndex(object => object.layer === variant.layer)
+
+
       // inform everybody up the tree that a variant for this layer changed
-      const selectedVariantIndex = _.toNumber(target.value)
-      this.$emit('select:variant', {
-        layer: this.layer,
-        variant: this.layer.variants[selectedVariantIndex],
-        index: selectedVariantIndex
-      })
+      // this.$emit('select:variant', {
+      //   layer: this.layer,
+      //   variant: variant,
+      //   index: 0
+      // })
     },
     selectLayer () {
       this.$emit('select:layer', this.layer)

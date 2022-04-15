@@ -7,16 +7,16 @@
 }
 
 .layer-control__title {
-  margin: 0;
-  padding: 0;
   display: flex;
   align-items: center;
+  margin: 0;
+  padding: 0;
 }
 
 .layer-control__main,
 .layer-control__options {
-  position: relative;
   display: block;
+  position: relative;
   padding: .5rem .5rem .5rem 2.5rem;
 }
 
@@ -32,24 +32,26 @@
 
 .layer-control__range input {
   margin: .4rem;
-
 }
 
 .layer-control__options {
   display: none;
-  border-top: 1px solid var(--white);
-  padding-top: .25rem;
+  flex-wrap: wrap;
   justify-content: space-between;
+  border-top: 1px solid var(--white);
 }
-.layer-control__button {
-  padding: 0;
-  margin: 0;
-  border: none;
-  background: none;
+
+.layer-control__options label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 }
+
+.layer-control__button,
 .layer-control__info {
-  padding: 0;
   margin: 0;
+  padding: 0;
   border: none;
   background: none;
 }
@@ -72,7 +74,6 @@
 }
 
 .layer-control--active .layer-control__options {
-  display: block;
   display: flex;
 }
 
