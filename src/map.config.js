@@ -96,7 +96,7 @@ async function getServices () {
 
   const url = 'config/webconfig.json'
   // TODO: how shall we configure this? Discuss with Peter
-  // url = 'config/webconfig-rws.json'
+  // const url = 'config/webconfig-rws.json'
 
   const resp = await fetch(url)
   const result = await resp.json()

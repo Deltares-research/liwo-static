@@ -1,8 +1,9 @@
 <template>
-  <div class="site-main">
-    <div>
-      De pagina die u opvroeg is niet gevonden. Ga terug naar de <a href="/">hoofdpagina</a>.
-    </div>
+  <div class="not-found site-main">
+    <p>
+      De pagina die u opvroeg is niet gevonden.
+      Ga terug naar de <router-link :to="{ name: 'maps' }">hoofdpagina</router-link>.
+    </p>
   </div>
 </template>
 
@@ -13,4 +14,7 @@ export default {
 </script>
 
 <style>
+.not-found {
+  padding: 1rem;
+}
 </style>

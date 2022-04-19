@@ -6,7 +6,7 @@
         <router-link :to="{name: 'accessibility'}">Toegankelijkheid</router-link>
         <a href="https://www.rijkswaterstaat.nl/cookies">Cookies</a>
       </nav>
-      <a href="/" class="logo">
+      <router-link :to="{ name: 'maps' }" class="logo">
         <img
           src="/assets/img/logo-nl.svg"
           width="270"
@@ -14,7 +14,7 @@
           alt="Rijkswaterstaat Ministerie van Infrastructuur en Waterstaat."
           class="accessibility"
         />
-      </a>
+      </router-link>
   </div>
   <div id="menu" class="app-header__menu">
     <div class="app-header__top-menu container">
@@ -24,9 +24,8 @@
     </div>
     <nav role="navigation" class="app-header__nav">
       <ul class="container">
-        <li><router-link :to="{name: 'home'}" exact>Home</router-link></li>
-        <li><router-link :to="{name: 'maps'}">Kaarten</router-link></li>
-        <li><router-link :to="{name: 'about'}">Over LIWO</router-link></li>
+        <li><router-link :to="{ name: 'maps' }">Kaarten</router-link></li>
+        <li><router-link :to="{ name: 'about' }">Over LIWO</router-link></li>
       </ul>
     </nav>
     <h1 class="app-header__page-title container" v-test="'page-title'">{{ this.pageTitle }}</h1>

@@ -2,13 +2,18 @@
 <article class="maps">
   <header>
     <p>
-      Dit informatiesysteem bevat kaartlagen voor professionals, die nodig zijn voor de voorbereiding op wateroverlast en
-      overstromingen in Nederland. De ruimtelijke informatie is ondergebracht onder het kopje 'Kaarten' en is voor iedereen
-      toegankelijk. Het gaat hierbij om crisisbeheersing (preparatie en respons) maar het is ook bruikbaar
-      voor ruimtelijke adaptatie. Kaarten worden vanuit het LIWO ook beschikbaar gesteld aan andere systemen voor het
-      verhogen van het waterbewustzijn en de versterking van zelfredzaamheid.
+      Het Landelijk Informatiesysteem Water en Overstromingen (LIWO) bevat kaartlagen voor professionals die zich
+      bezighouden met (de voorbereiding op) wateroverlast en overstromingen in Nederland. Het LIWO is een product
+      van het Watermanagementcentrum Nederland (WMCN).
     </p>
   </header>
+  <div>
+    <p>Voor niet-professionele gebruikers is er <a href="https://www.overstroomik.nl">www.overstroomik.nl</a>.</p>
+    <p>
+      Voor uitleg over het gebruik en de gebruikershandleiding kunt u terecht op de <a href="https://www.helpdeskwater.nl/onderwerpen/applicaties-modellen/applicaties-per/watermanagement/watermanagement/liwo/">Helpdesk Water</a>. Hier vindt u ook
+      contactgegevens voor het aanvragen van LIWO-opleidingen.
+    </p>
+  </div>
   <div class="maps__sections">
     <layer-set-list
       v-for="layerSet in layerSets"

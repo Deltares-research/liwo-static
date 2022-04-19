@@ -97,7 +97,6 @@ The configuration that can be changed after build time is stored in webconfig.js
 ## Sig review
 Create a release with `npm run release` and then run `./sig-deploy.sh` to download the latest zip file to the format liwo-static-yyyymmdd.zip. Upload that file to sig.
 
-
 ## Upgrade node version
 If you want to node version you have to do this in several locations at the same time.
 - .nvmrc, for netlify

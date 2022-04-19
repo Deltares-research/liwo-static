@@ -44,7 +44,7 @@ describe('Map', () => {
   })
 
   it('Renders legend', () => {
-    cy.intercept('GetLegendGraphic').as('legend')
+    cy.intercept(/GetLegendGraphic/).as('legend')
     cy.visit(url)
     cy.wait('@legend')
     cy.get(selector('legend')).should('exist')
