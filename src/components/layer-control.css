@@ -60,6 +60,12 @@
   padding: 1px 7px 0;
 }
 
+.layer-control__options-subject {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .layer-control__button,
 .layer-control__info {
   margin: 0;
