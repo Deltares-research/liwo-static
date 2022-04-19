@@ -138,6 +138,7 @@ export default {
 
           if (!existingOptions) {
             uniqueOptions.push({ title: key, options: [variant.properties[key]] })
+            return
           }
 
           const existingValue = existingOptions.options.includes(variant.properties[key])
