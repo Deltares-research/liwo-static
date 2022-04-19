@@ -100,7 +100,7 @@ export default {
   },
   data () {
     return {
-      allowedVariantKeys: ['Overschrijdingsfrequentie', 'Status SVK'],
+      allowedVariantKeys: ['Overschrijdingsfrequentie', 'Status SVK', 'Bres'],
       popupIsOpen: false,
       noDataAvailableForSelection: false,
       selectedLayerIndex: 0,
