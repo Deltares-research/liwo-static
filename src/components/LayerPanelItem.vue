@@ -101,9 +101,7 @@ export default {
   }
 
   .layerpanel-item__title {
-    padding: 4px;
-    padding-right: 10px;
-    line-height: 44px;
+    padding: 10px;
     font-size: 1.2em;
     color: var(--black);
     margin-bottom: 0;

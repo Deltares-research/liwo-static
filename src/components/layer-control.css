@@ -27,7 +27,6 @@
 .layer-control__vis-label {
   position: absolute;
   left: .5rem;
-  border: 2px solid transparent;
 }
 
 .layer-control__range {
@@ -50,6 +49,15 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
+}
+
+.layer-control__options label + label {
+  margin-top: 4px;
+}
+
+.layer-control__options select {
+  margin: 0;
+  padding: 1px 7px 0;
 }
 
 .layer-control__button,
