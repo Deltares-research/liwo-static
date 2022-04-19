@@ -34,7 +34,7 @@
   <div v-if="layerVariantOptions.length" class="layer-control__options">
     <!-- TODO: this now  shows up for each band reorganize -->
     <label v-for="(variant, index) in layerVariantOptions" :key="index">
-      <span>{{ variant.title }}:</span>
+      <span class="layer-control__options-subject">{{ variant.title }}:</span>
       <layer-control-select
         :key="index"
         name="layer-variant"

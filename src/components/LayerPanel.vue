@@ -40,8 +40,9 @@ export default {
     max-height: calc(100vh - 23rem);
     overflow: auto;
   }
+
   .layer-panel__title .right {
-    float: right;
+    margin-left: auto;
   }
 
   .layer-panel__content {
@@ -62,6 +63,8 @@ export default {
 
   .layer-panel__title,
   .layer-panel__action {
+    display: flex;
+    align-items: center;
     background-color: var(--yellow);
     font-size: 1.2em;
     padding: 10px;
