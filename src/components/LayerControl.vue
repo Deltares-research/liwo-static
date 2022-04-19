@@ -135,11 +135,12 @@ export default {
           if (!keyIsAllowed) { return false }
 
           const existingOptions = uniqueOptions.find(field => field.title === key)
-          const existingValue = existingOptions?.options.includes(variant.properties[key])
 
           if (!existingOptions) {
             uniqueOptions.push({ title: key, options: [variant.properties[key]] })
           }
+
+          const existingValue = existingOptions.options.includes(variant.properties[key])
 
           if (existingOptions && !existingValue) {
             existingOptions.options.push(variant.properties[key])
