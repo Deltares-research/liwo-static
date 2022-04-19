@@ -30,20 +30,20 @@
     </div>
   </form>
   <!-- TODO: this is not a layer setting. Move this to an application settings pane. -->
-  <div v-if="variantsOptions.length" class="layer-control__options">
+  <div v-if="layerVariantOptions.length" class="layer-control__options">
     <!-- TODO: this now  shows up for each band reorganize -->
-    <label v-for="(variant, index) in variantsOptions" :key="index">
+    <label v-for="(variant, index) in layerVariantOptions" :key="index">
       <span>{{ variant.title }}:</span>
       <layer-control-select
         :key="index"
         name="layer-variant"
         :options="variant.options"
-        v-model="selectedOptionByVariant[variant.title]"
-        @change="(e) => setLayerVariant(e, variant.title)"
+        v-model="selectedIndexByVariant[variant.title]"
+        @change="setLayerVariant"
         v-test="'variant-select'"
       />
     </label>
-    <span v-if="noVariantAvailable">Geen data beschikbaar voor deze selectie</span>
+    <span v-if="noDataAvailableForSelection">Geen data beschikbaar voor deze selectie</span>
   </div>
   <div class="layer-control__options">
     <div class="layer-control__range" v-test="'transparancy-input'">
@@ -66,7 +66,6 @@
 </template>
 
 <script>
-
 import _ from 'lodash'
 
 import LayerPopup from '@/components/LayerPopup'
@@ -85,10 +84,11 @@ export default {
   },
   data () {
     return {
+      allowedVariantKeys: ['Overschrijdingsfrequentie', 'Status SVK'],
       popupIsOpen: false,
-      noVariantAvailable: false,
-      selectedIndex: 0,
-      selectedOptionByVariant: {
+      noDataAvailableForSelection: false,
+      selectedLayerIndex: 0,
+      selectedIndexByVariant: {
         Overschrijdingsfrequentie: 0,
         'Status SVK': 0
       }
@@ -104,50 +104,50 @@ export default {
         'layer-control--active': this.active
       }
     },
-    variantsOptions () {
-      const uniqueFields = []
+    layerVariantOptions () {
+      const uniqueOptions = []
       const variantsLength = this.layer.variants.length
 
       if (!variantsLength || variantsLength === 1) {
         return []
       }
 
-      this.layer.variants.map(variant => (Object.keys(variant.properties)
-        .find((key) => {
-          const keyIsAllowed = key === 'Overschrijdingsfrequentie' || key === 'Status SVK'
+      this.layer.variants.map(variant => (
+        Object.keys(variant.properties).find((key) => {
+          const keyIsAllowed = this.allowedVariantKeys.includes(key)
 
           if (!keyIsAllowed) { return false }
 
-          const existingField = uniqueFields.find(field => field.title === key)
-          const existingValue = existingField?.options.includes(variant.properties[key])
+          const existingOptions = uniqueOptions.find(field => field.title === key)
+          const existingValue = existingOptions?.options.includes(variant.properties[key])
 
-          if (!existingField) {
-            uniqueFields.push({ title: key, options: [variant.properties[key]] })
+          if (!existingOptions) {
+            uniqueOptions.push({ title: key, options: [variant.properties[key]] })
           }
 
-          if (existingField && !existingValue) {
-            existingField.options.push(variant.properties[key])
+          if (existingOptions && !existingValue) {
+            existingOptions.options.push(variant.properties[key])
           }
         })
       ))
 
-      return uniqueFields.map((variant) => ({
+      return uniqueOptions.map((variant) => ({
         options: variant.options.map((value, index) => ({ value: index, title: value })),
         title: variant.title
       }))
     },
     metadata () {
-      const variant = _.get(this.layer.variants, this.selectedIndex)
+      const variant = _.get(this.layer.variants, this.selectedLayerIndex)
       const result = _.get(variant, 'metadata')
       return result
     },
-    selectedOptions () {
-      return Object.entries(this.selectedOptionByVariant).map(([key, value]) => {
-        const variantsOptions = this.variantsOptions.find(options => options.title === key)
+    selectedLayerVariantOptions () {
+      return Object.entries(this.selectedIndexByVariant).map(([key, value]) => {
+        const layerVariantOptions = this.layerVariantOptions.find(options => options.title === key)
 
         return {
           name: key,
-          value: variantsOptions.options[value].title
+          value: layerVariantOptions.options[value].title
         }
       })
     }
@@ -175,27 +175,27 @@ export default {
       })
     },
     setLayerVariant () {
-      this.noVariantAvailable = false
+      this.noDataAvailableForSelection = false
 
       const variant = this.layer.variants
-        .find(variant => this.selectedOptions
+        .find(variant => this.selectedLayerVariantOptions
           .every(option => variant.properties[option.name] === option.value)
         )
 
       if (!variant) {
-        this.noVariantAvailable = true
+        this.noDataAvailableForSelection = true
         return
       }
 
       const index = this.layer.variants
         .findIndex(object => object.layer === variant.layer)
 
-      this.selectedIndex = index
+      this.selectedLayerIndex = index
 
       // inform everybody up the tree that a variant for this layer changed
       this.$emit('select:variant', {
         layer: this.layer,
-        variant: variant,
+        variant,
         index
       })
     },
