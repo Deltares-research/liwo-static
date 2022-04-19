@@ -2,7 +2,7 @@
   "_comment0": "This file will be overwritten automatically by a puppet script in the deployment process, DO NOT EDIT BY HAND, DO NOT MINIFY",
   "_comment1": "url's for webservice calls (https required, TODO fix at google)",
   "_comment2": "TODO: maps here our outdated url to nationaalgeoregister. Merge with mapconfig.js",
-  "WEBSERVICE_URL": "http://34.117.7.205/liwo.ws",
+  "WEBSERVICE_URL": "http://34.117.7.205/api/liwo.ws",
   "STATIC_GEOSERVER_URL": "http://34.117.7.205/geoserver/ows",
   "LEGEND_URL": "http://34.117.7.205/geoserver/ows",
   "DYNAMIC_GEOSERVER_URL": "http://34.117.7.205/geoserver/ows",
