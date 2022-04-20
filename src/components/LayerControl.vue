@@ -130,8 +130,6 @@ export default {
         return []
       }
 
-      console.log(this.layer.variants)
-
       this.layer.variants.map(variant => (
         Object.keys(variant.properties).find((key) => {
           const keyIsAllowed = this.variantFilterProperties.includes(key)
