@@ -82,6 +82,7 @@
 </template>
 
 <script>
+import { mapGetters, mapState } from 'vuex'
 import _ from 'lodash'
 
 import LayerPopup from '@/components/LayerPopup'
@@ -100,17 +101,18 @@ export default {
   },
   data () {
     return {
-      allowedVariantKeys: ['Overschrijdingsfrequentie', 'Status SVK', 'Bres'],
       popupIsOpen: false,
       noDataAvailableForSelection: false,
       selectedLayerIndex: 0,
-      selectedIndexByVariant: {
-        Overschrijdingsfrequentie: 0,
-        'Status SVK': 0
-      }
+      selectedIndexByVariant: null
     }
   },
+  mounted () {
+    this.selectedIndexByVariant = this.filterPropertiesIndex
+  },
   computed: {
+    ...mapGetters(['filterPropertiesIndex']),
+    ...mapState(['variantFilterProperties']),
     id () {
       return this.layer.breachBandId
     },
@@ -128,9 +130,11 @@ export default {
         return []
       }
 
+      console.log(this.layer.variants)
+
       this.layer.variants.map(variant => (
         Object.keys(variant.properties).find((key) => {
-          const keyIsAllowed = this.allowedVariantKeys.includes(key)
+          const keyIsAllowed = this.variantFilterProperties.includes(key)
 
           if (!keyIsAllowed) { return false }
 

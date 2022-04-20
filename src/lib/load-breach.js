@@ -5,8 +5,6 @@ import store from '@/store'
 import { BREACH_LAYERS_EN, BREACH_LAYERS_NL, BREACH_REGIONAL, BREACH_PRIMARY, getLayerType } from '@/lib/liwo-identifiers'
 import mapConfig from '../map.config'
 
-import mockData from '../../public/mock/mock-layerset-data.json'
-
 const headers = { Accept: 'application/json', 'Content-Type': 'application/json' }
 
 export async function loadBreach (feature) {
@@ -153,9 +151,11 @@ async function loadBreachLayer (breachId, layerName) {
   // Load the dataset  for a breach
   const services = await mapConfig.getServices()
   const BREACHES_BASE_URL = services.WEBSERVICE_URL
+  const FILTERS_BASE_URL = services.WEBSERVICE_URL_V2
   const BREACHES_API_URL = `${BREACHES_BASE_URL}/Tools/FloodImage.asmx/GetScenariosPerBreachGeneric`
+  const FILTERS_API_URL = `${FILTERS_BASE_URL}/filter_variants`
 
-  const resp = await fetch(BREACHES_API_URL, {
+  const breachFetch = await fetch(BREACHES_API_URL, {
     method: 'POST',
     mode: 'cors',
     credentials: 'omit',
@@ -166,11 +166,25 @@ async function loadBreachLayer (breachId, layerName) {
     })
   })
 
-  const d = await resp.json()
-  let data = JSON.parse(d.d)
-  // Use mock data for now.
-  data = mockData
-  // get  the first layerset  if available,  otherwise return null
+  const filterFetch = await fetch(FILTERS_API_URL, {
+    method: 'GET',
+    mode: 'cors',
+    credentials: 'omit',
+    headers
+  })
+
+  const [breachData, filtersData] = await Promise.all([breachFetch, filterFetch])
+    .then(responses => responses.map(response => response.json()))
+
+  const properties = await filtersData
+
+  if (properties.length) {
+    store.commit('setVariantFilterProperties', { properties })
+  }
+
+  const data = await breachData.then(data => JSON.parse(data.d))
+
+  // get the first layerset if available, otherwise return null
   let result = null
   // if this layerset is not available layerset can be null
   if (_.has(data, '[0].layerset[0]')) {
