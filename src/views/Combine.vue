@@ -155,7 +155,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import _ from 'lodash'
 
 import LiwoMap from '@/components/LiwoMap'
@@ -229,7 +229,6 @@ export default {
       scenarioInfo: {},
       // the main layerSet collapse
       layerSetCollapsed: false,
-      selectedProbability: 'no_filter',
 
       // allows to select a layer (for the unit panel)
       selectedLayer: null,
@@ -270,12 +269,13 @@ export default {
     this.loadScenarioLayerSetsByRoute()
   },
   computed: {
-    // we get the  default layerSet from the store
+    // we get the default layerSet from the store
     ...mapGetters([
       'layerSet',
       'layers',
       'currentNotifications'
     ]),
+    ...mapState(['selectedProbabilities']),
     layerSetId () {
       // this id is passed on from the Maps page.
       const layerSetId = _.toNumber(this.$route.params.id)
@@ -380,12 +380,11 @@ export default {
             return feature
           })
         }
-        // if  feature is not selected, filter by probability
-        if (this.selectedProbability !== 'no_filter') {
-          geojson.features = _.filter(geojson.features, (feature) => {
-            const featureSelected = feature.properties[this.selectedProbability] > 0
-            return featureSelected
-          })
+
+        // if feature is not selected, filter by probabilities
+        if (this.selectedProbabilities.length) {
+          geojson.features = _.filter(geojson.features, (feature) =>
+            this.selectedProbabilities.some(item => feature.properties[item] > 0))
         }
 
         const selectedFeatureIds = _.map(this.selectedFeatures, 'properties.id')

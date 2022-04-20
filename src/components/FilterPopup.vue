@@ -1,48 +1,28 @@
 <template>
 <pop-up class="filter-popup" title="Filter" @close="$emit('close')">
   <form class="filter-popup__form" id="genericform" novalidate="novalidate">
-    <p class="filter-popup__total">Totaal aantal scenatio's: xx</p>
-    <fieldset class="control-group">
-      <legend class="control-label">Doorbraaklocaties:</legend>
-      <ul class="choice-options">
-        <li class="choice-options__item" v-for="location in locations" :key="location.id">
-          <label
-            v-test="'filter-item'"
-            class="choice-options__item__label"
-            :for="`probability-${location.id}`"
-          >
-            <input
-              class="choice-options__item__checkbox"
-              type="checkbox"
-              name="probability"
-              :id="`probability-${location.id}`"
-              :value="location.value"
-              v-model="selectedLocations"
-            />
-            {{ location.title }} - xx scenario's
-          </label>
-        </li>
-      </ul>
-    </fieldset>
-
-    <fieldset class="control-group">
+    <fieldset class="control-group" @change="onProbabilitiesChange">
       <legend class="control-label">Kansklasse:</legend>
       <ul class="choice-options">
-        <li class="choice-options__item" v-for="probability in probabilities" :key="probability.identifier">
+        <li
+          class="choice-options__item"
+          v-for="option in probabilityOptions"
+          :key="option.id"
+        >
           <label
             v-test="'filter-item'"
             class="choice-options__item__label"
-            :for="`probability-${probability.identifier}`"
+            :for="`probability-${option.id}`"
           >
             <input
               class="choice-options__item__checkbox"
               type="checkbox"
               name="probability"
-              :id="`probability-${probability.identifier}`"
-              :value="probability.identifier"
-              v-model="selectedProbabilities"
+              :id="`probability-${option.id}`"
+              :value="option.id"
+              v-model="selectedOptions"
             />
-            {{ probability.title }} - xx scenario's
+            {{ option.title }}
           </label>
         </li>
       </ul>
@@ -71,20 +51,40 @@
 </pop-up>
 </template>
 <script>
+import { mapGetters, mapState } from 'vuex'
 import { probabilityConfig } from '@/lib/probability-filter'
+import store from '@/store'
 import PopUp from '@/components/PopUp'
 
 export default {
-  components: {
-    PopUp
-  },
+  components: { PopUp },
   data () {
     return {
-      locations: [{ id: 'gebied-a', title: 'Gebied A', value: 'gebied-a' }, { id: 'gebied-b', title: 'Gebied B', value: 'gebied-b' }],
-      selectedLocations: [],
-      probabilities: probabilityConfig,
-      selectedProbabilities: [],
-      imminentFlood: false
+      imminentFlood: false,
+      selectedOptions: []
+    }
+  },
+  created () {
+    this.selectedOptions = this.probabilityOptions
+  },
+  computed: {
+    ...mapGetters(['featuresForProbability']),
+    ...mapState(['selectedProbabilities']),
+    probabilityOptions () {
+      return probabilityConfig
+        .filter(config => config.identifier !== 'no_filter')
+        .map(({ identifier, title }) => ({
+          id: identifier,
+          title
+        }))
+    }
+  },
+  methods: {
+    getFeaturesByProbability (probability) {
+      return this.featuresForProbability(probability)
+    },
+    onProbabilitiesChange () {
+      store.commit('setSelectedProbabilities', { probabilities: this.selectedOptions })
     }
   }
 }
@@ -98,8 +98,11 @@ export default {
   }
 
   .filter-popup__form .control-group {
-    margin-top: 15px;
     padding: 0;
+  }
+
+  .filter-popup__form .control-group + .control-group {
+    margin-top: 15px;
   }
 
   .filter-popup__form .control-label {

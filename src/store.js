@@ -30,7 +30,8 @@ export default new Vuex.Store({
     notificationsById: {},
 
     // This is the filter for probabilities (a string  used to pass to the backend)
-    probabilityFilter: ''
+    probabilityFilter: '',
+    selectedProbabilities: []
   },
   mutations: {
     setLayerSetById (state, { id, layerSet }) {
@@ -62,6 +63,9 @@ export default new Vuex.Store({
     },
     clearNotifications (state) {
       state.notificationsById = {}
+    },
+    setSelectedProbabilities (state, { probabilities }) {
+      state.selectedProbabilities = probabilities
     }
   },
   actions: {
@@ -115,6 +119,34 @@ export default new Vuex.Store({
       const notifications = notificationsById[layerSetId] || []
 
       return notifications
+    },
+    featuresForProbability: (state) => (probability) => {
+      const { layerSetId, layerSetsById } = state
+      const layers = flattenLayerSet(layerSetsById[layerSetId])
+
+      return layers
+        .filter(layer => layer.geojson)
+        .map(({ geojson }) => geojson.features.filter(({ properties }) => properties[probability] > 0).length)
+        .reduce((a, b) => a + b, 0)
+    },
+    featuresForLayer: (state) => ({ id }) => {
+      const { layerSetId, layerSetsById } = state
+      const layers = flattenLayerSet(layerSetsById[layerSetId])
+
+      const layer = layers
+        .filter(layer => layer.geojson)
+        .find(layer => layer.layerObj.properties.id === id)
+
+      return layer.geojson.features.length
+    },
+    totalFeaturesAmount (state) {
+      const { layerSetId, layerSetsById } = state
+      const layers = flattenLayerSet(layerSetsById[layerSetId])
+
+      return layers
+        .filter(layer => (layer.geojson))
+        .map(({ geojson }) => geojson.features.length)
+        .reduce((a, b) => a + b, 0)
     }
   }
 })
