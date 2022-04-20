@@ -128,25 +128,6 @@ export default new Vuex.Store({
         .filter(layer => layer.geojson)
         .map(({ geojson }) => geojson.features.filter(({ properties }) => properties[probability] > 0).length)
         .reduce((a, b) => a + b, 0)
-    },
-    featuresForLayer: (state) => ({ id }) => {
-      const { layerSetId, layerSetsById } = state
-      const layers = flattenLayerSet(layerSetsById[layerSetId])
-
-      const layer = layers
-        .filter(layer => layer.geojson)
-        .find(layer => layer.layerObj.properties.id === id)
-
-      return layer.geojson.features.length
-    },
-    totalFeaturesAmount (state) {
-      const { layerSetId, layerSetsById } = state
-      const layers = flattenLayerSet(layerSetsById[layerSetId])
-
-      return layers
-        .filter(layer => (layer.geojson))
-        .map(({ geojson }) => geojson.features.length)
-        .reduce((a, b) => a + b, 0)
     }
   }
 })
