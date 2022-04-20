@@ -30,7 +30,6 @@ export default new Vuex.Store({
     notificationsById: {},
 
     // This is the filter for probabilities (a string  used to pass to the backend)
-    probabilityFilter: '',
     selectedProbabilities: []
   },
   mutations: {
