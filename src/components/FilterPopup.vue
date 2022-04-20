@@ -65,7 +65,7 @@ export default {
     }
   },
   created () {
-    this.selectedOptions = this.probabilityOptions
+    this.selectedOptions = this.selectedProbabilities
   },
   computed: {
     ...mapGetters(['featuresForProbability']),
