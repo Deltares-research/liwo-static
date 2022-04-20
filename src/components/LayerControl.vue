@@ -61,11 +61,13 @@
 </template>
 
 <script>
-
+import { mapState } from 'vuex'
 import _ from 'lodash'
 
 import LayerPopup from '@/components/LayerPopup'
 import LayerControlSelect from '@/components/LayerControlSelect'
+
+import { matchValueToProbability } from '@/lib/probability-filter'
 
 export default {
   props: {
@@ -84,6 +86,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['selectedProbabilities']),
     selectedVariantIndex () {
       // get the selectedVariant from the layer
       const index = _.get(this.layer, 'properties.selectedVariant', 0)
@@ -104,10 +107,18 @@ export default {
         return []
       }
 
-      return this.layer.variants.map((variant, index) => ({
-        value: Number(index),
-        title: variant.title
-      }))
+      return this.layer.variants
+        .filter((variant) => {
+          const chance = this.getNumberFromString(variant.title)
+          const probability = matchValueToProbability(chance)
+          return this.selectedProbabilities.length
+            ? this.selectedProbabilities.includes(probability)
+            : true
+        })
+        .map((variant, index) => ({
+          value: index,
+          title: variant.title
+        }))
     },
     metadata () {
       const variant = _.get(this.layer.variants, this.selectedVariantIndex)
@@ -116,6 +127,10 @@ export default {
     }
   },
   methods: {
+    getNumberFromString (string) {
+      const matches = string.match(/\d+/g)
+      return parseInt(matches[0], 10)
+    },
     setTransparancy ({ target }) {
       // Create a copy of the layer with the new opacity
       const layer = { ...this.layer }
