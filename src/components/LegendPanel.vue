@@ -62,23 +62,26 @@ export default {
     font-family:  RijksoverheidSansText, Verdana, Arial, sans-serif;
     font-size: 1rem;
   }
+
   .legend-panel__title {
-    text-align: center;
-    font-weight: normal;
     margin: 0;
     padding: .25rem;
     background-color: var(--lighter-gray);
     color: var(--black);
-  }
-  .legend-panel__caption {
-    margin-bottom: 0.25rem;
-  }
-  .legend-panel__legend {
-    padding: 0.1rem;
-    margin-bottom: 0;
-  }
-  .legend-panel figure img {
-    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
   }
 
+  .legend-panel__legend {
+    margin: 7px;
+  }
+
+  .legend-panel__caption {
+    margin-bottom: 4px;
+    line-height: 1;
+  }
+
+  .legend-panel figure img {
+    margin: 0;
+  }
 </style>
