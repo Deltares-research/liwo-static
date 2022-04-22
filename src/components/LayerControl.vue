@@ -31,16 +31,16 @@
     </div>
   </form>
   <!-- TODO: this is not a layer setting. Move this to an application settings pane. -->
-  <div v-if="layerVariantOptions.length" class="layer-control__options">
+  <div v-if="!isEmptyObject(layerVariantOptions)" class="layer-control__options">
     <!-- TODO: this now  shows up for each band reorganize -->
-    <label v-for="(variant, index) in layerVariantOptions" :key="index">
-      <span class="layer-control__options-subject">{{ variant.title }}:</span>
+    <label v-for="(variant, title, index) in layerVariantOptions" :key="index">
+      <span class="layer-control__options-subject">{{ title }}:</span>
       <layer-control-select
         :key="index"
         name="layer-variant"
-        :options="variant.options"
-        v-model="selectedIndexByVariant[variant.title]"
-        @change="setLayerVariant"
+        :options="variant"
+        v-model="selectedIndexByVariant[title]"
+        @change="setLayerVariant(title)"
         v-test="'variant-select'"
       />
     </label>
@@ -104,11 +104,15 @@ export default {
       popupIsOpen: false,
       noDataAvailableForSelection: false,
       selectedLayerIndex: 0,
-      selectedIndexByVariant: null
+      selectedIndexByVariant: null,
+      layerVariantOptions: {}
     }
   },
   mounted () {
     this.selectedIndexByVariant = this.filterPropertiesIndex
+    const variantName = this.variantFilterProperties[0]
+    const variantValue = _.get(this.layer, `variants[0].properties[${variantName}]`)
+    this.setLayerVariantOptions(variantName, variantValue)
   },
   computed: {
     ...mapGetters(['filterPropertiesIndex']),
@@ -122,40 +126,6 @@ export default {
         'layer-control--active': this.active
       }
     },
-    layerVariantOptions () {
-      const uniqueOptions = []
-      const variantsLength = this.layer.variants.length
-
-      if (!variantsLength || variantsLength === 1) {
-        return []
-      }
-
-      this.layer.variants.map(variant => (
-        Object.keys(variant.properties).find((key) => {
-          const keyIsAllowed = this.variantFilterProperties.includes(key)
-
-          if (!keyIsAllowed) { return false }
-
-          const existingOptions = uniqueOptions.find(field => field.title === key)
-
-          if (!existingOptions) {
-            uniqueOptions.push({ title: key, options: [variant.properties[key]] })
-            return
-          }
-
-          const existingValue = existingOptions.options.includes(variant.properties[key])
-
-          if (existingOptions && !existingValue) {
-            existingOptions.options.push(variant.properties[key])
-          }
-        })
-      ))
-
-      return uniqueOptions.map((variant) => ({
-        options: variant.options.map((value, index) => ({ value: index, title: value })),
-        title: variant.title
-      }))
-    },
     metadata () {
       const variant = _.get(this.layer.variants, this.selectedLayerIndex)
       const result = _.get(variant, 'metadata')
@@ -163,16 +133,66 @@ export default {
     },
     selectedLayerVariantOptions () {
       return Object.entries(this.selectedIndexByVariant).map(([key, value]) => {
-        const layerVariantOptions = this.layerVariantOptions.find(options => options.title === key)
-
+        const layerVariantOptions = _.get(this.layerVariantOptions, key, {})
+        // TODO: assumption that if title not available, the value is null
         return {
           name: key,
-          value: layerVariantOptions.options[value].title
+          value: _.get(layerVariantOptions, `[${value}].title`, null)
         }
+      })
+    },
+    showLayers () {
+      return this.layer.variants.map(vari => {
+        return this.variantFilterProperties.map(prop => {
+          return vari.properties[prop]
+        })
       })
     }
   },
   methods: {
+    isEmptyObject (obj) {
+      return _.isEmpty(obj)
+    },
+    setLayerVariantOptions (variantName, variantValue) {
+      if (!variantName) {
+        return
+      }
+      const variantOptions = {}
+
+      const updateVariantOptions = (variant, prop) => {
+        if (!variant.properties[prop]) {
+          return
+        }
+
+        if (!_.get(variantOptions, prop)) {
+          variantOptions[prop] = [{
+            title: variant.properties[prop],
+            value: 0
+          }]
+        }
+        if (_.get(variantOptions, prop) &&
+          !_.get(variantOptions, prop, []).find(opt => opt.title === variant.properties[prop])) {
+          variantOptions[prop].push({
+            title: variant.properties[prop],
+            value: variantOptions[prop].length
+          })
+        }
+      }
+
+      this.layer.variants.forEach(variant => {
+        // For each variant add the options for the chosen variantName
+        updateVariantOptions(variant, variantName)
+
+        // For the chosen variantName find the options of variants available
+        if (variant.properties[variantName] === variantValue) {
+          this.variantFilterProperties.forEach(prop => {
+            // Check if a real value
+            updateVariantOptions(variant, prop)
+          })
+        }
+      })
+      this.layerVariantOptions = variantOptions
+    },
     setTransparancy ({ target }) {
       // Create a copy of the layer with the new opacity
       const layer = { ...this.layer }
@@ -194,8 +214,12 @@ export default {
         }
       })
     },
-    setLayerVariant () {
-      this.noDataAvailableForSelection = false
+    setLayerVariant (title) {
+      // Only update the variants fields if a different Overschrijdingsfrequentie is chosen..
+      if (this.selectedLayerVariantOptions[0].name === title) {
+        const variantValue = this.selectedLayerVariantOptions[0].value
+        this.setLayerVariantOptions(title, variantValue)
+      }
 
       const variant = this.layer.variants
         .find(variant => this.selectedLayerVariantOptions
@@ -203,10 +227,8 @@ export default {
         )
 
       if (!variant) {
-        this.noDataAvailableForSelection = true
         return
       }
-
       const index = this.layer.variants
         .findIndex(object => object.layer === variant.layer)
 
