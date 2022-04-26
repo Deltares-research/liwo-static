@@ -44,9 +44,6 @@
         v-test="'variant-select'"
       />
     </label>
-    <span v-if="noDataAvailableForSelection">
-      Geen scenario data beschikbaar voor deze selectie
-    </span>
   </div>
   <div class="layer-control__options">
     <div class="layer-control__range" v-test="'transparancy-input'">
@@ -109,8 +106,9 @@ export default {
     }
   },
   mounted () {
-    this.selectedIndexByVariant = this.filterPropertiesIndex
-    const variantName = this.variantFilterProperties[0]
+    this.selectedIndexByVariant = this.filterPropertiesIndex(_.get(this.layer, 'variants[0].layerSet.id'))
+    const breachId = _.get(this.layer, 'variants[0].layerSet.id')
+    const variantName = _.get(this.variantFilterProperties, `[${breachId}][0]`, '')
     const variantValue = _.get(this.layer, `variants[0].properties[${variantName}]`)
     this.setLayerVariantOptions(variantName, variantValue)
   },
@@ -143,7 +141,7 @@ export default {
     },
     showLayers () {
       return this.layer.variants.map(vari => {
-        return this.variantFilterProperties.map(prop => {
+        return this.variantFilterProperties[_.get(this.layer, 'variants[0].layerSet.id')].map(prop => {
           return vari.properties[prop]
         })
       })
@@ -185,7 +183,7 @@ export default {
 
         // For the chosen variantName find the options of variants available
         if (variant.properties[variantName] === variantValue) {
-          this.variantFilterProperties.forEach(prop => {
+          this.variantFilterProperties[_.get(this.layer, 'variants[0].layerSet.id')].forEach(prop => {
             // Check if a real value
             updateVariantOptions(variant, prop)
           })

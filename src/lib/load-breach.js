@@ -179,7 +179,7 @@ async function loadBreachLayer (breachId, layerName) {
   const properties = await filtersData
 
   if (properties.length) {
-    store.commit('setVariantFilterProperties', { properties })
+    store.commit('setVariantFilterProperties', { properties, breachId })
   }
 
   const data = await breachData.then(data => JSON.parse(data.d))
