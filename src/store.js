@@ -30,7 +30,9 @@ export default new Vuex.Store({
     notificationsById: {},
 
     // This is the filter for probabilities (a string  used to pass to the backend)
-    selectedProbabilities: []
+    selectedProbabilities: [],
+    // This is a specific filter from 'overig' special on imminent flood
+    imminentFlood: false
   },
   mutations: {
     setLayerSetById (state, { id, layerSet }) {
@@ -65,6 +67,9 @@ export default new Vuex.Store({
     },
     setSelectedProbabilities (state, { probabilities }) {
       state.selectedProbabilities = probabilities
+    },
+    setImminentFlood (state, imminentFlood) {
+      state.imminentFlood = imminentFlood
     }
   },
   actions: {
@@ -118,15 +123,16 @@ export default new Vuex.Store({
       const notifications = notificationsById[layerSetId] || []
 
       return notifications
-    },
-    featuresForProbability: (state) => (probability) => {
-      const { layerSetId, layerSetsById } = state
-      const layers = flattenLayerSet(layerSetsById[layerSetId])
-
-      return layers
-        .filter(layer => layer.geojson)
-        .map(({ geojson }) => geojson.features.filter(({ properties }) => properties[probability] > 0).length)
-        .reduce((a, b) => a + b, 0)
     }
+    // featuresForProbability: (state) => (probability) => {
+    //   console.log('featuresForProbability')
+    //   const { layerSetId, layerSetsById } = state
+    //   const layers = flattenLayerSet(layerSetsById[layerSetId])
+
+    //   return layers
+    //     .filter(layer => layer.geojson)
+    //     .map(({ geojson }) => geojson.features.filter(({ properties }) => properties[probability] > 0).length)
+    //     .reduce((a, b) => a + b, 0)
+    // }
   }
 })

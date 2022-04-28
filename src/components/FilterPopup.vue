@@ -28,7 +28,7 @@
       </ul>
     </fieldset>
 
-    <fieldset class="control-group">
+    <fieldset class="control-group" @change="onImminentFloodChange">
       <legend class="control-label">Overig:</legend>
       <label
         v-test="'filter-item'"
@@ -80,11 +80,14 @@ export default {
     }
   },
   methods: {
-    getFeaturesByProbability (probability) {
-      return this.featuresForProbability(probability)
+    getFeaturesByProbability (probability, imminentFlood) {
+      return this.featuresForProbability(probability, imminentFlood)
     },
     onProbabilitiesChange () {
       store.commit('setSelectedProbabilities', { probabilities: this.selectedOptions })
+    },
+    onImminentFloodChange () {
+      store.commit('setImminentFlood', this.imminentFlood)
     }
   }
 }

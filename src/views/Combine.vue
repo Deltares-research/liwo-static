@@ -275,7 +275,7 @@ export default {
       'layers',
       'currentNotifications'
     ]),
-    ...mapState(['selectedProbabilities']),
+    ...mapState(['selectedProbabilities', 'imminentFlood']),
     layerSetId () {
       // this id is passed on from the Maps page.
       const layerSetId = _.toNumber(this.$route.params.id)
@@ -385,6 +385,12 @@ export default {
         if (this.selectedProbabilities.length) {
           geojson.features = _.filter(geojson.features, (feature) =>
             this.selectedProbabilities.some(item => feature.properties[item] > 0))
+        }
+
+        if (this.imminentFlood) {
+          geojson.features = _.filter(geojson.features, (feature) => feature.properties.dreigende_overstroming === 1)
+        } else {
+          geojson.features = _.filter(geojson.features, (feature) => feature.properties.dreigende_overstroming !== 1)
         }
 
         const selectedFeatureIds = _.map(this.selectedFeatures, 'properties.id')
