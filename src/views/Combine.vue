@@ -655,8 +655,11 @@ export default {
       layerSet = normalizeLayerSet(layerSet)
       // and clean
       layerSet = cleanLayerSet(layerSet)
-      layerSet = selectVariantsInLayerSet(layerSet, this.scenarioIds)
 
+      _.each(layerSet.layers, layer => {
+        layer.breachId = layerSet.id
+      })
+      layerSet = selectVariantsInLayerSet(layerSet, this.scenarioIds)
       // before showing new notifications, clear existing ones
       this.$store.commit('clearNotifications')
 

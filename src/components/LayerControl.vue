@@ -106,8 +106,8 @@ export default {
     }
   },
   mounted () {
-    this.selectedIndexByVariant = this.filterPropertiesIndex(_.get(this.layer, 'variants[0].layerSet.id'))
-    const breachId = _.get(this.layer, 'variants[0].layerSet.id')
+    const breachId = _.get(this.layer, 'breachId')
+    this.selectedIndexByVariant = this.filterPropertiesIndex(breachId)
     const variantName = _.get(this.variantFilterProperties, `[${breachId}][0]`, '')
     const variantValue = _.get(this.layer, `variants[0].properties[${variantName}]`)
     this.setLayerVariantOptions(variantName, variantValue)
@@ -141,7 +141,7 @@ export default {
     },
     showLayers () {
       return this.layer.variants.map(vari => {
-        return this.variantFilterProperties[_.get(this.layer, 'variants[0].layerSet.id')].map(prop => {
+        return this.variantFilterProperties[_.get(this.layer, 'breachId')].map(prop => {
           return vari.properties[prop]
         })
       })
@@ -183,7 +183,7 @@ export default {
 
         // For the chosen variantName find the options of variants available
         if (variant.properties[variantName] === variantValue) {
-          this.variantFilterProperties[_.get(this.layer, 'variants[0].layerSet.id')].forEach(prop => {
+          this.variantFilterProperties[_.get(this.layer, 'breachId')].forEach(prop => {
             // Check if a real value
             updateVariantOptions(variant, prop)
           })
