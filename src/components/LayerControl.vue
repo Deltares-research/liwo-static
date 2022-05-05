@@ -107,13 +107,13 @@ export default {
   },
   mounted () {
     const breachId = _.get(this.layer, 'breachId')
-    this.selectedIndexByVariant = this.filterPropertiesIndex(breachId)
+    this.selectedIndexByVariant = this.variantFilterPropertiesIndex(breachId)
     const variantName = _.get(this.variantFilterProperties, `[${breachId}][0]`, '')
     const variantValue = _.get(this.layer, `variants[0].properties[${variantName}]`)
     this.setLayerVariantOptions(variantName, variantValue)
   },
   computed: {
-    ...mapGetters(['filterPropertiesIndex']),
+    ...mapGetters(['variantFilterPropertiesIndex']),
     ...mapState(['variantFilterProperties']),
     id () {
       return this.layer.breachBandId

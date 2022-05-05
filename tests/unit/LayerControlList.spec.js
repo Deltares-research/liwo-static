@@ -17,7 +17,7 @@ describe('the LayerControlList', () => {
   let actions
   beforeEach(() => {
     getters = {
-      filterPropertiesIndex: () => () => []
+      variantFilterPropertiesIndex: () => () => []
     }
     actions = {
       loadLayerSetById: () => {}

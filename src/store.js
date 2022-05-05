@@ -104,7 +104,7 @@ export default new Vuex.Store({
 
   },
   getters: {
-    filterPropertiesIndex: (state) => (breachId) => {
+    variantFilterPropertiesIndex: (state) => (breachId) => {
       const props = _.get(state.variantFilterProperties, breachId, [])
       return props
         .reduce((arr, val) => ({ ...arr, [val]: 0 }), {})
