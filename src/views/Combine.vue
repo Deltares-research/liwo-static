@@ -387,9 +387,7 @@ export default {
             this.selectedProbabilities.some(item => feature.properties[item] > 0))
         }
 
-        if (this.imminentFlood) {
-          geojson.features = _.filter(geojson.features, (feature) => feature.properties.dreigende_overstroming === 1)
-        } else {
+        if (!this.imminentFlood) {
           geojson.features = _.filter(geojson.features, (feature) => feature.properties.dreigende_overstroming !== 1)
         }
 
