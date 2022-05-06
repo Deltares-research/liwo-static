@@ -5,7 +5,7 @@
       v-for="(layer, index) in layers"
       :key="layer.breachBandId"
       @click="selectLayer(layer)"
-      >
+    >
       <layer-control
         v-if="layer"
         :id="layer.breachBandId"
@@ -14,8 +14,7 @@
         @update:layer="layer => updateLayer(layer, index)"
         @select:layer="selectLayer"
         @select:variant="selectVariant"
-        >
-      </layer-control>
+      />
     </li>
     <li v-if="$slots.default">
       <slot></slot>

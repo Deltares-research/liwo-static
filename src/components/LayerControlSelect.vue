@@ -1,16 +1,22 @@
 <template>
-  <select :name="name" @change="(event) => $emit('change', event)">
+  <select
+    :name="name"
+    v-model="model"
+    v-bind="$attrs"
+  >
     <option
       v-for="option in options"
-      :key="option.value"
       :value="option.value"
-      :selected="selected && selected === option.value"
-    >{{ option.title }}</option>
+      :key="option.value"
+    >
+      {{ option.title }}
+    </option>
   </select>
 </template>
 
 <script>
 export default {
+  inheritAttrs: false,
   props: {
     name: {
       type: String,
@@ -23,6 +29,28 @@ export default {
     selected: {
       required: false,
       default: undefined
+    },
+    value: {
+      type: [String, Number]
+    }
+  },
+  model: {
+    prop: 'value',
+    event: 'change'
+  },
+  computed: {
+    model: {
+      get () {
+        return this.value !== undefined || this.value !== null ? this.value : ''
+      },
+      set (value) {
+        this.$emit('change', value)
+      }
+    }
+  },
+  methods: {
+    onInput (e) {
+      this.$emit('input', e)
     }
   }
 }

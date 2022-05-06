@@ -96,10 +96,7 @@ export default {
   },
   async mounted () {
     this.$store.commit('setLayerSetId', this.id)
-    this.$store.dispatch('loadLayerSetById', {
-      id: this.id,
-      initializeMap: true
-    })
+    this.$store.dispatch('loadLayerSetById', { id: this.id })
   },
   computed: {
     ...mapGetters([
