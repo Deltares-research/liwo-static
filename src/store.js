@@ -11,7 +11,6 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-
     // we have three or four levels that can be current/active/selected
     // layerSet -> layers -> variants (-> features|bands)
     // active/current -> currently loaded TODO: use consistent
@@ -30,7 +29,10 @@ export default new Vuex.Store({
     notificationsById: {},
 
     // This is the filter for probabilities (a string  used to pass to the backend)
-    probabilityFilter: ''
+    probabilityFilter: '',
+
+    // These are the variants used to filter the layer variant options
+    variantFilterProperties: {}
   },
   mutations: {
     setLayerSetById (state, { id, layerSet }) {
@@ -62,6 +64,9 @@ export default new Vuex.Store({
     },
     clearNotifications (state) {
       state.notificationsById = {}
+    },
+    setVariantFilterProperties (state, { properties, breachId }) {
+      state.variantFilterProperties[breachId] = properties
     }
   },
   actions: {
@@ -99,6 +104,11 @@ export default new Vuex.Store({
 
   },
   getters: {
+    variantFilterPropertiesIndex: (state) => (breachId) => {
+      const props = _.get(state.variantFilterProperties, breachId, [])
+      return props
+        .reduce((arr, val) => ({ ...arr, [val]: 0 }), {})
+    },
     layerSet ({ layerSetsById, layerSetId }) {
       // return the current layerSet
       return layerSetsById[layerSetId]

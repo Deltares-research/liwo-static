@@ -25,7 +25,9 @@
           <button @click="showFilter = true" class="layer-control__button" v-test="'filter-toggle'">
             <!-- icons are 32x32 but other icons don't fill up the space... -->
             <!-- TODO: use iconfont -->
-            <svg class="icon" width="27" height="27" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="black" d="M487.976 0H24.028C2.71 0-8.047 25.866 7.058 40.971L192 225.941V432c0 7.831 3.821 15.17 10.237 19.662l80 55.98C298.02 518.69 320 507.493 320 487.98V225.941l184.947-184.97C520.021 25.896 509.338 0 487.976 0z"></path></svg>
+            <svg class="icon" width="22" height="22" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+              <path fill="black" d="M487.976 0H24.028C2.71 0-8.047 25.866 7.058 40.971L192 225.941V432c0 7.831 3.821 15.17 10.237 19.662l80 55.98C298.02 518.69 320 507.493 320 487.98V225.941l184.947-184.97C520.021 25.896 509.338 0 487.976 0z"></path>
+            </svg>
           </button>
         </template>
         <template v-slot:default>
@@ -256,17 +258,12 @@ export default {
   },
   async mounted () {
     // If the url contains a list of scenarioIds
-
     // get the layerSet that corresponds to this map
     const layerSetId = this.layerSetId
     // store it
     this.$store.commit('setLayerSetId', layerSetId)
-
     // load the corresponding layerSet
-    const options = {
-      id: layerSetId
-    }
-    await this.$store.dispatch('loadLayerSetById', options)
+    await this.$store.dispatch('loadLayerSetById', { id: layerSetId })
     // now we can load the scenario layerSets (which will look for the ids in the url)
     this.loadScenarioLayerSetsByRoute()
   },
@@ -658,8 +655,11 @@ export default {
       layerSet = normalizeLayerSet(layerSet)
       // and clean
       layerSet = cleanLayerSet(layerSet)
-      layerSet = selectVariantsInLayerSet(layerSet, this.scenarioIds)
 
+      _.each(layerSet.layers, layer => {
+        layer.breachId = layerSet.id
+      })
+      layerSet = selectVariantsInLayerSet(layerSet, this.scenarioIds)
       // before showing new notifications, clear existing ones
       this.$store.commit('clearNotifications')
 
