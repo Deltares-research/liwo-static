@@ -35,7 +35,9 @@ export default new Vuex.Store({
     probabilityFilter: '',
 
     // These are the variants used to filter the layer variant options
-    variantFilterProperties: {}
+    variantFilterProperties: {},
+
+    selectedIndexByVariant: {}
   },
   mutations: {
     setLayerSetById (state, { id, layerSet }) {
@@ -76,6 +78,9 @@ export default new Vuex.Store({
     },
     setVariantFilterProperties (state, { properties, breachId }) {
       state.variantFilterProperties[breachId] = properties
+    },
+    setSelectedIndexByVariant (state, { selectedIndex }) {
+      state.selectedIndexByVariant = selectedIndex
     }
   },
   actions: {

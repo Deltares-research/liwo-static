@@ -41,7 +41,7 @@
           name="layer-variant"
           :options="variant"
           v-model="selectedIndexByVariant[title]"
-          @change="setLayerVariant(title)"
+          @change="(value) => setLayerVariant(title, value)"
           v-test="'variant-select'"
         />
       </label>
@@ -84,6 +84,8 @@
 import { mapGetters, mapState } from 'vuex'
 import _ from 'lodash'
 
+import store from '@/store'
+
 import LayerPopup from '@/components/LayerPopup'
 import LayerControlSelect from '@/components/LayerControlSelect'
 
@@ -105,23 +107,18 @@ export default {
       popupIsOpen: false,
       noDataAvailableForSelection: false,
       selectedLayerIndex: 0,
-      selectedIndexByVariant: null,
       layerVariantOptions: {}
     }
   },
   mounted () {
     const breachId = _.get(this.layer, 'breachId')
-    this.selectedIndexByVariant = this.variantFilterPropertiesIndex(breachId)
+    const defaultIndex = this.variantFilterPropertiesIndex(breachId)
+    store.commit('setSelectedIndexByVariant', { selectedIndex: defaultIndex })
     this.setLayerVariantOptions()
   },
   computed: {
     ...mapGetters(['variantFilterPropertiesIndex']),
-    ...mapState(['variantFilterProperties', 'selectedProbabilities']),
-    selectedVariantIndex () {
-      // get the selectedVariant from the layer
-      const index = _.get(this.layer, 'properties.selectedVariant', 0)
-      return index
-    },
+    ...mapState(['variantFilterProperties', 'selectedProbabilities', 'selectedIndexByVariant']),
     id () {
       return this.layer.breachBandId
     },
@@ -229,7 +226,8 @@ export default {
         }
       })
     },
-    setLayerVariant (title) {
+    setLayerVariant (title, value) {
+      this.selectedIndexByVariant[title] = value
       // Only update the variants fields if a different Overschrijdingsfrequentie is chosen..
       if (this.selectedLayerVariantOptions[0].name === title) {
         const value = this.selectedLayerVariantOptions[0].value
