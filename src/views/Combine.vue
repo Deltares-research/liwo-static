@@ -272,7 +272,7 @@ export default {
       'layers',
       'currentNotifications'
     ]),
-    ...mapState(['imminentFlood', 'selectedProbabilities', 'probabilitiesSelected']),
+    ...mapState(['imminentFlood', 'selectedProbabilities']),
     layerSetId () {
       // this id is passed on from the Maps page.
       const layerSetId = _.toNumber(this.$route.params.id)
@@ -385,7 +385,7 @@ export default {
         }
 
         // if no probabilities are selected, return an empty array of features
-        if (this.probabilitiesSelected && !this.selectedProbabilities.length) {
+        if (!this.selectedProbabilities.length) {
           geojson.features = []
         }
 
