@@ -40,7 +40,7 @@
           :key="index"
           name="layer-variant"
           :options="variant"
-          v-model="selectedIndexByVariant[title]"
+          v-model="selectedVariantIndexByBreachId[breachId][title]"
           @change="(value) => setLayerVariant(title, value)"
           v-test="'variant-select'"
         />
@@ -107,18 +107,23 @@ export default {
       popupIsOpen: false,
       noDataAvailableForSelection: false,
       selectedLayerIndex: 0,
+      breachId: null,
       layerVariantOptions: {}
     }
   },
   mounted () {
-    const breachId = _.get(this.layer, 'breachId')
-    const defaultIndex = this.variantFilterPropertiesIndex(breachId)
-    store.commit('setSelectedIndexByVariant', { selectedIndex: defaultIndex })
+    this.breachId = _.get(this.layer, 'breachId')
+    const defaultIndexes = this.variantFilterPropertiesIndex(this.breachId)
+
+    if (this.breachId && defaultIndexes) {
+      store.commit('setSelectedVariantIndexByBreachId', { selectedIndex: defaultIndexes, breachId: this.breachId })
+    }
+
     this.setLayerVariantOptions()
   },
   computed: {
     ...mapGetters(['variantFilterPropertiesIndex']),
-    ...mapState(['variantFilterProperties', 'selectedProbabilities', 'selectedIndexByVariant']),
+    ...mapState(['variantFilterProperties', 'selectedProbabilities', 'selectedVariantIndexByBreachId']),
     id () {
       return this.layer.breachBandId
     },
@@ -134,7 +139,7 @@ export default {
       return result
     },
     selectedLayerVariantOptions () {
-      return Object.entries(this.selectedIndexByVariant).map(([key, value]) => {
+      return Object.entries(this.selectedVariantIndexByBreachId).map(([key, value]) => {
         const layerVariantOptions = _.get(this.layerVariantOptions, key, {})
         // TODO: assumption that if title not available, the value is null
         return {
@@ -156,8 +161,7 @@ export default {
       return _.isEmpty(obj)
     },
     setLayerVariantOptions (name, value) {
-      const breachId = _.get(this.layer, 'breachId')
-      const variantName = name || _.get(this.variantFilterProperties, `[${breachId}][0]`, '')
+      const variantName = name || _.get(this.variantFilterProperties, `[${this.breachId}][0]`, '')
       const variantValue = value || _.get(this.layer, `variants[0].properties[${variantName}]`)
 
       if (!variantName) { return }
@@ -227,7 +231,9 @@ export default {
       })
     },
     setLayerVariant (title, value) {
-      this.selectedIndexByVariant[title] = value
+      const selectedIndexes = this.selectedVariantIndexByBreachId
+      selectedIndexes[this.breachId][title] = value
+      store.commit('setSelectedVariantIndexByBreachId', { selectedIndex: selectedIndexes, breachId: this.breachId })
       // Only update the variants fields if a different Overschrijdingsfrequentie is chosen..
       if (this.selectedLayerVariantOptions[0].name === title) {
         const value = this.selectedLayerVariantOptions[0].value
