@@ -51,7 +51,7 @@
 </pop-up>
 </template>
 <script>
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 import { probabilityConfig } from '@/lib/probability-filter'
 import store from '@/store'
 import PopUp from '@/components/PopUp'
@@ -65,11 +65,12 @@ export default {
     }
   },
   created () {
-    this.selectedOptions = this.selectedProbabilities
+    this.selectedOptions = probabilityConfig
+      .filter(config => config.identifier !== 'no_filter')
+      .map(({ identifier }) => identifier)
   },
   computed: {
     ...mapGetters(['featuresForProbability']),
-    ...mapState(['selectedProbabilities']),
     probabilityOptions () {
       return probabilityConfig
         .filter(config => config.identifier !== 'no_filter')
