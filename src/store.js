@@ -135,15 +135,5 @@ export default new Vuex.Store({
 
       return notifications
     }
-    // featuresForProbability: (state) => (probability) => {
-    //   console.log('featuresForProbability')
-    //   const { layerSetId, layerSetsById } = state
-    //   const layers = flattenLayerSet(layerSetsById[layerSetId])
-
-    //   return layers
-    //     .filter(layer => layer.geojson)
-    //     .map(({ geojson }) => geojson.features.filter(({ properties }) => properties[probability] > 0).length)
-    //     .reduce((a, b) => a + b, 0)
-    // }
   }
 })
