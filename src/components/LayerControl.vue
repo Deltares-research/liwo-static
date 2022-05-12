@@ -33,17 +33,19 @@
   <!-- TODO: this is not a layer setting. Move this to an application settings pane. -->
   <div v-if="!isEmptyObject(layerVariantOptions)" class="layer-control__options">
     <!-- TODO: this now  shows up for each band reorganize -->
-    <label v-for="(variant, title, index) in layerVariantOptions" :key="index">
-      <span class="layer-control__options-subject">{{ title }}:</span>
-      <layer-control-select
-        :key="index"
-        name="layer-variant"
-        :options="variant"
-        v-model="selectedIndexByVariant[title]"
-        @change="setLayerVariant(title)"
-        v-test="'variant-select'"
-      />
-    </label>
+    <template v-for="(variant, title, index) in layerVariantOptions">
+      <label v-if="variant.length" :key="index">
+        <span class="layer-control__options-subject">{{ title }}:</span>
+        <layer-control-select
+          :key="index"
+          name="layer-variant"
+          :options="variant"
+          v-model="selectedIndexByVariant[title]"
+          @change="setLayerVariant(title)"
+          v-test="'variant-select'"
+        />
+      </label>
+    </template>
   </div>
   <div class="layer-control__options">
     <div class="layer-control__range" v-test="'transparancy-input'">
@@ -110,9 +112,7 @@ export default {
   mounted () {
     const breachId = _.get(this.layer, 'breachId')
     this.selectedIndexByVariant = this.variantFilterPropertiesIndex(breachId)
-    const variantName = _.get(this.variantFilterProperties, `[${breachId}][0]`, '')
-    const variantValue = _.get(this.layer, `variants[0].properties[${variantName}]`)
-    this.setLayerVariantOptions(variantName, variantValue)
+    this.setLayerVariantOptions()
   },
   computed: {
     ...mapGetters(['variantFilterPropertiesIndex']),
@@ -130,25 +130,6 @@ export default {
         'layer-control': true,
         'layer-control--active': this.active
       }
-    },
-    variantsOptions () {
-      const variantsLength = this.layer.variants.length
-      if (!variantsLength || variantsLength === 1) {
-        return []
-      }
-
-      return this.layer.variants
-        .filter((variant) => {
-          const chance = this.getNumberFromString(variant.title)
-          const probability = matchValueToProbability(chance)
-          return this.selectedProbabilities.length
-            ? this.selectedProbabilities.includes(probability)
-            : true
-        })
-        .map((variant, index) => ({
-          value: index,
-          title: variant.title
-        }))
     },
     metadata () {
       const variant = _.get(this.layer.variants, this.selectedLayerIndex)
@@ -174,35 +155,40 @@ export default {
     }
   },
   methods: {
-    getNumberFromString (string) {
-      const matches = string.match(/\d+/g)
-      return parseInt(matches[0], 10)
-    },
     isEmptyObject (obj) {
       return _.isEmpty(obj)
     },
-    setLayerVariantOptions (variantName, variantValue) {
-      if (!variantName) {
-        return
-      }
+    setLayerVariantOptions (name, value) {
+      const breachId = _.get(this.layer, 'breachId')
+      const variantName = name || _.get(this.variantFilterProperties, `[${breachId}][0]`, '')
+      const variantValue = value || _.get(this.layer, `variants[0].properties[${variantName}]`)
+
+      if (!variantName) { return }
+
       const variantOptions = {}
 
       const updateVariantOptions = (variant, prop) => {
-        if (!variant.properties[prop]) {
-          return
-        }
+        if (!variant.properties[prop]) { return }
 
-        if (!_.get(variantOptions, prop)) {
+        if (!variantOptions[prop]) {
           variantOptions[prop] = [{
             title: variant.properties[prop],
             value: 0
           }]
         }
-        if (_.get(variantOptions, prop) &&
+
+        if (variantOptions[prop] &&
           !_.get(variantOptions, prop, []).find(opt => opt.title === variant.properties[prop])) {
           variantOptions[prop].push({
             title: variant.properties[prop],
             value: variantOptions[prop].length
+          })
+        }
+
+        if (prop === 'Overschrijdingsfrequentie') {
+          variantOptions[prop] = variantOptions[prop].filter(option => {
+            const probability = matchValueToProbability(option.title)
+            return this.selectedProbabilities.includes(probability)
           })
         }
       }
@@ -219,6 +205,7 @@ export default {
           })
         }
       })
+
       this.layerVariantOptions = variantOptions
     },
     setTransparancy ({ target }) {
@@ -245,8 +232,8 @@ export default {
     setLayerVariant (title) {
       // Only update the variants fields if a different Overschrijdingsfrequentie is chosen..
       if (this.selectedLayerVariantOptions[0].name === title) {
-        const variantValue = this.selectedLayerVariantOptions[0].value
-        this.setLayerVariantOptions(title, variantValue)
+        const value = this.selectedLayerVariantOptions[0].value
+        this.setLayerVariantOptions(title, value)
       }
 
       const variant = this.layer.variants
@@ -285,6 +272,11 @@ export default {
     active (isActive) {
       if (!isActive) {
         this.popupIsOpen = false
+      }
+    },
+    selectedProbabilities (newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.setLayerVariantOptions()
       }
     }
   },
