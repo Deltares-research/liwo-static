@@ -69,13 +69,13 @@ export default {
       .filter(config => config.identifier !== 'no_filter')
       .map(({ identifier }) => identifier)
 
-    this.selectedOptions = defaultSelection !== this.selectedProbabilities
+    this.selectedOptions = this.probabilitiesSelected
       ? this.selectedProbabilities
       : defaultSelection
   },
   computed: {
     ...mapGetters(['featuresForProbability']),
-    ...mapState(['selectedProbabilities']),
+    ...mapState(['selectedProbabilities', 'probabilitiesSelected']),
     probabilityOptions () {
       return probabilityConfig
         .filter(config => config.identifier !== 'no_filter')
@@ -91,6 +91,7 @@ export default {
     },
     onProbabilitiesChange () {
       store.commit('setSelectedProbabilities', { probabilities: this.selectedOptions })
+      store.commit('setProbabilitiesSelected', { selected: true })
     },
     onImminentFloodChange () {
       store.commit('setImminentFlood', this.imminentFlood)

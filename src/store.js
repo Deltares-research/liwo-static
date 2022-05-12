@@ -35,7 +35,9 @@ export default new Vuex.Store({
     probabilityFilter: '',
 
     // These are the variants used to filter the layer variant options
-    variantFilterProperties: {}
+    variantFilterProperties: {},
+
+    probabilitiesSelected: false
   },
   mutations: {
     setLayerSetById (state, { id, layerSet }) {
@@ -70,6 +72,9 @@ export default new Vuex.Store({
     },
     setSelectedProbabilities (state, { probabilities }) {
       state.selectedProbabilities = probabilities
+    },
+    setProbabilitiesSelected (state, { selected }) {
+      state.probabilitiesSelected = selected
     },
     setImminentFlood (state, imminentFlood) {
       state.imminentFlood = imminentFlood
