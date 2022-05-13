@@ -241,17 +241,13 @@ export default {
         breachId: this.breachId
       })
 
-      // Only update the variants fields if a different Overschrijdingsfrequentie is chosen..
-      if (this.selectedLayerVariantOptions[0].name === title) {
-        const value = this.selectedLayerVariantOptions[0].value
-        this.setLayerVariantOptions(title, value)
-      }
-
+      // TODO: Find the correct variant for the selection of options.
       const variant = this.layer.variants
         .find(variant => this.selectedLayerVariantOptions
           .every(option => variant.properties[option.name] === option.value)
         )
 
+      // TODO: maybe show the user that there's no variant for the chosen options.
       if (!variant) {
         return
       }
