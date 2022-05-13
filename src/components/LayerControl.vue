@@ -139,7 +139,9 @@ export default {
       return result
     },
     selectedLayerVariantOptions () {
-      return Object.entries(this.selectedVariantIndexByBreachId).map(([key, value]) => {
+      const indexes = this.selectedVariantIndexByBreachId[this.breachId]
+
+      return Object.entries(indexes).map(([key, value]) => {
         const layerVariantOptions = _.get(this.layerVariantOptions, key, {})
         // TODO: assumption that if title not available, the value is null
         return {
@@ -233,7 +235,12 @@ export default {
     setLayerVariant (title, value) {
       const selectedIndexes = this.selectedVariantIndexByBreachId
       selectedIndexes[this.breachId][title] = value
-      store.commit('setSelectedVariantIndexByBreachId', { selectedIndex: selectedIndexes, breachId: this.breachId })
+
+      store.commit('setSelectedVariantIndexByBreachId', {
+        selectedIndex: selectedIndexes[this.breachId],
+        breachId: this.breachId
+      })
+
       // Only update the variants fields if a different Overschrijdingsfrequentie is chosen..
       if (this.selectedLayerVariantOptions[0].name === title) {
         const value = this.selectedLayerVariantOptions[0].value
