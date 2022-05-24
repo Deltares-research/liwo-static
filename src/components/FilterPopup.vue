@@ -28,7 +28,7 @@
       </ul>
     </fieldset>
 
-    <fieldset class="control-group" @change="onImminentFloodChange">
+    <fieldset class="control-group">
       <legend class="control-label">Overig:</legend>
       <label
         v-test="'filter-item'"
@@ -40,7 +40,6 @@
           type="checkbox"
           name="probability"
           id="probability-imminent-flood"
-          value="imminent-flood"
           v-model="imminentFlood"
         />
         Dreigende overstroming
@@ -60,7 +59,6 @@ export default {
   components: { PopUp },
   data () {
     return {
-      imminentFlood: false,
       selectedOptions: []
     }
   },
@@ -76,14 +74,19 @@ export default {
           id: identifier,
           title
         }))
+    },
+    imminentFlood: {
+      get () {
+        return this.$store.state.imminentFlood
+      },
+      set (value) {
+        store.commit('setImminentFlood', value)
+      }
     }
   },
   methods: {
     onProbabilitiesChange () {
       store.commit('setSelectedProbabilities', { probabilities: this.selectedOptions })
-    },
-    onImminentFloodChange () {
-      store.commit('setImminentFlood', this.imminentFlood)
     }
   }
 }
