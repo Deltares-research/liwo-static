@@ -138,7 +138,7 @@ export default {
   },
   computed: {
     ...mapGetters(['variantFilterPropertiesIndex']),
-    ...mapState(['variantFilterProperties', 'selectedProbabilities', 'selectedVariantIndexByBreachId']),
+    ...mapState(['variantFilterProperties', 'selectedProbabilities', 'selectedVariantIndexByBreachId', 'imminentFlood']),
     id () {
       return this.layer.breachBandId
     },
@@ -195,6 +195,9 @@ export default {
 
       const updateVariantOptions = (variant, prop) => {
         if (!variant.properties[prop]) { return }
+        if (this.imminentFlood && variant.properties['Dreigende overstroming'] === 1) {
+          return
+        }
 
         if (!variantOptions[prop]) {
           variantOptions[prop] = [{
@@ -315,6 +318,9 @@ export default {
       if (newVal !== oldVal) {
         this.setLayerVariantOptions()
       }
+    },
+    imminentFlood () {
+      this.setLayerVariantOptions()
     }
   },
   components: {
