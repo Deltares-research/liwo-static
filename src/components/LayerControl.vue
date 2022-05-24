@@ -47,6 +47,21 @@
       </label>
     </template>
   </div>
+    <!-- TODO: this is not a layer setting. Move this to an application settings pane. -->
+  <div v-if="!breachId && layerOptions.length > 1" class="layer-control__options">
+    <!-- TODO: this now  shows up for each band reorganize -->
+    <template>
+      <label>
+        <layer-control-select
+          name="layer-variant"
+          :options="layerOptions"
+          v-model="selectedLayerIndex"
+          @change="selectLayerOption($event)"
+          v-test="'variant-select'"
+        />
+      </label>
+    </template>
+  </div>
   <div class="layer-control__options">
     <div class="layer-control__range" v-test="'transparancy-input'">
       <label for="`layer-${id}-trans`">Transparantie: </label>
@@ -144,6 +159,12 @@ export default {
           return vari.properties[prop]
         })
       })
+    },
+    layerOptions () {
+      const variants = _.get(this.layer, 'variants', [])
+      return variants.map((variant, index) => {
+        return { value: index, title: variant.title }
+      })
     }
   },
   methods: {
@@ -166,7 +187,9 @@ export default {
       const variantName = name || _.get(this.variantFilterProperties, `[${this.breachId}][0]`, '')
       const variantValue = value || _.get(this.layer, `variants[0].properties[${variantName}]`)
 
-      if (!variantName) { return }
+      if (!variantName) {
+        return
+      }
 
       const variantOptions = {}
 
@@ -260,6 +283,13 @@ export default {
       this.$emit('select:variant', {
         layer: this.layer,
         variant,
+        index
+      })
+    },
+    selectLayerOption (index) {
+      this.$emit('select:variant', {
+        layer: this.layer,
+        variant: this.layer.variants[index],
         index
       })
     },
