@@ -41,7 +41,7 @@
           name="layer-variant"
           :options="variant"
           v-model="selectedVariantIndexByBreachId[breachId][title]"
-          @change="(value) => setLayerVariant(title, value)"
+          @change="setLayerVariant(title, $event)"
           v-test="'variant-select'"
         />
       </label>
@@ -138,18 +138,6 @@ export default {
       const result = _.get(variant, 'metadata')
       return result
     },
-    selectedLayerVariantOptions () {
-      const indexes = this.selectedVariantIndexByBreachId[this.breachId]
-
-      return Object.entries(indexes).map(([key, value]) => {
-        const layerVariantOptions = _.get(this.layerVariantOptions, key, {})
-        // TODO: assumption that if title not available, the value is null
-        return {
-          name: key,
-          value: _.get(layerVariantOptions, `[${value}].title`, null)
-        }
-      })
-    },
     showLayers () {
       return this.layer.variants.map(vari => {
         return this.variantFilterProperties[_.get(this.layer, 'breachId')].map(prop => {
@@ -161,6 +149,18 @@ export default {
   methods: {
     isEmptyObject (obj) {
       return _.isEmpty(obj)
+    },
+    selectedLayerVariantOptions () {
+      const indexes = this.selectedVariantIndexByBreachId[this.breachId]
+
+      return Object.entries(indexes).map(([key, value]) => {
+        const layerVariantOptions = _.get(this.layerVariantOptions, key, {})
+        // TODO: assumption that if title not available, the value is null
+        return {
+          name: key,
+          value: _.get(layerVariantOptions, `[${value}].title`, null)
+        }
+      })
     },
     setLayerVariantOptions (name, value) {
       const variantName = name || _.get(this.variantFilterProperties, `[${this.breachId}][0]`, '')
@@ -243,7 +243,7 @@ export default {
 
       // TODO: Find the correct variant for the selection of options.
       const variant = this.layer.variants
-        .find(variant => this.selectedLayerVariantOptions
+        .find(variant => this.selectedLayerVariantOptions()
           .every(option => variant.properties[option.name] === option.value)
         )
 
