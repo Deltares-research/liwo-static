@@ -379,18 +379,20 @@ export default {
         }
 
         // if feature is not selected, filter by probabilities
-        if (this.selectedProbabilities.length) {
-          geojson.features = _.filter(geojson.features, (feature) =>
-            this.selectedProbabilities.some(item => feature.properties[item] > 0))
+        if (this.selectedProbabilities.length || this.imminentFlood) {
+          geojson.features = _.filter(geojson.features, (feature) => {
+            const checkProbabilities = this.selectedProbabilities.some(item => feature.properties[item] > 0)
+            let checkImminentFlood = false
+            if (this.imminentFlood) {
+              checkImminentFlood = feature.properties.dreigende_overstroming === 1
+            }
+            return checkProbabilities || checkImminentFlood
+          })
         }
 
         // if no probabilities are selected, return an empty array of features
-        if (!this.selectedProbabilities.length) {
+        if (!this.selectedProbabilities.length && !this.imminentFlood) {
           geojson.features = []
-        }
-
-        if (!this.imminentFlood) {
-          geojson.features = _.filter(geojson.features, (feature) => feature.properties.dreigende_overstroming !== 1)
         }
 
         const selectedFeatureIds = _.map(this.selectedFeatures, 'properties.id')

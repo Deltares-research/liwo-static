@@ -195,7 +195,7 @@ export default {
 
       const updateVariantOptions = (variant, prop) => {
         if (!variant.properties[prop]) { return }
-        if (this.imminentFlood && variant.properties['Dreigende overstroming'] === 1) {
+        if (!this.imminentFlood && variant.properties['Dreigende overstroming'] === 1) {
           return
         }
 
