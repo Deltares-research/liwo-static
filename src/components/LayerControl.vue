@@ -133,7 +133,6 @@ export default {
     if (this.breachId && defaultIndexes) {
       store.commit('setSelectedVariantIndexByBreachId', { selectedIndex: defaultIndexes, breachId: this.breachId })
     }
-
     this.setLayerVariantOptions()
   },
   computed: {
@@ -199,6 +198,12 @@ export default {
           return
         }
 
+        if (variantName === 'Overschrijdingsfrequentie' && prop !== 'Overschrijdingsfrequentie') {
+          if (variant.properties.Overschrijdingsfrequentie !== variantValue) {
+            return
+          }
+        }
+
         if (!variantOptions[prop]) {
           variantOptions[prop] = [{
             title: variant.properties[prop],
@@ -234,7 +239,6 @@ export default {
           })
         }
       })
-
       this.layerVariantOptions = variantOptions
     },
     setTransparancy ({ target }) {
@@ -268,14 +272,19 @@ export default {
       })
 
       // TODO: Find the correct variant for the selection of options.
-      const variant = this.layer.variants
+      let variant = this.layer.variants
         .find(variant => this.selectedLayerVariantOptions()
           .every(option => variant.properties[option.name] === option.value)
         )
 
       // TODO: maybe show the user that there's no variant for the chosen options.
       if (!variant) {
-        return
+        if (title === 'Overschrijdingsfrequentie') {
+          const val = this.selectedLayerVariantOptions().find(opt => opt.name === title)
+          variant = this.layer.variants
+            .find(variant => variant.properties[title] === val.value)
+        }
+        if (!variant) { return }
       }
       const index = this.layer.variants
         .findIndex(object => object.layer === variant.layer)
@@ -288,6 +297,7 @@ export default {
         variant,
         index
       })
+      this.setLayerVariantOptions(title, variant.properties[title])
     },
     selectLayerOption (index) {
       this.$emit('select:variant', {
