@@ -274,13 +274,6 @@ export default {
       })
     },
     setLayerVariant (title, value) {
-      const selectedIndexes = this.selectedVariantIndexByBreachId
-      selectedIndexes[this.breachId][title] = value
-      store.commit('setSelectedVariantIndexByBreachId', {
-        selectedIndex: selectedIndexes[this.breachId],
-        breachId: this.breachId
-      })
-
       // TODO: Find the correct variant for the selection of options.
       let variant = this.layer.variants
         .find(variant => this.selectedLayerVariantOptions()
@@ -303,7 +296,26 @@ export default {
 
       this.selectedLayerIndex = index
       this.selectLayerOption(index)
-      this.setLayerVariantOptions(title)
+      // this.setLayerVariantOptions(title)
+
+      const variantOptions = this.setLayerVariantOptions(title)
+
+      const selectedIndexes = this.selectedVariantIndexByBreachId
+      selectedIndexes[this.breachId][title] = value
+      const indexes = {}
+      // If switching back to a variant with multiple dropdown boxes from one with less dropdowns,
+      // make sure that the first dropdown is selected
+      Object.entries(selectedIndexes[this.breachId]).forEach(index => {
+        if (_.has(variantOptions, index[0])) {
+          indexes[index[0]] = index[1]
+        } else {
+          indexes[index[0]] = 0
+        }
+      })
+      store.commit('setSelectedVariantIndexByBreachId', {
+        selectedIndex: indexes,
+        breachId: this.breachId
+      })
     },
     selectLayerOption (index) {
       this.$emit('select:variant', {
@@ -331,9 +343,9 @@ export default {
       }
     },
     selectedProbabilities (newVal, oldVal) {
-      const variantIndex = _.get(this.selectedVariantIndexByBreachId, `[${this.breachId}].Overschrijdingsfrequentie`, 0)
-      console.log(newVal, oldVal, this.layerVariantOptions, variantIndex)
+      if (!newVal) { return }
       if (newVal !== oldVal) {
+        const variantIndex = _.get(this.selectedVariantIndexByBreachId, `[${this.breachId}].Overschrijdingsfrequentie`, 0)
         this.setLayerVariant('Overschrijdingsfrequentie', this.layerVariantOptions.Overschrijdingsfrequentie[variantIndex].value)
       }
     },
