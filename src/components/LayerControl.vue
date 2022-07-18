@@ -104,7 +104,7 @@ import store from '@/store'
 import LayerPopup from '@/components/LayerPopup'
 import LayerControlSelect from '@/components/LayerControlSelect'
 
-// import { matchValueToProbability } from '@/lib/probability-filter'
+import { matchValueToProbability } from '@/lib/probability-filter'
 
 export default {
   props: {
@@ -121,20 +121,22 @@ export default {
     return {
       popupIsOpen: false,
       noDataAvailableForSelection: false,
-      selectedLayerIndex: 0,
+      selectedLayerIndex: null,
       breachId: null,
       layerVariantOptions: {}
     }
   },
   mounted () {
     this.breachId = _.get(this.layer, 'breachId')
-    const defaultIndexes = this.variantFilterPropertiesIndex(this.breachId)
-
-    if (this.breachId && defaultIndexes) {
-      store.commit('setSelectedVariantIndexByBreachId', { selectedIndex: defaultIndexes, breachId: this.breachId })
+    this.selectedLayerIndex = _.get(this.layer, 'properties.selectedVariant')
+    if (this.breachId) {
+      let indexes = this.variantFilterPropertiesIndex(this.breachId)
+      if (typeof this.selectedLayerIndex === 'number') {
+        indexes = this.getOptionsByVariantId(this.selectedLayerIndex)
+      }
+      store.commit('setSelectedVariantIndexByBreachId', { selectedIndex: indexes, breachId: this.breachId })
     }
-    const variantName = _.get(this.variantFilterProperties, `[${this.breachId}][0]`, '')
-    this.setLayerVariantOptions(variantName)
+    this.setLayerVariantOptions()
   },
   computed: {
     ...mapGetters(['variantFilterPropertiesIndex']),
@@ -191,50 +193,7 @@ export default {
         return
       }
       const variantOptions = {}
-
-      // const updateVariantOptions = (variant, prop) => {
-      //   // If properties don't contain a value for this option, don't show
-      //   if (!variant.properties[prop]) { return }
-
-      //   // If dreigende overstroming is off and the variant has dreigende overstroming, don't show
-      //   if (!this.imminentFlood && variant.properties['Dreigende overstroming'] === 1) {
-      //     return
-      //   }
-
-      // if Overschrijdingsfrequentie is changed,
-      // if (variantName === 'Overschrijdingsfrequentie' && prop !== 'Overschrijdingsfrequentie') {
-      //   if (variant.properties.Overschrijdingsfrequentie !== variantValue) {
-      //     return
-      //   }
-      // }
-
-      // if (!variantOptions[prop]) {
-      //   variantOptions[prop] = [{
-      //     title: variant.properties[prop],
-      //     value: 0
-      //   }]
-      // }
-
-      // if (variantOptions[prop] &&
-      //   !_.get(variantOptions, prop, []).find(opt => opt.title === variant.properties[prop])) {
-      //   variantOptions[prop].push({
-      //     title: variant.properties[prop],
-      //     value: variantOptions[prop].length
-      //   })
-      // }
-
-      //   if (prop === 'Overschrijdingsfrequentie') {
-      //     variantOptions[prop] = variantOptions[prop].filter(option => {
-      //       const probability = matchValueToProbability(option.title)
-      //       return this.selectedProbabilities.includes(probability)
-      //     })
-      //   } else {
-
-      //   }
-      // }
-
       const currentVariant = this.layer.variants[this.selectedLayerIndex]
-
       this.variantFilterProperties[_.get(this.layer, 'breachId')].forEach(prop => {
         this.layer.variants.forEach(variant => {
           // If the property is empty, don't show
@@ -269,9 +228,29 @@ export default {
               })
             }
           }
+
+          if (prop === 'Overschrijdingsfrequentie') {
+            variantOptions[prop] = variantOptions[prop].filter(option => {
+              const probability = matchValueToProbability(option.title)
+              return this.selectedProbabilities.includes(probability) ||
+                (this.imminentFlood && variant.properties['Dreigende overstroming'] === 1)
+            })
+          }
         })
       })
       this.layerVariantOptions = variantOptions
+      return variantOptions
+    },
+    getOptionsByVariantId (variantIndex) {
+      const variant = this.layer.variants[variantIndex]
+      const indexes = {}
+      Object.entries(_.get(this.variantFilterProperties, this.breachId, {})).forEach(filter => {
+        const options = _.get(this.setLayerVariantOptions(), filter[1], []).find(options => {
+          return options.title === variant.properties[filter[1]]
+        })
+        indexes[filter[1]] = _.get(options, 'value', null)
+      })
+      return indexes
     },
     setTransparancy ({ target }) {
       // Create a copy of the layer with the new opacity
@@ -297,13 +276,11 @@ export default {
     setLayerVariant (title, value) {
       const selectedIndexes = this.selectedVariantIndexByBreachId
       selectedIndexes[this.breachId][title] = value
-
       store.commit('setSelectedVariantIndexByBreachId', {
         selectedIndex: selectedIndexes[this.breachId],
         breachId: this.breachId
       })
 
-      this.setLayerVariantOptions(title)
       // TODO: Find the correct variant for the selection of options.
       let variant = this.layer.variants
         .find(variant => this.selectedLayerVariantOptions()
@@ -324,6 +301,7 @@ export default {
       const index = this.layer.variants
         .findIndex(object => object.layer === variant.layer)
 
+      this.selectedLayerIndex = index
       this.selectLayerOption(index)
       this.setLayerVariantOptions(title)
     },
@@ -353,8 +331,10 @@ export default {
       }
     },
     selectedProbabilities (newVal, oldVal) {
+      const variantIndex = _.get(this.selectedVariantIndexByBreachId, `[${this.breachId}].Overschrijdingsfrequentie`, 0)
+      console.log(newVal, oldVal, this.layerVariantOptions, variantIndex)
       if (newVal !== oldVal) {
-        this.setLayerVariantOptions()
+        this.setLayerVariant('Overschrijdingsfrequentie', this.layerVariantOptions.Overschrijdingsfrequentie[variantIndex].value)
       }
     },
     imminentFlood () {
