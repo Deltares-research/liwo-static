@@ -29,15 +29,10 @@ export default new Vuex.Store({
     notificationsById: {},
 
     // This is the filter for probabilities (a string  used to pass to the backend)
-    selectedProbabilities: ['lt30', 'f30t300', 'f300t3000', 'f3000t30k', 'gt30k'],
-    // This is a specific filter from 'overig' special on imminent flood
-    imminentFlood: false,
     probabilityFilter: '',
 
     // These are the variants used to filter the layer variant options
-    variantFilterProperties: {},
-
-    selectedVariantIndexByBreachId: {}
+    variantFilterProperties: {}
   },
   mutations: {
     setLayerSetById (state, { id, layerSet }) {
@@ -70,17 +65,8 @@ export default new Vuex.Store({
     clearNotifications (state) {
       state.notificationsById = {}
     },
-    setSelectedProbabilities (state, { probabilities }) {
-      state.selectedProbabilities = probabilities
-    },
-    setImminentFlood (state, imminentFlood) {
-      state.imminentFlood = imminentFlood
-    },
     setVariantFilterProperties (state, { properties, breachId }) {
       state.variantFilterProperties[breachId] = properties
-    },
-    setSelectedVariantIndexByBreachId (state, { selectedIndex, breachId }) {
-      state.selectedVariantIndexByBreachId[breachId] = selectedIndex
     }
   },
   actions: {

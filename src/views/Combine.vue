@@ -151,13 +151,14 @@
       <filter-popup
         v-if="showFilter"
         @close="showFilter = false"
-      />
+        :probability.sync="selectedProbability">
+      </filter-popup>
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 import _ from 'lodash'
 
 import LiwoMap from '@/components/LiwoMap'
@@ -231,6 +232,7 @@ export default {
       scenarioInfo: {},
       // the main layerSet collapse
       layerSetCollapsed: false,
+      selectedProbability: 'no_filter',
 
       // allows to select a layer (for the unit panel)
       selectedLayer: null,
@@ -266,13 +268,12 @@ export default {
     this.loadScenarioLayerSetsByRoute()
   },
   computed: {
-    // we get the default layerSet from the store
+    // we get the  default layerSet from the store
     ...mapGetters([
       'layerSet',
       'layers',
       'currentNotifications'
     ]),
-    ...mapState(['imminentFlood', 'selectedProbabilities']),
     layerSetId () {
       // this id is passed on from the Maps page.
       const layerSetId = _.toNumber(this.$route.params.id)
@@ -377,22 +378,12 @@ export default {
             return feature
           })
         }
-
-        // if feature is not selected, filter by probabilities
-        if (this.selectedProbabilities.length || this.imminentFlood) {
+        // if  feature is not selected, filter by probability
+        if (this.selectedProbability !== 'no_filter') {
           geojson.features = _.filter(geojson.features, (feature) => {
-            const checkProbabilities = this.selectedProbabilities.some(item => feature.properties[item] > 0)
-            let checkImminentFlood = false
-            if (this.imminentFlood) {
-              checkImminentFlood = feature.properties.dreigende_overstroming === 1
-            }
-            return checkProbabilities || checkImminentFlood
+            const featureSelected = feature.properties[this.selectedProbability] > 0
+            return featureSelected
           })
-        }
-
-        // if no probabilities are selected, return an empty array of features
-        if (!this.selectedProbabilities.length && !this.imminentFlood) {
-          geojson.features = []
         }
 
         const selectedFeatureIds = _.map(this.selectedFeatures, 'properties.id')
