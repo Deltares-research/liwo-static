@@ -6,7 +6,6 @@ import mapConfig from '@/map.config'
 import { EPSG_3857 } from '../../lib/leaflet-utils/projections'
 import createCrs from '../../lib/leaflet-utils/create-crs'
 import MapFillWindowControl from '../../components/MapFillWindowControl'
-import MapImageControl from '../../components/MapImageControl'
 import northIcon from '../../img/north-arrow.svg'
 
 const INITIAL_BASELAYER = mapConfig.tileLayers[0].title
@@ -32,7 +31,6 @@ export default function (el, vnode, config) {
   map.addControl(L.control.scale({ position: 'bottomleft', imperial: false }))
 
   map.addControl(printControl())
-  map.addControl(imageControl())
 
   map.addControl(layerControl(baseLayers))
 
@@ -172,37 +170,6 @@ function fillWindowControl () {
     // mount vue component as control
     const button = new Vue({
       render: h => h(MapFillWindowControl, {
-        props: {
-          map
-        }
-      })
-    }).$mount(div)
-
-    return button.$el
-  }
-
-  return control
-}
-
-function imageControl () {
-  const control = L.control({ position: 'topright' })
-
-  control.onAdd = function (map) {
-    map.printPlugin = L.easyPrint({
-      hidden: true,
-      exportOnly: true,
-      hideControlContainer: false,
-      hideClasses: ['leaflet-control'],
-      position: 'topright',
-      filename: 'export',
-      sizeModes: ['Current', 'A4Landscape', 'A4Portrait']
-    }).addTo(map)
-
-    const div = L.DomUtil.create('div', '')
-
-    // mount vue component as control
-    const button = new Vue({
-      render: h => h(MapImageControl, {
         props: {
           map
         }
