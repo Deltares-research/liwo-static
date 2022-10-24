@@ -6,26 +6,28 @@ import { getLayerInfoValue } from '../../../../../src/lib/leaflet-utils/get-laye
 function selectLayer (cy, layer) {
   cy.intercept(new RegExp(/GetLayerSet/)).as('layerset')
 
-  cy.visit('#/maps')
+  cy.visit('/#/maps')
 
-  cy.contains(layer.Kaartenset).click()
+  cy
+    .contains('li.layerset-list__list-item a', layer.kaartenset)
+    .click()
 
   cy.wait('@layerset')
 
-  // disable all layers
+  // // disable all layers
   cy.get('.layer-control__vis-checkbox').each(el => {
     if (el[0].checked) {
       el[0].click({ force: true })
     }
   })
 
-  // enable one specific layer that we want to test
-  cy.get(`[data-name="${layer.Kaartlaag}"] input[type="checkbox"]`).click({ force: true })
+  // // enable one specific layer that we want to test
+  cy.get(`[data-name="${layer.kaartlaag}"] input[type="checkbox"]`).click({ force: true })
 
   if (layer.Variant) {
-    cy.get(`[data-name="${layer.Kaartlaag}"]`)
+    cy.get(`[data-name="${layer.kaartlaag}"]`)
       .within(() => {
-        cy.get(selector('variant-select')).select(layer.Variant.trim())
+        cy.get(selector('variant-select')).select(layer.variant.trim())
       })
   }
 }
@@ -88,7 +90,7 @@ describe('Layer functionalities', () => {
     })
 
     it('shows metadata modal', () => {
-      cy.get(`[data-name="${layer.Kaartlaag}"]`)
+      cy.get(`[data-name="${layer.kaartlaag}"]`)
         .within(() => {
           cy.get(selector('info-toggle')).first().click({ force: true })
 
@@ -104,7 +106,7 @@ describe('Layer functionalities', () => {
     })
 
     it('renders layer correctly', () => {
-      cy.screenshot(`${layer.Kaartenset}__${layer.Kaartlaag}__${layer.Variant}`)
+      cy.screenshot(`${layer.kaartenset}__${layer.kaartlaag}__${layer.variant}`)
     })
   })
 })
