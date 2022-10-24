@@ -21,7 +21,7 @@
       <p>
         Voor gedetailleerde informatie over het gebruik van deze website verwijzen
         we u naar de gebruikershandleiding. De handleiding vindt u op de
-        <a href="https://www.helpdeskwater.nl/onderwerpen/applicaties-modellen/applicaties-per/watermanagement/watermanagement/liwo/" target="_blank" rel="nofollow noopener">LIWO pagina van de helpdesk water</a>.
+        <a href="https://iplo.nl/thema/water/applicaties-modellen/berichtgeving-crisismanagement/liwo/" target="_blank" rel="nofollow noopener">website Informatiepunt Leefomgeving (iplo.nl)</a>.
       </p>
       <h2 data-class="section-head">Auteursrecht</h2>
       <p>
