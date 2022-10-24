@@ -10,8 +10,8 @@
   <div>
     <p>Voor niet-professionele gebruikers is er <a href="https://www.overstroomik.nl">www.overstroomik.nl</a>.</p>
     <p>
-      Voor uitleg over het gebruik en de gebruikershandleiding kunt u terecht op de <a href="https://www.helpdeskwater.nl/onderwerpen/applicaties-modellen/applicaties-per/watermanagement/watermanagement/liwo/">Helpdesk Water</a>. Hier vindt u ook
-      contactgegevens voor het aanvragen van LIWO-opleidingen.
+      Voor uitleg over het gebruik en de gebruikershandleiding kunt u terecht op de <a href="https://iplo.nl/thema/water/applicaties-modellen/berichtgeving-crisismanagement/liwo/" target="_blank" rel="noreferrer noopener">Informatiepunt Leefomgeving (iplo.nl)</a>.
+      Hier vindt u ook contactgegevens voor het aanvragen van LIWO-opleidingen.
     </p>
   </div>
   <div class="maps__sections">
