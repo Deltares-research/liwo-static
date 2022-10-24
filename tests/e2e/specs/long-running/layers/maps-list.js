@@ -1,13 +1,13 @@
 const layerSets = Cypress.env('MAP_LAYERS').reduce((acc, layer) => {
-  const existing = acc.find(item => item.name === layer.Categorie)
+  const existing = acc.find(item => item.name === layer.categorie)
   if (existing) {
-    if (!existing.layers.includes(layer.Kaartenset)) {
-      existing.layers.push(layer.Kaartenset)
+    if (!existing.layers.includes(layer.kaartenset)) {
+      existing.layers.push(layer.kaartenset)
     }
   } else {
     acc.push({
-      name: layer.Categorie,
-      layers: [layer.Kaartenset]
+      name: layer.categorie,
+      layers: [layer.kaartenset]
     })
   }
 
