@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import queryString from 'query-string'
 import { generateSelector as selector } from '../../lib/generate-selector'
 
-const url = '#/viewer/1?center=52,5&zoom=4'
+const url = '/#/viewer/1?center=52,5&zoom=4'
 
 function getParams (url) {
   return queryString.parse('?' + url.split('?')[1])
@@ -56,11 +56,11 @@ describe('Map', () => {
   })
 
   it('Renders scale indicator', () => {
-    cy.visit('#/viewer/34?center=52.00245,5.29952&zoom=3')
+    cy.visit('/#/viewer/34?center=52.00245,5.29952&zoom=3')
 
     cy.get('.leaflet-control-scale-line').contains('30 km')
 
-    cy.visit('#/viewer/34?center=51.87501,4.43046&zoom=7')
+    cy.visit('/#/viewer/34?center=51.87501,4.43046&zoom=7')
 
     cy.get('.leaflet-control-scale-line').contains('2 km')
   })

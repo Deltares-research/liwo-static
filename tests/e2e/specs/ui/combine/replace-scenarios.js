@@ -3,7 +3,7 @@ import mockLayerSetData from '../../../mock/layerset.json'
 import mockDoubleFeaturesData from '../../../mock/doubleFeatureCollection.json'
 import mockMultipleFeaturesData from '../../../mock/multipleFeatureCollection.json'
 
-const url = '#/combine/7?center=52.32401,5.35995&zoom=10'
+const url = '/#/combine/7?center=52.32401,5.35995&zoom=10'
 const exportUrl = 'http://localhost:8081/#/combine/7/19422,19428'
 const importUrl = 'http://localhost:8081/#/combine/7/19431,19435'
 const location1 = mockDoubleFeaturesData.features[0].properties.name

@@ -9,7 +9,7 @@ describe('Layers', () => {
 
   // disabled because of flaky behaviour, enable again when test is improved
   it.skip('Changes opacity of layer', () => {
-    const url = '#/viewer/1?center=52.15382,4.88242&zoom=2'
+    const url = '/#/viewer/1?center=52.15382,4.88242&zoom=2'
 
     cy.intercept('GetLayerSet').as('layerSet')
 
@@ -34,7 +34,7 @@ describe('Layers', () => {
   })
 
   it('Changes visibility of layer', () => {
-    const url = '#/viewer/18?center=52.15382,4.88242&zoom=2'
+    const url = '/#/viewer/18?center=52.15382,4.88242&zoom=2'
     cy.visit(url)
 
     cy.get(`${selector('legend')} img`).invoke('attr', 'src').then(initSrc => {

@@ -2,7 +2,7 @@ import { generateSelector as selector } from '../../../lib/generate-selector'
 import mockLayersetData from '../../../mock/layerset.json'
 import mockFeaturesData from '../../../mock/featureCollection.json'
 
-const url = '#/combine/7'
+const url = '/#/combine/7'
 
 describe('Combine: combine selection', () => {
   beforeEach(() => {

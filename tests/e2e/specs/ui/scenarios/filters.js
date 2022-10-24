@@ -1,6 +1,6 @@
 import { generateSelector as selector } from '../../../lib/generate-selector'
 
-const url = '#/scenarios/7'
+const url = '/#/scenarios/7'
 const filterMarkerCounts = {
   'probability-lt30': 36,
   'probability-f30t300': 64,

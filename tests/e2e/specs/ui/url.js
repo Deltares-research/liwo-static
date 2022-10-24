@@ -2,7 +2,7 @@ import queryString from 'query-string'
 import mockLayerSetData from '../../mock/layerset.json'
 import mockDoubleFeaturesData from '../../mock/doubleFeatureCollection.json'
 
-const url = '#/viewer/1?center=52,5&zoom=4'
+const url = '/#/viewer/1?center=52,5&zoom=4'
 
 function getParams (url) {
   return queryString.parse('?' + url.split('?')[1])
@@ -71,7 +71,7 @@ describe('URL', () => {
     cy.intercept(new RegExp(/GetLayerSet/), mockLayerSetData)
     cy.intercept(new RegExp(/getFeature/), mockDoubleFeaturesData).as('features')
 
-    cy.visit('#/combine/7/19422,19428')
+    cy.visit('/#/combine/7/19422,19428')
 
     cy.wait(500)
 

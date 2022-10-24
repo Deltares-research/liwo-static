@@ -2,7 +2,7 @@ import { generateSelector as selector } from '../../../lib/generate-selector'
 import mockLayersetData from '../../../mock/layerset.json'
 import mockFeaturesData from '../../../mock/featureCollection.json'
 
-const url = '#/scenarios/7'
+const url = '/#/scenarios/7'
 
 describe('Scenarios: shows correct popup value', () => {
   beforeEach(() => {

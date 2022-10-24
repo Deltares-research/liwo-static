@@ -1,6 +1,6 @@
 import { skipOn } from '@cypress/skip-test'
 import { generateSelector as selector } from '../../../lib/generate-selector'
-const url = '#/scenarios/7/19422?center=52.36134,5.38055&zoom=11'
+const url = '/#/scenarios/7/19422?center=52.36134,5.38055&zoom=11'
 
 describe('Scenarios: click for value', () => {
   skipOn('firefox', () => {

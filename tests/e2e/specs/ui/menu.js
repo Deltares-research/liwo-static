@@ -1,9 +1,9 @@
 const pages = [
-  ['Contact', '#/contact'],
+  ['Contact', '/#/contact'],
   ['Cookies', 'https://www.rijkswaterstaat.nl/cookies'],
-  ['Kaarten', '#/maps'],
-  ['Over LIWO', '#/about'],
-  ['Toegankelijkheid', '#/accessibility']
+  ['Kaarten', '/#/maps'],
+  ['Over LIWO', '/#/about'],
+  ['Toegankelijkheid', '/#/accessibility']
 ]
 
 describe('Menu', () => {

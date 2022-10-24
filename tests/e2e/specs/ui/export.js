@@ -2,7 +2,7 @@ import path from 'path'
 import { skipOn } from '@cypress/skip-test'
 import { generateSelector as selector } from '../../lib/generate-selector'
 
-const url = '#/viewer/34'
+const url = '/#/viewer/34'
 
 describe('Maps export', () => {
   before(() => {

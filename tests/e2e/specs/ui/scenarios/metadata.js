@@ -1,6 +1,6 @@
 import { skipOn } from '@cypress/skip-test'
 import { generateSelector as selector } from '../../../lib/generate-selector'
-const url = '#/scenarios/7/19422'
+const url = '/#/scenarios/7/19422'
 
 describe('Scenarios: metadata is available', () => {
   skipOn('firefox', () => {
