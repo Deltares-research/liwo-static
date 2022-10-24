@@ -3,7 +3,7 @@ import mockLayerSetData from '../../../mock/layerset.json'
 import mockDoubleFeaturesData from '../../../mock/doubleFeatureCollection.json'
 
 const url = '/#/combine/7?center=52.32401,5.35995&zoom=10'
-const exportUrl = '/#/combine/7/19422,19428'
+const exportUrl = '/#/combine/7/12617'
 
 describe('Combine: Export combined scenarios', () => {
   it('Exports scenario', () => {
@@ -24,7 +24,7 @@ describe('Combine: Export combined scenarios', () => {
     cy.wait(5000)
 
     cy.url()
-      .should('contain', '/combine/7/19422,19428', { timeout: 30000 })
+      .should('contain', exportUrl, { timeout: 30000 })
       .then(() => {
         cy.get(selector('export-selection-button'))
           .click()
