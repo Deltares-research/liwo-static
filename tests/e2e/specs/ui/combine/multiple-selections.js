@@ -10,6 +10,9 @@ describe('Combine multiple selections: marker selection', () => {
     cy.intercept(new RegExp(/getFeature/), mockFeaturesData).as('features')
 
     cy.visit(url)
+
+    cy.wait('@layerset', { timeout: 20000 })
+    cy.wait('@features', { timeout: 20000 })
   })
 
   it('Changes marker image on click', () => {
@@ -23,6 +26,8 @@ describe('Combine multiple selections: marker selection', () => {
           .invoke('attr', 'src')
           .should('not.eq', srcVal)
       })
+
+    cy.wait(400)
 
     cy.get('.leaflet-marker-icon')
       .eq(3)
@@ -40,6 +45,8 @@ describe('Combine multiple selections: marker selection', () => {
     cy.get('.leaflet-marker-icon')
       .eq(3)
       .click({ force: true })
+
+    cy.wait(400)
 
     cy.get('.leaflet-marker-icon')
       .eq(4)
