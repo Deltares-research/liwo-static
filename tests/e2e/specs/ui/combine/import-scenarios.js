@@ -3,21 +3,24 @@ import mockLayerSetData from '../../../mock/layerset.json'
 import mockDoubleFeaturesData from '../../../mock/doubleFeatureCollection.json'
 
 const url = '/#/combine/7?center=52.32401,5.35995&zoom=10'
-const exportUrl = 'http://localhost:8081/#/combine/7/19422,19428'
+const importUrl = 'http://localhost:8081/#/combine/7/19422,19428'
 const location1 = mockDoubleFeaturesData.features[0].properties.name
 const location2 = mockDoubleFeaturesData.features[1].properties.name
 
 describe('Combine: Import combined scenarios', () => {
   beforeEach(() => {
-    cy.intercept(new RegExp(/GetLayerSet/), mockLayerSetData)
+    cy.intercept(new RegExp(/GetLayerSet/), mockLayerSetData).as('layerset')
     cy.intercept(new RegExp(/getFeature/), mockDoubleFeaturesData).as('features')
     cy.visit(url)
+
+    cy.wait('@layerset', { timeout: 20000 })
+    cy.wait('@features', { timeout: 20000 })
 
     cy.get(selector('import-selection-button'))
       .click()
 
     cy.get(selector('import-selection-url'))
-      .type(exportUrl)
+      .type(importUrl)
       .then(() => {
         cy.get(selector('import-url-button'))
           .click()
