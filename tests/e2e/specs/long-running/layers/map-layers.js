@@ -12,7 +12,7 @@ function selectLayer (cy, layer) {
     .contains('li.layerset-list__list-item a', layer.kaartenset)
     .click()
 
-  cy.wait('@layerset')
+  cy.wait('@layerset').its('response.statusCode').should('eq', 200)
 
   // // disable all layers
   cy.get('.layer-control__vis-checkbox').each(el => {
