@@ -8,11 +8,14 @@ describe('Combine: combine selection', () => {
   beforeEach(() => {
     cy.intercept(new RegExp(/GetLayerSet/), mockLayersetData).as('layerset')
     cy.intercept(new RegExp(/getFeature/), mockFeaturesData).as('features')
+
+    cy.visit(url)
+
+    cy.wait('@layerset', { timeout: 20000 })
+    cy.wait('@features', { timeout: 20000 })
   })
 
   it('Triggers combine popup', () => {
-    cy.visit(url)
-
     cy.get('.leaflet-marker-icon')
       .eq(3)
       .click()
@@ -30,8 +33,6 @@ describe('Combine: combine selection', () => {
   })
 
   it('Combines results', () => {
-    cy.visit(url)
-
     cy.get('.leaflet-marker-icon')
       .eq(3)
       .click()
@@ -40,7 +41,7 @@ describe('Combine: combine selection', () => {
       .click()
 
     cy.contains('waterdiepte')
-      .click()
+      .click({ force: true })
 
     cy.wait(500)
 
