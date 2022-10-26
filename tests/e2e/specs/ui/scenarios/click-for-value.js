@@ -17,7 +17,11 @@ describe('Scenarios: click for value', () => {
       cy.get(selector('map'))
         .click('center')
 
+      cy.wait(500)
+
       cy.get('.leaflet-popup').should('exist')
+
+      cy.wait(500)
 
       cy.get('.leaflet-popup-content').then($el => {
         const value = $el.text()

@@ -32,13 +32,10 @@ describe('Combine: Export and import combined scenarios', () => {
 
   it('Replaces selection with import', () => {
     cy.url()
-      .should('contain', '/combine/7/4922,12617', { timeout: 30000 })
+      .should('contain', '/combine/7/19428,19422', { timeout: 30000 })
       .then(() => {
-        cy.contains(location1)
-          .parentsUntil(selector('layer-panel'))
-
-        cy.contains(location2)
-          .parentsUntil(selector('layer-panel'))
+        cy.contains(selector('layer-panel'), location1)
+        cy.contains(selector('layer-panel'), location2)
 
         cy.get(selector('import-selection-button'))
           .click()
@@ -55,25 +52,19 @@ describe('Combine: Export and import combined scenarios', () => {
       })
 
     cy.url()
-      .should('contain', '/combine/7/4922,12617', { timeout: 30000 })
+      .should('contain', '/combine/7/19428,19422', { timeout: 30000 })
       .then(() => {
-        cy.contains(location1)
-          .parentsUntil(selector('layer-panel'))
-
-        cy.contains(location2)
-          .parentsUntil(selector('layer-panel'))
+        cy.contains(selector('layer-panel'), location1)
+        cy.contains(selector('layer-panel'), location2)
       })
   })
 
   it('Combines import with selection', () => {
     cy.url()
-      .should('contain', '/combine/7/4922,12617', { timeout: 30000 })
+      .should('contain', '/combine/7/19428,19422', { timeout: 30000 })
       .then(() => {
-        cy.contains(location1)
-          .parentsUntil(selector('layer-panel'))
-
-        cy.contains(location2)
-          .parentsUntil(selector('layer-panel'))
+        cy.contains(selector('layer-panel'), location1)
+        cy.contains(selector('layer-panel'), location2)
 
         cy.get(selector('import-selection-button'))
           .click()
@@ -87,6 +78,6 @@ describe('Combine: Export and import combined scenarios', () => {
       })
 
     cy.url()
-      .should('contain', '/combine/7/4922,12617,19431,19435', { timeout: 30000 })
+      .should('contain', '/combine/7/19428,19422,19431,19435', { timeout: 30000 })
   })
 })

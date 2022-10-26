@@ -1,13 +1,13 @@
 import { generateSelector as selector } from '../../../lib/generate-selector'
 import mockLayersetData from '../../../mock/layerset.json'
-import mockMultipleFeaturesData from '../../../mock/multipleFeatureCollection.json'
+import mockFeaturesData from '../../../mock/featureCollection.json'
 
 const url = '/#/scenarios/7?center=52.32401,5.35995&zoom=10'
 
 describe('Scenarios: shows correct popup value', () => {
   beforeEach(() => {
     cy.intercept(new RegExp(/GetLayerSet/), mockLayersetData).as('layerset')
-    cy.intercept(new RegExp(/getFeature/), mockMultipleFeaturesData).as('features')
+    cy.intercept(new RegExp(/getFeature/), mockFeaturesData).as('features')
 
     cy.visit(url)
 
@@ -23,7 +23,7 @@ describe('Scenarios: shows correct popup value', () => {
     cy.wait(1000)
 
     cy.get('.leaflet-marker-icon')
-      .eq(3)
+      .eq(0)
       .trigger('mouseover', { force: true })
 
     cy.wait(500)
@@ -52,7 +52,7 @@ describe('Scenarios: shows correct popup value', () => {
 
     cy.get(selector('variant-select'))
       .eq(0)
-      .select('1')
+      .select('0')
 
     cy.wait(500)
 

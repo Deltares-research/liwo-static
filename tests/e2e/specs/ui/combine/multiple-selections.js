@@ -1,13 +1,16 @@
 import { generateSelector as selector } from '../../../lib/generate-selector'
 import mockLayerSetData from '../../../mock/layerset.json'
-import mockFeaturesData from '../../../mock/multipleFeatureCollection.json'
+import mockDoubleFeaturesData from '../../../mock/doubleFeatureCollection.json'
 
 const url = '/#/combine/7?center=52.32401,5.35995&zoom=10'
+
+const location1 = mockDoubleFeaturesData.features[0].properties.name
+const location2 = mockDoubleFeaturesData.features[1].properties.name
 
 describe('Combine multiple selections: marker selection', () => {
   beforeEach(() => {
     cy.intercept(new RegExp(/GetLayerSet/), mockLayerSetData).as('layerset')
-    cy.intercept(new RegExp(/getFeature/), mockFeaturesData).as('features')
+    cy.intercept(new RegExp(/getFeature/), mockDoubleFeaturesData).as('features')
 
     cy.visit(url)
 
@@ -27,7 +30,7 @@ describe('Combine multiple selections: marker selection', () => {
           .should('not.eq', srcVal)
       })
 
-    cy.wait(400)
+    cy.wait(10000)
 
     cy.get('.leaflet-marker-icon')
       .eq(3)
@@ -52,24 +55,20 @@ describe('Combine multiple selections: marker selection', () => {
       .eq(4)
       .click({ force: true })
 
-    cy.contains('OOSTVAARDERSDIJK_03.4', {
-      timeout: 20000
-    })
-      .parentsUntil(selector('layer-panel'))
-      .next()
-      .contains('Waterdiepte')
+    cy.wait(400)
 
-    cy.contains('Lelystad', {
-      timeout: 20000
-    })
-      .parentsUntil(selector('layer-panel'))
-      .next()
-      .contains('Waterdiepte')
+    cy.contains(selector('layer-panel'), location1, { timeout: 20000 })
+    cy.contains(selector('layer-panel'), 'Waterdiepte', { timeout: 20000 })
+
+    cy.wait(400)
+
+    cy.contains(selector('layer-panel'), location2, { timeout: 20000 })
+    cy.contains(selector('layer-panel'), 'Waterdiepte', { timeout: 20000 })
   })
 
   it('Changes legend graphic', () => {
     cy.get('.leaflet-marker-icon')
-      .eq(3)
+      .eq(2)
       .click({ force: true })
 
     cy.get(`${selector('legend')} img`)
@@ -79,7 +78,7 @@ describe('Combine multiple selections: marker selection', () => {
           .eq(4)
           .click({ force: true })
 
-        cy.wait(5000)
+        cy.wait(10000)
 
         cy.get(`${selector('legend')} img`)
           .invoke('attr', 'src')
