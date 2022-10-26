@@ -19,12 +19,15 @@ describe('Combine: Import combined scenarios', () => {
     cy.get(selector('import-selection-button'))
       .click()
 
+    cy.wait(1000)
+
     cy.get(selector('import-selection-url'))
       .type(importUrl)
-      .then(() => {
-        cy.get(selector('import-url-button'))
-          .click()
-      })
+
+    cy.wait(1000)
+
+    cy.get(selector('import-url-button'))
+      .click()
   })
 
   it('Imports scenario', () => {

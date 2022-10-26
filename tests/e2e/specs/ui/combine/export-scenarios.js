@@ -21,13 +21,13 @@ describe('Combine: Export combined scenarios', () => {
       .eq(4)
       .click({ force: true })
 
-    cy.wait(500)
+    cy.wait(1000)
 
     cy.url().should('contain', exportUrl, { timeout: 30000 })
 
     cy.get(selector('export-selection-button')).click()
 
-    cy.wait(500)
+    cy.wait(1000)
 
     cy.get(selector('export-selection-url'))
       .then(($el) => {

@@ -55,7 +55,7 @@ describe('Combine multiple selections: marker selection', () => {
       .eq(4)
       .click({ force: true })
 
-    cy.wait(400)
+    cy.wait(5000)
 
     cy.contains(selector('layer-panel'), location1, { timeout: 20000 })
     cy.contains(selector('layer-panel'), 'Waterdiepte', { timeout: 20000 })

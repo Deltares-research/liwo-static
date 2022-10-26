@@ -20,7 +20,13 @@ describe('Scenarios: shows correct popup value', () => {
       .eq(0)
       .click({ force: true })
 
-    cy.wait(1000)
+    cy.wait(500)
+
+    cy.get(selector('variant-select'))
+      .eq(0)
+      .select('0')
+
+    cy.wait(500)
 
     cy.get('.leaflet-marker-icon')
       .eq(0)

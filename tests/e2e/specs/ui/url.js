@@ -68,18 +68,21 @@ describe('URL', () => {
   })
 
   it('Changes when scenario ID is changed', () => {
-    cy.intercept(new RegExp(/GetLayerSet/), mockLayerSetData)
+    cy.intercept(new RegExp(/GetLayerSet/), mockLayerSetData).as('layerset')
     cy.intercept(new RegExp(/getFeature/), mockDoubleFeaturesData).as('features')
 
     cy.visit('/#/combine/7/19422,19428')
 
-    cy.wait(500)
+    cy.wait('@layerset', { timeout: 20000 })
+    cy.wait('@features', { timeout: 20000 })
+
+    cy.wait(1000)
 
     cy.get('.leaflet-marker-icon')
       .eq(0)
       .click({ force: true })
 
-    cy.wait(500)
+    cy.wait(1000)
 
     cy.url()
       .should('contain', '/combine/7/19428', { timeout: 30000 })

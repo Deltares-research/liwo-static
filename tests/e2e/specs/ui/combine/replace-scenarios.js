@@ -23,23 +23,28 @@ describe('Combine: Export and import combined scenarios', () => {
       .eq(0)
       .click({ force: true })
 
-    cy.wait(400)
+    cy.wait(1000)
 
     cy.get('.leaflet-marker-icon')
       .eq(4)
       .click({ force: true })
+
+    cy.wait(5000)
   })
 
   it('Replaces selection with import', () => {
     cy.url()
       .should('contain', '/combine/7/19428,19422', { timeout: 30000 })
-      .then(() => {
-        cy.contains(selector('layer-panel'), location1)
-        cy.contains(selector('layer-panel'), location2)
 
-        cy.get(selector('import-selection-button'))
-          .click()
-      })
+    cy.wait(5000)
+
+    cy.contains(selector('layer-panel'), location1)
+    cy.contains(selector('layer-panel'), location2)
+
+    cy.wait(500)
+
+    cy.get(selector('import-selection-button'))
+      .click()
 
     cy.get(selector('import-selection-url'))
       .type(exportUrl)
@@ -51,24 +56,32 @@ describe('Combine: Export and import combined scenarios', () => {
           .click()
       })
 
+    cy.wait(5000)
+
     cy.url()
       .should('contain', '/combine/7/19428,19422', { timeout: 30000 })
-      .then(() => {
-        cy.contains(selector('layer-panel'), location1)
-        cy.contains(selector('layer-panel'), location2)
-      })
+
+    cy.wait(5000)
+
+    cy.contains(selector('layer-panel'), location1)
+    cy.contains(selector('layer-panel'), location2)
   })
 
   it('Combines import with selection', () => {
     cy.url()
-      .should('contain', '/combine/7/19428,19422', { timeout: 30000 })
-      .then(() => {
-        cy.contains(selector('layer-panel'), location1)
-        cy.contains(selector('layer-panel'), location2)
+      .should('contain', '/combine/7/19428', { timeout: 30000 })
 
-        cy.get(selector('import-selection-button'))
-          .click()
-      })
+    cy.wait(5000)
+
+    cy.contains(selector('layer-panel'), location1)
+    cy.contains(selector('layer-panel'), location2)
+
+    cy.wait(500)
+
+    cy.get(selector('import-selection-button'))
+      .click()
+
+    cy.wait(500)
 
     cy.get(selector('import-selection-url'))
       .type(importUrl)
