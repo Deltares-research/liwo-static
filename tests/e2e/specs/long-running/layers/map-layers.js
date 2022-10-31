@@ -8,7 +8,7 @@ function selectLayer (cy, layer) {
 
   cy.visit('/#/maps')
 
-  cy.wait(100)
+  cy.wait(500)
 
   cy.contains('li.layerset-list__list-item a', layer.kaartenset)
     .click()
@@ -17,26 +17,56 @@ function selectLayer (cy, layer) {
     .its('response.statusCode')
     .should('eq', 200)
 
-  cy.wait(100)
-
   // disable all layers
-  cy.get('.layer-control__vis-checkbox').each($el => {
-    if ($el[0].checked) {
-      $el[0].click({ force: true })
+  cy.get('.layer-control__vis-checkbox').each(el => {
+    if (el[0].checked) {
+      el[0].click({ force: true })
     }
   })
 
-  cy.wait(100)
+  cy.wait(200)
 
   // enable one specific layer that we want to test
-  cy.get(`[data-name="${layer.kaartlaag}"] input[type="checkbox"]`).click({ force: true })
+  cy.get(`[data-name="${layer.kaartlaag}"] input[type="checkbox"]`)
+    .click({ force: true })
 
-  cy.wait(100)
+  cy.wait(4000)
 
   if (layer.variant) {
     cy.get(`[data-name="${layer.kaartlaag}"]`)
-      .within(() => {
-        cy.get(selector('variant-select')).select(layer.variant.trim())
+      .then(() => {
+        cy.wait(200)
+
+        // trick to conditionally check for existence of element
+        cy.get('body')
+          .then($body => {
+            const hasVariantSelect = $body.find(selector('variant-select')).length
+            return Boolean(hasVariantSelect);
+          })
+          .then(hasVariantSelect => {
+            console.log('hasVariantSelect', hasVariantSelect);
+            // only continue if variant select exists
+            if (hasVariantSelect) {
+              cy.get(selector('variant-select'))
+                .then(($el) => {
+                  const hasOptions = $el[0].options.length
+                  return Boolean(hasOptions);
+                })
+                .then(hasOptions => {
+                  console.log('hasOptions', hasOptions);
+                  // only continue if variant select has options
+                  if (hasOptions) {
+                    cy.get(selector('variant-select'))
+                    .eq(0)
+                    .select(layer.variant.trim(), { force: true })
+                    .then($el => {
+                      const selected = $el[0].selectedOptions[0]
+                      expect(selected.label).to.equal(layer.variant.trim())
+                    })
+                  }
+                })
+            }
+          });
       })
   }
 }
@@ -79,19 +109,17 @@ describe('Layer functionalities', () => {
     })
 
     it('renders legend', () => {
-      cy.wait(100)
+      cy.wait(500)
       cy.get(selector('legend')).should('exist')
     })
 
     it('shows popup on click', () => {
       cy.intercept(new RegExp(/GetFeatureInfo/)).as('info')
 
-      cy.wait(100)
+      cy.wait(1000)
 
       cy.get(selector('map'))
         .click('center')
-
-      cy.wait(100)
 
       cy.wait('@info', { timeout: 20000 })
         .then((res) => {
@@ -104,13 +132,11 @@ describe('Layer functionalities', () => {
     })
 
     it('shows metadata modal', () => {
-      cy.wait(100)
+      cy.wait(1000)
 
       cy.get(`[data-name="${layer.kaartlaag}"]`)
         .within(() => {
           cy.get(selector('info-toggle')).first().click({ force: true })
-
-          cy.wait(100)
 
           cy.get(selector('meta-table'))
             .contains('Title')
@@ -118,8 +144,6 @@ describe('Layer functionalities', () => {
             .should(($el) => {
               expect($el.text().trim()).not.equal('')
             })
-
-          cy.wait(100)
 
           cy.get(selector('close-button')).click()
         })
