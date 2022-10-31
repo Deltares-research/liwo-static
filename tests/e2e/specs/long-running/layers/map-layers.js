@@ -40,20 +40,18 @@ function selectLayer (cy, layer) {
         // trick to conditionally check for existence of element
         cy.get('body')
           .then($body => {
-            const hasVariantSelect = $body.find(selector('variant-select')).length
-            return Boolean(hasVariantSelect);
+            const layerHasVariantSelect = $body.find(`[data-name="${layer.kaartlaag}"] ${selector('variant-select')}`).length
+            return Boolean(layerHasVariantSelect);
           })
-          .then(hasVariantSelect => {
-            console.log('hasVariantSelect', hasVariantSelect);
+          .then(layerHasVariantSelect => {
             // only continue if variant select exists
-            if (hasVariantSelect) {
+            if (layerHasVariantSelect) {
               cy.get(selector('variant-select'))
                 .then(($el) => {
                   const hasOptions = $el[0].options.length
                   return Boolean(hasOptions);
                 })
                 .then(hasOptions => {
-                  console.log('hasOptions', hasOptions);
                   // only continue if variant select has options
                   if (hasOptions) {
                     cy.get(selector('variant-select'))
