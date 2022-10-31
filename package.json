@@ -1,6 +1,6 @@
 {
   "name": "liwo-static",
-  "version": "2.44.0",
+  "version": "2.45.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --open",
@@ -50,7 +50,7 @@
     "@babel/preset-env": "7.3.4",
     "@babel/runtime-corejs3": "^7.13.10",
     "@cypress/skip-test": "^2.6.1",
-    "@semantic-release/git": "^9.0.0",
+    "@semantic-release/git": "^10.0.1",
     "@vue/babel-preset-app": "4.5.15",
     "@vue/cli-plugin-babel": "~4.5.15",
     "@vue/cli-plugin-e2e-cypress": "~4.5.15",
