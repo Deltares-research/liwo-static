@@ -8,23 +8,32 @@ function selectLayer (cy, layer) {
 
   cy.visit('/#/maps')
 
-  cy
-    .contains('li.layerset-list__list-item a', layer.kaartenset)
+  cy.wait(100)
+
+  cy.contains('li.layerset-list__list-item a', layer.kaartenset)
     .click()
 
-  cy.wait('@layerset').its('response.statusCode').should('eq', 200)
+  cy.wait('@layerset', { timeout: 20000 })
+    .its('response.statusCode')
+    .should('eq', 200)
 
-  // // disable all layers
-  cy.get('.layer-control__vis-checkbox').each(el => {
-    if (el[0].checked) {
-      el[0].click({ force: true })
+  cy.wait(100)
+
+  // disable all layers
+  cy.get('.layer-control__vis-checkbox').each($el => {
+    if ($el[0].checked) {
+      $el[0].click({ force: true })
     }
   })
 
-  // // enable one specific layer that we want to test
+  cy.wait(100)
+
+  // enable one specific layer that we want to test
   cy.get(`[data-name="${layer.kaartlaag}"] input[type="checkbox"]`).click({ force: true })
 
-  if (layer.Variant) {
+  cy.wait(100)
+
+  if (layer.variant) {
     cy.get(`[data-name="${layer.kaartlaag}"]`)
       .within(() => {
         cy.get(selector('variant-select')).select(layer.variant.trim())
@@ -39,8 +48,7 @@ describe('Layer functionalities', () => {
 
       const fileName = 'test-filename'
 
-      cy.intercept(new RegExp(/DownloadZipFileDataLayers/))
-        .as('apiCheck')
+      cy.intercept(new RegExp(/DownloadZipFileDataLayers/)).as('apiCheck')
 
       cy.get('body').then($body => {
         // only run if export button exists
@@ -71,15 +79,21 @@ describe('Layer functionalities', () => {
     })
 
     it('renders legend', () => {
+      cy.wait(100)
       cy.get(selector('legend')).should('exist')
     })
 
     it('shows popup on click', () => {
       cy.intercept(new RegExp(/GetFeatureInfo/)).as('info')
 
+      cy.wait(100)
+
       cy.get(selector('map'))
         .click('center')
-        .wait('@info')
+
+      cy.wait(100)
+
+      cy.wait('@info', { timeout: 20000 })
         .then((res) => {
           const value = getLayerInfoValue(res.response.body, layer.id)
 
@@ -90,9 +104,13 @@ describe('Layer functionalities', () => {
     })
 
     it('shows metadata modal', () => {
+      cy.wait(100)
+
       cy.get(`[data-name="${layer.kaartlaag}"]`)
         .within(() => {
           cy.get(selector('info-toggle')).first().click({ force: true })
+
+          cy.wait(100)
 
           cy.get(selector('meta-table'))
             .contains('Title')
@@ -101,11 +119,15 @@ describe('Layer functionalities', () => {
               expect($el.text().trim()).not.equal('')
             })
 
+          cy.wait(100)
+
           cy.get(selector('close-button')).click()
         })
     })
 
     it('renders layer correctly', () => {
+      cy.wait(100)
+
       cy.screenshot(`${layer.kaartenset}__${layer.kaartlaag}__${layer.variant}`)
     })
   })
