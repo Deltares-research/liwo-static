@@ -1,4 +1,4 @@
-import deepEqual from 'deep-equal'
+import { deepEqual } from 'fast-equals'
 import { isPromise } from '@/lib/utils'
 import L from '@/lib/leaflet-utils/leaf'
 import createLayer from './leaflet-utils/layer-factory'

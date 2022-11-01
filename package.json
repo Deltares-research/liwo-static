@@ -15,9 +15,9 @@
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
     "@vue-a11y/skip-to": "^2.1.2",
-    "deep-equal": "^2.0.5",
     "delay": "^5.0.0",
     "dom-to-image": "^2.6.0",
+    "fast-equals": "^4.0.3",
     "file-saver": "^2.0.5",
     "focus-trap": "^6.7.2",
     "leaflet": "^1.7.1",
