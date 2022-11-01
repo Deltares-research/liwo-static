@@ -10,7 +10,7 @@ describe('Dead links', () => {
   })
 
   it('Links to existing links', () => {
-    const pages = ['/', '#/contact', '#/accessibility', '#/about']
+    const pages = ['/', '/#/contact', '/#/accessibility', '/#/about']
 
     pages.forEach(page => {
       cy.visit(page)
