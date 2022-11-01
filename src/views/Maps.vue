@@ -7,13 +7,9 @@
       van het Watermanagementcentrum Nederland (WMCN).
     </p>
   </header>
-  <div>
-    <p>Voor niet-professionele gebruikers is er <a href="https://www.overstroomik.nl">www.overstroomik.nl</a>.</p>
-    <p>
-      Voor uitleg over het gebruik en de gebruikershandleiding kunt u terecht op de <a href="https://iplo.nl/thema/water/applicaties-modellen/berichtgeving-crisismanagement/liwo/" target="_blank" rel="noreferrer noopener">Informatiepunt Leefomgeving (iplo.nl)</a>.
-      Hier vindt u ook contactgegevens voor het aanvragen van LIWO-opleidingen.
-    </p>
-  </div>
+
+  <p>Voor niet-professionele gebruikers is er <a href="https://www.overstroomik.nl">www.overstroomik.nl</a> & <a href="https://www.klimaateffectatlas.nl/">www.klimaateffectatlas.nl</a>.</p>
+
   <div class="maps__sections">
     <layer-set-list
       v-for="layerSet in layerSets"
