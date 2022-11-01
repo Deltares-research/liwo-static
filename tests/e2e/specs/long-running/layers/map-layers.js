@@ -96,7 +96,7 @@ describe('Layer functionalities', () => {
 
           cy.wait(500)
 
-          cy.wait('@apiCheck', { timeout: 60000 })
+          cy.wait('@apiCheck', { timeout: 100000 })
             .then((xhr) => {
               console.log(xhr)
               const body = xhr.request.body
@@ -146,6 +146,8 @@ describe('Layer functionalities', () => {
           cy.get(selector('info-toggle'))
             .first()
             .click({ force: true })
+
+          cy.wait(1000)
 
           cy.get(selector('meta-table'))
             .contains('Title')
