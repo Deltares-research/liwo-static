@@ -42,7 +42,7 @@ describe('Map', () => {
     cy.location().should((loc) => {
       const params = getParams(loc.hash)
 
-      expect(params.zoom).to.equal('5')
+      expect(params.zoom).to.equal('6')
     })
   })
 
