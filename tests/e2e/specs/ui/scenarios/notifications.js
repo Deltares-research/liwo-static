@@ -12,7 +12,7 @@ describe('Notifications', () => {
   })
 
   it('Are visible when needed', () => {
-    cy.visit('#/scenarios/6/18310')
+    cy.visit('/#/scenarios/6/18310')
 
     cy.wait('@scenarios', { timeout: 120000 })
       .then(() => {
@@ -22,7 +22,7 @@ describe('Notifications', () => {
   })
 
   it('Can be closed by clicking on them', () => {
-    cy.visit('#/scenarios/6/18310')
+    cy.visit('/#/scenarios/6/18310')
 
     cy.wait('@scenarios', { timeout: 120000 })
       .then(() => {
@@ -37,7 +37,7 @@ describe('Notifications', () => {
   })
 
   it('Can be closed using the close button', () => {
-    cy.visit('#/scenarios/6/18310')
+    cy.visit('/#/scenarios/6/18310')
 
     cy.wait('@scenarios', { timeout: 120000 })
       .then(() => {

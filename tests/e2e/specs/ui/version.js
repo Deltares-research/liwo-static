@@ -1,11 +1,9 @@
-// https://docs.cypress.io/api/introduction/api.html
-const version = require('../../../../package.json').version
-
 describe('Version', () => {
-  it('Renders correct version on ', () => {
-
+  it('Renders correct version on', () => {
     cy.visit('/#/about')
 
-    cy.contains('p', `User interface versie: ${version}`)
+    cy.wait(1000)
+
+    cy.contains('p', 'Applicatie versie: v2.9.0-w1')
   })
 })
