@@ -36,7 +36,7 @@ describe('Scenarios: click for value', () => {
 
         cy.get('.leaflet-popup').should('exist')
 
-        cy.wait(500)
+        cy.wait(5000)
 
         cy.get('.leaflet-popup-content').invoke('text').should('not.equal', value)
       })
