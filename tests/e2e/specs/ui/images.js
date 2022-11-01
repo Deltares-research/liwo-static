@@ -1,4 +1,4 @@
-const pages = ['/', '#/contact', '#/accessibility', '#/about']
+const pages = ['/', '/#/contact', '/#/accessibility', '/#/about']
 
 describe('Images', () => {
   it('Has images with alt attributes', () => {
