@@ -302,26 +302,19 @@ export default {
 
       this.selectedLayerIndex = index
       this.selectLayerOption(index)
-      // this.setLayerVariantOptions(title)
-
-      const variantOptions = this.setLayerVariantOptions(title)
 
       const selectedIndexes = this.selectedVariantIndexByBreachBandId
       selectedIndexes[this.breachBandId][title] = value
-      const indexes = {}
-      // If switching back to a variant with multiple dropdown boxes from one with less dropdowns,
-      // make sure that the first dropdown is selected
-      Object.entries(selectedIndexes[this.breachBandId]).forEach(index => {
-        if (_.has(variantOptions, index[0])) {
-          indexes[index[0]] = index[1]
-        } else {
-          indexes[index[0]] = 0
+
+      if (this.breachId) {
+        let indexes = this.variantFilterPropertiesIndex(this.breachId)
+
+        if (typeof this.selectedLayerIndex === 'number') {
+          indexes = this.getOptionsByVariantId(this.selectedLayerIndex)
         }
-      })
-      store.commit('setSelectedVariantIndexByBreachBandId', {
-        selectedIndex: indexes,
-        breachBandId: this.breachBandId
-      })
+
+        store.commit('setSelectedVariantIndexByBreachBandId', { selectedIndex: indexes, breachBandId: this.breachBandId })
+      }
     },
     selectLayerOption (index) {
       this.$emit('select:variant', {
