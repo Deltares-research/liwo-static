@@ -11,7 +11,7 @@ function selectLayer (cy, layer) {
   cy.wait(500)
 
   cy.contains('li.layerset-list__list-item a', layer.kaartenset)
-    .click()
+    .click({ force: true })
 
   cy.wait('@layerset', { timeout: 20000 })
     .its('response.statusCode')
@@ -70,27 +70,35 @@ function selectLayer (cy, layer) {
 }
 
 describe('Layer functionalities', () => {
-  Cypress.env('MAP_LAYERS').forEach(layer => {
+  Cypress.env('MAP_LAYERS').forEach((layer, index) => {
     it('exports zip file', () => {
       selectLayer(cy, layer)
 
-      const fileName = 'test-filename'
-
-      cy.intercept(new RegExp(/DownloadZipFileDataLayers/)).as('apiCheck')
+      const fileName = 'test-filename-' + (index + 1)
 
       cy.get('body').then($body => {
         // only run if export button exists
         if ($body.find(selector('init-export-button')).length) {
+          cy.intercept(new RegExp(/DownloadZipFileDataLayers/)).as('apiCheck')
+
           cy.get(selector('init-export-button'))
-            .click()
+            .click({ force: true })
+
+          cy.wait(500)
 
           cy.get(selector('name-input'))
             .type(fileName)
 
+          cy.wait(500)
+
           cy.get(selector('export-file-button'))
-            .click()
-            .wait('@apiCheck')
-            .should((xhr) => {
+            .click({ force: true })
+
+          cy.wait(500)
+
+          cy.wait('@apiCheck', { timeout: 100000 })
+            .then((xhr) => {
+              console.log(xhr)
               const body = xhr.request.body
               expect(body.name).to.equal(fileName)
             })
@@ -101,7 +109,8 @@ describe('Layer functionalities', () => {
               expect(size).to.be.greaterThan(5000)
             })
 
-          cy.get(selector('close-button')).click()
+          cy.get(selector('close-button'))
+            .click({ force: true })
         }
       })
     })
@@ -117,7 +126,7 @@ describe('Layer functionalities', () => {
       cy.wait(1000)
 
       cy.get(selector('map'))
-        .click('center')
+        .click('center', { force: true })
 
       cy.wait('@info', { timeout: 20000 })
         .then((res) => {
@@ -134,7 +143,11 @@ describe('Layer functionalities', () => {
 
       cy.get(`[data-name="${layer.kaartlaag}"]`)
         .within(() => {
-          cy.get(selector('info-toggle')).first().click({ force: true })
+          cy.get(selector('info-toggle'))
+            .first()
+            .click({ force: true })
+
+          cy.wait(1000)
 
           cy.get(selector('meta-table'))
             .contains('Title')
@@ -143,7 +156,8 @@ describe('Layer functionalities', () => {
               expect($el.text().trim()).not.equal('')
             })
 
-          cy.get(selector('close-button')).click()
+          cy.get(selector('close-button'))
+            .click({ force: true })
         })
     })
 
