@@ -12,12 +12,12 @@ describe('Scenarios: click for value', () => {
 
       cy.wait('@features', { timeout: 20000 })
 
-      cy.wait(500)
+      cy.wait(5000)
 
       cy.get(selector('map'))
         .click('center')
 
-      cy.wait(500)
+      cy.wait(5000)
 
       cy.get('.leaflet-popup').should('exist')
 
