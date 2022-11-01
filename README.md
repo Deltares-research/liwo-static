@@ -84,10 +84,16 @@ We perform a [set of E2E tests](https://github.com/Deltares/liwo-static/tree/mas
 - Long running tests (run once every day)
 - UI tests (run on every PR/merge)
 
+### Running tests
 The tests are conducted using [Cypress](https://www.cypress.io/) in the following browsers:
 - Chrome
 - Firefox (some tests are specifically disabled for Firefox, since they do not work in the headless environment)
 
+### Testing times
+Be aware that although the 'UI tests' are separate from the 'long running' tests, they still take about 4 minutes to complete.
+The long running tests can take up about 40 minutes. Luckily they don't need to be run on every PR/merge, but only once a day.
+
+### Mock data
 We use some static (mock)data to run our tests more reliably, consistently and faster.
 - UI tests use JSON [mock data](https://github.com/Deltares/liwo-static/tree/master/tests/e2e/mock).
 - Long running tests use a CSV [data set](https://github.com/Deltares/liwo-static/tree/master/tests/e2e/data).
