@@ -88,6 +88,12 @@ The tests are conducted using [Cypress](https://www.cypress.io/) in the followin
 - Chrome
 - Firefox (some tests are specifically disabled for Firefox, since they do not work in the headless environment)
 
+We use some static (mock)data to run our tests more reliably, consistently and faster.
+- UI tests use JSON [mock data](https://github.com/Deltares/liwo-static/tree/master/tests/e2e/mock).
+- Long running tests use a CSV [data set](https://github.com/Deltares/liwo-static/tree/master/tests/e2e/data).
+
+Both are updated every once in a while. Please run (and update) the tests if you change the mock data.
+
 ## Deploy using docker
 If you want to deploy the docker version, you can use the Dockerfile in the main directory. It will build the website and add it to a container with an nginx webserver. Make sure you check the nginx.conf settings for details about the security settings.
 
