@@ -81,12 +81,31 @@ If you want to deploy under a different url you can use the environment variable
 
 ## E2E testing
 We perform a [set of E2E tests](https://github.com/Deltares/liwo-static/tree/master/tests/e2e/specs) to verify that specific functionality of the application is working correctly. We make a distinction between the following types:
-- Long running tests (run once every day)
-- UI tests (run on every PR/merge)
+- Long running tests (run once every day):
+  - These tests test, for each map, a few basic features that all 'views' have in common. For example: downloading a .zip file, clicking on the map, etc.
+- UI tests (run on every PR/merge):
+  - These tests test the UI of the application. For example: the menu, the map, the sidebar etc.
+  - We also test the things users can do with the application. Creating certain selections on maps, exporting them, importing them, etc.
 
+### Running tests
 The tests are conducted using [Cypress](https://www.cypress.io/) in the following browsers:
 - Chrome
 - Firefox (some tests are specifically disabled for Firefox, since they do not work in the headless environment)
+
+### Testing times
+Be aware that although the 'UI tests' are separate from the 'long running' tests, they still take about 4 minutes to complete.
+The long running tests can take up about 40 minutes. Luckily they don't need to be run on every PR/merge, but only once a day.
+
+### Mock data
+We use some static (mock)data to run our tests more reliably, consistently and faster.
+- UI tests use JSON [mock data](https://github.com/Deltares/liwo-static/tree/master/tests/e2e/mock).
+- Long running tests use a CSV [data set](https://github.com/Deltares/liwo-static/tree/master/tests/e2e/data).
+
+Both are updated every once in a while. Please run (and update) the tests if you change the mock data.
+
+### Test example
+We included an example test file [here](https://github.com/Deltares/liwo-static/tree/master/tests/e2e/_example). We've added
+some comments explaining how we've setup the tests and how to test certain things.
 
 ## Deploy using docker
 If you want to deploy the docker version, you can use the Dockerfile in the main directory. It will build the website and add it to a container with an nginx webserver. Make sure you check the nginx.conf settings for details about the security settings.
