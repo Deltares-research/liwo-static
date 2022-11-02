@@ -31,7 +31,7 @@ export function showLayerInfoPopup ({ map, layerId, unit, selectedLayer, positio
 
 export async function showCombinedLayerInfoPopup ({ coordinates, map }) {
   const services = await mapConfig.getServices()
-  const HYDRO_ENGINE_URL = services.HYDRO_ENGINE_URL_V2
+  const HYDRO_ENGINE_URL = services.HYDRO_ENGINE_URL
   const { lat, lng } = coordinates
   const url = `${HYDRO_ENGINE_URL}/get_feature_info`
   const options = {

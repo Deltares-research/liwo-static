@@ -97,8 +97,8 @@ export default {
 
       // Lookup the hydro engine url
       const services = await mapConfig.getServices()
-      const HYDRO_ENGINE_URL = services.HYDRO_ENGINE_URL
-      const url = `${HYDRO_ENGINE_URL}/get_liwo_scenarios`
+      const HYDRO_ENGINE_URL_V2 = services.HYDRO_ENGINE_URL_V2
+      const url = `${HYDRO_ENGINE_URL_V2}/get_liwo_scenarios`
 
       /* get the id of the layerSet */
       const layerSetId = this.otherLayers[0].layerSet.id

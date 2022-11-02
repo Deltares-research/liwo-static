@@ -103,7 +103,7 @@ export async function computeCombinedScenario (scenarioIds, band, layerSetId) {
 export async function getScenarioInfo (scenarioIds, featureInfoByScenarioId) {
   const services = await mapConfig.getServices()
   /* get the url of the hydro engine */
-  const hydroEngine = services.HYDRO_ENGINE_URL
+  const hydroEngine = services.HYDRO_ENGINE_URL_V2
 
   const url = `${hydroEngine}/get_liwo_scenarios_info`
 
@@ -209,8 +209,8 @@ async function loadBreachesLayer (scenarioIds, band, layerSetId) {
       collection: services.DATASET_VERSION
     })
   }
-  const HYDRO_ENGINE_URL = services.HYDRO_ENGINE_URL
-  const url = `${HYDRO_ENGINE_URL}/get_liwo_scenarios`
+  const HYDRO_ENGINE_URL_V2 = services.HYDRO_ENGINE_URL_V2
+  const url = `${HYDRO_ENGINE_URL_V2}/get_liwo_scenarios`
   return fetch(url, requestOptions)
     .then(resp => {
       return resp.json()
