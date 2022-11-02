@@ -170,7 +170,7 @@ We use some static (mock)data to run our tests more reliably, consistently and f
 - UI tests use JSON [mock data](https://github.com/Deltares/liwo-static/tree/master/tests/e2e/mock).
 - Long running tests use a CSV [data set](https://github.com/Deltares/liwo-static/tree/master/tests/e2e/data).
 
-Note: The CSV file is not comma separated but semicolon separated. This is because the CSV file is the output of another process, which uses semicolons as separators.
+**Note**: The CSV file is not comma separated but semicolon separated. This is because the CSV file is the output of another process, which uses semicolons as separators.
 
 Both are updated every once in a while. Please run (and update) the tests if you change the mock data.
 
