@@ -92,7 +92,7 @@ The tests are conducted using [Cypress](https://www.cypress.io/) in the followin
 - Chrome
 - Firefox (some tests are specifically disabled for Firefox, since they do not work in the headless environment)
 
-## Filestructure
+## File structure
 ```
   e2e/
   ├── _example/
@@ -166,8 +166,10 @@ The long running tests can take up about 40 minutes. Luckily they don't need to 
 
 ### Mock data
 We use some static (mock)data to run our tests more reliably, consistently and faster.
+
 - UI tests use JSON [mock data](https://github.com/Deltares/liwo-static/tree/master/tests/e2e/mock).
 - Long running tests use a CSV [data set](https://github.com/Deltares/liwo-static/tree/master/tests/e2e/data).
+
 Note: The CSV file is not comma separated but semicolon separated. This is because the CSV file is the output of another process, which uses semicolons as separators.
 
 Both are updated every once in a while. Please run (and update) the tests if you change the mock data.
