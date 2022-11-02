@@ -92,7 +92,7 @@ The tests are conducted using [Cypress](https://www.cypress.io/) in the followin
 - Chrome
 - Firefox (some tests are specifically disabled for Firefox, since they do not work in the headless environment)
 
-## File structure
+### File structure
 ```
   e2e/
   ├── _example/
