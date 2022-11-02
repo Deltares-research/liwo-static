@@ -202,7 +202,7 @@ export default {
       this.variantFilterProperties[_.get(this.layer, 'breachId')].forEach(prop => {
         this.layer.variants.forEach(variant => {
           // If the property is empty, don't show
-          if (variant.properties[prop] === undefined) { return }
+          if (variant.properties[prop] === undefined || variant.properties[prop] === null) { return }
 
           // If dreigende overstroming is off and the variant has dreigende overstroming, don't show
           if (!this.imminentFlood && variant.properties['Dreigende overstroming'] === 1) {
