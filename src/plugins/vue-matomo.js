@@ -4,7 +4,7 @@ import router from '../router'
 
 Vue.use(VueMatomo, {
   // Configure your matomo server and site by providing
-  host: 'https://statistiek.rijksoverheid.nl/',
+  host: 'https://statistiek.rijksoverheid.nl',
   siteId: process.env.VUE_APP_MATOMO_SITE_ID,
 
   // Changes the default .js and .php endpoint's filename
@@ -29,7 +29,7 @@ Vue.use(VueMatomo, {
 
   // Require consent before sending tracking information to matomo
   // Default: false
-  requireConsent: true,
+  configConsentRequired: true,
 
   // Whether to track the initial page view
   // Default: true

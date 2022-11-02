@@ -1962,11 +1962,6 @@ fieldset fieldset {
     opacity: .5
 }
 
-.contact-form fieldset:before {
-    height: 1px;
-    background-color: #e6e6e6
-}
-
 .contact-form__actions {
     position: relative;
     border-top: 1px solid #e6e6e6;

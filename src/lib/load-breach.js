@@ -151,9 +151,11 @@ async function loadBreachLayer (breachId, layerName) {
   // Load the dataset  for a breach
   const services = await mapConfig.getServices()
   const BREACHES_BASE_URL = services.WEBSERVICE_URL
+  const FILTERS_BASE_URL = services.WEBSERVICE_URL_V2
   const BREACHES_API_URL = `${BREACHES_BASE_URL}/Tools/FloodImage.asmx/GetScenariosPerBreachGeneric`
+  const FILTERS_API_URL = `${FILTERS_BASE_URL}/filter_variants`
 
-  const resp = await fetch(BREACHES_API_URL, {
+  const breachFetch = await fetch(BREACHES_API_URL, {
     method: 'POST',
     mode: 'cors',
     credentials: 'omit',
@@ -164,9 +166,25 @@ async function loadBreachLayer (breachId, layerName) {
     })
   })
 
-  const d = await resp.json()
-  const data = JSON.parse(d.d)
-  // get  the first layerset  if available,  otherwise return null
+  const filterFetch = await fetch(FILTERS_API_URL, {
+    method: 'GET',
+    mode: 'cors',
+    credentials: 'omit',
+    headers
+  })
+
+  const [breachData, filtersData] = await Promise.all([breachFetch, filterFetch])
+    .then(responses => responses.map(response => response.json()))
+
+  const properties = await filtersData
+
+  if (properties.length) {
+    store.commit('setVariantFilterProperties', { properties, breachId })
+  }
+
+  const data = await breachData.then(data => JSON.parse(data.d))
+
+  // get the first layerset if available, otherwise return null
   let result = null
   // if this layerset is not available layerset can be null
   if (_.has(data, '[0].layerset[0]')) {

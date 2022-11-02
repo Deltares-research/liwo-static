@@ -1,4 +1,4 @@
-const pages = ['/', '#/contact', '#/accessibility', '#/about']
+const pages = ['/', '/#/contact', '/#/accessibility', '/#/about']
 
 describe('Images', () => {
   it('Has images with alt attributes', () => {
@@ -11,8 +11,7 @@ describe('Images', () => {
     })
   })
 
-  // TODO: enable when images are working again
-  it.skip("Contains images with valid url's", () => {
+  it("Contains images with valid url's", () => {
     pages.forEach(page => {
       cy.visit(page)
 
