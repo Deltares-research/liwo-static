@@ -51,9 +51,10 @@ export async function showCombinedLayerInfoPopup ({ coordinates, map }) {
     .then(response => response.json())
     .then(({ value }) => {
       if (value !== null) {
+        const content = value.toString()
         L.popup()
           .setLatLng(coordinates)
-          .setContent(`${value}`)
+          .setContent(content)
           .openOn(map)
       }
     })
