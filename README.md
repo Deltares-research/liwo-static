@@ -92,6 +92,74 @@ The tests are conducted using [Cypress](https://www.cypress.io/) in the followin
 - Chrome
 - Firefox (some tests are specifically disabled for Firefox, since they do not work in the headless environment)
 
+## Filestructure
+```
+  e2e/
+  ├── _example/
+  │   └── test.js
+  ├── custom-assertions/
+  │   └── elementCount.js
+  │   ## CSV mock data
+  ├── data/
+  │   └── Kaartlagen_LIWO.csv
+  │   ## Helper functions used in tests
+  ├── lib/
+  │   ├── csv-to-json.js
+  │   ├── generate-selector.js
+  │   └── get-layers.js
+  │   ## JSON mock data
+  ├── mock/
+  │   ├── doubleFeatureCollection.json
+  │   ├── featureCollection.json
+  │   ├── layerset.json
+  │   └── multipleFeatureCollection.json
+  │   ## Cypress configuration
+  ├── plugins/
+  │   └── index.js
+  ├── specs/
+  │   ├── long-running/
+  │   │   └── layers/
+  │   │       │   ## Tests all layers in the .csv file ##
+  │   │       ├── map-layers.js
+  │   │       └── maps-list.js
+  │   └── ui/
+  │       │   ## Tests functionality after combining multiple points ##
+  │       ├── combine/
+  │       │   ├── export-scenarios.js
+  │       │   ├── import-scenarios.js
+  │       │   ├── multiple-scenarios.js
+  │       │   └── replace-scenarios.js
+  │       │
+  │       │   ### Tests pre-combined scenarios functionality ##
+  │       ├── combined/
+  │       │   ├── activate.js
+  │       │   ├── export.js
+  │       │   └── url.js
+  │       │
+  │       │   # Tests for for a scenario
+  │       ├── scenarios/
+  │       │   ├── click-for-value.js
+  │       │   ├── filters.js
+  │       │   ├── metadata.js
+  │       │   ├── notifications.js
+  │       │   ├── popup.js
+  │       │   └── selection.js
+  │       │
+  │       │   ## Tests for other aspects of the application ##
+  │       ├── dead-links.js
+  │       ├── export.js
+  │       ├── images.js
+  │       ├── layer-controls.js
+  │       ├── map-controls.js
+  │       ├── maps-list.js
+  │       ├── url.js
+  │       └── version.js
+  │   ## Global configuration and behavior that modifies Cypress
+  └── support/
+      ├── commands.js
+      └── index.js
+```
+
 ### Testing times
 Be aware that although the 'UI tests' are separate from the 'long running' tests, they still take about 4 minutes to complete.
 The long running tests can take up about 40 minutes. Luckily they don't need to be run on every PR/merge, but only once a day.
@@ -100,6 +168,7 @@ The long running tests can take up about 40 minutes. Luckily they don't need to 
 We use some static (mock)data to run our tests more reliably, consistently and faster.
 - UI tests use JSON [mock data](https://github.com/Deltares/liwo-static/tree/master/tests/e2e/mock).
 - Long running tests use a CSV [data set](https://github.com/Deltares/liwo-static/tree/master/tests/e2e/data).
+Note: The CSV file is not comma separated but semicolon separated. This is because the CSV file is the output of another process, which uses semicolons as separators.
 
 Both are updated every once in a while. Please run (and update) the tests if you change the mock data.
 
