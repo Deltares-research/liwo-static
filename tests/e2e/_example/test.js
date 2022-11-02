@@ -1,3 +1,6 @@
+import mockLayerSetData from '../mock/layerset.json'
+import mockDoubleFeaturesData from '../mock/double-features.json'
+
 // The url you want to test with.
 const url = '/#/viewer/1?center=52,5&zoom=4'
 
