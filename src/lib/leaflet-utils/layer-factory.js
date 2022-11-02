@@ -166,30 +166,39 @@ export function createTile (layer) {
 }
 
 export async function createWms (layer) {
-  // these options come frome the vaiant properties of the layer
-  const { namespace, attribution, style } = layer
-  // fully visible by default
   const opacity = _.get(layer.layerObj, 'properties.opacity', 1)
-  const url = await getGeoServerURL(namespace)
+  const url = await getServerURL(layer)
+
   return L.tileLayer.wms(url, {
-    // TODO: layer is now sometimes a string, sometimes an object. Clean this up
     layers: layer.layer,
     format: 'image/png',
     transparent: true,
-    attribution,
+    attribution: layer.attribution,
     tiled: true,
-    styles: style,
+    styles: layer.style,
     opacity
   })
 }
 
-async function getGeoServerURL (namespace) {
+async function getServerURL (layer) {
   const services = await mapConfig.getServices()
-  const DYNAMIC_GEOSERVER_URL = services.DYNAMIC_GEOSERVER_URL
-  const STATIC_GEOSERVER_URL = services.STATIC_GEOSERVER_URL
-  return namespace === 'LIWO_Operationeel'
-    ? DYNAMIC_GEOSERVER_URL
-    : STATIC_GEOSERVER_URL
+
+  switch (layer.layer) {
+    case 'administratieve_grenzen_waterschappen': {
+      return services.PDOK_WATERSCHAPPEN_URL
+    }
+    case 'administratieve_grenzen_provincies': {
+      return services.PDOK_PROVINCIES_URL
+    }
+    case 'administratieve_grenzen_gemeenten': {
+      return services.PDOK_GEMEENTE_URL
+    }
+    default: {
+      return layer.namespace === 'LIWO_Operationeel'
+        ? services.DYNAMIC_GEOSERVER_URL
+        : services.STATIC_GEOSERVER_URL
+    }
+  }
 }
 
 function clusterIconCreateFunction (layer) {
