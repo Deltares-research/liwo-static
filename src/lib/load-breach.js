@@ -151,9 +151,9 @@ async function loadBreachLayer (breachId, layerName) {
   // Load the dataset  for a breach
   const services = await mapConfig.getServices()
   const BREACHES_BASE_URL = services.WEBSERVICE_URL
-  // const FILTERS_BASE_URL = services.WEBSERVICE_URL_V2
+  const FILTERS_BASE_URL = services.WEBSERVICE_URL_V2
   const BREACHES_API_URL = `${BREACHES_BASE_URL}/Tools/FloodImage.asmx/GetScenariosPerBreachGeneric`
-  // const FILTERS_API_URL = `${FILTERS_BASE_URL}/filter_variants`
+  const FILTERS_API_URL = `${FILTERS_BASE_URL}/filter_variants`
 
   const breachFetch = await fetch(BREACHES_API_URL, {
     method: 'POST',
@@ -166,19 +166,11 @@ async function loadBreachLayer (breachId, layerName) {
     })
   })
 
-  // const filterFetch = await fetch(FILTERS_API_URL, {
-  //   method: 'GET',
-  //   mode: 'cors',
-  //   credentials: 'omit',
-  //   headers
-  // })
-
-  const filterFetch = new Promise((resolve) => {
-    resolve({
-      json () {
-        return ['Overschrijdingsfrequentie', 'VariantKeuze_1', 'VariantKeuze_2', 'VariantKeuze_3', 'VariantKeuze_4', 'VariantKeuze_5', 'VariantKeuze_6']
-      }
-    })
+  const filterFetch = await fetch(FILTERS_API_URL, {
+    method: 'GET',
+    mode: 'cors',
+    credentials: 'omit',
+    headers
   })
 
   const [breachData, filtersData] = await Promise.all([breachFetch, filterFetch])
