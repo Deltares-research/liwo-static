@@ -182,7 +182,7 @@ import { extractUnit } from '@/lib/load-layersets'
 import { getLayerType, BREACH_LAYERS_EN } from '@/lib/liwo-identifiers'
 import { iconsByLayerType, redIcon, defaultIcon } from '@/lib/leaflet-utils/markers'
 import { EPSG_3857 } from '@/lib/leaflet-utils/projections'
-import { showLayerInfoPopup } from '@/lib/leaflet-utils/popup'
+import { showLayerInfoPopup, showCombinedLayerInfoPopup } from '@/lib/leaflet-utils/popup'
 
 export default {
   name: 'Combine',
@@ -715,7 +715,10 @@ export default {
         }
         const activeLayer = _.get(this.selectedLayer, 'legend.layer')
         if (_.isNil(activeLayer)) {
-          console.warn('clicking on layer not supported for layer:', this.selectedLayer ? this.selectedLayer.id : 'unknown')
+          showCombinedLayerInfoPopup({
+            map: mapObject,
+            coordinates: event.latlng
+          })
           return
         }
         showLayerInfoPopup({
