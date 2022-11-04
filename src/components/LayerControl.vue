@@ -40,7 +40,7 @@
           :key="index"
           name="layer-variant"
           :options="variant"
-          v-model="selectedVariantIndexByBreachId[breachId][title]"
+          v-model="selectedVariantIndexByBreachBandId[breachBandId][title]"
           @change="setLayerVariant(title, $event)"
           v-test="'variant-select'"
         />
@@ -123,24 +123,29 @@ export default {
       noDataAvailableForSelection: false,
       selectedLayerIndex: null,
       breachId: null,
+      breachBandId: null,
       layerVariantOptions: {}
     }
   },
   mounted () {
     this.breachId = _.get(this.layer, 'breachId')
+    this.breachBandId = _.get(this.layer, 'breachBandId')
     this.selectedLayerIndex = _.get(this.layer, 'properties.selectedVariant')
+
     if (this.breachId) {
       let indexes = this.variantFilterPropertiesIndex(this.breachId)
       if (typeof this.selectedLayerIndex === 'number') {
         indexes = this.getOptionsByVariantId(this.selectedLayerIndex)
       }
-      store.commit('setSelectedVariantIndexByBreachId', { selectedIndex: indexes, breachId: this.breachId })
+
+      store.commit('setSelectedVariantIndexByBreachBandId', { selectedIndex: indexes, breachBandId: this.breachBandId })
     }
+
     this.setLayerVariantOptions()
   },
   computed: {
     ...mapGetters(['variantFilterPropertiesIndex']),
-    ...mapState(['variantFilterProperties', 'selectedProbabilities', 'selectedVariantIndexByBreachId', 'imminentFlood']),
+    ...mapState(['variantFilterProperties', 'selectedProbabilities', 'selectedVariantIndexByBreachBandId', 'imminentFlood']),
     id () {
       return this.layer.breachBandId
     },
@@ -174,7 +179,7 @@ export default {
       return _.isEmpty(obj)
     },
     selectedLayerVariantOptions () {
-      const indexes = this.selectedVariantIndexByBreachId[this.breachId]
+      const indexes = this.selectedVariantIndexByBreachBandId[this.breachBandId]
 
       return Object.entries(indexes).map(([key, value]) => {
         const layerVariantOptions = _.get(this.layerVariantOptions, key, {})
@@ -197,7 +202,7 @@ export default {
       this.variantFilterProperties[_.get(this.layer, 'breachId')].forEach(prop => {
         this.layer.variants.forEach(variant => {
           // If the property is empty, don't show
-          if (!variant.properties[prop]) { return }
+          if (variant.properties[prop] === undefined || variant.properties[prop] === null) { return }
 
           // If dreigende overstroming is off and the variant has dreigende overstroming, don't show
           if (!this.imminentFlood && variant.properties['Dreigende overstroming'] === 1) {
@@ -205,7 +210,7 @@ export default {
           }
 
           let checkVariantAvailable = true
-          // Alwayscheck if options are available for the selected Overschrijdingsfrequentie
+          // Always check if options are available for the selected Overschrijdingsfrequentie
           if (prop !== name) {
             checkVariantAvailable = variant.properties[name] === currentVariant.properties[name]
           }
@@ -281,6 +286,7 @@ export default {
             return variant.properties[option.name] === option.value
           })
         )
+
       // TODO: maybe show the user that there's no variant for the chosen options.
       if (!variant) {
         // If a selection was made for overschrijdingsfrequentie, but all the other props are null,
@@ -296,26 +302,19 @@ export default {
 
       this.selectedLayerIndex = index
       this.selectLayerOption(index)
-      // this.setLayerVariantOptions(title)
 
-      const variantOptions = this.setLayerVariantOptions(title)
+      const selectedIndexes = this.selectedVariantIndexByBreachBandId
+      selectedIndexes[this.breachBandId][title] = value
 
-      const selectedIndexes = this.selectedVariantIndexByBreachId
-      selectedIndexes[this.breachId][title] = value
-      const indexes = {}
-      // If switching back to a variant with multiple dropdown boxes from one with less dropdowns,
-      // make sure that the first dropdown is selected
-      Object.entries(selectedIndexes[this.breachId]).forEach(index => {
-        if (_.has(variantOptions, index[0])) {
-          indexes[index[0]] = index[1]
-        } else {
-          indexes[index[0]] = 0
+      if (this.breachId) {
+        let indexes = this.variantFilterPropertiesIndex(this.breachId)
+
+        if (typeof this.selectedLayerIndex === 'number') {
+          indexes = this.getOptionsByVariantId(this.selectedLayerIndex)
         }
-      })
-      store.commit('setSelectedVariantIndexByBreachId', {
-        selectedIndex: indexes,
-        breachId: this.breachId
-      })
+
+        store.commit('setSelectedVariantIndexByBreachBandId', { selectedIndex: indexes, breachBandId: this.breachBandId })
+      }
     },
     selectLayerOption (index) {
       this.$emit('select:variant', {
@@ -345,7 +344,7 @@ export default {
     selectedProbabilities (newVal, oldVal) {
       if (!newVal) { return }
       if (newVal !== oldVal) {
-        const variantIndex = _.get(this.selectedVariantIndexByBreachId, `[${this.breachId}].Overschrijdingsfrequentie`, 0)
+        const variantIndex = _.get(this.selectedVariantIndexByBreachBandId, `[${this.breachBandId}].Overschrijdingsfrequentie`, 0)
         this.setLayerVariant('Overschrijdingsfrequentie', this.layerVariantOptions.Overschrijdingsfrequentie[variantIndex].value)
       }
     },
