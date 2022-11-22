@@ -155,6 +155,9 @@ export default {
         'layer-control--active': this.active
       }
     },
+    layerSetId () {
+      return parseInt(this.$route.params.id, 10)
+    },
     metadata () {
       const variant = _.get(this.layer.variants, this.selectedLayerIndex)
       const result = _.get(variant, 'metadata')
@@ -287,7 +290,6 @@ export default {
           })
         )
 
-      // TODO: maybe show the user that there's no variant for the chosen options.
       if (!variant) {
         // If a selection was made for overschrijdingsfrequentie, but all the other props are null,
         // only make a choice by overschrijdingsfrequentie
@@ -295,8 +297,17 @@ export default {
           const val = this.selectedLayerVariantOptions().find(opt => opt.name === title)
           variant = this.layer.variants
             .find(variant => variant.properties[title] === val.value)
-        } else { return }
+        } else {
+          const notification = {
+            message: 'Er is geen scenario met de door u geselecteerde filteropties. Probeer een andere combinatie.',
+            type: 'warning',
+            show: true
+          }
+          store.commit('clearNotifications')
+          return store.commit('addNotificationById', { id: this.layerSetId, notification })
+        }
       }
+
       const index = this.layer.variants
         .findIndex(object => object.layer === variant.layer)
 
