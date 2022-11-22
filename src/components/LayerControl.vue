@@ -260,7 +260,7 @@ export default {
     setTransparancy ({ target }) {
       // Create a copy of the layer with the new opacity
       const layer = { ...this.layer }
-      let opacity = 1 - _.toNumber(target.value)
+      let opacity = 1 - parseFloat(target.value, 10)
 
       if (opacity < 0) {
         opacity = 0

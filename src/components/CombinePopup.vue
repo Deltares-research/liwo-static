@@ -85,7 +85,7 @@ export default {
     }
   },
   async mounted () {
-    const scenarioIds = this.path.split(',').map(_.toNumber)
+    const scenarioIds = this.path.split(',').map((id) => parseInt(id, 10))
     const scenarioInfo = await getScenarioInfo(scenarioIds)
     /* extract number of features and bands per layer */
     this.$set(this, 'bandCounts', scenarioInfo.properties.bandCounts)
