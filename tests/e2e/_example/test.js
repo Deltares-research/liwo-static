@@ -49,7 +49,6 @@ describe('Version', () => {
     // The timeout is optional, could be useful if the request takes a long time.
     cy.url().should('contain', '?foo=bar', { timeout: 30000 })
 
-
     // Example: see if the element changes when clicking on it.
     // You can check attributes or it's text contents for any changes.
     // Here we test if a marker icon changes color (different image) when clicked. More

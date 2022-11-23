@@ -41,7 +41,7 @@ function selectLayer (cy, layer) {
         cy.get('body')
           .then($body => {
             const layerHasVariantSelect = $body.find(`[data-name="${layer.kaartlaag}"] ${selector('variant-select')}`).length
-            return Boolean(layerHasVariantSelect);
+            return Boolean(layerHasVariantSelect)
           })
           .then(layerHasVariantSelect => {
             // only continue if variant select exists
@@ -49,22 +49,22 @@ function selectLayer (cy, layer) {
               cy.get(selector('variant-select'))
                 .then(($el) => {
                   const hasOptions = $el[0].options.length
-                  return Boolean(hasOptions);
+                  return Boolean(hasOptions)
                 })
                 .then(hasOptions => {
                   // only continue if variant select has options
                   if (hasOptions) {
                     cy.get(selector('variant-select'))
-                    .eq(0)
-                    .select(layer.variant.trim(), { force: true })
-                    .then($el => {
-                      const selected = $el[0].selectedOptions[0]
-                      expect(selected.label).to.equal(layer.variant.trim())
-                    })
+                      .eq(0)
+                      .select(layer.variant.trim(), { force: true })
+                      .then($el => {
+                        const selected = $el[0].selectedOptions[0]
+                        expect(selected.label).to.equal(layer.variant.trim())
+                      })
                   }
                 })
             }
-          });
+          })
       })
   }
 }

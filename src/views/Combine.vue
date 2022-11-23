@@ -717,6 +717,7 @@ export default {
         if (_.isNil(activeLayer)) {
           showCombinedLayerInfoPopup({
             map: mapObject,
+            layer: this.selectedLayer,
             coordinates: event.latlng
           })
           return
