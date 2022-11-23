@@ -1,6 +1,7 @@
 <template>
 <div
-  :class="classData"
+  class="layer-control"
+  :class="{ 'layer-control--active': this.active }"
   :data-name="layer.properties.title"
   >
   <form class="layer-control__main" v-test="'layer-toggle'">
@@ -128,32 +129,29 @@ export default {
     }
   },
   mounted () {
-    this.breachId = _.get(this.layer, 'breachId')
-    this.breachBandId = _.get(this.layer, 'breachBandId')
-    this.selectedLayerIndex = _.get(this.layer, 'properties.selectedVariant')
+    const { breachId, breachBandId, properties } = this.layer
+    this.breachId = breachId
+    this.breachBandId = breachBandId
+    this.selectedLayerIndex = properties.selectedVariant
 
-    if (this.breachId) {
-      let indexes = this.variantFilterPropertiesIndex(this.breachId)
-      if (typeof this.selectedLayerIndex === 'number') {
-        indexes = this.getOptionsByVariantId(this.selectedLayerIndex)
-      }
-
-      store.commit('setSelectedVariantIndexByBreachBandId', { selectedIndex: indexes, breachBandId: this.breachBandId })
-    }
+    this.setIndexes()
 
     this.setLayerVariantOptions()
   },
   computed: {
-    ...mapGetters(['variantFilterPropertiesIndex']),
+    ...mapGetters(['variantFilterPropertiesIndex', 'scenarioVariantsById']),
     ...mapState(['variantFilterProperties', 'selectedProbabilities', 'selectedVariantIndexByBreachBandId', 'imminentFlood']),
     id () {
       return this.layer.breachBandId
     },
-    classData () {
-      return {
-        'layer-control': true,
-        'layer-control--active': this.active
-      }
+    layerOptions () {
+      const variants = _.get(this.layer, 'variants', [])
+      return variants.map((variant, index) => {
+        return { value: index, title: variant.title }
+      })
+    },
+    layerSetId () {
+      return parseInt(this.$route.params.id, 10)
     },
     metadata () {
       const variant = _.get(this.layer.variants, this.selectedLayerIndex)
@@ -165,12 +163,6 @@ export default {
         return this.variantFilterProperties[_.get(this.layer, 'breachId')].map(prop => {
           return vari.properties[prop]
         })
-      })
-    },
-    layerOptions () {
-      const variants = _.get(this.layer, 'variants', [])
-      return variants.map((variant, index) => {
-        return { value: index, title: variant.title }
       })
     }
   },
@@ -190,7 +182,6 @@ export default {
         }
       })
     },
-
     setLayerVariantOptions (variantName = null) {
       const name = _.get(this.variantFilterProperties, `[${this.breachId}][0]`, '')
       variantName = variantName || name
@@ -295,26 +286,26 @@ export default {
           const val = this.selectedLayerVariantOptions().find(opt => opt.name === title)
           variant = this.layer.variants
             .find(variant => variant.properties[title] === val.value)
-        } else { return }
+        } else {
+          const notification = {
+            message: 'Er is geen scenario met de door u geselecteerde filteropties. Probeer een andere combinatie.',
+            type: 'warning',
+            show: true
+          }
+          store.commit('clearNotifications')
+          return store.commit('addNotificationById', { id: this.layerSetId, notification })
+        }
       }
+
       const index = this.layer.variants
         .findIndex(object => object.layer === variant.layer)
 
       this.selectedLayerIndex = index
       this.selectLayerOption(index)
 
-      const selectedIndexes = this.selectedVariantIndexByBreachBandId
-      selectedIndexes[this.breachBandId][title] = value
+      this.selectedVariantIndexByBreachBandId[this.breachBandId][title] = value
 
-      if (this.breachId) {
-        let indexes = this.variantFilterPropertiesIndex(this.breachId)
-
-        if (typeof this.selectedLayerIndex === 'number') {
-          indexes = this.getOptionsByVariantId(this.selectedLayerIndex)
-        }
-
-        store.commit('setSelectedVariantIndexByBreachBandId', { selectedIndex: indexes, breachBandId: this.breachBandId })
-      }
+      this.setIndexes()
     },
     selectLayerOption (index) {
       this.$emit('select:variant', {
@@ -325,6 +316,19 @@ export default {
     },
     selectLayer () {
       this.$emit('select:layer', this.layer)
+    },
+    setIndexes () {
+      if (!this.breachId) { return }
+      let indexes = this.variantFilterPropertiesIndex(this.breachId)
+
+      if (typeof this.selectedLayerIndex === 'number') {
+        indexes = this.getOptionsByVariantId(this.selectedLayerIndex)
+      }
+
+      store.commit('setSelectedVariantIndexByBreachBandId', {
+        selectedIndex: indexes,
+        breachBandId: this.breachBandId
+      })
     },
     toggleLayer () {
       this.layer.properties.visible = !this.layer.properties.visible
