@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import Vue from 'vue'
 import Router from 'vue-router'
 import About from './views/About'
@@ -37,7 +36,7 @@ const router = new Router({
       },
       // pass id to component
       props: (route) => {
-        const id = _.toNumber(route.params.id)
+        const id = parseInt(route.params.id, 10)
         return {
           id
         }

@@ -274,9 +274,7 @@ export default {
     ]),
     ...mapState(['imminentFlood', 'selectedProbabilities']),
     layerSetId () {
-      // this id is passed on from the Maps page.
-      const layerSetId = _.toNumber(this.$route.params.id)
-      return layerSetId
+      return parseInt(this.$route.params.id, 10)
     },
     scenarioIds () {
       // unpack the id string to filter all the features
@@ -284,7 +282,7 @@ export default {
         return []
       }
       let ids = this.$route.params.ids.split(',')
-      ids = ids.map(id => _.toNumber(id))
+      ids = ids.map(id => parseInt(id, 10))
       return ids
     },
     band () {

@@ -98,7 +98,6 @@ describe('Layer functionalities', () => {
 
           cy.wait('@apiCheck', { timeout: 100000 })
             .then((xhr) => {
-              console.log(xhr)
               const body = xhr.request.body
               expect(body.name).to.equal(fileName)
             })
