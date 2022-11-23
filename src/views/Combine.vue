@@ -174,7 +174,7 @@ import ExportCombinedPopup from '@/components/ExportCombinedPopUp'
 import ImportCombinePopup from '@/components/ImportCombinePopUp'
 import FilterPopup from '@/components/FilterPopup'
 
-import { flattenLayerSet, normalizeLayerSet, cleanLayerSet, selectVariantsInLayerSet } from '@/lib/layer-parser'
+import { flattenLayerSet, normalizeLayerSet, cleanLayerSet } from '@/lib/layer-parser'
 import buildLayerSetNotifications from '@/lib/build-layerset-notifications'
 import { loadBreach, getScenarioInfo, computeCombinedScenario, getFeatureIdsByScenarioIds } from '@/lib/load-breach'
 import { extractUnit } from '@/lib/load-layersets'
@@ -668,12 +668,16 @@ export default {
       _.each(layerSet.layers, layer => {
         layer.breachId = layerSet.id
       })
-      layerSet = selectVariantsInLayerSet(layerSet, this.scenarioIds)
       // before showing new notifications, clear existing ones
       this.$store.commit('clearNotifications')
 
       const layers = flattenLayerSet(layerSet)
       const notifications = buildLayerSetNotifications(layers)
+
+      // store variations by scenario id.
+      layerSet.layers.forEach(({ id, variants }) => {
+        this.$store.commit('setVariantsByScenarioId', { id, variants })
+      })
 
       _.each(
         notifications,

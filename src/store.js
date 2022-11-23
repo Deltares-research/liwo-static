@@ -37,7 +37,9 @@ export default new Vuex.Store({
     // These are the variants used to filter the layer variant options
     variantFilterProperties: {},
 
-    selectedVariantIndexByBreachBandId: {}
+    selectedVariantIndexByBreachBandId: {},
+
+    scenarioVariantsById: {}
   },
   mutations: {
     setLayerSetById (state, { id, layerSet }) {
@@ -81,6 +83,9 @@ export default new Vuex.Store({
     },
     setSelectedVariantIndexByBreachBandId (state, { selectedIndex, breachBandId }) {
       state.selectedVariantIndexByBreachBandId[breachBandId] = selectedIndex
+    },
+    setVariantsByScenarioId (state, { id, variants }) {
+      state.scenarioVariantsById[id] = variants
     }
   },
   actions: {
@@ -139,6 +144,7 @@ export default new Vuex.Store({
       const notifications = notificationsById[layerSetId] || []
 
       return notifications
-    }
+    },
+    scenarioVariantsById: (state) => state.scenarioVariantsById
   }
 })
