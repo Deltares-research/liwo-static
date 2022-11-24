@@ -134,6 +134,7 @@ export default {
 
     if (this.breachId) {
       let indexes = this.variantFilterPropertiesIndex(this.breachId)
+
       if (typeof this.selectedLayerIndex === 'number') {
         indexes = this.getOptionsByVariantId(this.selectedLayerIndex)
       }
@@ -141,7 +142,7 @@ export default {
       store.commit('setSelectedVariantIndexByBreachBandId', { selectedIndex: indexes, breachBandId: this.breachBandId })
     }
 
-    this.setLayerVariantOptions()
+    this.layerVariantOptions = this.getLayerVariantOptions()
   },
   computed: {
     ...mapGetters(['variantFilterPropertiesIndex']),
@@ -175,11 +176,6 @@ export default {
       return variants.map((variant, index) => {
         return { value: index, title: variant.title }
       })
-    }
-  },
-  methods: {
-    isEmptyObject (obj) {
-      return _.isEmpty(obj)
     },
     selectedLayerVariantOptions () {
       const indexes = this.selectedVariantIndexByBreachBandId[this.breachBandId]
@@ -192,68 +188,57 @@ export default {
           value: _.get(layerVariantOptions, `[${value}].title`, null)
         }
       })
+    }
+  },
+  methods: {
+    isEmptyObject (obj) {
+      return _.isEmpty(obj)
     },
-
-    setLayerVariantOptions (variantName = null) {
-      const name = _.get(this.variantFilterProperties, `[${this.breachId}][0]`, '')
-      variantName = variantName || name
-      if (!variantName) {
-        return
+    getLayerVariantOptions () {
+      if (!this.variantFilterProperties[this.layer.breachId]) {
+        return {}
       }
-      const variantOptions = {}
-      const currentVariant = this.layer.variants[this.selectedLayerIndex]
-      this.variantFilterProperties[_.get(this.layer, 'breachId')].forEach(prop => {
-        this.layer.variants.forEach(variant => {
-          // If the property is empty, don't show
-          if (variant.properties[prop] === undefined || variant.properties[prop] === null) { return }
 
-          // If dreigende overstroming is off and the variant has dreigende overstroming, don't show
-          if (!this.imminentFlood && variant.properties['Dreigende overstroming'] === 1) {
-            return
+      // create an object of all available options for each property
+      const options = this.layer.variants.reduce((acc, variant) => {
+        const { properties } = variant
+
+        this.variantFilterProperties[this.layer.breachId].forEach(prop => {
+          const value = properties[prop]
+
+          // if there are no values for a prop yet, create an array to put them in
+          if (!acc[prop]) {
+            acc[prop] = []
           }
 
-          let checkVariantAvailable = true
-          // Always check if options are available for the selected Overschrijdingsfrequentie
-          if (prop !== name) {
-            checkVariantAvailable = variant.properties[name] === currentVariant.properties[name]
+          // only add value if it does not yet exist in the array
+          if (!acc[prop].find(({ title }) => title === value)) {
+            acc[prop].push({
+              title: value,
+              value: acc[prop].length
+            })
           }
 
-          // Always add all Overschrijdingsfrequenties
-          if (checkVariantAvailable) {
-            // First time adding the prop
-            if (!variantOptions[prop]) {
-              variantOptions[prop] = [{
-                title: variant.properties[prop],
-                value: 0
-              }]
-            }
-            // Check if prop not already in list.
-            if (variantOptions[prop] &&
-              !_.get(variantOptions, prop, []).find(opt => opt.title === variant.properties[prop])) {
-              variantOptions[prop].push({
-                title: variant.properties[prop],
-                value: variantOptions[prop].length
-              })
-            }
-          }
-
+          // add specific exception for Overschrijdingsfrequentie
           if (prop === 'Overschrijdingsfrequentie') {
-            variantOptions[prop] = variantOptions[prop].filter(option => {
+            acc[prop] = acc[prop].filter(option => {
               const probability = matchValueToProbability(option.title)
               return this.selectedProbabilities.includes(probability) ||
                 (this.imminentFlood && variant.properties['Dreigende overstroming'] === 1)
             })
           }
         })
-      })
-      this.layerVariantOptions = variantOptions
-      return variantOptions
+
+        return acc
+      }, {})
+
+      return options
     },
     getOptionsByVariantId (variantIndex) {
       const variant = this.layer.variants[variantIndex]
       const indexes = {}
       Object.entries(_.get(this.variantFilterProperties, this.breachId, {})).forEach(filter => {
-        const options = _.get(this.setLayerVariantOptions(), filter[1], []).find(options => {
+        const options = _.get(this.getLayerVariantOptions(), filter[1], []).find(options => {
           return options.title === variant.properties[filter[1]]
         })
         indexes[filter[1]] = _.get(options, 'value', null)
@@ -284,17 +269,16 @@ export default {
     setLayerVariant (title, value) {
       // TODO: Find the correct variant for the selection of options.
       let variant = this.layer.variants
-        .find(variant => this.selectedLayerVariantOptions()
+        .find(variant => this.selectedLayerVariantOptions
           .every(option => {
             return variant.properties[option.name] === option.value
           })
         )
 
       if (!variant) {
-        // If a selection was made for overschrijdingsfrequentie, but all the other props are null,
-        // only make a choice by overschrijdingsfrequentie
         if (title === 'Overschrijdingsfrequentie') {
-          const val = this.selectedLayerVariantOptions().find(opt => opt.name === title)
+          const val = this.selectedLayerVariantOptions.find(opt => opt.name === title)
+
           variant = this.layer.variants
             .find(variant => variant.properties[title] === val.value)
         } else {
@@ -304,7 +288,9 @@ export default {
             show: true
           }
           store.commit('clearNotifications')
-          return store.commit('addNotificationById', { id: this.layerSetId, notification })
+          store.commit('addNotificationById', { id: this.layerSetId, notification })
+
+          return
         }
       }
 
@@ -360,7 +346,7 @@ export default {
       }
     },
     imminentFlood () {
-      this.setLayerVariantOptions()
+      this.layerVariantOptions = this.getLayerVariantOptions()
     }
   },
   components: {
