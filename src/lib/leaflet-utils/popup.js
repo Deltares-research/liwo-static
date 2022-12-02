@@ -43,7 +43,7 @@ export async function showCombinedLayerInfoPopup ({ coordinates, layer, map }) {
       imageId,
       bbox: {
         type: 'Point',
-        coordinates: [lat, lng]
+        coordinates: [lng, lat]
       },
       band
     })
