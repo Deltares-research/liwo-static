@@ -53,7 +53,7 @@ export async function showCombinedLayerInfoPopup ({ coordinates, layer, map }) {
     .then(response => response.json())
     .then((json) => {
       const value = Object.values(json)
-      const content = value[0] ? value[0].toString() : 'Geen data beschikbaar'
+      const content = value[0] ? value[0].toFixed(2).toString() : 'Geen data beschikbaar'
 
       L.popup()
         .setLatLng(coordinates)
