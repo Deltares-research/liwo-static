@@ -8,7 +8,12 @@
     </p>
   </header>
 
-  <p>Voor niet-professionele gebruikers is er <a href="https://www.overstroomik.nl">www.overstroomik.nl</a> & <a href="https://www.klimaateffectatlas.nl/">www.klimaateffectatlas.nl</a>.</p>
+  <p>
+    Voor professionals die niet in de watersector werkzaam zijn en studenten is er
+    <a href="https://www.klimaateffectatlas.nl/" rel="noopener noreferrer" target="_blank">www.klimaateffectatlas.nl</a>,
+    waar overstromingsinformatie uit LIWO in 'kaartverhalen' wordt toegelicht.
+    Voor overige gebruikers is er <a href="https://overstroomik.nl/" rel="noopener noreferrer" target="_blank">www.overstroomik.nl</a>.
+  </p>
 
   <div class="maps__sections">
     <layer-set-list
