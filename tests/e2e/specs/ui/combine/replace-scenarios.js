@@ -34,7 +34,7 @@ describe('Combine: Export and import combined scenarios', () => {
 
   it('Replaces selection with import', () => {
     cy.url()
-      .should('contain', '/combine/7/19428,19422', { timeout: 30000 })
+      .should('contain', '/combine/7/18752,9752', { timeout: 30000 })
 
     cy.wait(5000)
 
@@ -59,7 +59,7 @@ describe('Combine: Export and import combined scenarios', () => {
     cy.wait(5000)
 
     cy.url()
-      .should('contain', '/combine/7/19428,19422', { timeout: 30000 })
+      .should('contain', '/combine/7/18752,9752', { timeout: 30000 })
 
     cy.wait(5000)
 
@@ -69,7 +69,7 @@ describe('Combine: Export and import combined scenarios', () => {
 
   it('Combines import with selection', () => {
     cy.url()
-      .should('contain', '/combine/7/19428', { timeout: 30000 })
+      .should('contain', '/combine/7/18752', { timeout: 30000 })
 
     cy.wait(5000)
 
@@ -91,6 +91,6 @@ describe('Combine: Export and import combined scenarios', () => {
       })
 
     cy.url()
-      .should('contain', '/combine/7/19428,19422,19431,19435', { timeout: 30000 })
+      .should('contain', '/combine/7/18752,9752,19431,19435', { timeout: 30000 })
   })
 })
