@@ -18,12 +18,13 @@ export function flattenLayerSet (layerSet) {
     // get all layer properties
     const layerProperties = _.omit(layer, ['variants'])
     // get all variants
-    let variantIndex = _.get(layer.properties, 'selectedVariant', null)
+    let variantIndex = (layer.properties && layer.properties.selectedVariant) || null
 
-    // pick the first varian if there is only 1 variant
+    // pick the first variant if there is only 1 variant.
     if (layer.variants.length === 1) {
       variantIndex = 0
     }
+    // if there is no variant index, warn and set to 0.
     if (_.isNil(variantIndex)) {
       console.warn('no variant index set for', layer.id)
       variantIndex = 0
