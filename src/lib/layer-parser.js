@@ -29,14 +29,14 @@ export function flattenLayerSet (layerSet) {
       variantIndex = 0
     }
     // select the variant
-    const variant = layer.variants[variantIndex]
-    // make a copy of the variant as a basis for the flattened layer
-    const newLayer = _.clone(variant)
-    // copy layer properties in variant
-    newLayer.layerObj = layerProperties
-    newLayer.layerSet = layerSetProperties
-    // return the newLayer as a flat layer
-    return newLayer
+    // If no existing variant matches, we just create an empty object.
+    const variant = layer.variants[variantIndex] || {}
+
+    return {
+      ...variant,
+      layerObj: layerProperties,
+      layerSet: layerSetProperties
+    }
   })
   // now we have layers[variants[]]
   // so we just need to flatten
