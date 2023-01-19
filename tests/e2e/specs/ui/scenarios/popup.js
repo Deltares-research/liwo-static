@@ -39,12 +39,13 @@ describe('Scenarios: shows correct popup value', () => {
         const text = $tooltipEl.text()
 
         const variant = text.split(' - ')[1]
-        const number = variant.split('.')[0]
+        const label = variant.split('.')[0]
 
         cy.get(selector('variant-select')).then($selectEl => {
           const selected = $selectEl[0].selectedOptions[0]
+          const selectedLabel = 'Kans 1 op ' + selected.label
 
-          expect(selected.label).to.equal(number)
+          expect(selectedLabel).to.equal(label)
         })
       })
   })
@@ -73,12 +74,13 @@ describe('Scenarios: shows correct popup value', () => {
         const text = $tooltipEl.text()
 
         const variant = text.split(' - ')[1]
-        const number = variant.split('.')[0]
+        const label = variant.split('.')[0]
 
         cy.get(selector('variant-select')).then($selectEl => {
           const selected = $selectEl[0].selectedOptions[0]
+          const selectedLabel = 'Kans 1 op ' + selected.label
 
-          expect(selected.label).to.equal(number)
+          expect(selectedLabel).to.equal(label)
         })
       })
   })
