@@ -282,30 +282,16 @@ export default {
       })
     },
     setLayerVariant (title, value) {
-      // TODO: Find the correct variant for the selection of options.
+      const selectedLayerVariantOptions = this.selectedLayerVariantOptions()
       let variant = this.layer.variants
-        .find(variant => this.selectedLayerVariantOptions()
-          .every(option => {
-            return variant.properties[option.name] === option.value
-          })
+        .find(variant => selectedLayerVariantOptions
+          .every(option => variant.properties[option.name] === option.value)
         )
 
       if (!variant) {
-        // If a selection was made for overschrijdingsfrequentie, but all the other props are null,
-        // only make a choice by overschrijdingsfrequentie
-        if (title === 'Overschrijdingsfrequentie') {
-          const val = this.selectedLayerVariantOptions().find(opt => opt.name === title)
-          variant = this.layer.variants
-            .find(variant => variant.properties[title] === val.value)
-        } else {
-          const notification = {
-            message: 'Er is geen scenario met de door u geselecteerde filteropties. Probeer een andere combinatie.',
-            type: 'warning',
-            show: true
-          }
-          store.commit('clearNotifications')
-          return store.commit('addNotificationById', { id: this.layerSetId, notification })
-        }
+        const val = selectedLayerVariantOptions.find(opt => opt.name === title)
+        variant = this.layer.variants
+          .find(variant => variant.properties[title] === val.value)
       }
 
       const index = this.layer.variants
@@ -353,6 +339,7 @@ export default {
       }
     },
     selectedProbabilities (newVal, oldVal) {
+      console.log(newVal, oldVal)
       if (!newVal) { return }
       if (newVal !== oldVal) {
         const variantIndex = _.get(this.selectedVariantIndexByBreachBandId, `[${this.breachBandId}].Overschrijdingsfrequentie`, 0)
