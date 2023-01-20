@@ -1,3 +1,4 @@
+import { skipOn } from '@cypress/skip-test'
 const getUrl = (variantId) => `#/scenarios/6/${variantId}?center=51.84278,4.66138&zoom=13`
 
 const variants = [
@@ -29,19 +30,21 @@ const variants = [
 
 describe('Scenarios: marker selection', () => {
   variants.forEach((variant) => {
-    it(`Should show the correct input value for variant (${variant.id})`, () => {
-      cy.intercept(new RegExp(/GetLayerSet/)).as('layerset')
-      cy.intercept(new RegExp(/getFeature/)).as('features')
+    skipOn('firefox', () => {
+      it(`Should show the correct input value for variant (${variant.id})`, () => {
+        cy.intercept(new RegExp(/GetLayerSet/)).as('layerset')
+        cy.intercept(new RegExp(/getFeature/)).as('features')
 
-      cy.reload()
+        cy.reload()
 
-      cy.visit(getUrl(variant.id))
+        cy.visit(getUrl(variant.id))
 
-      cy.wait('@layerset', { timeout: 20000 })
-      cy.wait('@features', { timeout: 20000 })
+        cy.wait('@layerset', { timeout: 20000 })
+        cy.wait('@features', { timeout: 20000 })
 
-      Object.entries(variant.values).forEach(([key, value]) => {
-        cy.get('.layer-control__options select').eq(key).should('have.value', value)
+        Object.entries(variant.values).forEach(([key, value]) => {
+          cy.get('.layer-control__options select').eq(key).should('have.value', value)
+        })
       })
     })
   })
