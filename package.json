@@ -89,7 +89,7 @@
     "postcss-import": "^11.1.0",
     "sass": "^1.55.0",
     "sass-loader": "^10.3.1",
-    "semantic-release": "^19.0.3",
+    "semantic-release": "^20.0.4",
     "unfetch": "^4.2.0",
     "vue-template-compiler": "^2.6.14"
   },
