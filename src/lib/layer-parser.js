@@ -18,26 +18,26 @@ export function flattenLayerSet (layerSet) {
     // get all layer properties
     const layerProperties = _.omit(layer, ['variants'])
     // get all variants
-    let variantIndex = (layer.properties && layer.properties.selectedVariant) || null
+    let variantIndex = _.get(layer.properties, 'selectedVariant', null)
 
-    // pick the first variant if there is only 1 variant.
+    // pick the first varian if there is only 1 variant
     if (layer.variants.length === 1) {
       variantIndex = 0
     }
-    // if there is no variant index, warn and set to 0.
+
     if (_.isNil(variantIndex)) {
       console.warn('no variant index set for', layer.id)
       variantIndex = 0
     }
     // select the variant
-    // If no existing variant matches, we just create an empty object.
     const variant = layer.variants[variantIndex] || {}
-
-    return {
-      ...variant,
-      layerObj: layerProperties,
-      layerSet: layerSetProperties
-    }
+    // make a copy of the variant as a basis for the flattened layer
+    const newLayer = _.clone(variant)
+    // copy layer properties in variant
+    newLayer.layerObj = layerProperties
+    newLayer.layerSet = layerSetProperties
+    // return the newLayer as a flat layer
+    return newLayer
   })
   // now we have layers[variants[]]
   // so we just need to flatten
