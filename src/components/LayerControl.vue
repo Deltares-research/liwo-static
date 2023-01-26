@@ -302,9 +302,6 @@ export default {
       this.selectedLayerIndex = index
       this.selectLayerOption(index)
 
-      const selectedIndexes = this.selectedVariantIndexByBreachBandId
-      selectedIndexes[this.breachBandId][title] = value
-
       if (this.breachId) {
         let indexes = this.variantFilterPropertiesIndex(this.breachId)
 
