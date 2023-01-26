@@ -37,13 +37,11 @@ describe('Scenarios: shows correct popup value', () => {
     cy.get('.leaflet-tooltip')
       .then($tooltipEl => {
         const text = $tooltipEl.text()
-
         const variant = text.split(' - ')[1]
-        const number = variant.split('.')[0]
+        const number = variant.split(' ').pop()
 
         cy.get(selector('variant-select')).then($selectEl => {
           const selected = $selectEl[0].selectedOptions[0]
-
           expect(selected.label).to.equal(number)
         })
       })
@@ -71,13 +69,11 @@ describe('Scenarios: shows correct popup value', () => {
     cy.get('.leaflet-tooltip')
       .then($tooltipEl => {
         const text = $tooltipEl.text()
-
         const variant = text.split(' - ')[1]
-        const number = variant.split('.')[0]
+        const number = variant.split(' ').pop()
 
         cy.get(selector('variant-select')).then($selectEl => {
           const selected = $selectEl[0].selectedOptions[0]
-
           expect(selected.label).to.equal(number)
         })
       })
