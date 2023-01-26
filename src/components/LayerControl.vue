@@ -284,14 +284,15 @@ export default {
     },
     setLayerVariant (title, value) {
       const selectedLayerVariantOptions = this.selectedLayerVariantOptions()
+      const filteredVariantOptions = selectedLayerVariantOptions.filter(option => option.value !== null)
       // TODO: Find the correct variant for the selection of options.
       let variant = this.layer.variants
-        .find(variant => selectedLayerVariantOptions
+        .find(variant => filteredVariantOptions
           .every(option => variant.properties[option.name] === option.value)
         )
 
       if (!variant) {
-        const val = selectedLayerVariantOptions.find(opt => opt.name === title)
+        const val = filteredVariantOptions.find(opt => opt.name === title)
         variant = this.layer.variants
           .find(variant => variant.properties[title] === val.value)
       }
