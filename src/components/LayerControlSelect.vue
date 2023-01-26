@@ -47,11 +47,6 @@ export default {
         this.$emit('change', value)
       }
     }
-  },
-  methods: {
-    onInput (e) {
-      this.$emit('input', e)
-    }
   }
 }
 </script>
