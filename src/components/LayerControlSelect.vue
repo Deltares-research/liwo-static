@@ -8,6 +8,7 @@
       v-for="option in options"
       :value="option.value"
       :key="option.value"
+      :disabled="option.disabled"
     >
       {{ option.title }}
     </option>

@@ -39,7 +39,7 @@
         <layer-control-select
           :key="index"
           name="layer-variant"
-          :options="variant"
+          :options="getLayerVariantOptionsWithFallback(variant, breachBandId, title)"
           v-model="selectedVariantIndexByBreachBandId[breachBandId][title]"
           @change="setLayerVariant(title, $event)"
           v-test="'variant-select'"
@@ -248,6 +248,22 @@ export default {
         })
       })
       this.layerVariantOptions = variantOptions
+      return variantOptions
+    },
+    getLayerVariantOptionsWithFallback (variantOptions, breachBandId, title) {
+      const selectedVariant = this.selectedVariantIndexByBreachBandId[breachBandId][title]
+
+      if (selectedVariant > variantOptions.length - 1) {
+        return [
+          ...variantOptions,
+          {
+            title: 'Geen data beschikbaar',
+            value: selectedVariant,
+            disabled: true
+          }
+        ]
+      }
+
       return variantOptions
     },
     getOptionsByVariantId (variantIndex) {
