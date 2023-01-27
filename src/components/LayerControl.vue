@@ -298,7 +298,7 @@ export default {
         }
       })
     },
-    setLayerVariant (title, value) {
+    setLayerVariant (title) {
       const selectedLayerVariantOptions = this.selectedLayerVariantOptions()
       const filteredVariantOptions = selectedLayerVariantOptions.filter(option => option.value !== null)
       // TODO: Find the correct variant for the selection of options.

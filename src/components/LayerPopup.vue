@@ -40,7 +40,7 @@ export default {
       const asArray = Object.entries(this.metadata)
 
       // filter values
-      const nonId = asArray.filter(([key, value]) => (key !== 'id'))
+      const nonId = asArray.filter((key) => (key !== 'id'))
 
       // Convert the key/value array back to an object:
       const result = Object.fromEntries(nonId)

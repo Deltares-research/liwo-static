@@ -5,7 +5,7 @@ import { loadGeojson } from './load-geojson'
 
 const headers = { Accept: 'application/json', 'Content-Type': 'application/json' }
 
-export async function loadLayerSetById (id, options) {
+export async function loadLayerSetById (id) {
   const body = JSON.stringify({ id })
 
   const services = await mapConfig.getServices()
