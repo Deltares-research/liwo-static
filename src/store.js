@@ -84,6 +84,13 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    setSelectedVariantIndexes ({ commit, state }, { selectedIndex }) {
+      const { selectedVariantIndexByBreachBandId } = state
+
+      for (const breachBandId in selectedVariantIndexByBreachBandId) {
+        commit('setSelectedVariantIndexByBreachBandId', { selectedIndex, breachBandId })
+      }
+    },
     async loadLayerSetById (state, { id }) {
       // Skip if we already loaded this layerSet
       if (_.has(state.layerSetsById, id)) {

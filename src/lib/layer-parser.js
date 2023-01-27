@@ -24,12 +24,13 @@ export function flattenLayerSet (layerSet) {
     if (layer.variants.length === 1) {
       variantIndex = 0
     }
+
     if (_.isNil(variantIndex)) {
       console.warn('no variant index set for', layer.id)
       variantIndex = 0
     }
     // select the variant
-    const variant = layer.variants[variantIndex]
+    const variant = layer.variants[variantIndex] || {}
     // make a copy of the variant as a basis for the flattened layer
     const newLayer = _.clone(variant)
     // copy layer properties in variant

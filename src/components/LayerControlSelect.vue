@@ -8,6 +8,7 @@
       v-for="option in options"
       :value="option.value"
       :key="option.value"
+      :disabled="option.disabled"
     >
       {{ option.title }}
     </option>
@@ -46,11 +47,6 @@ export default {
       set (value) {
         this.$emit('change', value)
       }
-    }
-  },
-  methods: {
-    onInput (e) {
-      this.$emit('input', e)
     }
   }
 }

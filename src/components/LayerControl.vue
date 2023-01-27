@@ -39,7 +39,7 @@
         <layer-control-select
           :key="index"
           name="layer-variant"
-          :options="variant"
+          :options="getLayerVariantOptionsWithFallback(variant, breachBandId, title)"
           v-model="selectedVariantIndexByBreachBandId[breachBandId][title]"
           @change="setLayerVariant(title, $event)"
           v-test="'variant-select'"
@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 import _ from 'lodash'
 
 import store from '@/store'
@@ -178,6 +178,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['setSelectedVariantIndexes']),
     isEmptyObject (obj) {
       return _.isEmpty(obj)
     },
@@ -249,6 +250,22 @@ export default {
       this.layerVariantOptions = variantOptions
       return variantOptions
     },
+    getLayerVariantOptionsWithFallback (variantOptions, breachBandId, title) {
+      const selectedVariant = this.selectedVariantIndexByBreachBandId[breachBandId][title]
+
+      if (selectedVariant > variantOptions.length - 1) {
+        return [
+          ...variantOptions,
+          {
+            title: 'Geen data beschikbaar',
+            value: selectedVariant,
+            disabled: true
+          }
+        ]
+      }
+
+      return variantOptions
+    },
     getOptionsByVariantId (variantIndex) {
       const variant = this.layer.variants[variantIndex]
       const indexes = {}
@@ -282,30 +299,18 @@ export default {
       })
     },
     setLayerVariant (title, value) {
+      const selectedLayerVariantOptions = this.selectedLayerVariantOptions()
+      const filteredVariantOptions = selectedLayerVariantOptions.filter(option => option.value !== null)
       // TODO: Find the correct variant for the selection of options.
       let variant = this.layer.variants
-        .find(variant => this.selectedLayerVariantOptions()
-          .every(option => {
-            return variant.properties[option.name] === option.value
-          })
+        .find(variant => filteredVariantOptions
+          .every(option => variant.properties[option.name] === option.value)
         )
 
       if (!variant) {
-        // If a selection was made for overschrijdingsfrequentie, but all the other props are null,
-        // only make a choice by overschrijdingsfrequentie
-        if (title === 'Overschrijdingsfrequentie') {
-          const val = this.selectedLayerVariantOptions().find(opt => opt.name === title)
-          variant = this.layer.variants
-            .find(variant => variant.properties[title] === val.value)
-        } else {
-          const notification = {
-            message: 'Er is geen scenario met de door u geselecteerde filteropties. Probeer een andere combinatie.',
-            type: 'warning',
-            show: true
-          }
-          store.commit('clearNotifications')
-          return store.commit('addNotificationById', { id: this.layerSetId, notification })
-        }
+        const val = filteredVariantOptions.find(opt => opt.name === title)
+        variant = this.layer.variants
+          .find(variant => variant.properties[title] === val.value)
       }
 
       const index = this.layer.variants
@@ -313,9 +318,6 @@ export default {
 
       this.selectedLayerIndex = index
       this.selectLayerOption(index)
-
-      const selectedIndexes = this.selectedVariantIndexByBreachBandId
-      selectedIndexes[this.breachBandId][title] = value
 
       if (this.breachId) {
         let indexes = this.variantFilterPropertiesIndex(this.breachId)
@@ -325,6 +327,7 @@ export default {
         }
 
         store.commit('setSelectedVariantIndexByBreachBandId', { selectedIndex: indexes, breachBandId: this.breachBandId })
+        this.setSelectedVariantIndexes({ selectedIndex: indexes })
       }
     },
     selectLayerOption (index) {
