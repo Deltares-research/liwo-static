@@ -5,7 +5,7 @@ import { generateSelector as selector } from '../../lib/generate-selector'
 const url = '/#/viewer/1?center=52,5&zoom=4'
 
 function getParams (url) {
-  return queryString.parse('?' + url.split('?')[1])
+  return queryString.stringify.parse('?' + url.split('?')[1])
 }
 
 describe('Map', () => {

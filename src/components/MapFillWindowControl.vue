@@ -65,7 +65,7 @@ export default {
       this.windowHeight = window.innerHeight
     })
   },
-  beforeDestroy () {
+  beforeUnmount () {
     window.removeEventListener(this.listener)
   },
   methods: {

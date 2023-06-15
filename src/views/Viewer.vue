@@ -46,13 +46,15 @@
         v-if="showExport"
         :map-object="mapObject"
         :map-layers="selectedLayers"
-        @close="showExport = false"
+        @onClose="showExport = false"
         />
     </div>
   </div>
 </template>
 
 <script>
+
+import store from '@/store'
 
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
@@ -68,6 +70,8 @@ import { extractUnit } from '@/lib/load-layersets'
 
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
 import { showLayerInfoPopup } from '@/lib/leaflet-utils/popup'
+
+// import { reactive } from 'vue'
 
 export default {
   name: 'Viewer',
@@ -95,8 +99,10 @@ export default {
     }
   },
   async mounted () {
-    this.$store.commit('setLayerSetId', this.id)
-    this.$store.dispatch('loadLayerSetById', { id: this.id })
+    store.commit('setLayerSetId', this.id)
+    store.dispatch('loadLayerSetById', { id: this.id })
+    // this.$store.commit('setLayerSetId', this.id)
+    // this.$store.dispatch('loadLayerSetById', { id: this.id })
   },
   computed: {
     ...mapGetters([
@@ -158,14 +164,20 @@ export default {
     },
     updateLayers (layerSet, layers) {
       // store the new layers
-      this.$store.commit('setLayersByLayerSetId', { id: layerSet.id, layers })
+      // this.$store.commit('setLayersByLayerSetId', { id: layerSet.id, layers })
+      store.commit('setLayersByLayerSetId', { id: layerSet.id, layers })
     },
     selectLayer (layer) {
       this.selectedLayerId = layer.id
     },
     selectVariant ({ layer, index }) {
       // store the index of the active variant in the layer
-      this.$set(layer.properties, 'selectedVariant', index)
+      // this.$set(layer.properties, 'selectedVariant', index)
+      // const reactiveObject = reactive(layer.properties)
+      // reactiveObject.selectedVariant = index
+
+      layer.properties.selectedVariant = index
+
       // update the  layer in the layerSet
       this.updateLayers(this.layerSet, this.layerSet.layers)
     }

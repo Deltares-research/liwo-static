@@ -3,12 +3,12 @@
     <div
       ref="liwoMap"
       class="liwo-map"
-      @marker:mouseover="$emit('marker:mouseover', $event)"
+      @marker:mouseover="handleMarkerMouseOver"
       v-leaflet="{
         callbacks: { onClick, initMapObject },
         config: mapConfig,
         layers: layers,
-        cluster: clusterMarkers,
+        cluster: clusterMarkers
       }"
       v-test="'map'"
     >
@@ -57,20 +57,16 @@ export default {
       projection: this.projection
     })
   },
-  mounted () {
-    this.mapRef = this.$refs.liwoMap
-    this.$on('browser-print-start', (evt) => {
-      const control = legendControl({ position: 'bottomright', el: this.$refs.legend })
-      control.addTo(evt.printMap)
-    })
-  },
-  beforeDestroy () {
+  beforeUnmount () {
     this.removePositionListeners()
   },
   methods: {
     onClick (event) {
       // TODO: click on what
-      this.$emit('click', event)
+      this.$emit('onClick', event)
+    },
+    handleMarkerMouseOver (data) {
+      this.$emit('marker:mouseover', data)
     },
     initMapObject (mapObject) {
       this.map = mapObject
@@ -78,7 +74,11 @@ export default {
       // pass along click to map objects
       mapObject.on('click', event => {
         // pass the  map click event on up
-        this.$emit('map:click', event)
+        this.$emit('map:onClick', event)
+      })
+      mapObject.on('browser-print-start', event => {
+        const control = legendControl({ position: 'bottomright', el: this.$refs.legend })
+        control.addTo(event.printMap)
       })
 
       window.liwoMap = mapObject

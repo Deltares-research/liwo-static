@@ -1,7 +1,7 @@
 <template>
   <pop-up
     title="Selectie importeren"
-    @close="$emit('close')"
+    @onClose="$emit('onClose')"
   >
     <form class="combine-popup__form" @submit.prevent="onSubmit">
       <fieldset>
@@ -46,7 +46,7 @@
             <button
               type="button"
               class="btn secondary"
-              @click="$emit('close')"
+              @click="$emit('onClose')"
             >
               Annuleer
             </button>
@@ -101,7 +101,7 @@ export default {
           window.location.reload()
         }
 
-        this.$emit('close')
+        this.$emit('onClose')
         // go to the new page
         this.$router.push({
           params: { ids: newIds.join(',') },

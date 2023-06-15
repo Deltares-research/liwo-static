@@ -18,16 +18,17 @@ let vnode
 // emit custom events to the component implementing the directive
 // when vnode.context.$emit does not workd
 function emit (vnode, name, data) {
-  var handlers = (vnode.data && vnode.data.on) ||
-    (vnode.componentOptions && vnode.componentOptions.listeners)
-
+  const handlers = vnode.props
   if (handlers && handlers[name]) {
-    handlers[name].fns(data)
+    const func = handlers[name]
+    func(data)
   }
 }
 
-export default function createLayer (layer, { onClick }, _, vnodeRef) {
-  vnode = vnodeRef
+// export default function createLayer (layer, { onClick }, _, vnodeRef) {
+export default function createLayer (layer, { onClick }, _, instanceRef) {
+  // vnode = vnodeRef
+  vnode = instanceRef
   if (layer.type === 'json' && layer.geojson) {
     return createGeoJson(layer)
   } else if (layer.type === 'cluster') {
@@ -97,7 +98,7 @@ function onEachFeature (feature, marker, onClick) {
     marker.bindTooltip(name)
 
     // emit properties so e.g. state can be used to set tooltip text
-    emit(vnode, 'marker:mouseover', { feature, marker })
+    emit(vnode, 'onMarker:mouseover', { feature, marker })
 
     event.target.openTooltip()
   })

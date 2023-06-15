@@ -9,6 +9,7 @@ export default function createMapConfig ({ projection }) {
     continuousWorld: true,
     crs: createCrs(projection),
     zoomControl: false,
+    zoomAnimation: false,
     zoom: mapConfig.zoom[projection],
     maxZoom: mapConfig.maxZoom[projection],
     minZoom: mapConfig.minZoom[projection],

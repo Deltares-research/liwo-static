@@ -10,7 +10,7 @@
     </button>
     <!-- the modal needs to be rendered outside of the map, the portal takes care of that -->
     <portal to="portal-target">
-      <pop-up v-if="showPopUp" @close="showPopUp = false">
+      <pop-up v-if="showPopUp" @onClose="showPopUp = false">
         <form action="" submit.prevent class="map-image-control__form">
           <div class="control-group">
             <label for="name" class="control-label"> Bestandsnaam </label>

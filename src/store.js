@@ -1,5 +1,4 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 
 import _ from 'lodash'
 
@@ -7,9 +6,7 @@ import { loadLayerSetById } from './lib/load-layersets'
 import { flattenLayerSet, normalizeLayerSet, cleanLayerSet } from './lib/layer-parser'
 import buildLayerSetNotifications from './lib/build-layerset-notifications'
 
-Vue.use(Vuex)
-
-export default new Vuex.Store({
+const store = createStore({
   state: {
     // we have three or four levels that can be current/active/selected
     // layerSet -> layers -> variants (-> features|bands)
@@ -42,18 +39,30 @@ export default new Vuex.Store({
   mutations: {
     setLayerSetById (state, { id, layerSet }) {
       // always update the selected variants and selected id's at the smae time
-      Vue.set(state.layerSetsById, id, layerSet)
+
+      state.layerSetsById[id] = layerSet
+      // Object.assign(state.layerSetsById, { [id]: layerSet })
+
+      // Vue.set(state.layerSetsById, id, layerSet)
     },
     setLayerSetId (state, id) {
       state.layerSetId = id
     },
     setLayersByLayerSetId (state, { id, layers }) {
       // update the layers in layerSet id
-      Vue.set(state.layerSetsById[id], 'layers', layers)
+
+      state.layerSetsById[id].layers = layers
+      // Object.assign(state.layerSetsById[id], { layers: layers })
+
+      // Vue.set(state.layerSetsById[id], 'layers', layers)
     },
     setNotificationsById (state, { id, notifications }) {
       // set the notifications
-      Vue.set(state.notificationsById, id, notifications)
+
+      state.notificationsById[id] = notifications
+      // Object.assign(state.notificationsById[id], notifications)
+
+      // Vue.set(state.notificationsById, id, notifications)
     },
     addNotificationById (state, { id, notification }) {
       // store a notification
@@ -87,6 +96,7 @@ export default new Vuex.Store({
     setSelectedVariantIndexes ({ commit, state }, { selectedIndex }) {
       const { selectedVariantIndexByBreachBandId } = state
 
+      // commit('setSelectedVariantIndexByBreachBandId', { selectedIndex, breachBandId })
       for (const breachBandId in selectedVariantIndexByBreachBandId) {
         commit('setSelectedVariantIndexByBreachBandId', { selectedIndex, breachBandId })
       }
@@ -149,3 +159,5 @@ export default new Vuex.Store({
     }
   }
 })
+
+export default store

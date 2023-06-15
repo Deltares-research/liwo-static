@@ -85,7 +85,7 @@ const tileLayers = [
   }
 ]
 
-var services = null
+let services = null
 
 async function getServices () {
   // return the content of webconfig.json
@@ -94,7 +94,7 @@ async function getServices () {
     return services
   }
 
-  const url = 'config/webconfig.json'
+  const url = '/config/webconfig.json'
   // TODO: how shall we configure this? Discuss with Peter
   // const url = 'config/webconfig-rws.json'
 

@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { createApp } from 'vue'
 import L from '@/lib/leaflet-utils/leaf'
 
 import '@/lib/leaflet-hack'
@@ -10,9 +10,10 @@ import northIcon from '../../img/north-arrow.svg'
 
 const INITIAL_BASELAYER = mapConfig.tileLayers[0].title
 
-export default function (el, vnode, config) {
+export default function (el, instance, config) {
   const tileLayerOptions = baseLayerOptions(config)
   const baseLayers = createBaseLayers(tileLayerOptions)
+
   const map = L.map(el, {
     ...config,
     crs: createCrs(config.projection),
@@ -35,8 +36,7 @@ export default function (el, vnode, config) {
   map.addControl(layerControl(baseLayers))
 
   map.on('browser-print-start', function (e) {
-    // when printing starts emit an event to the containing element so that we can add a legend
-    vnode.context.$emit('browser-print-start', e)
+    instance.$emit('browser-print-start', e)
   })
 
   // Hack to make the map display
@@ -167,16 +167,10 @@ function fillWindowControl () {
   control.onAdd = function (map) {
     const div = L.DomUtil.create('div', '')
 
-    // mount vue component as control
-    const button = new Vue({
-      render: h => h(MapFillWindowControl, {
-        props: {
-          map
-        }
-      })
-    }).$mount(div)
+    const app = createApp(MapFillWindowControl, { map })
+    app.mount(div)
 
-    return button.$el
+    return div
   }
 
   return control
@@ -186,7 +180,7 @@ function roseControl () {
   const control = L.control({ position: 'topright' })
 
   control.onAdd = function () {
-    var div = L.DomUtil.create('div', '')
+    const div = L.DomUtil.create('div', '')
 
     div.classList.add('leaflet-control-map-rose')
 

@@ -1,26 +1,26 @@
 <template>
-    <transition name="popup-fade">
-      <div class="pop-up" @keydown.esc="$emit('close')">
-        <div class="pop-up__backdrop" @click="$emit('close')"></div>
-        <div class="pop-up__modal" ref="popUp">
-          <header class="pop-up__header">
-            <h1 class="pop-up__title">
-              <slot name="icon"><!-- Icon to inject before title --></slot>
-              {{title}}
-            </h1>
-            <button
-              @click="$emit('close')"
-              class="pop-up__close icon-close-big panel-close"
-              v-test="'close-button'"
-            >
-              <span class="sr-only">Sluiten</span>
-            </button>
-          </header>
-          <section class="pop-up__content">
-            <slot><!-- Placeholder content --></slot>
-          </section>
-        </div>
+  <transition name="popup-fade">
+    <div class="pop-up" @keydown.esc="$emit('onClose')">
+      <div class="pop-up__backdrop" @click="$emit('onClose')"></div>
+      <div class="pop-up__modal" ref="popUp">
+        <header class="pop-up__header">
+          <h1 class="pop-up__title">
+            <slot name="icon"><!-- Icon to inject before title --></slot>
+            {{title}}
+          </h1>
+          <button
+            @click="$emit('onClose')"
+            class="pop-up__close icon-close-big panel-close"
+            v-test="'close-button'"
+          >
+            <span class="sr-only">Sluiten</span>
+          </button>
+        </header>
+        <section class="pop-up__content">
+          <slot><!-- Placeholder content --></slot>
+        </section>
       </div>
+    </div>
   </transition>
 </template>
 
@@ -44,7 +44,7 @@ export default {
     this.trap = focusTrap.createFocusTrap(this.$refs.popUp)
     this.trap.activate()
   },
-  beforeDestroy () {
+  beforeUnmount () {
     if (this.focusElBeforeOpen) {
       this.focusElBeforeOpen.focus()
     }
