@@ -1,4 +1,8 @@
 import mapConfig from '../map.config.js'
+import store from '@/store'
+
+const MAX_RETRIES = 5
+const RETRY_DELAY = 1000 // Delay in milliseconds between retries
 
 const requestOptions = ({ namespace, layer }) => ({
   isActive: true,
@@ -12,6 +16,46 @@ const requestOptions = ({ namespace, layer }) => ({
   srsName: 'EPSG:4326',
   maxFeatures: 3000
 })
+
+const getFeatures = (url, jsonLayer, retries = 0) => {
+  return new Promise((resolve, reject) => {
+    fetch(url, { mode: 'cors' })
+      .then(resp => {
+        if (
+          resp.headers.get('content-type') &&
+          !resp.headers.get('content-type').includes('application/json')
+        ) {
+          caches.delete(url)
+          throw new Error('Response is not JSON')
+        }
+        return resp.json()
+      })
+      .then(geojson => {
+        geojson.features = geojson.features.map(feature => {
+          feature.properties.isControllable = !!jsonLayer.iscontrollayer
+          feature.properties.icon = 'default'
+          return feature
+        })
+
+        resolve(geojson)
+      })
+      .catch(error => {
+        if (retries < MAX_RETRIES) {
+          console.warn(`Retry ${retries + 1} - Error: ${error}`)
+          setTimeout(
+            () =>
+              getFeatures(url, jsonLayer, retries + 1)
+                .then(resolve)
+                .catch(reject),
+            RETRY_DELAY
+          )
+        } else {
+          console.error(`Max retries exceeded - Error: ${error}`)
+          reject(error)
+        }
+      })
+  })
+}
 
 export async function loadGeojson (jsonLayer, { filteredIds = [] } = {}) {
   // fetch the geojson and add it  to the layer
@@ -33,17 +77,12 @@ export async function loadGeojson (jsonLayer, { filteredIds = [] } = {}) {
 
   const services = await mapConfig.getServices()
   const url = `${services.STATIC_GEOSERVER_URL}?${params}${filterString}`
-  const result = fetch(url, { mode: 'cors' })
-    .then(resp => resp.json())
+  const result = getFeatures(url, jsonLayer)
     .then(geojson => {
-      geojson.features = geojson.features.map(feature => {
-        feature.properties.isControllable = !!jsonLayer.iscontrollayer
-        feature.properties.icon = 'default'
-        return feature
-      })
-
       return geojson
     })
-    .catch(error => console.warn(error, jsonLayer))
+    .catch(error => {
+      console.warn(error, jsonLayer)
+    })
   return result
 }
