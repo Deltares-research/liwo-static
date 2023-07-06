@@ -3,6 +3,10 @@ import store from '@/store'
 
 const MAX_RETRIES = 5
 const RETRY_DELAY = 1000 // Delay in milliseconds between retries
+const EMPTY_GEOJSON = {
+  type: 'FeatureCollection',
+  features: []
+}
 
 const requestOptions = ({ namespace, layer }) => ({
   isActive: true,
@@ -51,13 +55,16 @@ const getFeatures = (url, jsonLayer, layerSetId, retries = 0) => {
           )
         } else {
           console.error(`Max retries exceeded - Error: ${error}`)
+          // Show an error notification if the layer is not available
           const notification = {
             message: 'Please retry in 5 to 10 minutes.',
             type: 'error',
             show: true
           }
           store.commit('addNotificationById', { id: layerSetId, notification })
-          reject(error)
+          // By returning an empty geojson we prevent the map from crashing,
+          // instead it displays the other available layers
+          resolve(EMPTY_GEOJSON)
         }
       })
   })
