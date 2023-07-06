@@ -25,6 +25,8 @@ const getFeatures = (url, jsonLayer, layerSetId, retries = 0) => {
   return new Promise((resolve, reject) => {
     fetch(url, { mode: 'cors' })
       .then(resp => {
+        // Workaround for a bug in the geoserver,
+        // it returns 200 but the response is an XML with an error message
         if (
           resp.headers.get('content-type') &&
           !resp.headers.get('content-type').includes('application/json')
@@ -45,7 +47,7 @@ const getFeatures = (url, jsonLayer, layerSetId, retries = 0) => {
       })
       .catch(error => {
         if (retries < MAX_RETRIES) {
-          console.warn(`Retry ${retries + 1} - Error: ${error}`)
+          console.warn(`Retry ${retries + 1} - ${error}`)
           setTimeout(
             () =>
               getFeatures(url, jsonLayer, layerSetId, retries + 1)
@@ -54,7 +56,7 @@ const getFeatures = (url, jsonLayer, layerSetId, retries = 0) => {
             RETRY_DELAY
           )
         } else {
-          console.error(`Max retries exceeded - Error: ${error}`)
+          console.error(`Max retries exceeded - ${error}`)
           // Show an error notification if the layer is not available
           const notification = {
             message: 'Please retry in 5 to 10 minutes.',
