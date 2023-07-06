@@ -140,10 +140,7 @@ export function createClusterGeoJson (layer, onClick) {
   const unselectedGeoJson = {
     ...layer.geojson
   }
-  if (unselectedGeoJson.features) {
-    unselectedGeoJson.features = unselectedGeoJson.features.filter(feature => !feature.properties.selected)
-  }
-
+  unselectedGeoJson.features = unselectedGeoJson.features.filter(feature => !feature.properties.selected)
   return L.geoJson(unselectedGeoJson, options)
 }
 
