@@ -17,7 +17,7 @@ const requestOptions = ({ namespace, layer }) => ({
   maxFeatures: 3000
 })
 
-const getFeatures = (url, jsonLayer, retries = 0) => {
+const getFeatures = (url, jsonLayer, layerSetId, retries = 0) => {
   return new Promise((resolve, reject) => {
     fetch(url, { mode: 'cors' })
       .then(resp => {
@@ -44,20 +44,26 @@ const getFeatures = (url, jsonLayer, retries = 0) => {
           console.warn(`Retry ${retries + 1} - Error: ${error}`)
           setTimeout(
             () =>
-              getFeatures(url, jsonLayer, retries + 1)
+              getFeatures(url, jsonLayer, layerSetId, retries + 1)
                 .then(resolve)
                 .catch(reject),
             RETRY_DELAY
           )
         } else {
           console.error(`Max retries exceeded - Error: ${error}`)
+          const notification = {
+            message: 'Please retry in 5 to 10 minutes.',
+            type: 'error',
+            show: true
+          }
+          store.commit('addNotificationById', { id: layerSetId, notification })
           reject(error)
         }
       })
   })
 }
 
-export async function loadGeojson (jsonLayer, { filteredIds = [] } = {}) {
+export async function loadGeojson (jsonLayer, layerSetId, { filteredIds = [] } = {}) {
   // fetch the geojson and add it  to the layer
 
   // no json, nothing to do
@@ -77,7 +83,7 @@ export async function loadGeojson (jsonLayer, { filteredIds = [] } = {}) {
 
   const services = await mapConfig.getServices()
   const url = `${services.STATIC_GEOSERVER_URL}?${params}${filterString}`
-  const result = getFeatures(url, jsonLayer)
+  const result = getFeatures(url, jsonLayer, layerSetId)
     .then(geojson => {
       return geojson
     })

@@ -111,8 +111,7 @@ export default new Vuex.Store({
 
       // The layers are in a deep  structure. Flatten it before  building the notifications
       const layers = flattenLayerSet(layerSet)
-
-      const notifications = buildLayerSetNotifications(layers)
+      const notifications = [...(state.notificationsById?.[id] || []), ...buildLayerSetNotifications(layers)]
 
       // TODO: the function is called setLayerSet[s]
       // but it only loads  the layers of 1 layerSet, make this consistent
