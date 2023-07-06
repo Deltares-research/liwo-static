@@ -3,10 +3,6 @@ import store from '@/store'
 
 const MAX_RETRIES = 5
 const RETRY_DELAY = 1000 // Delay in milliseconds between retries
-const EMPTY_GEOJSON = {
-  type: 'FeatureCollection',
-  features: []
-}
 
 const requestOptions = ({ namespace, layer }) => ({
   isActive: true,
@@ -14,7 +10,7 @@ const requestOptions = ({ namespace, layer }) => ({
   version: '1.0.0',
   request: 'getFeature',
   typeName: `${namespace}:${layer}`,
-  outputFormat: 'application/json',
+  outputFormat: `${layer === 'gebiedsindeling_doorbraaklocaties_buitendijks' ? 'csv' : 'application/json'}`,
   // get this info unprojected
   // formally geojson does not support CRS
   srsName: 'EPSG:4326',
@@ -25,8 +21,9 @@ const getFeatures = (url, jsonLayer, layerSetId, retries = 0) => {
   return new Promise((resolve, reject) => {
     fetch(url, { mode: 'cors' })
       .then(resp => {
-        // Workaround for a bug in the geoserver,
-        // it returns 200 but the response is an XML with an error message
+        // Workaround for geoserver issue:
+        // When the request fails it returns 200 but the response is an XML with an error message
+        // We can detect this by checking the content-type header
         if (
           resp.headers.get('content-type') &&
           !resp.headers.get('content-type').includes('application/json')
@@ -59,14 +56,12 @@ const getFeatures = (url, jsonLayer, layerSetId, retries = 0) => {
           console.error(`Max retries exceeded - ${error}`)
           // Show an error notification if the layer is not available
           const notification = {
-            message: 'Please retry in 5 to 10 minutes.',
+            message: 'Probeer het over 5 tot 10 minuten opnieuw.',
             type: 'error',
             show: true
           }
           store.commit('addNotificationById', { id: layerSetId, notification })
-          // By returning an empty geojson we prevent the map from crashing,
-          // instead it displays the other available layers
-          resolve(EMPTY_GEOJSON)
+          reject(error)
         }
       })
   })
