@@ -10,7 +10,7 @@ const requestOptions = ({ namespace, layer }) => ({
   version: '1.0.0',
   request: 'getFeature',
   typeName: `${namespace}:${layer}`,
-  outputFormat: `${layer === 'gebiedsindeling_doorbraaklocaties_buitendijks' ? 'csv' : 'application/json'}`,
+  outputFormat: 'application/json',
   // get this info unprojected
   // formally geojson does not support CRS
   srsName: 'EPSG:4326',
