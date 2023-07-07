@@ -29,7 +29,7 @@
     "portal-vue": "^2.1.7",
     "proj4leaflet": "^1.0.2",
     "proxy-polyfill": "^0.3.2",
-    "query-string": "^7.1.1",
+    "query-string": "^8.1.0",
     "url-polyfill": "^1.1.12",
     "url-search-params-polyfill": "^8.1.1",
     "vue": "^2.6.14",
