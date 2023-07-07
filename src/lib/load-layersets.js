@@ -73,7 +73,7 @@ export async function loadLayerSetById (id, options) {
       const variants = await Promise.all(
         layer.variants.map(async (variant) => {
           if (_.includes(['json', 'cluster'], variant.map.type)) {
-            const geojson = await loadGeojson(variant.map)
+            const geojson = await loadGeojson(variant.map, layerSet.id)
             variant.map.geojson = geojson
           }
           return variant

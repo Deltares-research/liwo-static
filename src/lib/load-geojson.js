@@ -1,4 +1,8 @@
 import mapConfig from '../map.config.js'
+import store from '@/store'
+
+const MAX_RETRIES = 5
+const RETRY_DELAY = 1000 // Delay in milliseconds between retries
 
 const requestOptions = ({ namespace, layer }) => ({
   isActive: true,
@@ -13,7 +17,57 @@ const requestOptions = ({ namespace, layer }) => ({
   maxFeatures: 3000
 })
 
-export async function loadGeojson (jsonLayer, { filteredIds = [] } = {}) {
+const getFeatures = (url, jsonLayer, layerSetId, retries = 0) => {
+  return new Promise((resolve, reject) => {
+    fetch(url, { mode: 'cors' })
+      .then(resp => {
+        // Workaround for geoserver issue:
+        // When the request fails it returns 200 but the response is an XML with an error message
+        // We can detect this by checking the content-type header
+        if (
+          resp.headers.get('content-type') &&
+          !resp.headers.get('content-type').includes('application/json')
+        ) {
+          caches.delete(url)
+          throw new Error('Response is not JSON')
+        }
+        return resp.json()
+      })
+      .then(geojson => {
+        geojson.features = geojson.features.map(feature => {
+          feature.properties.isControllable = !!jsonLayer.iscontrollayer
+          feature.properties.icon = 'default'
+          return feature
+        })
+
+        resolve(geojson)
+      })
+      .catch(error => {
+        if (retries < MAX_RETRIES) {
+          console.warn(`Retry ${retries + 1} - ${error}`)
+          setTimeout(
+            () =>
+              getFeatures(url, jsonLayer, layerSetId, retries + 1)
+                .then(resolve)
+                .catch(reject),
+            RETRY_DELAY
+          )
+        } else {
+          console.error(`Max retries exceeded - ${error}`)
+          // Show an error notification if the layer is not available
+          const notification = {
+            message: 'Probeer het over 5 tot 10 minuten opnieuw.',
+            type: 'error',
+            show: true
+          }
+          store.commit('addNotificationById', { id: layerSetId, notification })
+          reject(error)
+        }
+      })
+  })
+}
+
+export async function loadGeojson (jsonLayer, layerSetId, { filteredIds = [] } = {}) {
   // fetch the geojson and add it  to the layer
 
   // no json, nothing to do
@@ -33,17 +87,12 @@ export async function loadGeojson (jsonLayer, { filteredIds = [] } = {}) {
 
   const services = await mapConfig.getServices()
   const url = `${services.STATIC_GEOSERVER_URL}?${params}${filterString}`
-  const result = fetch(url, { mode: 'cors' })
-    .then(resp => resp.json())
+  const result = getFeatures(url, jsonLayer, layerSetId)
     .then(geojson => {
-      geojson.features = geojson.features.map(feature => {
-        feature.properties.isControllable = !!jsonLayer.iscontrollayer
-        feature.properties.icon = 'default'
-        return feature
-      })
-
       return geojson
     })
-    .catch(error => console.warn(error, jsonLayer))
+    .catch(error => {
+      console.warn(error, jsonLayer)
+    })
   return result
 }

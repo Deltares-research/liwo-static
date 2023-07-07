@@ -91,7 +91,7 @@ export default new Vuex.Store({
         commit('setSelectedVariantIndexByBreachBandId', { selectedIndex, breachBandId })
       }
     },
-    async loadLayerSetById (state, { id }) {
+    async loadLayerSetById ({ commit, state }, { id }) {
       // Skip if we already loaded this layerSet
       if (_.has(state.layerSetsById, id)) {
         return
@@ -112,15 +112,15 @@ export default new Vuex.Store({
       // The layers are in a deep  structure. Flatten it before  building the notifications
       const layers = flattenLayerSet(layerSet)
 
-      const notifications = buildLayerSetNotifications(layers)
+      const currentNotifications = state.notificationsById[id] || []
+      const notifications = [...currentNotifications, ...buildLayerSetNotifications(layers)]
 
       // TODO: the function is called setLayerSet[s]
       // but it only loads  the layers of 1 layerSet, make this consistent
-
-      state.commit('setLayerSetById', { id, layerSet: layerSet })
+      commit('setLayerSetById', { id, layerSet: layerSet })
 
       // TODO: why not in the view...
-      state.commit('setNotificationsById', { id, notifications })
+      commit('setNotificationsById', { id, notifications })
     }
 
   },
