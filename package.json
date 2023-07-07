@@ -31,7 +31,6 @@
     "proxy-polyfill": "^0.3.2",
     "query-string": "^7.1.1",
     "url-polyfill": "^1.1.12",
-    "url-search-params": "^1.1.0",
     "url-search-params-polyfill": "^8.1.1",
     "vue": "^2.6.14",
     "vue-cookie-law": "^1.13.3",
