@@ -3,6 +3,7 @@
     :name="name"
     v-model="model"
     v-bind="$attrs"
+    @change="handleChange"
   >
     <option
       v-for="option in options"
@@ -16,6 +17,8 @@
 </template>
 
 <script>
+import { ref, watch } from 'vue'
+
 export default {
   inheritAttrs: false,
   props: {
@@ -35,18 +38,24 @@ export default {
       type: [String, Number]
     }
   },
-  model: {
-    prop: 'value',
-    event: 'change'
-  },
-  computed: {
-    model: {
-      get () {
-        return this.value !== undefined || this.value !== null ? this.value : ''
-      },
-      set (value) {
-        this.$emit('change', value)
+  setup (props, { emit }) {
+    const model = ref(props.value !== undefined && props.value !== null ? props.value : '')
+
+    const handleChange = (event) => {
+      const value = event.target.value
+      emit('onChange', value)
+    }
+
+    watch(
+      () => props.value,
+      (newValue) => {
+        model.value = newValue !== undefined && newValue !== null ? newValue : ''
       }
+    )
+
+    return {
+      model,
+      handleChange
     }
   }
 }

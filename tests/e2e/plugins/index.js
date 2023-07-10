@@ -20,12 +20,30 @@ module.exports = (on, config) => {
   config.env.MAP_LAYERS = getLayers()
 
   return Object.assign({}, config, {
+    reporter: 'mochawesome',
+    projectId: 'h5f19q',
     defaultCommandTimeout: 8000,
-    fixturesFolder: 'tests/e2e/fixtures',
+    pageLoadTimeout: 30000,
+    requestTimeout: 10000,
+    viewportWidth: 1920,
+    viewportHeight: 1080,
+    retries: {
+      runMode: 3,
+      openMode: 0,
+    },
     downloadsFolder: 'tests/e2e/downloads',
-    integrationFolder: 'tests/e2e/specs',
+    fixturesFolder: 'tests/e2e/fixtures',
     screenshotsFolder: 'tests/e2e/screenshots',
     videosFolder: 'tests/e2e/videos',
-    supportFile: 'tests/e2e/support/index.js'
+    e2e: {
+      // We've imported your old cypress plugins here.
+      // You may want to clean this up later by importing these.
+      setupNodeEvents(on, config) {
+        return require('./tests/e2e/plugins/index.js')(on, config)
+      },
+      baseUrl: 'http://localhost:8080',
+      specPattern: 'tests/e2e/specs/**/*.{js,jsx,ts,tsx}',
+      supportFile: 'tests/e2e/support/index.js',
+    },
   })
 }

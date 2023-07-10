@@ -1,5 +1,4 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import About from './views/About'
 import Contact from './views/Contact'
 import Maps from './views/Maps'
@@ -8,9 +7,8 @@ import Combine from './views/Combine'
 import NotFound from './views/NotFound'
 import Accessibility from './views/Accessibility'
 
-Vue.use(Router)
-
-const router = new Router({
+const router = createRouter({
+  history: createWebHistory(),
   routes: [
     {
       path: '/',
@@ -118,7 +116,7 @@ const router = new Router({
       component: NotFound
     },
     {
-      path: '*', redirect: '/404'
+      path: '/:catchAll(.*)', redirect: '/404'
     }
   ]
 })

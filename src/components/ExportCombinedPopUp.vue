@@ -1,5 +1,5 @@
 <template>
-  <pop-up class="export-popup" title="Exporteer" @close="$emit('close')">
+  <pop-up class="export-popup" title="Exporteer" @onClose="$emit('onClose')">
     <form class="export-popup__content export-popup__form-columns">
       <div class="export-popup__notification export-popup__notification--loading" v-if="!eeLayer">
         <b>Wacht tot de data geladen is.</b>
@@ -37,7 +37,7 @@
         <button
           class="btn secondary"
           type="reset"
-          @click="$emit('close')"
+          @click="$emit('onClose')"
         >
           Annuleer
         </button>
@@ -138,7 +138,7 @@ export default {
           if (result.export_url) {
             window.location = result.export_url
           }
-          this.$emit('close')
+          this.$emit('onClose')
         }
       )
     }

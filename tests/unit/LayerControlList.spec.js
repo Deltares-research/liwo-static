@@ -1,3 +1,5 @@
+import { nextTick } from 'vue'
+
 import { mount, createLocalVue } from '@vue/test-utils'
 import LayerControlList from '@/components/LayerControlList'
 import chai from 'chai'
@@ -48,7 +50,7 @@ describe('the LayerControlList', () => {
     const propsData = { layers }
     const { vm } = mount(LayerControlList, { store, propsData: propsData })
 
-    vm.$nextTick(() => {
+    nextTick(() => {
       expect(vm.$el.querySelector('.layer-control')).to.have.class('layer-control--active')
     })
   })

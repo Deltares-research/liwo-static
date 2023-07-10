@@ -1,5 +1,5 @@
 <template>
-  <pop-up class="export-popup" title="Exporteer" @close="$emit('close')">
+  <pop-up class="export-popup" title="Exporteer" @onClose="$emit('onClose')">
     <form class="export-popup__content export-popup__form-columns">
       <div class="export-popup__notification export-popup__notification--error" v-if="formErrors.length">
         <b>Graag de volgende velden aanvullen:</b>
@@ -42,7 +42,7 @@
         class="export-popup__form-column-item export-popup__textfield" v-test="'name-input'">
       <footer class="export-popup__footer">
         <button class="btn primary" @click.prevent="exportMap" v-test="'export-file-button'">Exporteer</button>
-        <button class="btn secondary" type="reset" @click="$emit('close')">Annuleer</button>
+        <button class="btn secondary" type="reset" @click="$emit('onClose')">Annuleer</button>
       </footer>
     </form>
   </pop-up>

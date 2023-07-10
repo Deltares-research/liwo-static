@@ -1,5 +1,5 @@
 <template>
-<pop-up class="filter-popup" title="Filter" @close="$emit('close')">
+<pop-up class="filter-popup" title="Filter" @onClose="$emit('onClose')">
   <form class="filter-popup__form" id="genericform" novalidate="novalidate">
     <fieldset class="control-group" @change="onProbabilitiesChange">
       <legend class="control-label">Kansklasse:</legend>
@@ -50,13 +50,29 @@
 </pop-up>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { computed } from 'vue'
+
+import {
+  // mapState
+  useStore
+} from 'vuex'
+
 import { probabilityConfig } from '@/lib/probability-filter'
-import store from '@/store'
 import PopUp from '@/components/PopUp'
+
+import store from '@/store'
 
 export default {
   components: { PopUp },
+  setup () {
+    const store = useStore()
+
+    const selectedProbabilities = computed(() => store.state.selectedProbabilities)
+
+    return {
+      selectedProbabilities
+    }
+  },
   data () {
     return {
       selectedOptions: []
@@ -66,7 +82,7 @@ export default {
     this.selectedOptions = this.selectedProbabilities
   },
   computed: {
-    ...mapState(['selectedProbabilities']),
+    // ...mapState(['selectedProbabilities']),
     probabilityOptions () {
       return probabilityConfig
         .filter(config => config.identifier !== 'no_filter')
@@ -77,7 +93,7 @@ export default {
     },
     imminentFlood: {
       get () {
-        return this.$store.state.imminentFlood
+        return store.state.imminentFlood
       },
       set (value) {
         store.commit('setImminentFlood', value)

@@ -6,17 +6,14 @@ import mapFactory from './leaflet-utils/map-factory'
 
 let map
 let layerGroup
-// TODO: replace  this with vue2-leaflet
-// see vue docs
-// https://vuejs.org/v2/guide/components-edge-cases.html#Accessing-the-Parent-Component-Instance
 export default {
-  bind (el, { value }, vnode) {
+  beforeMount (el, { value, instance }) {
     const { config, callbacks } = value
-    map = mapFactory(el, vnode, config)
+    map = mapFactory(el, instance, config)
     layerGroup = L.layerGroup().addTo(map)
     callbacks.initMapObject(map)
   },
-  update (_, { value, oldValue }, vnode) {
+  updated (_, { value, oldValue }, instance) {
     // check if of one of the layers the opacity changed
     const changedOpacityLayers = value.layers.filter((layer) => {
       // lookup the old layer in the old values
@@ -58,7 +55,7 @@ export default {
       .filter(layer => !layer.hide)
 
     leafletLayers
-      .map(layer => createLayer(layer, callbacks, cluster, vnode))
+      .map(layer => createLayer(layer, callbacks, cluster, instance))
       .filter(layer => layer)
       .forEach(async layer => {
         if (isPromise(layer)) {

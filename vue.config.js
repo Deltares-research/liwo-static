@@ -5,8 +5,21 @@ process.env.VUE_APP_VERSION = require('./package.json').version
 module.exports = {
   // transpileDependencies: [ 'delay' ],
   publicPath: process.env.BASE_URL || '/',
+  // devServer: {
+  //   disableHostCheck: true
+  // },
   devServer: {
-    disableHostCheck: true
+    allowedHosts: ['localhost', 'basisinformatie-overstromingen.nl'], // Add any specific hosts you want to allow here
+    compress: true,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
+    historyApiFallback: true,
+    host: 'localhost',
+    hot: true,
+    https: false,
+    open: true,
+    port: 8080
   },
   configureWebpack: {
     module: {
@@ -19,15 +32,6 @@ module.exports = {
               plugins: ['lodash']
             }
           }
-        },
-        {
-          test: require.resolve('leaflet'),
-          use: [
-            {
-              loader: 'expose-loader',
-              options: 'L'
-            }
-          ]
         }
       ]
     },

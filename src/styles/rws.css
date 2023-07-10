@@ -1190,7 +1190,7 @@ hr {
     border-bottom: 1px solid transparent
 }
 
-@font-face {
+/* @font-face {
     font-family: RijksoverheidSansText;
     src: url(/assets/font/text/italic/ROsanswebtextitalic.eot);
     src: url(/assets/font/text/italic/ROsanswebtextitalic.woff) format("woff"), url(/assets/font/text/italic/ROsanswebtextitalic.ttf) format("truetype");
@@ -1212,7 +1212,7 @@ hr {
     src: url(/assets/font/text/bold/ROsanswebtextbold.woff) format("woff"), url(/assets/font/text/bold/ROsanswebtextbold.ttf) format("truetype");
     font-weight: 700;
     font-style: normal
-}
+} */
 
 img {
     display: inline-block;
@@ -2067,13 +2067,13 @@ a.media {
     outline: #000 dotted thin
 }
 
-@font-face {
+/* @font-face {
     font-family: icons;
     src: url(/assets/font/icons/icons.eot);
     src: url(/assets/font/icons/icons.woff) format("woff"), url(/assets/font/icons/icons.ttf) format("truetype"), url(/assets/font/icons/icons.svg#rws) format("svg");
     font-weight: 400;
     font-style: normal
-}
+} */
 
 .icon,
 .more--icon-after:after,

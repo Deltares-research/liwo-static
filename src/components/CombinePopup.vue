@@ -1,7 +1,7 @@
 <template>
 <pop-up
   title="Selectie combineren"
-  @close="$emit('close')"
+  @onClose="$emit('onClose')"
   >
   <form class="combine-popup__form" v-test="'combine-form'">
     <fieldset>
@@ -31,7 +31,7 @@
           <router-link
             :to="{name: 'combined', params: {ids: path, band: selected,  id: this.layerSetId}}"
             target="_blank"
-            @click="$emit('close')"
+            @click="$emit('onClose')"
             class="btn primary"
             v-test="'combine-trigger'"
             >
@@ -40,7 +40,7 @@
           <button
             type="button"
             class="btn secondary"
-            @click="$emit('close')"
+            @click="$emit('onClose')"
             >
             Annuleer
           </button>
@@ -56,6 +56,8 @@ import _ from 'lodash'
 import PopUp from './PopUp'
 import { BREACH_LAYERS_EN } from '@/lib/liwo-identifiers'
 import { getScenarioInfo } from '@/lib/load-breach'
+
+// import { reactive } from 'vue'
 
 export default {
   components: {
@@ -88,8 +90,14 @@ export default {
     const scenarioIds = this.path.split(',').map((id) => parseInt(id, 10))
     const scenarioInfo = await getScenarioInfo(scenarioIds)
     /* extract number of features and bands per layer */
-    this.$set(this, 'bandCounts', scenarioInfo.properties.bandCounts)
-    this.$set(this, 'featureCount', scenarioInfo.features.length)
+    // this.$set(this, 'bandCounts', scenarioInfo.properties.bandCounts)
+    // this.$set(this, 'featureCount', scenarioInfo.features.length)
+
+    this.bandCounts = scenarioInfo.properties.bandCounts
+    this.featureCount = scenarioInfo.features.length
+    // const reactiveObject = reactive(this)
+    // reactiveObject.bandCounts = scenarioInfo.properties.bandCounts
+    // reactiveObject.featureCount = scenarioInfo.features.length
 
     /* select first option (waterlevel) by default */
     this.selected = this.options[0].id

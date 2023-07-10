@@ -1,7 +1,7 @@
 <template>
   <pop-up
     title="Huidige selectie exporteren"
-    @close="$emit('close')"
+    @onClose="$emit('onClose')"
   >
     <form class="combine-popup__form">
       <fieldset>
@@ -29,7 +29,7 @@
             <button
               type="button"
               class="btn secondary"
-              @click="$emit('close')"
+              @click="$emit('onClose')"
             >
               Sluiten
             </button>

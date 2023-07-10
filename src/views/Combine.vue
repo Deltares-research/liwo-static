@@ -5,11 +5,11 @@
         :projection="projection"
         :clusterMarkers="true"
         :layers="selectedLayers"
-        @click="selectFeature"
+        @onClick="selectFeature"
         @marker:mouseover="handleMouseOver"
         @initMap="setMapObject"
       >
-        <template slot="legend">
+        <template #legend>
           <legend-panel
             :layers="controlLayerSelected ? controlLayers : [selectedLayer]"
             v-if="controlLayers.length || selectedLayer"
@@ -118,7 +118,7 @@
       <combine-popup
         :path="selectedScenarioIdsPath"
         :layer-set-id="layerSetId"
-        @close="showCombine = false"
+        @onClose="showCombine = false"
         v-if="showCombine"
         ></combine-popup>
       <!-- This popup is shown in single mode -->
@@ -126,39 +126,44 @@
         v-if="showExport"
         :map-object="mapObject"
         :map-layers="selectedLayers"
-        @close="showExport = false"
+        @onClose="showExport = false"
       />
       <!-- shows the export url in multiple  mode-->
       <export-combine-popup
         :path="selectedScenarioIdsPath"
         v-if="selectFeatureMode === 'multiple' && showExportCombine"
-        @close="showExportCombine = false"
+        @onClose="showExportCombine = false"
       />
       <!-- shows the export url in combined  mode-->
       <export-combined-popup
         :map-object="mapObject"
         :map-layers="selectedLayers"
         v-if="showExportCombined"
-        @close="showExportCombined = false"
+        @onClose="showExportCombined = false"
       />
       <!-- This import popup navigates to the the new url -->
       <import-combine-popup
         v-if="showImportCombine"
         :current-selected-ids="selectedScenarioIdsPath"
-        @close="showImportCombine = false"
+        @onClose="showImportCombine = false"
         @update="loadScenarioLayerSetsByRoute"
       />
       <filter-popup
         v-if="showFilter"
-        @close="showFilter = false"
+        @onClose="showFilter = false"
       />
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
+import { computed } from 'vue'
+
+import { useStore } from 'vuex'
+
 import _ from 'lodash'
+
+import store from '@/store'
 
 import LiwoMap from '@/components/LiwoMap'
 import NotificationBar from '@/components/NotificationBar.vue'
@@ -218,6 +223,25 @@ export default {
       default: 'lookup'
     }
   },
+  setup () {
+    // we get the default layerSet from the store
+    const store = useStore()
+
+    const layerSet = computed(() => store.getters.layerSet)
+    const layers = computed(() => store.getters.layers)
+    const currentNotifications = computed(() => store.getters.currentNotifications)
+
+    const imminentFlood = computed(() => store.state.imminentFlood)
+    const selectedProbabilities = computed(() => store.state.selectedProbabilities)
+
+    return {
+      layerSet,
+      layers,
+      currentNotifications,
+      imminentFlood,
+      selectedProbabilities
+    }
+  },
   data () {
     return {
       // selected features
@@ -259,20 +283,13 @@ export default {
     // get the layerSet that corresponds to this map
     const layerSetId = this.layerSetId
     // store it
-    this.$store.commit('setLayerSetId', layerSetId)
+    store.commit('setLayerSetId', layerSetId)
     // load the corresponding layerSet
-    await this.$store.dispatch('loadLayerSetById', { id: layerSetId })
+    await store.dispatch('loadLayerSetById', { id: layerSetId })
     // now we can load the scenario layerSets (which will look for the ids in the url)
     this.loadScenarioLayerSetsByRoute()
   },
   computed: {
-    // we get the default layerSet from the store
-    ...mapGetters([
-      'layerSet',
-      'layers',
-      'currentNotifications'
-    ]),
-    ...mapState(['imminentFlood', 'selectedProbabilities']),
     layerSetId () {
       return parseInt(this.$route.params.id, 10)
     },
@@ -447,14 +464,16 @@ export default {
   },
   methods: {
     updateLayersInLayerSet (layerSet, layers) {
+      console.log('updateLayersInLayerSet layerSet', layerSet)
+      console.log('updateLayersInLayerSet this.layerSet', this.layerSet)
       // send new layers to the store
-      this.$store.commit('setLayersByLayerSetId', { id: this.layerSet.id, layers })
+      store.commit('setLayersByLayerSetId', { id: this.layerSet.id, layers })
     },
     updateLayersInScenarioLayerSets (index, layers) {
       // this method updates the layers in the ScenarioLayerSet at index
       // taking into account https://vuejs.org/v2/guide/list.html#Caveats
       // update layers
-      this.$set(this.scenarioLayerSets[index], 'layers', layers)
+      this.scenarioLayerSets[index].layers = layers
     },
     updatePath () {
       // replace the url with the ids of the currently loaded scenarios
@@ -478,7 +497,7 @@ export default {
     },
     selectVariant ({ index, layerSet, scenarioLayerSetIndex, layer }) {
       // store the index of the active variant
-      this.$set(layer.properties, 'selectedVariant', index)
+      layer.properties.selectedVariant = index
 
       // Store new layers (which now contain the new active variant)
       if (layerSet === this.layerSet) {
@@ -489,7 +508,10 @@ export default {
         // are actually bands that share the same variant....
         // TODO: move band selection to more logic location, now it is magic...
         _.each(layerSet.layers, (layer) => {
-          this.$set(layer.properties, 'selectedVariant', index)
+          // this.$set(layer.properties, 'selectedVariant', index)
+          // const reactiveObject = reactive(layer.properties)
+          // reactiveObject.selectedVariant = index
+          layer.properties.selectedVariant = index
         })
         // TODO: move this to scenario module  in store
         this.updateLayersInScenarioLayerSets(scenarioLayerSetIndex, layerSet.layers)
@@ -541,7 +563,7 @@ export default {
       // now start loading
 
       // change the selected property
-      features.map(feature => { feature.properties.selected = true })
+      features.forEach(feature => { feature.properties.selected = true })
 
       // select features
       this.selectedFeatures = features
@@ -576,7 +598,7 @@ export default {
 
       // set feature properties for reactive components
       // deselect all features
-      this.selectedFeatures.map(feature => {
+      this.selectedFeatures.forEach(feature => {
         feature.properties.selected = false
       })
 
@@ -668,7 +690,7 @@ export default {
       })
       layerSet = selectVariantsInLayerSet(layerSet, this.scenarioIds)
       // before showing new notifications, clear existing ones
-      this.$store.commit('clearNotifications')
+      store.commit('clearNotifications')
 
       const layers = flattenLayerSet(layerSet)
       const notifications = buildLayerSetNotifications(layers)
@@ -677,7 +699,7 @@ export default {
         notifications,
         (notification) => {
           // add them to the main layerSetId number to show up
-          this.$store.commit('addNotificationById', { id: this.layerSetId, notification })
+          store.commit('addNotificationById', { id: this.layerSetId, notification })
         }
       )
       return layerSet
@@ -733,8 +755,10 @@ export default {
     handleMouseOver ({ feature, marker }) {
       const selectedLayer = this.selectedLayers.find(layer => layer.layerSet.id === feature.properties.id)
 
-      if (feature.properties.Overschrijdingsfrequentie) {
-        marker.setTooltipContent(`${feature.properties.name} - Kans 1 op ${feature.properties.Overschrijdingsfrequentie}`)
+      const overschrijdingsfrequentie = (feature.properties.Overschrijdingsfrequentie || (selectedLayer && selectedLayer.properties.Overschrijdingsfrequentie))
+
+      if (overschrijdingsfrequentie) {
+        marker.setTooltipContent(`${feature.properties.name} - Kans 1 op ${overschrijdingsfrequentie}`)
       }
 
       if (marker.feature.properties.selected && selectedLayer) {
