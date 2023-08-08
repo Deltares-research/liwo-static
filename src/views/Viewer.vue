@@ -165,7 +165,7 @@ export default {
     },
     selectVariant ({ layer, index }) {
       // store the index of the active variant in the layer
-      this.$set(layer.properties, 'selectedVariant', index)
+      layer.properties.selectedVariant = index
       // update the  layer in the layerSet
       this.updateLayers(this.layerSet, this.layerSet.layers)
     }

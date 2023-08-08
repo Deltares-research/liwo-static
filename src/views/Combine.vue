@@ -5,11 +5,11 @@
         :projection="projection"
         :clusterMarkers="true"
         :layers="selectedLayers"
-        @click="selectFeature"
+        @map:click="selectFeature"
         @marker:mouseover="handleMouseOver"
         @initMap="setMapObject"
       >
-        <template slot="legend">
+        <template v-slot:legend>
           <legend-panel
             :layers="controlLayerSelected ? controlLayers : [selectedLayer]"
             v-if="controlLayers.length || selectedLayer"
@@ -40,7 +40,7 @@
             @update:layers="updateLayersInLayerSet(layerSet, $event)"
             @select:layer="selectLayer"
             @select:variant="selectVariant({ ...$event, layerSet })"
-            :collapsed.sync="layerSetCollapsed"
+            v-model:collapsed="layerSetCollapsed"
             :selectedLayer="selectedLayer"
             :key="layerSet.id"
           >
@@ -451,10 +451,7 @@ export default {
       this.$store.commit('setLayersByLayerSetId', { id: this.layerSet.id, layers })
     },
     updateLayersInScenarioLayerSets (index, layers) {
-      // this method updates the layers in the ScenarioLayerSet at index
-      // taking into account https://vuejs.org/v2/guide/list.html#Caveats
-      // update layers
-      this.$set(this.scenarioLayerSets[index], 'layers', layers)
+      this.scenarioLayerSets[index].layers = layers
     },
     updatePath () {
       // replace the url with the ids of the currently loaded scenarios
@@ -478,7 +475,7 @@ export default {
     },
     selectVariant ({ index, layerSet, scenarioLayerSetIndex, layer }) {
       // store the index of the active variant
-      this.$set(layer.properties, 'selectedVariant', index)
+      layer.properties.selectedVariant = index
 
       // Store new layers (which now contain the new active variant)
       if (layerSet === this.layerSet) {
@@ -489,7 +486,7 @@ export default {
         // are actually bands that share the same variant....
         // TODO: move band selection to more logic location, now it is magic...
         _.each(layerSet.layers, (layer) => {
-          this.$set(layer.properties, 'selectedVariant', index)
+          layer.properties.selectedVariant = index
         })
         // TODO: move this to scenario module  in store
         this.updateLayersInScenarioLayerSets(scenarioLayerSetIndex, layerSet.layers)

@@ -54,7 +54,7 @@ export default {
       // convert to boolean (twice ~= Boolean(x))
       isCollapsed: !!this.collapsed,
       // path where the server runs (should end in a /)
-      publicPath: process.env.BASE_URL
+      publicPath: import.meta.env.BASE_URL
     }
   },
   watch: {
