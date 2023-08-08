@@ -26,7 +26,7 @@
 <script>
 import _ from 'lodash'
 
-import LayerControlList from './LayerControlList'
+import LayerControlList from './LayerControlList.vue'
 
 export default {
   props: {

@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import PopUp from '@/components/PopUp'
+import PopUp from '@/components/PopUp.vue'
 
 export default {
   props: {

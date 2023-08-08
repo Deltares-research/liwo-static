@@ -59,7 +59,7 @@
 
 <script>
 import _ from 'lodash'
-import PopUp from './PopUp'
+import PopUp from './PopUp.vue'
 
 export default {
   props: {

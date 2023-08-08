@@ -101,8 +101,8 @@ import _ from 'lodash'
 
 import store from '@/store'
 
-import LayerPopup from '@/components/LayerPopup'
-import LayerControlSelect from '@/components/LayerControlSelect'
+import LayerPopup from '@/components/LayerPopup.vue'
+import LayerControlSelect from '@/components/LayerControlSelect.vue'
 
 import { matchValueToProbability } from '@/lib/probability-filter'
 

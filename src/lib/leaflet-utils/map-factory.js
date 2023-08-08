@@ -5,7 +5,7 @@ import '@/lib/leaflet-hack'
 import mapConfig from '@/map.config'
 import { EPSG_3857 } from '../../lib/leaflet-utils/projections'
 import createCrs from '../../lib/leaflet-utils/create-crs'
-import MapFillWindowControl from '../../components/MapFillWindowControl'
+import MapFillWindowControl from '../../components/MapFillWindowControl.vue'
 import northIcon from '../../img/north-arrow.svg'
 
 const INITIAL_BASELAYER = mapConfig.tileLayers[0].title

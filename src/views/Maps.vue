@@ -34,7 +34,7 @@
 
 <script>
 // @ is an alias to /src
-import LayerSetList from '@/components/LayerSetList'
+import LayerSetList from '@/components/LayerSetList.vue'
 import { loadLayerSets } from '@/lib/load-layersets'
 
 export default {

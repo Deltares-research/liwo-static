@@ -53,7 +53,7 @@
 
 <script>
 import _ from 'lodash'
-import PopUp from './PopUp'
+import PopUp from './PopUp.vue'
 import { BREACH_LAYERS_EN } from '@/lib/liwo-identifiers'
 import { getScenarioInfo } from '@/lib/load-breach'
 

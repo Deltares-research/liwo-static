@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import PopUp from './PopUp'
+import PopUp from './PopUp.vue'
 export default {
   components: {
     PopUp

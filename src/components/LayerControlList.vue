@@ -26,7 +26,7 @@
 
 import _ from 'lodash'
 
-import LayerControl from './LayerControl'
+import LayerControl from './LayerControl.vue'
 
 export default {
   props: {

@@ -1,16 +1,14 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import About from './views/About'
-import Contact from './views/Contact'
-import Maps from './views/Maps'
-import Viewer from './views/Viewer'
-import Combine from './views/Combine'
-import NotFound from './views/NotFound'
-import Accessibility from './views/Accessibility'
+import { createRouter, createWebHashHistory } from 'vue-router'
+import About from './views/About.vue'
+import Contact from './views/Contact.vue'
+import Maps from './views/Maps.vue'
+import Viewer from './views/Viewer.vue'
+import Combine from './views/Combine.vue'
+import NotFound from './views/NotFound.vue'
+import Accessibility from './views/Accessibility.vue'
 
-Vue.use(Router)
-
-const router = new Router({
+const router = createRouter({
+  history: createWebHashHistory(),
   routes: [
     {
       path: '/',
@@ -118,7 +116,7 @@ const router = new Router({
       component: NotFound
     },
     {
-      path: '*', redirect: '/404'
+      path: '/:pathMatch(.*)', redirect: '/404'
     }
   ]
 })
