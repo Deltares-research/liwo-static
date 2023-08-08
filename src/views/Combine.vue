@@ -598,14 +598,12 @@ export default {
           return selectedIds.includes(layerSet.feature.id)
         })
         this.scenarioLayerSets = scenarioLayerSets
+      } else if(this.selectFeatureMode === 'multiple') { // we just selected this feature, add it to the list
+        this.selectedFeatures.push(feature)
       } else {
-        // we just selected this feature, add it to the list
-        if (this.selectFeatureMode === 'multiple') {
-          this.selectedFeatures.push(feature)
-        } else {
-          this.selectedFeatures = [feature]
-        }
+        this.selectedFeatures = [feature]
       }
+
       // set the markers, based on the current selected feature
       const marker = evt.target
       this.setMarkers(feature, marker)
