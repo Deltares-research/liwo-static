@@ -1,7 +1,7 @@
 <template>
   <select
     :name="name"
-    v-model="model"
+    v-model="internalValue"
     v-bind="$attrs"
   >
     <option
@@ -31,21 +31,18 @@ export default {
       required: false,
       default: undefined
     },
-    value: {
+    modelValue: {
       type: [String, Number]
     }
   },
-  model: {
-    prop: 'value',
-    event: 'change'
-  },
+  emits: ['update:modelValue'],
   computed: {
-    model: {
+    internalValue: {
       get () {
-        return this.value !== undefined || this.value !== null ? this.value : ''
+        return this.modelValue !== undefined || this.modelValue !== null ? this.modelValue : ''
       },
       set (value) {
-        this.$emit('change', value)
+        this.$emit('update:modelValue', value)
       }
     }
   }
