@@ -1,4 +1,4 @@
-import Vue from 'vue'
+//import Vue from 'vue'
 import L from '@/lib/leaflet-utils/leaf'
 
 import '@/lib/leaflet-hack'
@@ -7,16 +7,18 @@ import { EPSG_3857 } from '../../lib/leaflet-utils/projections'
 import createCrs from '../../lib/leaflet-utils/create-crs'
 import MapFillWindowControl from '../../components/MapFillWindowControl.vue'
 import northIcon from '../../img/north-arrow.svg'
+import { createApp } from 'vue'
 
 const INITIAL_BASELAYER = mapConfig.tileLayers[0].title
 
-export default function (el, vnode, config) {
+export default function (el, vnode, config, onPrint) {
   const tileLayerOptions = baseLayerOptions(config)
   const baseLayers = createBaseLayers(tileLayerOptions)
+
   const map = L.map(el, {
     ...config,
     crs: createCrs(config.projection),
-    layers: [baseLayers[INITIAL_BASELAYER]]
+    layers: [baseLayers[INITIAL_BASELAYER]],
   })
 
   // When we change the baselayer we want it to be in the back
@@ -34,26 +36,28 @@ export default function (el, vnode, config) {
 
   map.addControl(layerControl(baseLayers))
 
-  map.on('browser-print-start', function (e) {
-    // when printing starts emit an event to the containing element so that we can add a legend
-    vnode.context.$emit('browser-print-start', e)
-  })
+  map.on('browser-print-start', onPrint)
 
   // Hack to make the map display
-  setTimeout(() => { map.invalidateSize() }, 100)
+  setTimeout(() => {
+    map.invalidateSize()
+  }, 100)
 
   return map
 }
 
-function createBaseLayers (options) {
+function createBaseLayers(options) {
   const baseLayers = {}
-  mapConfig.tileLayers.forEach(layer => {
-    baseLayers[layer.title] = L.tileLayer(layer[options.projection].url, options)
+  mapConfig.tileLayers.forEach((layer) => {
+    baseLayers[layer.title] = L.tileLayer(
+      layer[options.projection].url,
+      options
+    )
   })
   return baseLayers
 }
 
-function baseLayerOptions (config) {
+function baseLayerOptions(config) {
   const tms = config.baseLayer.tms
   const options = {
     attribution: config.attribution || mapConfig.attribution,
@@ -61,7 +65,7 @@ function baseLayerOptions (config) {
     minZoom: config.minZoom || mapConfig.minZoom[config.projection],
     tms: config.projection === EPSG_3857 ? undefined : tms,
     continuousWorld: config.continuousWorld || mapConfig.continuousWorld,
-    projection: config.projection
+    projection: config.projection,
   }
 
   return options
@@ -69,41 +73,40 @@ function baseLayerOptions (config) {
 
 // because leaflet provides no way of telling if the controls have rendered,
 // we watch the control object until the dom element is created
-function whenReady (control, cb) {
+function whenReady(control, cb) {
   return new Proxy(control, {
-    set (target, key, value) {
+    set(target, key, value) {
       if (key === '_container') {
         cb(value)
       }
 
       target[key] = value
       return true
-    }
+    },
   })
 }
 
-function geoCoderControl (map) {
+function geoCoderControl(map) {
   let containerListenerInitialized = false
 
   const control = L.Control.geocoder({
     position: 'topright',
     defaultMarkGeocode: false,
     iconLabel: 'Start een nieuwe zoekopdracht',
-    placeholder: 'Zoeken'
+    placeholder: 'Zoeken',
+  }).on('markgeocode', function (e) {
+    const bbox = e.geocode.bbox
+    const poly = L.polygon([
+      bbox.getSouthEast(),
+      bbox.getNorthEast(),
+      bbox.getNorthWest(),
+      bbox.getSouthWest(),
+    ])
+    map.fitBounds(poly.getBounds())
   })
-    .on('markgeocode', function (e) {
-      const bbox = e.geocode.bbox
-      const poly = L.polygon([
-        bbox.getSouthEast(),
-        bbox.getNorthEast(),
-        bbox.getNorthWest(),
-        bbox.getSouthWest()
-      ])
-      map.fitBounds(poly.getBounds())
-    })
 
   // add listeners for a11y
-  function addListeners (el) {
+  function addListeners(el) {
     // make sure the listeners are only set once
     if (!containerListenerInitialized) {
       const button = el.querySelector('button')
@@ -115,7 +118,7 @@ function geoCoderControl (map) {
       })
 
       // when the control is closed using the escape key, the focus should go back to the trigger button
-      el.addEventListener('keydown', e => {
+      el.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' || e.keyCode === 27) {
           button.focus()
         }
@@ -125,31 +128,39 @@ function geoCoderControl (map) {
     }
   }
 
-  return whenReady(control, el => {
+  return whenReady(control, (el) => {
     addListeners(el)
   })
 }
 
-function printControl () {
-  const control = L.control.browserPrint({ position: 'topright', printModes: ['Landscape'] })
+function printControl() {
+  const control = L.control.browserPrint({
+    position: 'topright',
+    printModes: ['Landscape'],
+  })
 
-  function makeFocusable (el) {
+  function makeFocusable(el) {
     const trigger = el.querySelector('.leaflet-browser-print')
 
     // add a href attribute, otherwise the browser will nog recognize it as focusable
     trigger.setAttribute('href', '#')
+
+    // Fix for sudden 404 page when clicking on print
+    trigger.addEventListener('click', (e) => {
+      e.preventDefault()
+    })
   }
 
-  return whenReady(control, el => {
+  return whenReady(control, (el) => {
     makeFocusable(el)
   })
 }
 
-function layerControl (layers) {
+function layerControl(layers) {
   const control = L.control.layers(layers)
 
-  function addListener (el) {
-    el.addEventListener('keydown', e => {
+  function addListener(el) {
+    el.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' || e.keyCode === 27) {
         control.collapse()
       }
@@ -161,20 +172,16 @@ function layerControl (layers) {
   })
 }
 
-function fillWindowControl () {
+function fillWindowControl() {
   const control = L.control({ position: 'topright' })
 
   control.onAdd = function (map) {
     const div = L.DomUtil.create('div', '')
 
     // mount vue component as control
-    const button = new Vue({
-      render: h => h(MapFillWindowControl, {
-        props: {
-          map
-        }
-      })
-    }).$mount(div)
+    const button = createApp(MapFillWindowControl, {
+      map,
+    }).mount(div)
 
     return button.$el
   }
@@ -182,7 +189,7 @@ function fillWindowControl () {
   return control
 }
 
-function roseControl () {
+function roseControl() {
   const control = L.control({ position: 'topright' })
 
   control.onAdd = function () {
@@ -190,7 +197,7 @@ function roseControl () {
 
     div.classList.add('leaflet-control-map-rose')
 
-    div.innerHTML = `<img width="34" style="padding:4px" src="${northIcon}" alt="">`
+    div.innerHTML = `<img width='34' style='padding:4px' src='${northIcon}' alt=''>`
 
     return div
   }
