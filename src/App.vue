@@ -37,9 +37,9 @@
 </template>
 
 <script>
-import CookieLaw from 'vue-cookie-law'
 import { mapGetters } from 'vuex'
 import AppHeader from '../src/components/AppHeader.vue'
+import CookieLaw from './components/CookieLaw.vue'
 
 import mapConfig from './map.config.js'
 
@@ -47,20 +47,6 @@ export default {
   components: {
     AppHeader,
     CookieLaw
-  },
-  head: {
-    title () {
-      if (!this.title) {
-        return {
-          inner: '',
-          separator: ' '
-        }
-      }
-
-      return {
-        inner: this.title
-      }
-    }
   },
   data () {
     return {
@@ -82,7 +68,8 @@ export default {
       handler () {
         // emit this event to let vue-head know it should update the title element
         // https://www.npmjs.com/package/vue-head#update-elements-with-asynchronous-data-or-after-page-loaded
-        this.$emit('updateHead')
+
+        document.title = this.title || ''
       }
     }
   },
