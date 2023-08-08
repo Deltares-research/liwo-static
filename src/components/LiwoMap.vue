@@ -5,7 +5,7 @@
       class="liwo-map"
       @marker:mouseover="$emit('marker:mouseover', $event)"
       v-leaflet="{
-        callbacks: { onClick, initMapObject },
+        callbacks: { onClick, initMapObject, onPrint },
         config: mapConfig,
         layers: layers,
         cluster: clusterMarkers,
@@ -24,7 +24,6 @@ import createMapConfig from '@/lib/leaflet-utils/mapconfig-factory'
 import { legendControl } from '@/lib/leaflet-utils/legend'
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
 
-// TODO: replace v-leaflet directive with vue2-leaflet package...
 export default {
   props: {
     projection: {
@@ -42,44 +41,41 @@ export default {
   },
   data () {
     return {
-      map: null
+      mapInitialized: false
     }
   },
   watch: {
     '$route.query' () {
-      if (this.map) {
+      if (this.mapInitialized) {
         this.setPosition()
       }
     }
   },
   created () {
+    this.map = null
     this.mapConfig = createMapConfig({
       projection: this.projection
     })
   },
   mounted () {
     this.mapRef = this.$refs.liwoMap
-    this.$on('browser-print-start', (evt) => {
-      const control = legendControl({ position: 'bottomright', el: this.$refs.legend })
-      control.addTo(evt.printMap)
-    })
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.removePositionListeners()
   },
   methods: {
+    onPrint(evt) {
+      const control = legendControl({ position: 'bottomright', el: this.$refs.legend })
+      control.addTo(evt.printMap)
+    },
     onClick (event) {
       // TODO: click on what
-      this.$emit('click', event)
+      this.$emit('map:click', event)
     },
     initMapObject (mapObject) {
       this.map = mapObject
+      this.mapInitialized = true
       this.$emit('initMap', mapObject)
-      // pass along click to map objects
-      mapObject.on('click', event => {
-        // pass the  map click event on up
-        this.$emit('map:click', event)
-      })
 
       window.liwoMap = mapObject
 
