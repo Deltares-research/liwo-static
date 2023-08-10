@@ -361,8 +361,10 @@ export default {
     selectedProbabilities (newVal, oldVal) {
       if (!newVal) { return }
       if (newVal !== oldVal) {
-        const variantIndex = _.get(this.selectedVariantIndexByBreachBandId, `[${this.breachBandId}].Overschrijdingsfrequentie`, 0)
-        this.setLayerVariant('Overschrijdingsfrequentie', this.layerVariantOptions.Overschrijdingsfrequentie[variantIndex].value)
+        if(this.layerVariantOptions.Overschrijdingsfrequentie) {
+          const variantIndex = _.get(this.selectedVariantIndexByBreachBandId, `[${this.breachBandId}].Overschrijdingsfrequentie`, 0)
+          this.setLayerVariant('Overschrijdingsfrequentie', this.layerVariantOptions.Overschrijdingsfrequentie[variantIndex].value)
+        }
       }
     },
     imminentFlood () {

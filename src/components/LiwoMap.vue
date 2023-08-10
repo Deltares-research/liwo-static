@@ -7,7 +7,7 @@
       v-leaflet="{
         callbacks: { onClick, initMapObject, onPrint },
         config: mapConfig,
-        layers: layers,
+        layers: updatedLayers,
         cluster: clusterMarkers,
       }"
       v-test="'map'"
@@ -41,13 +41,22 @@ export default {
   },
   data () {
     return {
-      mapInitialized: false
+      mapInitialized: false,
+      updatedLayers: []
     }
   },
   watch: {
     '$route.query' () {
       if (this.mapInitialized) {
         this.setPosition()
+      }
+    },
+    layers: {
+      deep: true,
+      immediate: true,
+      handler(_oldValue, newValue) {
+        // TODO: Somewhere the layers are updated, but Vue 3 does not pick up changes in nested properties
+        this.updatedLayers = newValue ? [...newValue] : []
       }
     }
   },
