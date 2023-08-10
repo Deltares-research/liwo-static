@@ -54,11 +54,11 @@ export default {
     layers: {
       deep: true,
       immediate: true,
-      handler(_oldValue, newValue) {
+      handler(newValue) {
         // TODO: Somewhere the layers are updated, but Vue 3 does not pick up changes in nested properties
         this.updatedLayers = newValue ? [...newValue] : []
       }
-    }
+    },
   },
   created () {
     this.map = null
