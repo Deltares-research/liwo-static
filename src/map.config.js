@@ -1,6 +1,6 @@
 // eslint-disable-next-line
 
-import { EPSG_28992, EPSG_3857 } from "./lib/leaflet-utils/projections";
+import { EPSG_28992, EPSG_3857 } from './lib/leaflet-utils/projections';
 
 // This is the attribution (maps and datasets often require attribution of the source)
 const attribution = '&copy <a href="http://www.pdok.nl">PDOK</a>';
@@ -29,57 +29,57 @@ const center = [52.0, 5.3];
 // Dutch aerial photography and rendered map (default backgrounds)
 const tileLayers = [
   {
-    title: "Topografie - water",
+    title: 'Topografie - water',
     [EPSG_28992]: {
-      url: "https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/water/EPSG:28992/{z}/{x}/{y}.png",
+      url: 'https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/water/EPSG:28992/{z}/{x}/{y}.png',
       tms: false,
     },
     [EPSG_3857]: {
-      url: "https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/water/EPSG:3857/{z}/{x}/{y}.png",
+      url: 'https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/water/EPSG:3857/{z}/{x}/{y}.png',
       tms: true,
     },
   },
   {
-    title: "Topografie - grijs",
+    title: 'Topografie - grijs',
     [EPSG_28992]: {
-      url: "https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/grijs/EPSG:28992/{z}/{x}/{y}.png",
+      url: 'https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/grijs/EPSG:28992/{z}/{x}/{y}.png',
       tms: false,
     },
     [EPSG_3857]: {
-      url: "https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/grijs/EPSG:3857/{z}/{x}/{y}.png",
+      url: 'https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/grijs/EPSG:3857/{z}/{x}/{y}.png',
       tms: true,
     },
   },
   {
-    title: "Topografie",
+    title: 'Topografie',
     [EPSG_28992]: {
-      url: "https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/standaard/EPSG:28992/{z}/{x}/{y}.png",
+      url: 'https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/standaard/EPSG:28992/{z}/{x}/{y}.png',
       tms: false,
     },
     [EPSG_3857]: {
-      url: "https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/standaard/EPSG:3857/{z}/{x}/{y}.png",
+      url: 'https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/standaard/EPSG:3857/{z}/{x}/{y}.png',
       tms: true,
     },
   },
   {
-    title: "Luchtfoto",
+    title: 'Luchtfoto',
     [EPSG_28992]: {
-      url: "https://service.pdok.nl/hwh/luchtfotorgb/wmts/v1_0/Actueel_ortho25/EPSG:28992/{z}/{x}/{y}.jpeg",
+      url: 'https://service.pdok.nl/hwh/luchtfotorgb/wmts/v1_0/Actueel_ortho25/EPSG:28992/{z}/{x}/{y}.jpeg',
       tms: false,
     },
     [EPSG_3857]: {
-      url: "https://service.pdok.nl/hwh/luchtfotorgb/wmts/v1_0/Actueel_ortho25/EPSG:3857/{z}/{x}/{y}.jpeg",
+      url: 'https://service.pdok.nl/hwh/luchtfotorgb/wmts/v1_0/Actueel_ortho25/EPSG:3857/{z}/{x}/{y}.jpeg',
       tms: true,
     },
   },
   {
-    title: "Geen Achtergrondkaart",
+    title: 'Geen Achtergrondkaart',
     [EPSG_28992]: {
-      url: "",
+      url: '',
       tms: false,
     },
     [EPSG_3857]: {
-      url: "",
+      url: '',
       tms: true,
     },
   },
@@ -96,7 +96,7 @@ async function getServices() {
 
   //const url = 'config/webconfig.json'
   // TODO: how shall we configure this? Discuss with Peter
-  const url = "config/webconfig-netlify.json";
+  const url = import.meta.env.NETLIFY ? 'config/webconfig-netlify.json' : 'config/webconfig.json'
 
   const resp = await fetch(url);
   const result = await resp.json();
