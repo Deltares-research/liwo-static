@@ -34,7 +34,7 @@
           <!-- These layers are set through the store, TODO: make consistent -->
           <!-- layers can be updated in the panel item -->
           <!-- possible updates: opacity, visiblity -->
-          <layer-panel-item
+          <combine-layer-panel-item
             v-if="layerSet"
             :layers="layerSet.layers"
             @update:layers="updateLayersInLayerSet(layerSet, $event)"
@@ -44,14 +44,14 @@
             :selectedLayer="selectedLayer"
             :key="layerSet.id"
           >
-          </layer-panel-item>
+          </combine-layer-panel-item>
 
           <div class="layer-control layer-control-list__item layerpanel-item__title" v-if="loading">
             Scenario's worden geladen
             <div class="lds-dual-ring"></div>
           </div>
           <!-- these correspond to the loaded scenarios based on the selected features -->
-          <layer-panel-item
+          <combine-layer-panel-item
             v-for="(layerSet_, index) in scenarioLayerSets"
             :layers="layerSet_.layers"
             @update:layers="updateLayersInScenarioLayerSets(index, $event)"
@@ -62,7 +62,7 @@
             :key="(layerSet_.feature && layerSet_.feature.id) || layerSet_.id"
           >
             <!-- add scenario layer control options -->
-          </layer-panel-item>
+          </combine-layer-panel-item>
 
         </template>
         <template v-slot:actions>
@@ -163,7 +163,7 @@ import _ from 'lodash'
 import LiwoMap from '@/components/LiwoMap'
 import NotificationBar from '@/components/NotificationBar.vue'
 import LayerPanel from '@/components/LayerPanel'
-import LayerPanelItem from '@/components/LayerPanelItem'
+import CombineLayerPanelItem from '@/components/CombineLayerPanelItem'
 import LegendPanel from '@/components/LegendPanel'
 import CombinePopup from '@/components/CombinePopup'
 import ExportPopup from '@/components/ExportPopup'
@@ -194,7 +194,7 @@ export default {
     ExportPopup,
     FilterPopup,
     LayerPanel,
-    LayerPanelItem,
+    CombineLayerPanelItem,
     LegendPanel,
     LiwoMap,
     NotificationBar
