@@ -23,10 +23,11 @@
 </template>
 
 <script>
-
+import store from '@/store'
 import _ from 'lodash'
 
 import CombineLayerControl from './CombineLayerControl'
+import { mapGetters } from 'vuex'
 
 export default {
   props: {
@@ -45,12 +46,14 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['layers']),
     classData () {
       return {
         'layer-control-list': true,
         'layer-control-list--active': this.active
       }
     }
+
   },
   methods: {
     updateLayer (layer, index) {
@@ -78,6 +81,10 @@ export default {
     if (firstLayer) {
       this.selectLayer(firstLayer)
     }
+
+    const indexes = this.getOptionsByVariantId(this.selectedLayerIndex)
+
+    store.dispatch('setSelectedVariantIndexes', { selectedIndex: indexes })
   },
   components: {
     CombineLayerControl

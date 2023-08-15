@@ -11,7 +11,7 @@
   </h3>
 
   <template v-if="!isCollapsed">
-    <dl v-for="{key, value} in details" :key="key">
+    <dl v-for="{key, value} in variantProperties" :key="key">
       <dt>{{key}}</dt>
       <dd>{{value}}</dd>
     </dl>
@@ -35,7 +35,7 @@
 import _ from 'lodash'
 
 import CombineLayerControlList from './CombineLayerControlList'
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   props: {
@@ -63,8 +63,7 @@ export default {
       // convert to boolean (twice ~= Boolean(x))
       isCollapsed: !!this.collapsed,
       // path where the server runs (should end in a /)
-      publicPath: process.env.BASE_URL,
-      layerVariantOptions: {}
+      publicPath: process.env.BASE_URL
     }
   },
   watch: {
@@ -82,24 +81,31 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['variantFilterPropertiesIndex']),
-    ...mapState(['variantFilterProperties', 'selectedVariantIndexByBreachBandId']),
-    details () {
-      return []
+    ...mapState(['variantFilterProperties']),
 
-      // const filterProperties = this.variantFilterProperties[Object.keys(this.variantFilterProperties)[0]]
-      // const propertyValues = this.selectedVariantIndexByBreachBandId[Object.keys(this.selectedVariantIndexByBreachBandId)[0]]
+    // Get all the variants
+    allVariants () {
+      return this.layers.reduce((acc, layer) => {
+        return [...acc, ...layer.variants]
+      }, [])
+    },
+    currentVariant () {
+      return this.allVariants[0]
+    },
+    variantPropertiesToShow () {
+      const layerBreachIds = Object.keys(this.variantFilterProperties)
+      return layerBreachIds.length > 0 ? layerBreachIds[0] : []
+    },
+    variantProperties () {
+      const propertyKeys = Object.keys(this.variantPropertiesToShow)
+      const variant = this.currentVariant
 
-      // return filterProperties
-      //   .filter(prop => {
-      //     return propertyValues[prop] !== null
-      //   })
-      //   .map(prop => {
-      //     return {
-      //       key: prop,
-      //       value: propertyValues[prop]
-      //     }
-      //   })
+      return propertyKeys.map(key => {
+        return {
+          key,
+          value: variant.properties[key]
+        }
+      })
     }
   },
   methods: {
