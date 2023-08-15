@@ -80,15 +80,12 @@ export default new Vuex.Store({
       state.variantFilterProperties[breachId] = properties
     },
     setSelectedVariantIndexByBreachBandId (state, { selectedIndex, breachBandId }) {
-      console.log(selectedIndex)
       state.selectedVariantIndexByBreachBandId[breachBandId] = selectedIndex
     }
   },
   actions: {
     setSelectedVariantIndexes ({ commit, state }, { selectedIndex }) {
       const { selectedVariantIndexByBreachBandId } = state
-
-      console.log(selectedIndex)
 
       for (const breachBandId in selectedVariantIndexByBreachBandId) {
         commit('setSelectedVariantIndexByBreachBandId', { selectedIndex, breachBandId })

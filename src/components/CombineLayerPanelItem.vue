@@ -15,6 +15,7 @@
       <dt>{{key}}</dt>
       <dd>{{value}}</dd>
     </dl>
+    <button v-if="allVariants.length > 1" @click.stop="showChangeVariantPopup">Wijzig variant</button>
   </template>
 
   <combine-layer-control-list
@@ -28,6 +29,13 @@
     <slot></slot>
   </combine-layer-control-list>
 
+  <combine-change-variant-popup
+    :allVariants="allVariants"
+    :currentVariant="currentVariant"
+    v-if="changeVariantPopupShown"
+  >
+  </combine-change-variant-popup>
+
 </div>
 </template>
 
@@ -35,6 +43,7 @@
 import _ from 'lodash'
 
 import CombineLayerControlList from './CombineLayerControlList'
+import CombineChangeVariantPopup from './CombineChangeVariantPopup'
 import { mapState } from 'vuex'
 
 export default {
@@ -63,7 +72,9 @@ export default {
       // convert to boolean (twice ~= Boolean(x))
       isCollapsed: !!this.collapsed,
       // path where the server runs (should end in a /)
-      publicPath: process.env.BASE_URL
+      publicPath: process.env.BASE_URL,
+
+      changeVariantPopupShown: false
     }
   },
   watch: {
@@ -85,30 +96,54 @@ export default {
 
     // Get all the variants
     allVariants () {
-      return this.layers.reduce((acc, layer) => {
-        return [...acc, ...layer.variants]
-      }, [])
+      return this.layers[0].variants
     },
+    // Current variant is not saved in store even though it is shared among all layers. Why?
     currentVariant () {
-      return this.allVariants[0]
+      if (!this.layers.length) {
+        return null
+      }
+      const index = this.layers[0].properties.selectedVariant
+      return this.allVariants[index]
     },
     variantPropertiesToShow () {
       const layerBreachIds = Object.keys(this.variantFilterProperties)
-      return layerBreachIds.length > 0 ? layerBreachIds[0] : []
+      return layerBreachIds.length > 0 ? this.variantFilterProperties[layerBreachIds[0]] : []
     },
     variantProperties () {
-      const propertyKeys = Object.keys(this.variantPropertiesToShow)
       const variant = this.currentVariant
 
-      return propertyKeys.map(key => {
-        return {
-          key,
-          value: variant.properties[key]
-        }
-      })
+      if (!variant) {
+        return []
+      }
+
+      const props = this.variantPropertiesToShow
+        .filter(key => variant.properties[key] !== null && variant.properties[key] !== undefined)
+        .map(key => {
+          console.log(variant.properties[key])
+          return {
+            key,
+            value: variant.properties[key]
+          }
+        })
+
+      console.log('Props', props)
+      console.log('Variant', variant)
+
+      return [
+        {
+          key: 'Variant',
+          value: variant.metadata.title
+        },
+        ...props
+      ]
     }
   },
   methods: {
+    showChangeVariantPopup () {
+      console.log('yolo')
+      this.changeVariantPopupShown = true
+    },
     selectFirstLayer () {
       this.selectLayer(_.first(this.layerSet.layers))
     },
@@ -127,7 +162,8 @@ export default {
     }
   },
   components: {
-    CombineLayerControlList
+    CombineLayerControlList,
+    CombineChangeVariantPopup
   }
 }
 </script>
