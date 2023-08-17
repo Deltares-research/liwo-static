@@ -147,12 +147,13 @@ export default {
 
     filteredVariants () {
       return this.allVariants.filter(variant => {
-        return Object.entries(this.groupedFilters).some(([prop, filters]) => {
+        return Object.entries(this.groupedFilters).every(([prop, filters]) => {
+          // Active filter values within the group
           const activeFilterValues = Object.entries(filters)
             .filter(([_, { filtered }]) => filtered)
             .map(([value]) => value)
 
-          return activeFilterValues.some(value => variant.properties[prop] === value)
+          return activeFilterValues.length === 0 || activeFilterValues.some(value => variant.properties[prop] === value)
         })
       })
     }
