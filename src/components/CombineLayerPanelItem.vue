@@ -10,13 +10,15 @@
     </button>
   </h3>
 
-  <template v-if="!isCollapsed">
-    <dl v-for="{key, value} in variantProperties" :key="key">
-      <dt>{{key}}</dt>
-      <dd>{{value}}</dd>
+  <div class="layerpanel-item__info" v-if="!isCollapsed">
+    <dl class="layerpanel-item__prop-list">
+      <div v-for="{key, value} in variantProperties" :key="key" class="layerpanel-item__prop">
+        <dt>{{key}}</dt>
+        <dd>{{value}}</dd>
+      </div>
     </dl>
     <button v-if="allVariants.length > 1" @click.stop="showChangeVariantPopup">Wijzig variant</button>
-  </template>
+  </div>
 
   <combine-layer-control-list
     :layers="layers"
@@ -32,6 +34,7 @@
     :allVariants="allVariants"
     :currentVariant="currentVariant"
     @select:variant="selectVariant"
+    @close="hideChangeVariantPopup"
     v-if="changeVariantPopupShown"
   >
   </combine-change-variant-popup>
@@ -136,6 +139,9 @@ export default {
     showChangeVariantPopup () {
       this.changeVariantPopupShown = true
     },
+    hideChangeVariantPopup () {
+      this.changeVariantPopupShown = false
+    },
     selectFirstLayer () {
       this.selectLayer(_.first(this.layerSet.layers))
     },
@@ -146,7 +152,6 @@ export default {
       this.$emit('select:layer', layer)
     },
     selectVariant (variant) {
-      console.log(variant)
       this.$emit('select:variant', variant)
     },
     toggleCollapse () {
@@ -167,6 +172,27 @@ export default {
   .layerpanel-item {
     background-color: var(--yellow);
     border-top: 2px solid var(--light-gray);
+  }
+
+  .layerpanel-item__info {
+    padding: 10px;
+  }
+
+  .layerpanel-item__prop {
+    display: flex;
+    margin-bottom: 6px;
+  }
+
+  .layerpanel-item__prop > * {
+    margin: 0;
+  }
+
+  .layerpanel-item__prop > dt {
+    margin-right: .2em;
+  }
+
+  .layerpanel-item__prop > dt:after {
+    content: ':';
   }
 
   .layerpanel-item__title {

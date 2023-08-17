@@ -476,11 +476,10 @@ export default {
     selectLayer (layer) {
       this.selectedLayer = layer
     },
-    selectVariant ({ index, layerSet, scenarioLayerSetIndex, layer }) {
-      console.log(layerSet)
-
-      // store the index of the active variant
-      this.$set(layer.properties, 'selectedVariant', index)
+    selectVariant ({ index, layerSet, scenarioLayerSetIndex }) {
+      _.each(layerSet.layers, (layer) => {
+        this.$set(layer.properties, 'selectedVariant', index)
+      })
 
       // Store new layers (which now contain the new active variant)
       if (layerSet === this.layerSet) {
@@ -490,9 +489,6 @@ export default {
         // store the index in all layers, because layers in the scenario
         // are actually bands that share the same variant....
         // TODO: move band selection to more logic location, now it is magic...
-        _.each(layerSet.layers, (layer) => {
-          this.$set(layer.properties, 'selectedVariant', index)
-        })
         // TODO: move this to scenario module  in store
         this.updateLayersInScenarioLayerSets(scenarioLayerSetIndex, layerSet.layers)
       }

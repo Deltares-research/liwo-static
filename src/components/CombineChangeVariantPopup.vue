@@ -65,7 +65,10 @@ export default {
   methods: {
 
     selectVariant (variant) {
-      this.$emit('select:variant', variant)
+      this.$emit('select:variant', {
+        index: this.allVariants.indexOf(variant),
+        ...variant
+      })
     },
 
     isCurrentVariant (variant) {
