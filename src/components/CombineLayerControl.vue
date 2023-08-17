@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   props: {
@@ -74,14 +74,9 @@ export default {
         'layer-control': true,
         'layer-control--active': this.active
       }
-    },
-    layerSetId () {
-      return parseInt(this.$route.params.id, 10)
     }
   },
   methods: {
-    ...mapActions(['setSelectedVariantIndexes']),
-
     setTransparancy ({ target }) {
       // Create a copy of the layer with the new opacity
       const layer = { ...this.layer }
@@ -101,13 +96,6 @@ export default {
           ...layer.properties,
           opacity
         }
-      })
-    },
-    selectLayerOption (index) {
-      this.$emit('select:variant', {
-        layer: this.layer,
-        variant: this.layer.variants[index],
-        index
       })
     },
     selectLayer () {

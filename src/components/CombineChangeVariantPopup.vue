@@ -20,8 +20,20 @@
       <div class="change-variant-popup__results">
         <strong>Beschikbare varianten: ({{ allVariants.length  }}):</strong>
 
-        <ul v-for="variant in filteredVariantsWithProps" :key="variant.title">
-          <li>{{ variant.title }}</li>
+        <ul class="change-variant-popup__result-list">
+          <li v-for="variant in filteredVariants" :key="variant.metadata.title">
+            <button
+              class="change-variant-popup__result-item"
+              :class="{'change-variant-popup__result-item--current': isCurrentVariant(variant)}"
+              @click="selectVariant(variant)"
+            >
+              {{ variant.metadata.title }}
+              <dl v-for="{name, value} in getPropsForVariant(variant)" :key="name" class="change-variant-popup__result-item-props">
+                <dt>{{name}}</dt>
+                <dd>{{value}}</dd>
+              </dl>
+            </button>
+          </li>
         </ul>
       </div>
     </div>
@@ -42,22 +54,37 @@ export default {
       required: true
     },
     currentVariant: {
-      type: Object,
-      required: true
+      type: Object
     }
   },
   data () {
     return {
-      groupedAvailableFilters: {}
+      groupedFilters: {}
     }
   },
   methods: {
-    updateFilter (item) {
-      console.log(item)
-      item.info.filtered = false
+
+    selectVariant (variant) {
+      this.$emit('select:variant', variant)
     },
-    getGroupedAvailableFilters () {
-      return this.allVariants.reduce((acc, variant) => {
+
+    isCurrentVariant (variant) {
+      return this.currentVariant && variant.layer === this.currentVariant.layer
+    },
+
+    /**
+     * Returns a object in the following structure
+     * {
+     *  "Overschrijdingsfrequentie": { // All filters from variantPropertiesToShow
+     *      "10": { // key is value found for "Overschrijdingsfrequentie" in all variants
+     *        count: 1 // total amount found for the value "10"
+     *        filtered: true // Whether this filter is active
+     *      }
+     *   }
+     * }
+     */
+    getGroupedFilters () {
+      return this.allVariants.reduce((filters, variant) => {
         this.variantPropertiesToShow.forEach(prop => {
           const valueInVariant = variant.properties[prop]
 
@@ -65,21 +92,32 @@ export default {
             return
           }
 
-          if (!acc[prop]) {
-            acc[prop] = {}
+          if (!filters[prop]) {
+            filters[prop] = {}
           }
 
-          if (!acc[prop][valueInVariant]) {
-            acc[prop][valueInVariant] = {
+          if (!filters[prop][valueInVariant]) {
+            filters[prop][valueInVariant] = {
               count: 0,
               filtered: true
             }
           }
-          acc[prop][valueInVariant].count = acc[prop][valueInVariant].count + 1
+          filters[prop][valueInVariant].count = filters[prop][valueInVariant].count + 1
         })
 
-        return acc
+        return filters
       }, {})
+    },
+
+    getPropsForVariant (variant) {
+      return this.variantPropertiesToShow
+        .filter(prop => variant.properties[prop] !== null && variant.properties[prop] !== undefined)
+        .map(prop => {
+          return {
+            name: prop,
+            value: variant.properties[prop]
+          }
+        })
     }
   },
   computed: {
@@ -93,11 +131,11 @@ export default {
 
     sidebarFilters () {
       return this.variantPropertiesToShow
-        .filter(prop => prop in this.groupedAvailableFilters)
+        .filter(prop => prop in this.groupedFilters)
         .map(prop => {
           return {
             title: prop,
-            values: Object.entries(this.groupedAvailableFilters[prop]).map(([title, info]) => {
+            values: Object.entries(this.groupedFilters[prop]).map(([title, info]) => {
               return {
                 title,
                 info
@@ -106,9 +144,10 @@ export default {
           }
         })
     },
+
     filteredVariants () {
       return this.allVariants.filter(variant => {
-        return Object.entries(this.groupedAvailableFilters).some(([prop, filters]) => {
+        return Object.entries(this.groupedFilters).some(([prop, filters]) => {
           const activeFilterValues = Object.entries(filters)
             .filter(([_, { filtered }]) => filtered)
             .map(([value]) => value)
@@ -116,18 +155,10 @@ export default {
           return activeFilterValues.some(value => variant.properties[prop] === value)
         })
       })
-    },
-    filteredVariantsWithProps () {
-      return this.filteredVariants.map(variant => {
-        return {
-          title: variant.metadata.title
-        }
-      })
     }
   },
   async mounted () {
-    console.log(this.allVariants)
-    this.groupedAvailableFilters = this.getGroupedAvailableFilters()
+    this.groupedFilters = this.getGroupedFilters()
   }
 }
 </script>
@@ -149,5 +180,57 @@ export default {
 
   .change-variant-popup__results {
     margin-left: 3rem;
+    flex-grow: 1;
+  }
+
+  .change-variant-popup__result-list {
+    list-style: none;
+    margin: 0;
+    margin-top: 1.4rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .change-variant-popup__result-list > *:not(:first-child) {
+    margin-top: 1rem;
+  }
+
+  .change-variant-popup__result-item {
+    appearance: none;
+    border: 0;
+    outline: 2px solid var(--lighter-gray);
+    background: none;
+    width: 100%;
+    text-align: left;
+    padding: .5rem;
+  }
+
+  .change-variant-popup__result-item--current {
+    outline-color: #000;
+  }
+
+  .change-variant-popup__result-item-props {
+    display: flex;
+    margin-top: 1rem;
+    margin-bottom: 0;
+    font-size: .9em;
+  }
+
+  .change-variant-popup__result-item-props dt {
+    font-weight: normal;
+    margin-bottom: 0;
+  }
+
+  .change-variant-popup__result-item-props dd {
+    margin: 0;
+  }
+
+  .change-variant-popup__result-item-props dt:after {
+    content: ':';
+  }
+
+  .change-variant-popup__result-item-props dd:not(:last-child):after {
+    content: ',';
+    margin-right: 1em;
   }
 </style>

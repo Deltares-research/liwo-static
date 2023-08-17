@@ -23,7 +23,6 @@
     :selectedLayer="selectedLayer"
     @update:layers="updateLayers"
     @select:layer="selectLayer"
-    @select:variant="selectVariant"
     v-if="!isCollapsed"
   >
     <slot></slot>
@@ -32,6 +31,7 @@
   <combine-change-variant-popup
     :allVariants="allVariants"
     :currentVariant="currentVariant"
+    @select:variant="selectVariant"
     v-if="changeVariantPopupShown"
   >
   </combine-change-variant-popup>
@@ -86,9 +86,6 @@ export default {
       if (!!val !== this.collapsed) {
         this.$emit('update:collapsed', val)
       }
-    },
-    layers (val) {
-      console.log(val)
     }
   },
   computed: {
@@ -120,15 +117,11 @@ export default {
       const props = this.variantPropertiesToShow
         .filter(key => variant.properties[key] !== null && variant.properties[key] !== undefined)
         .map(key => {
-          console.log(variant.properties[key])
           return {
             key,
             value: variant.properties[key]
           }
         })
-
-      console.log('Props', props)
-      console.log('Variant', variant)
 
       return [
         {
@@ -141,7 +134,6 @@ export default {
   },
   methods: {
     showChangeVariantPopup () {
-      console.log('yolo')
       this.changeVariantPopupShown = true
     },
     selectFirstLayer () {
@@ -154,6 +146,7 @@ export default {
       this.$emit('select:layer', layer)
     },
     selectVariant (variant) {
+      console.log(variant)
       this.$emit('select:variant', variant)
     },
     toggleCollapse () {

@@ -477,6 +477,8 @@ export default {
       this.selectedLayer = layer
     },
     selectVariant ({ index, layerSet, scenarioLayerSetIndex, layer }) {
+      console.log(layerSet)
+
       // store the index of the active variant
       this.$set(layer.properties, 'selectedVariant', index)
 
