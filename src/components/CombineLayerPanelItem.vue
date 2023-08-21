@@ -20,15 +20,25 @@
     <button v-if="allVariants.length > 1" @click.stop="showChangeVariantPopup" class="btn primary">Wijzig variant</button>
   </div>
 
-  <combine-layer-control-list
+  <layer-control-list
     :layers="layers"
     :selectedLayer="selectedLayer"
     @update:layers="updateLayers"
     @select:layer="selectLayer"
     v-if="!isCollapsed"
   >
+    <template #layer-control="{ layer, updateLayer }">
+      <combine-layer-control
+        :id="layer.breachBandId"
+        :layer="layer"
+        @update:layer="updateLayer"
+        @select:layer="selectLayer"
+        @select:variant="selectVariant"
+      />
+    </template>
+
     <slot></slot>
-  </combine-layer-control-list>
+  </layer-control-list>
 
   <combine-change-variant-popup
     :breachName="title"
@@ -46,7 +56,8 @@
 <script>
 import _ from 'lodash'
 
-import CombineLayerControlList from './CombineLayerControlList'
+import LayerControlList from './LayerControlList'
+import CombineLayerControl from './CombineLayerControl'
 import CombineChangeVariantPopup from './CombineChangeVariantPopup'
 import { mapState } from 'vuex'
 
@@ -161,7 +172,8 @@ export default {
     }
   },
   components: {
-    CombineLayerControlList,
+    LayerControlList,
+    CombineLayerControl,
     CombineChangeVariantPopup
   }
 }

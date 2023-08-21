@@ -12,13 +12,13 @@
           <strong>{{ title }}</strong>
           <ul>
             <li v-for="item in values" :key="item.title">
-              <input type="checkbox" v-model="item.info.filtered"> {{ item.title }} ({{ item.info.count }})
+              <label><input type="checkbox" v-model="item.info.filtered"> {{ item.title }} ({{ item.info.count }})</label>
             </li>
           </ul>
         </div>
       </aside>
       <form class="change-variant-popup__results">
-        <h3>Beschikbare varianten: ({{ allVariants.length  }}):</h3>
+        <h3>Beschikbare varianten: ({{ filteredVariants.length  }}):</h3>
 
         <ul class="change-variant-popup__result-list">
           <li v-for="variant in filteredVariants" :key="variant.metadata.title">

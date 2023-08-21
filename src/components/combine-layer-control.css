@@ -4,7 +4,8 @@
 
 .layer-control__transparancy-slider {
   width: 60px;
-  margin-left: .5rem;
+  margin-left: auto;
+  margin-right: .5rem;
 }
 
 .layer-control__identifiers {
@@ -15,6 +16,7 @@
 
 .layer-control__title {
   min-width: 0;
+  margin-right: .5rem;
 }
 
 .layer-control__main,

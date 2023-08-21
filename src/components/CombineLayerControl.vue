@@ -39,6 +39,25 @@
         value="0"
         @change.stop="setTransparancy"
       />
+
+      <button
+        v-if="metadata"
+        class="layer-control__info"
+        v-test="'info-toggle'"
+        @click="toggleInfoPopup"
+        type="button"
+      >
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 64 64">
+          <path fill="none" d="M0 0h64v64H0z"/>
+          <path d="M53.9 14.1c-.4-2-2-3.6-4-4-6-1-16-1-17.9-1-2 0-12 0-17.9 1-2 .4-3.6 2-4 4-1 6-1 16-1 17.9s0 12 1 17.9c.4 2 2 3.6 4 4 6 1 16 1 17.9 1 2 0 12 0 17.9-1 2-.4 3.6-2 4-4 1-6 1-16 1-17.9 0-6 0-12-1-17.9zM35 48h-6.6l.6-14v-8h6v22zm-3-26c-2.2 0-3.5-1.3-3.5-3.5 0-2 1.2-3.5 3.5-3.5 2.2 0 3.5 1.2 3.5 3.5 0 2-1.2 3.5-3.5 3.5z"/>
+        </svg>
+      </button>
+
+      <layer-popup
+        v-if="infoPopupIsOpen"
+        :metadata="metadata"
+        @close="toggleInfoPopup"
+      />
     </div>
   </form>
 
@@ -47,21 +66,24 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex'
+import LayerPopup from '@/components/LayerPopup'
+import _ from 'lodash'
 
 export default {
   props: {
     layer: {
       type: Object,
       required: true
-    },
-    active: {
-      type: Boolean,
-      default: false
     }
   },
   data () {
     return {
+      infoPopupIsOpen: false,
+      selectedLayerIndex: null
     }
+  },
+  mounted () {
+    this.selectedLayerIndex = _.get(this.layer, 'properties.selectedVariant')
   },
   computed: {
     ...mapGetters(['variantFilterPropertiesIndex']),
@@ -71,9 +93,13 @@ export default {
     },
     classData () {
       return {
-        'layer-control': true,
-        'layer-control--active': this.active
+        'layer-control': true
       }
+    },
+    metadata () {
+      const variant = _.get(this.layer.variants, this.selectedLayerIndex)
+      const result = _.get(variant, 'metadata')
+      return result
     }
   },
   methods: {
@@ -90,8 +116,6 @@ export default {
         opacity = 1
       }
 
-      console.log(opacity)
-
       this.$emit('update:layer', {
         ...layer,
         properties: {
@@ -107,17 +131,12 @@ export default {
       this.layer.properties.visible = !this.layer.properties.visible
       this.$emit('update:layer', this.layer)
     },
-    togglePopup () {
-      this.popupIsOpen = !this.popupIsOpen
+    toggleInfoPopup () {
+      this.infoPopupIsOpen = !this.infoPopupIsOpen
     }
   },
-  watch: {
-    // Always close meta when switching layers
-    active (isActive) {
-      if (!isActive) {
-        this.popupIsOpen = false
-      }
-    }
+  components: {
+    LayerPopup
   }
 }
 </script>
