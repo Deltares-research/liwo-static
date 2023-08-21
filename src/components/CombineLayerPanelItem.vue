@@ -17,7 +17,7 @@
         <dd>{{value}}</dd>
       </div>
     </dl>
-    <button v-if="allVariants.length > 1" @click.stop="showChangeVariantPopup" class="btn primary">Wijzig variant</button>
+    <button v-test="'change-variant'" v-if="allVariants.length > 1" @click.stop="showChangeVariantPopup" class="btn primary">Wijzig variant</button>
   </div>
 
   <layer-control-list
