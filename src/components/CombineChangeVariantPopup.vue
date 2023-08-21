@@ -220,9 +220,16 @@ export default {
   }
 
   .change-variant-popup__results {
-    margin-left: 3rem;
+    margin-top: 1.5rem;
     margin-bottom: 0;
     flex-grow: 1;
+  }
+
+  @media only screen and (min-width: 651px) {
+    .change-variant-popup__results {
+      margin-top: 0;
+      margin-left: 3rem;
+    }
   }
 
   .change-variant-popup__result-list {
