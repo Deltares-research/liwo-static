@@ -44,7 +44,7 @@ export default {
     this.trap = focusTrap.createFocusTrap(this.$refs.popUp)
     this.trap.activate()
   },
-  beforeDestroy () {
+  beforeUnmount () {
     if (this.focusElBeforeOpen) {
       this.focusElBeforeOpen.focus()
     }
