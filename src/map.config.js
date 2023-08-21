@@ -94,9 +94,10 @@ async function getServices () {
     return services
   }
 
-  const url = 'config/webconfig.json'
-  // TODO: how shall we configure this? Discuss with Peter
-  // const url = 'config/webconfig-rws.json'
+  let url = 'config/webconfig.json'
+  if(location.hostname.includes('netlify.app')) {
+    url = 'config/webconfig-netlify.json'
+  }
 
   const resp = await fetch(url)
   const result = await resp.json()
