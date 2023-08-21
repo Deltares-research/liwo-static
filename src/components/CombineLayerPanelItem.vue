@@ -11,13 +11,13 @@
   </h3>
 
   <div class="layerpanel-item__info" v-if="!isCollapsed">
-    <dl class="layerpanel-item__prop-list">
+    <dl class="layerpanel-item__prop-list" v-if="variantProperties.length > 1">
       <div v-for="{key, value} in variantProperties" :key="key" class="layerpanel-item__prop">
         <dt>{{key}}</dt>
         <dd>{{value}}</dd>
       </div>
     </dl>
-    <button v-if="allVariants.length > 1" @click.stop="showChangeVariantPopup">Wijzig variant</button>
+    <button v-if="allVariants.length > 1" @click.stop="showChangeVariantPopup" class="btn primary">Wijzig variant</button>
   </div>
 
   <combine-layer-control-list
@@ -31,6 +31,7 @@
   </combine-layer-control-list>
 
   <combine-change-variant-popup
+    :breachName="title"
     :allVariants="allVariants"
     :currentVariant="currentVariant"
     @select:variant="selectVariant"
@@ -193,6 +194,13 @@ export default {
 
   .layerpanel-item__prop > dt:after {
     content: ':';
+  }
+
+  .layerpanel-item__prop > dd {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    min-width: 0;
   }
 
   .layerpanel-item__title {

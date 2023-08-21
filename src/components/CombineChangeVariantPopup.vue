@@ -1,14 +1,14 @@
 <template>
   <pop-up
     class="change-variant-popup"
-    title="Variant kiezen"
+    :title="`Selecteer variant voor ${breachName}`"
     @close="$emit('close')"
     >
     <div class="change-variant-popup__content">
       <aside class="change-variant-popup__filters">
-        <p>Filter op variant eigenschappen</p>
+        <h3>Filter op variant eigenschappen</h3>
 
-        <div v-for="{ title, values } in sidebarFilters" :key="title">
+        <div v-for="{ title, values } in sidebarFilters" :key="title" class="change-variant-popup__filter-type">
           <strong>{{ title }}</strong>
           <ul>
             <li v-for="item in values" :key="item.title">
@@ -17,25 +17,44 @@
           </ul>
         </div>
       </aside>
-      <div class="change-variant-popup__results">
-        <strong>Beschikbare varianten: ({{ allVariants.length  }}):</strong>
+      <form class="change-variant-popup__results">
+        <h3>Beschikbare varianten: ({{ allVariants.length  }}):</h3>
 
         <ul class="change-variant-popup__result-list">
           <li v-for="variant in filteredVariants" :key="variant.metadata.title">
-            <button
+            <input type="radio" class="accessibility" name="variant" :value="variant.layer" v-model="selectedVariant" :id="`variant-${variant.layer}`" />
+
+            <label
               class="change-variant-popup__result-item"
-              :class="{'change-variant-popup__result-item--current': isCurrentVariant(variant)}"
-              @click="selectVariant(variant)"
-            >
+              :for="`variant-${variant.layer}`">
               {{ variant.metadata.title }}
-              <dl v-for="{name, value} in getPropsForVariant(variant)" :key="name" class="change-variant-popup__result-item-props">
-                <dt>{{name}}</dt>
-                <dd>{{value}}</dd>
+
+              <dl class="change-variant-popup__result-item-props">
+                <div :key="name" v-for="{name, value} in getPropsForVariant(variant)">
+                  <dt>{{name}}</dt>
+                  <dd>{{value}}</dd>
+                </div>
               </dl>
-            </button>
+            </label>
           </li>
         </ul>
-      </div>
+
+        <footer class="change-variant-popup__footer">
+          <button
+            class="btn primary"
+            @click.prevent="selectVariant"
+          >
+            Variant selecteren
+          </button>
+          <button
+            class="btn secondary"
+            type="reset"
+            @click="$emit('close')"
+          >
+            Annuleer
+          </button>
+        </footer>
+      </form>
     </div>
   </pop-up>
   </template>
@@ -55,24 +74,28 @@ export default {
     },
     currentVariant: {
       type: Object
+    },
+    breachName: {
+      type: String
     }
   },
   data () {
     return {
-      groupedFilters: {}
+      groupedFilters: {},
+      selectedVariant: this.currentVariant.layer
     }
   },
   methods: {
 
-    selectVariant (variant) {
-      this.$emit('select:variant', {
-        index: this.allVariants.indexOf(variant),
-        ...variant
-      })
-    },
+    selectVariant () {
+      const variantIndex = this.allVariants.findIndex(variant => variant.layer === this.selectedVariant)
 
-    isCurrentVariant (variant) {
-      return this.currentVariant && variant.layer === this.currentVariant.layer
+      this.$emit('select:variant', {
+        index: variantIndex,
+        ...this.allVariants[variantIndex]
+      })
+
+      this.$emit('close')
     },
 
     /**
@@ -175,6 +198,16 @@ export default {
   .change-variant-popup__content {
     padding: 1rem;
     display: flex;
+    flex-wrap: wrap;
+  }
+
+  .change-variant-popup__footer {
+    margin-top: 20px;
+    text-align: right;
+  }
+
+  .change-variant-popup__footer > button:not(:last-child) {
+    margin-right: 10px;
   }
 
   .change-variant-popup__filters {
@@ -182,8 +215,13 @@ export default {
     flex-shrink: 0;
   }
 
+  .change-variant-popup__filter-type {
+    margin-bottom: 10px;
+  }
+
   .change-variant-popup__results {
     margin-left: 3rem;
+    margin-bottom: 0;
     flex-grow: 1;
   }
 
@@ -207,17 +245,27 @@ export default {
     width: 100%;
     text-align: left;
     padding: .5rem;
+    display: block;
+    cursor: pointer;
   }
 
-  .change-variant-popup__result-item--current {
+  input[type=radio]:checked + .change-variant-popup__result-item {
     outline-color: #000;
   }
 
   .change-variant-popup__result-item-props {
-    display: flex;
     margin-top: 1rem;
     margin-bottom: 0;
     font-size: .9em;
+  }
+
+  .change-variant-popup__result-item-props > * {
+    display: inline-flex;
+  }
+
+  .change-variant-popup__result-item-props > *:not(:last-child):after {
+    content: ',';
+    margin-right: .2em;
   }
 
   .change-variant-popup__result-item-props dt {
@@ -231,10 +279,6 @@ export default {
 
   .change-variant-popup__result-item-props dt:after {
     content: ':';
-  }
-
-  .change-variant-popup__result-item-props dd:not(:last-child):after {
-    content: ',';
-    margin-right: 1em;
+    margin-right: .2em;
   }
 </style>

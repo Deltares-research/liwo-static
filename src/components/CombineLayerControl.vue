@@ -90,6 +90,8 @@ export default {
         opacity = 1
       }
 
+      console.log(opacity)
+
       this.$emit('update:layer', {
         ...layer,
         properties: {
