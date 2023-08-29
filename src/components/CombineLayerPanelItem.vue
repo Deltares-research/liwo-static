@@ -14,7 +14,7 @@
     <dl class="layerpanel-item__prop-list" v-if="variantProperties.length > 1">
       <div v-for="{key, value} in variantProperties" :key="key" class="layerpanel-item__prop">
         <dt>{{key}}</dt>
-        <dd>{{value}}</dd>
+        <dd :title="value">{{value}}</dd>
       </div>
     </dl>
     <button v-test="'change-variant'" v-if="allVariants.length > 1" @click.stop="showChangeVariantPopup" class="btn primary">Wijzig variant</button>
@@ -189,6 +189,12 @@ export default {
 
   .layerpanel-item__info {
     padding: 10px;
+    background: #fff;
+    border-bottom: 1px solid var(--light-gray);
+  }
+
+  .layerpanel-item__prop-list {
+    margin-bottom: 0;
   }
 
   .layerpanel-item__prop {
