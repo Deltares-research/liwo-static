@@ -1,6 +1,6 @@
 <template>
     <transition name="popup-fade">
-      <div class="pop-up" @keydown.esc="$emit('close')">
+      <div class="pop-up" :class="{'popup--disable-scrollbar': disableScrollbar}" @keydown.esc="$emit('close')">
         <div class="pop-up__backdrop" @click="$emit('close')"></div>
         <div class="pop-up__modal" ref="popUp">
           <header class="pop-up__header">
@@ -31,7 +31,10 @@ import * as focusTrap from 'focus-trap'
 export default {
   props: {
     title: {
-      Type: String
+      type: String
+    },
+    disableScrollbar: {
+      type: Boolean
     }
   },
   data () {
@@ -69,6 +72,7 @@ export default {
     display: flex;
     flex-direction: column;
   }
+
   .pop-up__backdrop {
     opacity: .5;
     position: absolute;
@@ -88,8 +92,16 @@ export default {
     border-radius: 4px;
     border: 2px solid rgba(0,0,0,0.2);
     max-height: calc(100vh - 14rem);
-    overflow: auto;
+    display: flex;
+    flex-direction: column;
   }
+
+  @media only screen and (min-width: 651px) {
+    .popup--disable-scrollbar .pop-up__content {
+      overflow: visible;
+    }
+  }
+
   .pop-up__content {
     overflow-y: auto;
     flex: 0 1 100%;

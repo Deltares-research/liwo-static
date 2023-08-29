@@ -3,6 +3,7 @@
     class="change-variant-popup"
     :title="`Selecteer variant voor ${breachName}`"
     @close="$emit('close')"
+    disable-scrollbar
     >
       <aside class="change-variant-popup__filters">
         <h3>Filter op variant eigenschappen</h3>
@@ -192,15 +193,7 @@ export default {
 <style>
   .change-variant-popup .pop-up__modal {
     max-width: 800px;
-    display: flex;
-    flex-direction: column;
     height: 900px;
-  }
-
-  @media only screen and (min-width: 651px) {
-    .change-variant-popup .pop-up__modal {
-      overflow: visible;
-    }
   }
 
   .change-variant-popup .pop-up__content {
