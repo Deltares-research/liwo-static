@@ -22,13 +22,13 @@
         <h3>Beschikbare varianten: ({{ filteredVariants.length  }}):</h3>
 
         <ul class="change-variant-popup__result-list change-variant-popup__scrollable-list">
-          <li v-for="variant in filteredVariants" :key="variant.metadata.title">
+          <li v-for="variant in filteredVariants" :key="variant.metadata.title" v-test="'resultItem'">
             <input type="radio" class="accessibility" name="variant" :value="variant.layer" v-model="selectedVariant" :id="`variant-${variant.layer}`" />
 
             <label
               class="change-variant-popup__result-item"
               :for="`variant-${variant.layer}`">
-              {{ variant.metadata.title }}
+              <span v-test="'variantName'">{{ variant.metadata.title }}</span>
 
               <dl class="change-variant-popup__result-item-props">
                 <div :key="name" v-for="{name, value} in getPropsForVariant(variant)">

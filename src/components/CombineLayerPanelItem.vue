@@ -11,7 +11,7 @@
   </h3>
 
   <div class="layerpanel-item__info" v-if="!isCollapsed">
-    <dl class="layerpanel-item__prop-list" v-if="variantProperties.length > 1">
+    <dl class="layerpanel-item__prop-list" v-if="variantProperties.length > 1" v-test="'variantProperties'">
       <div v-for="{key, value} in variantProperties" :key="key" class="layerpanel-item__prop">
         <dt>{{key}}</dt>
         <dd :title="value">{{value}}</dd>
