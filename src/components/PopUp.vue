@@ -9,6 +9,7 @@
               {{title}}
             </h1>
             <button
+              type="button"
               @click="$emit('close')"
               class="pop-up__close icon-close-big panel-close"
               v-test="'close-button'"
