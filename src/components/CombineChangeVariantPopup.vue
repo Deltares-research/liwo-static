@@ -4,12 +4,12 @@
     :title="`Selecteer variant voor ${breachName}`"
     @close="$emit('close')"
     >
-    <div class="change-variant-popup__content">
       <aside class="change-variant-popup__filters">
         <h3>Filter op variant eigenschappen</h3>
 
         <div v-for="{ title, values } in sidebarFilters" :key="title" class="change-variant-popup__filter-type">
           <strong>{{ title }}</strong>
+
           <ul>
             <li v-for="item in values" :key="item.title">
               <label><input type="checkbox" v-model="item.info.filtered"> {{ item.title }} ({{ item.info.count }})</label>
@@ -20,7 +20,7 @@
       <form class="change-variant-popup__results">
         <h3>Beschikbare varianten: ({{ filteredVariants.length  }}):</h3>
 
-        <ul class="change-variant-popup__result-list">
+        <ul class="change-variant-popup__result-list change-variant-popup__scrollable-list">
           <li v-for="variant in filteredVariants" :key="variant.metadata.title">
             <input type="radio" class="accessibility" name="variant" :value="variant.layer" v-model="selectedVariant" :id="`variant-${variant.layer}`" />
 
@@ -55,7 +55,6 @@
           </button>
         </footer>
       </form>
-    </div>
   </pop-up>
   </template>
 
@@ -192,13 +191,29 @@ export default {
 
 <style>
   .change-variant-popup .pop-up__modal {
-    max-width: 1024px;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    height: 900px;
   }
 
-  .change-variant-popup__content {
+  @media only screen and (min-width: 651px) {
+    .change-variant-popup .pop-up__modal {
+      overflow: visible;
+    }
+  }
+
+  .change-variant-popup .pop-up__content {
     padding: 1rem;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+  }
+
+  @media only screen and (min-width: 651px) {
+    .change-variant-popup .pop-up__content {
+      flex-direction: row;
+      min-height: 0;
+    }
   }
 
   .change-variant-popup__footer {
@@ -211,7 +226,7 @@ export default {
   }
 
   .change-variant-popup__filters {
-    width: 300px;
+    width: 250px;
     flex-shrink: 0;
   }
 
@@ -219,7 +234,16 @@ export default {
     margin-bottom: 10px;
   }
 
+  .change-variant-popup__scrollable-list {
+    overflow: auto;
+    padding: 2px;
+    max-height: 71vh;
+    flex-grow: 1;
+  }
+
   .change-variant-popup__results {
+    display: flex;
+    flex-direction: column;
     margin-top: 1.5rem;
     margin-bottom: 0;
     flex-grow: 1;
@@ -235,13 +259,13 @@ export default {
   .change-variant-popup__result-list {
     list-style: none;
     margin: 0;
-    margin-top: 1.4rem;
+    margin-top: .5rem;
     display: flex;
     flex-direction: column;
   }
 
   .change-variant-popup__result-list > *:not(:first-child) {
-    margin-top: 1rem;
+    margin-top: .7rem;
   }
 
   .change-variant-popup__result-item {
@@ -251,7 +275,7 @@ export default {
     background: none;
     width: 100%;
     text-align: left;
-    padding: .5rem;
+    padding: .3rem;
     display: block;
     cursor: pointer;
   }
@@ -261,7 +285,7 @@ export default {
   }
 
   .change-variant-popup__result-item-props {
-    margin-top: 1rem;
+    margin-top: .1rem;
     margin-bottom: 0;
     font-size: .9em;
   }
