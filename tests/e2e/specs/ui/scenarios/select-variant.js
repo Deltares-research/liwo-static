@@ -19,16 +19,21 @@ describe('Scenarios: select variant', () => {
 
     cy.wait(5000)
 
+    // Try to open the 'Wijzig variant' popup
     cy.get('button').contains('Wijzig variant').click()
 
+    // Check if it was opened by looking at the title
     cy.get('.pop-up__title').contains('Selecteer variant voor Noord km 977.7 (dkr16 AW112)')
 
+    // Check if there are results being displayed
     cy.get(selector('resultItem')).should('have.length.above', 0)
 
+    // First item should be selected in this scenario
     cy.get(`${selector('resultItem')}:first-child > input[type=radio]`).should('be.checked')
 
     let title = ''
 
+    // Next code checks if we can select another one and if that selection can be applied
     cy.get(`${selector('resultItem')}:nth-child(2)`).within((item) => {
       title = item.find(selector('variantName')).text()
 
