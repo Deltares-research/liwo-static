@@ -121,7 +121,6 @@ export default {
       return result
     },
     selectedLayer () {
-      console.log(this.selectedLayerId)
       // return the selected layer
       // return null if we have no layerSet yet
       if (_.isNil(this.layerSet)) {
