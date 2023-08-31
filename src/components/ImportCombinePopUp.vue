@@ -101,13 +101,18 @@ export default {
           window.location.reload()
         }
 
-        this.$emit('close')
+
+
         // go to the new page
         this.$router.push({
           params: { ids: newIds.join(',') },
           query: this.$route.query
+        }).then(() => {
+          this.$emit('update')
+          this.$emit('close')
         })
-        this.$emit('update')
+
+
       }
     }
   },
