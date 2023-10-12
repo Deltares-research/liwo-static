@@ -1,56 +1,53 @@
-/* eslint-disable import/first */
-import { mount, createLocalVue } from '@vue/test-utils'
-// explicitly import vue file otherwise we don't have the template render function
-// eslint-disable-next-line import/no-webpack-loader-syntax
-const exports = require('!vue-loader!imports-loader?window=>window!@/views/Combine.vue')
-const Combine = exports.default
-import leafletDirective from '@/lib/leaflet-directive'
 
-import chai from 'chai'
-import chaiDom from 'chai-dom'
-import Vuex from 'vuex'
+import { mount } from '@vue/test-utils'
+
+import Combine from '@/views/Combine.vue'
+import { directive as leafletDirective} from '@/lib/leaflet-directive'
+import { directive as testDirective} from '@/directives/test'
+
+import { createStore } from 'vuex'
 import router from '@/router'
+import { expect, beforeEach, it } from 'vitest'
 
-chai.use(chaiDom)
+//const localVue = createLocalVue()
 
-const localVue = createLocalVue()
+///localVue.directive('leaflet', leafletDirective)
 
-localVue.use(Vuex)
-localVue.directive('leaflet', leafletDirective)
+let store
+let getters
+let mutations
+let actions
 
-const expect = chai.expect
-
-describe('the Combine view', () => {
-  let store
-  let getters
-  let mutations
-  let actions
-  beforeEach(() => {
-    getters = {
-      currentNotifications: () => [],
-      layerSet: () => {}
-    }
-    actions = {
-      loadLayerSetById: () => {}
-    }
-    mutations = {
-      setLayerSetId: () => {}
-    }
-    store = new Vuex.Store({
-      getters,
-      actions,
-      mutations
-    })
+beforeEach(() => {
+  getters = {
+    currentNotifications: () => [],
+    layerSet: () => {},
+    layers: () => {},
+  }
+  actions = {
+    loadLayerSetById: () => {}
+  }
+  mutations = {
+    setLayerSetId: () => {}
+  }
+  store = createStore({
+    getters,
+    actions,
+    mutations
   })
+})
 
-  it('should mount', () => {
-    const propsData = {}
-    const { vm } = mount(Combine, {
-      store,
-      router,
-      localVue,
-      propsData
-    })
-    expect(vm)
+it('should mount', () => {
+  const propsData = {}
+  const { vm } = mount(Combine, {
+    global: {
+      directives: {
+        leaflet: leafletDirective,
+        test: testDirective
+      },
+      plugins: [store, router]
+    },
+    propsData
   })
+  expect(vm).toBeTruthy()
 })
