@@ -44,6 +44,7 @@
           :modelValue="selectedVariantIndexByBreachBandId[breachBandId][title]"
           @update:modelValue="setLayerVariant(breachBandId, title, $event)"
           v-test="'variant-select'"
+          data-tour-id="layer-variant-select"
         />
       </label>
     </template>
@@ -59,6 +60,7 @@
         :modelValue="selectedLayerIndex"
         @update:modelValue="selectLayerOption($event)"
         v-test="'variant-select'"
+        data-tour-id="layer-variant-select"
       />
     </label>
   </div>
@@ -73,6 +75,7 @@
         :name="`layer-${id}-trans`"
         value="0"
         @change.stop="setTransparancy"
+        data-tour-id="layer-transparency"
       />
     </div>
     <button
@@ -80,6 +83,7 @@
       class="layer-control__info"
       v-test="'info-toggle'"
       @click="togglePopup"
+      data-tour-id="layer-metadata"
     >
       <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 64 64">
         <path fill="none" d="M0 0h64v64H0z"/>
