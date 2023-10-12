@@ -34,7 +34,7 @@
           <!-- These layers are set through the store, TODO: make consistent -->
           <!-- layers can be updated in the panel item -->
           <!-- possible updates: opacity, visiblity -->
-          <layer-panel-item
+          <combine-layer-panel-item
             v-if="layerSet"
             :layers="layerSet.layers"
             @update:layers="updateLayersInLayerSet(layerSet, $event)"
@@ -44,14 +44,14 @@
             :selectedLayer="selectedLayer"
             :key="layerSet.id"
           >
-          </layer-panel-item>
+          </combine-layer-panel-item>
 
           <div class="layer-control layer-control-list__item layerpanel-item__title" v-if="loading">
             Scenario's worden geladen
             <div class="lds-dual-ring"></div>
           </div>
           <!-- these correspond to the loaded scenarios based on the selected features -->
-          <layer-panel-item
+          <combine-layer-panel-item
             v-for="(layerSet_, index) in scenarioLayerSets"
             :layers="layerSet_.layers"
             @update:layers="updateLayersInScenarioLayerSets(index, $event)"
@@ -62,7 +62,7 @@
             :key="(layerSet_.feature && layerSet_.feature.id) || layerSet_.id"
           >
             <!-- add scenario layer control options -->
-          </layer-panel-item>
+          </combine-layer-panel-item>
 
         </template>
         <template v-slot:actions>
@@ -163,10 +163,10 @@ import _ from 'lodash'
 import LiwoMap from '@/components/LiwoMap.vue'
 import NotificationBar from '@/components/NotificationBar.vue'
 import LayerPanel from '@/components/LayerPanel.vue'
-import LayerPanelItem from '@/components/LayerPanelItem.vue'
 import LegendPanel from '@/components/LegendPanel.vue'
 import CombinePopup from '@/components/CombinePopup.vue'
 import ExportPopup from '@/components/ExportPopup.vue'
+import CombineLayerPanelItem from '@/components/CombineLayerPanelItem.vue'
 /* note that there are some minor casing inconsistencies here  */
 /* pop up is the correct spelling, but I'm sticking to the pattern below */
 import ExportCombinePopup from '@/components/ExportCombinePopUp.vue'
@@ -194,7 +194,7 @@ export default {
     ExportPopup,
     FilterPopup,
     LayerPanel,
-    LayerPanelItem,
+    CombineLayerPanelItem,
     LegendPanel,
     LiwoMap,
     NotificationBar
@@ -473,9 +473,10 @@ export default {
     selectLayer (layer) {
       this.selectedLayer = layer
     },
-    selectVariant ({ index, layerSet, scenarioLayerSetIndex, layer }) {
-      // store the index of the active variant
-      layer.properties.selectedVariant = index
+    selectVariant ({ index, layerSet, scenarioLayerSetIndex }) {
+      _.each(layerSet.layers, (layer) => {
+        layer.properties.selectedVariant = index
+      })
 
       // Store new layers (which now contain the new active variant)
       if (layerSet === this.layerSet) {
@@ -485,9 +486,6 @@ export default {
         // store the index in all layers, because layers in the scenario
         // are actually bands that share the same variant....
         // TODO: move band selection to more logic location, now it is magic...
-        _.each(layerSet.layers, (layer) => {
-          layer.properties.selectedVariant = index
-        })
         // TODO: move this to scenario module  in store
         this.updateLayersInScenarioLayerSets(scenarioLayerSetIndex, layerSet.layers)
       }

@@ -340,9 +340,6 @@ export default {
         index
       })
     },
-    selectLayer () {
-      this.$emit('select:layer', this.layer)
-    },
     toggleLayer () {
       this.layer.properties.visible = !this.layer.properties.visible
       this.$emit('update:layer', this.layer)

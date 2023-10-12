@@ -6,15 +6,13 @@
       :key="layer.breachBandId"
       @click="selectLayer(layer)"
     >
-      <layer-control
+      <slot
+        name="layer-control"
         v-if="layer"
-        :id="layer.breachBandId"
         :active="isActive(layer)"
         :layer="layer"
-        @update:layer="layer => updateLayer(layer, index)"
-        @select:layer="selectLayer"
-        @select:variant="selectVariant"
-      />
+        :updateLayer="layer => updateLayer(layer, index)"
+      ></slot>
     </li>
     <li v-if="$slots.default">
       <slot></slot>
@@ -25,8 +23,6 @@
 <script>
 
 import _ from 'lodash'
-
-import LayerControl from './LayerControl.vue'
 
 export default {
   props: {
@@ -62,9 +58,6 @@ export default {
     selectLayer (layer) {
       this.$emit('select:layer', layer)
     },
-    selectVariant (evt) {
-      this.$emit('select:variant', evt)
-    },
     isActive (layer) {
       if (!this.selectedLayer) {
         return false
@@ -78,9 +71,6 @@ export default {
     if (firstLayer) {
       this.selectLayer(firstLayer)
     }
-  },
-  components: {
-    LayerControl
   }
 }
 </script>

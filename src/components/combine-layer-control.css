@@ -1,0 +1,106 @@
+.layer-control {
+  background-color: var(--white);
+}
+
+.layer-control__transparancy-slider {
+  width: 60px;
+  margin-left: auto;
+  margin-right: .5rem;
+}
+
+.layer-control__identifiers {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.layer-control__title {
+  min-width: 0;
+  margin-right: .5rem;
+}
+
+.layer-control__main,
+.layer-control__options {
+  display: block;
+  position: relative;
+  padding: .5rem .5rem .5rem 2.5rem;
+}
+
+.layer-control__main {
+  margin-bottom: 0;
+}
+
+.layer-control__vis-label {
+  position: absolute;
+  left: .5rem;
+}
+
+.layer-control__range {
+  display: flex;
+}
+
+.layer-control__range input {
+  margin: .4rem;
+}
+
+.layer-control__options {
+  display: none;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  border-top: 1px solid var(--white);
+}
+
+.layer-control__options label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.layer-control__options label + label {
+  margin-top: 4px;
+}
+
+.layer-control__options select {
+  margin: 0;
+  padding: 1px 7px 0;
+}
+
+.layer-control__options-subject {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.layer-control__button,
+.layer-control__info {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+.layer-control__vis-checkbox:focus + .layer-control__vis-label {
+  outline: 2px auto #0073bf;
+  outline: 5px auto -webkit-focus-ring-color;
+}
+
+.layer-control__vis-checkbox + .layer-control__vis-label svg {
+  fill: var(--medium-gray);
+}
+
+.layer-control__vis-checkbox:checked + .layer-control__vis-label svg {
+  fill: var(--black);
+}
+
+.layer-control--active {
+  background-color: var(--light-yellow);
+}
+
+.layer-control--active .layer-control__options {
+  display: flex;
+}
+
+.layer-control__marker-icon {
+  margin-left: auto;
+}

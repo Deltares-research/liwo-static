@@ -95,7 +95,7 @@ async function getServices() {
   }
 
   let url = 'config/webconfig.json'
-  if(location.hostname.includes('netlify.app')) {
+  if (location.hostname.includes('netlify.app')) {
     url = 'config/webconfig-netlify.json'
   }
 
