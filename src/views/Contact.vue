@@ -22,7 +22,7 @@
 
 <script>
 export default {
-  name: 'Contact'
+  name: 'ContactView'
 }
 </script>
 

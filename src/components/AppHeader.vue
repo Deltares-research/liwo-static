@@ -24,8 +24,8 @@
     </div>
     <nav role="navigation" class="app-header__nav">
       <ul class="container">
-        <li><router-link :to="{ name: 'maps' }">Kaarten</router-link></li>
-        <li><router-link :to="{ name: 'about' }">Over LIWO</router-link></li>
+        <li><router-link :to="{ name: 'maps' }" data-tour-id="kaarten-link">Kaarten</router-link></li>
+        <li><router-link :to="{ name: 'about' }" data-tour-id="over-liwo-link">Over LIWO</router-link></li>
       </ul>
     </nav>
     <h1 class="app-header__page-title container" v-test="'page-title'">{{ this.pageTitle }}</h1>

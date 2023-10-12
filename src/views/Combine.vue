@@ -185,7 +185,7 @@ import { EPSG_3857 } from '@/lib/leaflet-utils/projections'
 import { showLayerInfoPopup, showCombinedLayerInfoPopup } from '@/lib/leaflet-utils/popup'
 
 export default {
-  name: 'Combine',
+  name: 'CombineView',
   components: {
     CombinePopup,
     ExportCombinePopup,

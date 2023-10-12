@@ -68,9 +68,13 @@ import { extractUnit } from '@/lib/load-layersets'
 
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
 import { showLayerInfoPopup } from '@/lib/leaflet-utils/popup'
+import { useMapTour } from '@/tour/use-map-tour'
 
 export default {
-  name: 'Viewer',
+  name: 'ViewerView',
+  setup() {
+    useMapTour().start()
+  },
   components: {
     ExportPopup,
     LayerPanel,

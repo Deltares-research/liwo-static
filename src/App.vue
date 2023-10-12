@@ -40,6 +40,7 @@
 import { mapGetters } from 'vuex'
 import AppHeader from '../src/components/AppHeader.vue'
 import CookieLaw from './components/CookieLaw.vue'
+import { useAppTour } from '@/tour/use-app-tour'
 
 import mapConfig from './map.config.js'
 
@@ -47,6 +48,9 @@ export default {
   components: {
     AppHeader,
     CookieLaw
+  },
+  setup() {
+    useAppTour().start()
   },
   data () {
     return {

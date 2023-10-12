@@ -38,7 +38,7 @@ import LayerSetList from '@/components/LayerSetList.vue'
 import { loadLayerSets } from '@/lib/load-layersets'
 
 export default {
-  name: 'Maps',
+  name: 'MapsView',
   data () {
     return {
       layerSets: [],
