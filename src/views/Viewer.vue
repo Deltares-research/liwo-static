@@ -94,7 +94,7 @@ export default {
       selectedLayerId: null
     }
   },
-  async mounted () {
+  created () {
     this.$store.commit('setLayerSetId', this.id)
     this.$store.dispatch('loadLayerSetById', { id: this.id })
   },

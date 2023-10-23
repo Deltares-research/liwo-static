@@ -11,46 +11,31 @@ import { greyIcon, yellowIcon, defaultIcon, iconsByLayerType } from '@/lib/leafl
 
 import './cluster-icon.css'
 
-// store vnode so we can use it to interact with the component using the directive using events
-// TODO: rewrite directive as component so we can handle this is clearer way
-let vnode
-
-// emit custom events to the component implementing the directive
-// when vnode.context.$emit does not workd
-function emit (vnode, name, data) {
-  var handlers = (vnode.data && vnode.data.on) ||
-    (vnode.componentOptions && vnode.componentOptions.listeners)
-
-  if (handlers && handlers[name]) {
-    handlers[name].fns(data)
-  }
-}
-
-export default function createLayer (layer, { onClick }, _, vnodeRef) {
-  vnode = vnodeRef
+export default function createLayer (layer, callbacks, abortSignal) {
   if (layer.type === 'json' && layer.geojson) {
-    return createGeoJson(layer)
+    return createGeoJson(layer, callbacks, abortSignal)
   } else if (layer.type === 'cluster') {
-    return createCluster(layer, onClick)
+    return createCluster(layer, callbacks, abortSignal)
   } else if (layer.type === 'tile') {
-    return createTile(layer)
+    return createTile(layer, callbacks, abortSignal)
   } else if (!layer.hideWms) {
-    return createWms(layer)
+    return createWms(layer, callbacks, abortSignal)
   } else {
-    return null
+    return Promise.resolve(null)
   }
 }
 
-export function createGeoJson ({ geojson, style }) {
-  return L.geoJson(geojson, {
+async function createGeoJson (layer) {
+  return L.geoJson(layer.geojson, {
     style: () => {
       // TODO:  Is this used?
-      return { className: style }
+      return { className: layer.style }
     }
   })
 }
 
-function createCluster (layer, onClick) {
+async function createCluster (layer, callbacks) {
+
   // We have a nested structure of layers
   // LayerGroup -> [ MarkerCluster, Geojson ]
   // When selected the markers are filtered from the cluster and show up in the geojson layer
@@ -63,20 +48,26 @@ function createCluster (layer, onClick) {
     maxClusterRadius: 60
   })
   // create the markers
-  const geojsonLayer = createClusterGeoJson(layer, (evt) => {
-    evt.geojsonLayer = geojsonLayer
-    onClick(evt)
-    clusterGroup.refreshClusters()
+  const geojsonLayer = createClusterGeoJson(layer, {
+    ...callbacks,
+    onClick: (evt) => {
+      evt.geojsonLayer = geojsonLayer
+      callbacks.onClick(evt)
+      clusterGroup.refreshClusters()
+    }
   })
   // add the geojson layer to the cluster (lowest level)
   clusterGroup.addLayer(geojsonLayer)
   // add  the cluster to the group
   layerGroup.addLayer(clusterGroup)
   // now create the selected markers
-  const selectedLayer = createSelectedGeojson(layer, (evt) => {
-    evt.geojsonLayer = selectedLayer
-    onClick(evt)
-    clusterGroup.refreshClusters()
+  const selectedLayer = createSelectedGeojson(layer, {
+    ...callbacks,
+    onClick: (evt) => {
+      evt.geojsonLayer = selectedLayer
+      callbacks.onClick(evt)
+      clusterGroup.refreshClusters()
+    }
   })
   // also add  them
   layerGroup.addLayer(selectedLayer)
@@ -86,94 +77,19 @@ function createCluster (layer, onClick) {
   return layerGroup
 }
 
-// set custom  style for selected features
-function onEachFeature (feature, marker, onClick) {
-  const { name } = feature.properties
-  // TODO: implement is  controllable
-  marker.on('click', (evt) => {
-    onClick(evt)
-  })
-  marker.on('mouseover', (event) => {
-    marker.bindTooltip(name)
 
-    // emit properties so e.g. state can be used to set tooltip text
-    emit(vnode, 'marker:mouseover', { feature, marker })
-
-    event.target.openTooltip()
-  })
-  marker.on('mouseout', (event) => {
-    event.target.closeTooltip()
-    marker.unbindTooltip()
-  })
-  // color selected feature as red
-  if (marker.feature.properties.missing) {
-    marker.setIcon(greyIcon)
-  } else if (marker.feature.properties.selected) {
-    marker.setIcon(yellowIcon)
-  } else {
-    const layerType = getLayerType(feature)
-    const icon = _.get(iconsByLayerType, layerType, defaultIcon)
-    marker.setIcon(icon)
-  }
-}
-
-function pointToLayer (feature, latlng, options) {
-  // TODO: consider using circleMarker to allow faster and css based styling
-  const layer = L.marker(latlng, options)
-  return layer
-}
-
-export function createClusterGeoJson (layer, onClick) {
-  // create the geojson layer used as 0 level for the clusters
-  const opacity = _.get(layer.layerObj, 'properties.opacity', 1)
-  const markerOptions = {
-    opacity
-  }
-  const options = {
-    // set custom  style for selected features
-    onEachFeature: (feature, marker) => onEachFeature(feature, marker, onClick),
-    pointToLayer: (feature, latlng) => pointToLayer(feature, latlng, markerOptions)
-  }
-  if (_.has(layer, 'filter')) {
-    options.filter = layer.filter
-  }
-  const unselectedGeoJson = {
-    ...layer.geojson
-  }
-  if (unselectedGeoJson.features) {
-    unselectedGeoJson.features = unselectedGeoJson.features.filter(feature => !feature.properties.selected)
-  }
-
-  return L.geoJson(unselectedGeoJson, options)
-}
-
-export function createSelectedGeojson (layer, onClick) {
-  // create the markers for the selected geojsons
-  const options = {
-    onEachFeature: (feature, marker) => onEachFeature(feature, marker, onClick),
-    pointToLayer: (feature, latlng) => pointToLayer(feature, latlng, {})
-  }
-  if (_.has(layer, 'filter')) {
-    options.filter = layer.filter
-  }
-  const selectedGeoJson = {
-    ...layer.geojson
-  }
-  selectedGeoJson.features = selectedGeoJson.features.filter(feature => feature.properties.selected)
-  return L.geoJson(selectedGeoJson, options)
-}
-
-export function createTile (layer) {
+export async function createTile (layer) {
   const opacity = _.get(layer.layerObj, 'properties.opacity', 1)
   return L.tileLayer(layer.url, { opacity })
 }
 
-export async function createWms (layer) {
+export async function createWms (layer, _callbacks, abortSignal) {
   // these options come frome the vaiant properties of the layer
   const { namespace, attribution, style } = layer
   // fully visible by default
   const opacity = _.get(layer.layerObj, 'properties.opacity', 1)
   const url = await getGeoServerURL(namespace)
+  abortSignal.throwIfAborted()
   return L.tileLayer.wms(url, {
     // TODO: layer is now sometimes a string, sometimes an object. Clean this up
     layers: layer.layer,
@@ -195,6 +111,12 @@ async function getGeoServerURL (namespace) {
     : STATIC_GEOSERVER_URL
 }
 
+function pointToLayer (_feature, latlng, options) {
+  // TODO: consider using circleMarker to allow faster and css based styling
+  const layer = L.marker(latlng, options)
+  return layer
+}
+
 function clusterIconCreateFunction (layer) {
   return function (cluster) {
     const childCount = cluster.getChildCount()
@@ -206,5 +128,76 @@ function clusterIconCreateFunction (layer) {
       iconSize: new L.Point(45, 45)
     })
     return icon
+  }
+}
+
+function createSelectedGeojson (layer, callbacks) {
+  // create the markers for the selected geojsons
+  const options = {
+    onEachFeature: (feature, marker) => onEachFeature(feature, marker, callbacks),
+    pointToLayer: (feature, latlng) => pointToLayer(feature, latlng, {})
+  }
+  if (_.has(layer, 'filter')) {
+    options.filter = layer.filter
+  }
+  const selectedGeoJson = {
+    ...layer.geojson
+  }
+  selectedGeoJson.features = selectedGeoJson.features.filter(feature => feature.properties.selected)
+  return L.geoJson(selectedGeoJson, options)
+}
+
+function createClusterGeoJson (layer, callbacks) {
+  // create the geojson layer used as 0 level for the clusters
+  const opacity = _.get(layer.layerObj, 'properties.opacity', 1)
+  const markerOptions = {
+    opacity
+  }
+  const options = {
+    // set custom  style for selected features
+    onEachFeature: (feature, marker) => onEachFeature(feature, marker, callbacks),
+    pointToLayer: (feature, latlng) => pointToLayer(feature, latlng, markerOptions)
+  }
+  if (_.has(layer, 'filter')) {
+    options.filter = layer.filter
+  }
+  const unselectedGeoJson = {
+    ...layer.geojson
+  }
+  if (unselectedGeoJson.features) {
+    unselectedGeoJson.features = unselectedGeoJson.features.filter(feature => !feature.properties.selected)
+  }
+
+  return L.geoJson(unselectedGeoJson, options)
+}
+
+// set custom  style for selected features
+function onEachFeature (feature, marker, { onClick, onMarkerHover }) {
+  const { name } = feature.properties
+  // TODO: implement is  controllable
+  marker.on('click', (evt) => {
+    onClick(evt)
+  })
+  marker.on('mouseover', (event) => {
+    marker.bindTooltip(name)
+
+    // emit properties so e.g. state can be used to set tooltip text
+    onMarkerHover({ feature, marker })
+
+    event.target.openTooltip()
+  })
+  marker.on('mouseout', (event) => {
+    event.target.closeTooltip()
+    marker.unbindTooltip()
+  })
+  // color selected feature as red
+  if (marker.feature.properties.missing) {
+    marker.setIcon(greyIcon)
+  } else if (marker.feature.properties.selected) {
+    marker.setIcon(yellowIcon)
+  } else {
+    const layerType = getLayerType(feature)
+    const icon = _.get(iconsByLayerType, layerType, defaultIcon)
+    marker.setIcon(icon)
   }
 }

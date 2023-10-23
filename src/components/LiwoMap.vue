@@ -1,30 +1,31 @@
 <template>
-  <div>
-    <div
-      ref="liwoMap"
-      class="liwo-map"
-      @marker:mouseover="$emit('marker:mouseover', $event)"
-      v-leaflet="{
-        callbacks: { onClick, initMapObject, onPrint },
-        config: mapConfig,
-        layers: updatedLayers,
-        cluster: clusterMarkers,
-      }"
-      v-test="'map'"
-    >
-      <div ref="legend">
-        <slot name="legend"></slot>
-      </div>
+  <leaflet-map
+    class="liwo-map"
+    @marker:mouseover="$emit('marker:mouseover', $event)"
+    @initMapObject="initMapObject"
+    @print="onPrint"
+    @map:click="onClick"
+    v-test="'map'"
+    :layers="layers"
+    :cluster="clusterMarkers"
+    :config="mapConfig"
+  >
+    <div ref="legend">
+      <slot name="legend"></slot>
     </div>
-  </div>
+  </leaflet-map>
 </template>
 
 <script>
 import createMapConfig from '@/lib/leaflet-utils/mapconfig-factory'
 import { legendControl } from '@/lib/leaflet-utils/legend'
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
+import LeafletMap from './LeafletMap.vue'
 
 export default {
+  components: {
+    LeafletMap
+  },
   props: {
     projection: {
       type: String,
@@ -42,7 +43,6 @@ export default {
   data () {
     return {
       mapInitialized: false,
-      updatedLayers: []
     }
   },
   watch: {
@@ -51,23 +51,12 @@ export default {
         this.setPosition()
       }
     },
-    layers: {
-      deep: true,
-      immediate: true,
-      handler(newValue) {
-        // TODO: Somewhere the layers are updated, but Vue 3 does not pick up changes in nested properties
-        this.updatedLayers = newValue ? [...newValue] : []
-      }
-    },
   },
   created () {
     this.map = null
     this.mapConfig = createMapConfig({
       projection: this.projection
     })
-  },
-  mounted () {
-    this.mapRef = this.$refs.liwoMap
   },
   beforeUnmount () {
     this.removePositionListeners()
@@ -135,7 +124,7 @@ export default {
     removePositionListeners () {
       this.map.off('moveend', this.addPositionToRoute)
     }
-  }
+  },
 }
 </script>
 

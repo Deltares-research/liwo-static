@@ -1,26 +1,42 @@
-import { deepEqual } from 'fast-equals'
+import { onMounted, ref, watch } from "vue";
+import mapFactory from "./leaflet-utils/map-factory";
 import { isPromise } from '@/lib/utils'
 import L from '@/lib/leaflet-utils/leaf'
 import createLayer from './leaflet-utils/layer-factory'
-import mapFactory from './leaflet-utils/map-factory'
 
-let map
-let layerGroup
+export function useLeaflet({ el, config, callbacks, cluster, layers }) {
+  let map;
+  let layerGroup;
 
-export const directive = {
-
-  mounted (el, { value }, vnode) {
-    const { config, callbacks } = value
-    map = mapFactory(el, vnode, config, callbacks.onPrint)
+  onMounted(() => {
+    map = mapFactory(el.value, {}, config.value, callbacks.onPrint)
     layerGroup = L.layerGroup().addTo(map)
     callbacks.initMapObject(map)
-  },
 
-  updated (_, { value, oldValue }, vnode) {
-    // check if of one of the layers the opacity changed
-    const changedOpacityLayers = value.layers.filter((layer) => {
+    layerGroup.clearLayers()
+
+    const leafletLayers = layers
+      .filter(layer => !layer.hide)
+
+    leafletLayers
+      .map(layer => createLayer(layer, callbacks, cluster, {}))
+      .filter(layer => layer)
+      .forEach(async layer => {
+        if (isPromise(layer)) {
+          console.log('Promise layer')
+          layer = await layer
+        }
+
+        console.log('Adding layer', layer)
+
+        layerGroup.addLayer(layer)
+      })
+  })
+
+  watch([layers, cluster], () => {
+    const changedOpacityLayers = layers.filter((layer) => {
       // lookup the old layer in the old values
-      const oldLayer = oldValue.layers.find(l => l.layerObj.id === layer.layerObj.id)
+      const oldLayer = layers.find(l => l.layerObj.id === layer.layerObj.id)
 
       if (oldLayer) {
         const opacity = layer.layerObj.properties.opacity
@@ -47,34 +63,26 @@ export const directive = {
       return
     }
 
-    if (deepEqual(value, oldValue)) {
-      return
-    }
-    const { callbacks, cluster } = value
-
-    // TODO: why? remove falsy values?
-    const layers = value.layers.filter(value => value)
-
     layerGroup.clearLayers()
 
-    const leafletLayers = layers
-      .filter(layer => !layer.hide)
+    const leafletLayers = layers.filter(layer => !layer.hide)
 
     leafletLayers
-      .map(layer => createLayer(layer, callbacks, cluster, vnode))
+      .map(layer => createLayer(layer, callbacks, cluster, {}))
       .filter(layer => layer)
       .forEach(async layer => {
         if (isPromise(layer)) {
+          console.log('Promise layer')
           layer = await layer
         }
 
+        console.log('Adding layer', layer)
+
         layerGroup.addLayer(layer)
       })
+  })
+
+  return {
+    el,
   }
 }
-
-const install = (app) => {
-  app.directive('leaflet', directive)
-}
-
-export default install
