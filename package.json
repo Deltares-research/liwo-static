@@ -1,6 +1,6 @@
 {
   "name": "liwo-static",
-  "version": "3.0.1",
+  "version": "2.52.0",
   "private": true,
   "scripts": {
     "serve": "vite",
