@@ -7,8 +7,6 @@ export function useTour(steps) {
   let autoStart = false
 
   onMounted(() => {
-    console.log('Starting tour')
-
     driverInstance = driver({
       steps
     })
