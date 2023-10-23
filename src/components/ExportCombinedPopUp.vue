@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import PopUp from '@/components/PopUp'
+import PopUp from '@/components/PopUp.vue'
 import mapConfig from '../map.config'
 import store from '@/store'
 

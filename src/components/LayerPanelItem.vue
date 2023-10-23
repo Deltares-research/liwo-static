@@ -12,11 +12,21 @@
   <layer-control-list
     :layers="layers"
     :selectedLayer="selectedLayer"
-    @update:layers="updateLayers"
     @select:layer="selectLayer"
-    @select:variant="selectVariant"
+    @update:layers="updateLayers"
+
     v-if="!isCollapsed"
   >
+    <template #layer-control="{ layer, active, updateLayer }">
+      <layer-control
+        :id="layer.breachBandId"
+        :active="active"
+        :layer="layer"
+        @update:layer="updateLayer"
+        @select:variant="selectVariant"
+      />
+    </template>
+
     <slot></slot>
   </layer-control-list>
 
@@ -26,7 +36,8 @@
 <script>
 import _ from 'lodash'
 
-import LayerControlList from './LayerControlList'
+import LayerControlList from './LayerControlList.vue'
+import LayerControl from './LayerControl.vue'
 
 export default {
   props: {
@@ -54,11 +65,11 @@ export default {
       // convert to boolean (twice ~= Boolean(x))
       isCollapsed: !!this.collapsed,
       // path where the server runs (should end in a /)
-      publicPath: process.env.BASE_URL
+      publicPath: import.meta.env.BASE_URL
     }
   },
   watch: {
-    collapsed (val) {
+    collapsed () {
       this.isCollapsed = !!this.collapsed
     },
     isCollapsed (val) {
@@ -87,7 +98,8 @@ export default {
     }
   },
   components: {
-    LayerControlList
+    LayerControlList,
+    LayerControl
   }
 }
 </script>

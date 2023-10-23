@@ -1,4 +1,4 @@
-import { stringify } from 'query-string'
+import query from 'query-string'
 import mapConfig from '../map.config.js'
 
 export default async function ({
@@ -14,7 +14,8 @@ export default async function ({
     return undefined
   }
   const services = await mapConfig.getServices()
-  const params = stringify({
+
+  const params = query.stringify({
     service,
     request,
     width,

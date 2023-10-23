@@ -53,7 +53,7 @@
 import { mapState } from 'vuex'
 import { probabilityConfig } from '@/lib/probability-filter'
 import store from '@/store'
-import PopUp from '@/components/PopUp'
+import PopUp from '@/components/PopUp.vue'
 
 export default {
   components: { PopUp },

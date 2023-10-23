@@ -49,7 +49,7 @@
 
 <script>
 export default {
-  name: 'Accessibility'
+  name: 'AccessibilityPage'
 }
 </script>
 

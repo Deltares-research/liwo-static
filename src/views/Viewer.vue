@@ -57,11 +57,11 @@
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
 
-import ExportPopup from '@/components/ExportPopup'
-import LayerPanel from '@/components/LayerPanel'
-import LayerPanelItem from '@/components/LayerPanelItem'
-import LiwoMap from '@/components/LiwoMap'
-import LegendPanel from '@/components/LegendPanel'
+import ExportPopup from '@/components/ExportPopup.vue'
+import LayerPanel from '@/components/LayerPanel.vue'
+import LayerPanelItem from '@/components/LayerPanelItem.vue'
+import LiwoMap from '@/components/LiwoMap.vue'
+import LegendPanel from '@/components/LegendPanel.vue'
 import NotificationBar from '@/components/NotificationBar.vue'
 import { flattenLayerSet } from '@/lib/layer-parser'
 import { extractUnit } from '@/lib/load-layersets'
@@ -70,7 +70,7 @@ import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
 import { showLayerInfoPopup } from '@/lib/leaflet-utils/popup'
 
 export default {
-  name: 'Viewer',
+  name: 'ViewerPage',
   components: {
     ExportPopup,
     LayerPanel,
@@ -94,7 +94,7 @@ export default {
       selectedLayerId: null
     }
   },
-  async mounted () {
+  created () {
     this.$store.commit('setLayerSetId', this.id)
     this.$store.dispatch('loadLayerSetById', { id: this.id })
   },
@@ -165,7 +165,7 @@ export default {
     },
     selectVariant ({ layer, index }) {
       // store the index of the active variant in the layer
-      this.$set(layer.properties, 'selectedVariant', index)
+      layer.properties.selectedVariant = index
       // update the  layer in the layerSet
       this.updateLayers(this.layerSet, this.layerSet.layers)
     }

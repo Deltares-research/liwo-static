@@ -1,11 +1,11 @@
-import queryString from 'query-string'
 import mockLayerSetData from '../../mock/layerset.json'
 import mockDoubleFeaturesData from '../../mock/doubleFeatureCollection.json'
 
 const url = '/#/viewer/1?center=52,5&zoom=4'
 
 function getParams (url) {
-  return queryString.parse('?' + url.split('?')[1])
+  const params = new URLSearchParams(url.split('?')[1])
+  return params
 }
 
 describe('URL', () => {
@@ -28,8 +28,8 @@ describe('URL', () => {
     cy.wait(500)
 
     cy.location().should(($loc) => {
-      const { center } = getParams($loc.hash)
-      expect(center).to.equal('52.30009,5.29893')
+      const params = getParams($loc.hash)
+      expect(params.get('center')).to.equal('52.30009,5.29893')
     })
   })
 
@@ -51,8 +51,8 @@ describe('URL', () => {
     cy.get('.leaflet-control-zoom-in').click()
 
     cy.location().should(($loc) => {
-      const { zoom } = getParams($loc.hash)
-      expect(zoom).to.equal('6')
+      const params = getParams($loc.hash)
+      expect(params.get('zoom')).to.equal('6')
     })
   })
 
@@ -74,8 +74,8 @@ describe('URL', () => {
     cy.get('.leaflet-control-zoom-out').click()
 
     cy.location().should(($loc) => {
-      const { zoom } = getParams($loc.hash)
-      expect(zoom).to.equal('2')
+      const params = getParams($loc.hash)
+      expect(params.get('zoom')).to.equal('2')
     })
   })
 

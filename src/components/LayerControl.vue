@@ -40,8 +40,8 @@
           :key="index"
           name="layer-variant"
           :options="getLayerVariantOptionsWithFallback(variant, breachBandId, title)"
-          v-model="selectedVariantIndexByBreachBandId[breachBandId][title]"
-          @change="setLayerVariant(title, $event)"
+          :modelValue="selectedVariantIndexByBreachBandId[breachBandId][title]"
+          @update:modelValue="setLayerVariant(breachBandId, title, $event)"
           v-test="'variant-select'"
         />
       </label>
@@ -50,17 +50,16 @@
     <!-- TODO: this is not a layer setting. Move this to an application settings pane. -->
   <div v-if="!breachId && layerOptions.length > 1" class="layer-control__options">
     <!-- TODO: this now  shows up for each band reorganize -->
-    <template>
-      <label>
-        <layer-control-select
-          name="layer-variant"
-          :options="layerOptions"
-          v-model="selectedLayerIndex"
-          @change="selectLayerOption($event)"
-          v-test="'variant-select'"
-        />
-      </label>
-    </template>
+    <label>
+      <layer-control-select
+        name="layer-variant"
+        :options="layerOptions"
+        v-model="selectedLayerIndex"
+        :modelValue="selectedLayerIndex"
+        @update:modelValue="selectLayerOption($event)"
+        v-test="'variant-select'"
+      />
+    </label>
   </div>
   <div class="layer-control__options">
     <div class="layer-control__range" v-test="'transparancy-input'">
@@ -101,8 +100,8 @@ import _ from 'lodash'
 
 import store from '@/store'
 
-import LayerPopup from '@/components/LayerPopup'
-import LayerControlSelect from '@/components/LayerControlSelect'
+import LayerPopup from '@/components/LayerPopup.vue'
+import LayerControlSelect from '@/components/LayerControlSelect.vue'
 
 import { matchValueToProbability } from '@/lib/probability-filter'
 
@@ -298,7 +297,9 @@ export default {
         }
       })
     },
-    setLayerVariant (title, value) {
+    setLayerVariant (breachBandId, title, value) {
+      this.selectedVariantIndexByBreachBandId[breachBandId][title] = value
+
       const selectedLayerVariantOptions = this.selectedLayerVariantOptions()
       const filteredVariantOptions = selectedLayerVariantOptions.filter(option => option.value !== null)
       // TODO: Find the correct variant for the selection of options.
@@ -331,14 +332,13 @@ export default {
       }
     },
     selectLayerOption (index) {
+      this.selectedLayerIndex = index
+
       this.$emit('select:variant', {
         layer: this.layer,
         variant: this.layer.variants[index],
         index
       })
-    },
-    selectLayer () {
-      this.$emit('select:layer', this.layer)
     },
     toggleLayer () {
       this.layer.properties.visible = !this.layer.properties.visible
@@ -358,8 +358,10 @@ export default {
     selectedProbabilities (newVal, oldVal) {
       if (!newVal) { return }
       if (newVal !== oldVal) {
-        const variantIndex = _.get(this.selectedVariantIndexByBreachBandId, `[${this.breachBandId}].Overschrijdingsfrequentie`, 0)
-        this.setLayerVariant('Overschrijdingsfrequentie', this.layerVariantOptions.Overschrijdingsfrequentie[variantIndex].value)
+        if(this.layerVariantOptions.Overschrijdingsfrequentie) {
+          const variantIndex = _.get(this.selectedVariantIndexByBreachBandId, `[${this.breachBandId}].Overschrijdingsfrequentie`, 0)
+          this.setLayerVariant('Overschrijdingsfrequentie', this.layerVariantOptions.Overschrijdingsfrequentie[variantIndex].value)
+        }
       }
     },
     imminentFlood () {

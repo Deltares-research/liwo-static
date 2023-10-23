@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import PopUp from './PopUp'
+import PopUp from './PopUp.vue'
 import saveIcon from '../img/save_alt.svg'
 
 // hardcoded list of available controls in interface

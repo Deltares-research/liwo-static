@@ -58,7 +58,7 @@
 import mapConfig from '../map.config'
 
 export default {
-  name: 'About',
+  name: 'AboutPage',
   data () {
     return {
       version: 'not set'

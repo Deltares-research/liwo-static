@@ -1,31 +1,29 @@
 <template>
-  <div>
-    <div
-      ref="liwoMap"
-      class="liwo-map"
-      @marker:mouseover="$emit('marker:mouseover', $event)"
-      v-leaflet="{
-        callbacks: { onClick, initMapObject },
-        config: mapConfig,
-        layers: layers,
-        cluster: clusterMarkers,
-      }"
-      v-test="'map'"
-    >
-      <div ref="legend">
-        <slot name="legend"></slot>
-      </div>
+  <leaflet-map
+    class="liwo-map"
+    @initMapObject="initMapObject"
+    @print="onPrint"
+    v-test="'map'"
+    :layers="layers"
+    :cluster="clusterMarkers"
+    :config="mapConfig"
+  >
+    <div ref="legend">
+      <slot name="legend"></slot>
     </div>
-  </div>
+  </leaflet-map>
 </template>
 
 <script>
 import createMapConfig from '@/lib/leaflet-utils/mapconfig-factory'
 import { legendControl } from '@/lib/leaflet-utils/legend'
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
+import LeafletMap from './LeafletMap.vue'
 
-// TODO: replace v-leaflet directive with vue2-leaflet package...
 export default {
+  components: {
+    LeafletMap
+  },
   props: {
     projection: {
       type: String,
@@ -42,44 +40,34 @@ export default {
   },
   data () {
     return {
-      map: null
+      mapInitialized: false,
     }
   },
   watch: {
     '$route.query' () {
-      if (this.map) {
+      if (this.mapInitialized) {
         this.setPosition()
       }
-    }
+    },
   },
   created () {
+    this.map = null
     this.mapConfig = createMapConfig({
       projection: this.projection
     })
   },
-  mounted () {
-    this.mapRef = this.$refs.liwoMap
-    this.$on('browser-print-start', (evt) => {
-      const control = legendControl({ position: 'bottomright', el: this.$refs.legend })
-      control.addTo(evt.printMap)
-    })
-  },
-  beforeDestroy () {
+  beforeUnmount () {
     this.removePositionListeners()
   },
   methods: {
-    onClick (event) {
-      // TODO: click on what
-      this.$emit('click', event)
+    onPrint(evt) {
+      const control = legendControl({ position: 'bottomright', el: this.$refs.legend })
+      control.addTo(evt.printMap)
     },
     initMapObject (mapObject) {
       this.map = mapObject
+      this.mapInitialized = true
       this.$emit('initMap', mapObject)
-      // pass along click to map objects
-      mapObject.on('click', event => {
-        // pass the  map click event on up
-        this.$emit('map:click', event)
-      })
 
       window.liwoMap = mapObject
 
@@ -130,7 +118,7 @@ export default {
     removePositionListeners () {
       this.map.off('moveend', this.addPositionToRoute)
     }
-  }
+  },
 }
 </script>
 

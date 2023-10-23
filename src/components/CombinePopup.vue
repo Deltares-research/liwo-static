@@ -53,7 +53,7 @@
 
 <script>
 import _ from 'lodash'
-import PopUp from './PopUp'
+import PopUp from './PopUp.vue'
 import { BREACH_LAYERS_EN } from '@/lib/liwo-identifiers'
 import { getScenarioInfo } from '@/lib/load-breach'
 
@@ -88,8 +88,8 @@ export default {
     const scenarioIds = this.path.split(',').map((id) => parseInt(id, 10))
     const scenarioInfo = await getScenarioInfo(scenarioIds)
     /* extract number of features and bands per layer */
-    this.$set(this, 'bandCounts', scenarioInfo.properties.bandCounts)
-    this.$set(this, 'featureCount', scenarioInfo.features.length)
+    this.bandCounts = scenarioInfo.properties.bandCounts
+    this.featureCount = scenarioInfo.features.length
 
     /* select first option (waterlevel) by default */
     this.selected = this.options[0].id

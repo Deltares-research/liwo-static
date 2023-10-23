@@ -5,11 +5,11 @@
         :projection="projection"
         :clusterMarkers="true"
         :layers="selectedLayers"
-        @click="selectFeature"
+        @map:click="selectFeature"
         @marker:mouseover="handleMouseOver"
         @initMap="setMapObject"
       >
-        <template slot="legend">
+        <template v-slot:legend>
           <legend-panel
             :layers="controlLayerSelected ? controlLayers : [selectedLayer]"
             v-if="controlLayers.length || selectedLayer"
@@ -34,24 +34,24 @@
           <!-- These layers are set through the store, TODO: make consistent -->
           <!-- layers can be updated in the panel item -->
           <!-- possible updates: opacity, visiblity -->
-          <layer-panel-item
+          <combine-layer-panel-item
             v-if="layerSet"
             :layers="layerSet.layers"
             @update:layers="updateLayersInLayerSet(layerSet, $event)"
             @select:layer="selectLayer"
             @select:variant="selectVariant({ ...$event, layerSet })"
-            :collapsed.sync="layerSetCollapsed"
+            v-model:collapsed="layerSetCollapsed"
             :selectedLayer="selectedLayer"
             :key="layerSet.id"
           >
-          </layer-panel-item>
+          </combine-layer-panel-item>
 
           <div class="layer-control layer-control-list__item layerpanel-item__title" v-if="loading">
             Scenario's worden geladen
             <div class="lds-dual-ring"></div>
           </div>
           <!-- these correspond to the loaded scenarios based on the selected features -->
-          <layer-panel-item
+          <combine-layer-panel-item
             v-for="(layerSet_, index) in scenarioLayerSets"
             :layers="layerSet_.layers"
             @update:layers="updateLayersInScenarioLayerSets(index, $event)"
@@ -62,7 +62,7 @@
             :key="(layerSet_.feature && layerSet_.feature.id) || layerSet_.id"
           >
             <!-- add scenario layer control options -->
-          </layer-panel-item>
+          </combine-layer-panel-item>
 
         </template>
         <template v-slot:actions>
@@ -160,19 +160,19 @@
 import { mapGetters, mapState } from 'vuex'
 import _ from 'lodash'
 
-import LiwoMap from '@/components/LiwoMap'
+import LiwoMap from '@/components/LiwoMap.vue'
 import NotificationBar from '@/components/NotificationBar.vue'
-import LayerPanel from '@/components/LayerPanel'
-import LayerPanelItem from '@/components/LayerPanelItem'
-import LegendPanel from '@/components/LegendPanel'
-import CombinePopup from '@/components/CombinePopup'
-import ExportPopup from '@/components/ExportPopup'
+import LayerPanel from '@/components/LayerPanel.vue'
+import LegendPanel from '@/components/LegendPanel.vue'
+import CombinePopup from '@/components/CombinePopup.vue'
+import ExportPopup from '@/components/ExportPopup.vue'
+import CombineLayerPanelItem from '@/components/CombineLayerPanelItem.vue'
 /* note that there are some minor casing inconsistencies here  */
 /* pop up is the correct spelling, but I'm sticking to the pattern below */
-import ExportCombinePopup from '@/components/ExportCombinePopUp'
-import ExportCombinedPopup from '@/components/ExportCombinedPopUp'
-import ImportCombinePopup from '@/components/ImportCombinePopUp'
-import FilterPopup from '@/components/FilterPopup'
+import ExportCombinePopup from '@/components/ExportCombinePopUp.vue'
+import ExportCombinedPopup from '@/components/ExportCombinedPopUp.vue'
+import ImportCombinePopup from '@/components/ImportCombinePopUp.vue'
+import FilterPopup from '@/components/FilterPopup.vue'
 
 import { flattenLayerSet, normalizeLayerSet, cleanLayerSet, selectVariantsInLayerSet } from '@/lib/layer-parser'
 import buildLayerSetNotifications from '@/lib/build-layerset-notifications'
@@ -185,7 +185,7 @@ import { EPSG_3857 } from '@/lib/leaflet-utils/projections'
 import { showLayerInfoPopup, showCombinedLayerInfoPopup } from '@/lib/leaflet-utils/popup'
 
 export default {
-  name: 'Combine',
+  name: 'CombinePage',
   components: {
     CombinePopup,
     ExportCombinePopup,
@@ -194,7 +194,7 @@ export default {
     ExportPopup,
     FilterPopup,
     LayerPanel,
-    LayerPanelItem,
+    CombineLayerPanelItem,
     LegendPanel,
     LiwoMap,
     NotificationBar
@@ -451,10 +451,7 @@ export default {
       this.$store.commit('setLayersByLayerSetId', { id: this.layerSet.id, layers })
     },
     updateLayersInScenarioLayerSets (index, layers) {
-      // this method updates the layers in the ScenarioLayerSet at index
-      // taking into account https://vuejs.org/v2/guide/list.html#Caveats
-      // update layers
-      this.$set(this.scenarioLayerSets[index], 'layers', layers)
+      this.scenarioLayerSets[index].layers = layers
     },
     updatePath () {
       // replace the url with the ids of the currently loaded scenarios
@@ -476,9 +473,10 @@ export default {
     selectLayer (layer) {
       this.selectedLayer = layer
     },
-    selectVariant ({ index, layerSet, scenarioLayerSetIndex, layer }) {
-      // store the index of the active variant
-      this.$set(layer.properties, 'selectedVariant', index)
+    selectVariant ({ index, layerSet, scenarioLayerSetIndex }) {
+      _.each(layerSet.layers, (layer) => {
+        layer.properties.selectedVariant = index
+      })
 
       // Store new layers (which now contain the new active variant)
       if (layerSet === this.layerSet) {
@@ -488,9 +486,6 @@ export default {
         // store the index in all layers, because layers in the scenario
         // are actually bands that share the same variant....
         // TODO: move band selection to more logic location, now it is magic...
-        _.each(layerSet.layers, (layer) => {
-          this.$set(layer.properties, 'selectedVariant', index)
-        })
         // TODO: move this to scenario module  in store
         this.updateLayersInScenarioLayerSets(scenarioLayerSetIndex, layerSet.layers)
       }
@@ -601,14 +596,12 @@ export default {
           return selectedIds.includes(layerSet.feature.id)
         })
         this.scenarioLayerSets = scenarioLayerSets
+      } else if(this.selectFeatureMode === 'multiple') { // we just selected this feature, add it to the list
+        this.selectedFeatures.push(feature)
       } else {
-        // we just selected this feature, add it to the list
-        if (this.selectFeatureMode === 'multiple') {
-          this.selectedFeatures.push(feature)
-        } else {
-          this.selectedFeatures = [feature]
-        }
+        this.selectedFeatures = [feature]
       }
+
       // set the markers, based on the current selected feature
       const marker = evt.target
       this.setMarkers(feature, marker)

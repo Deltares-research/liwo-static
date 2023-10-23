@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import PopUp from '@/components/PopUp'
+import PopUp from '@/components/PopUp.vue'
 
 import exportZip from '@/lib/export-map-zip'
 
