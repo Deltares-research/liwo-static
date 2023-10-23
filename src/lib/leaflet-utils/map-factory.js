@@ -11,7 +11,7 @@ import { createApp } from 'vue'
 
 const INITIAL_BASELAYER = mapConfig.tileLayers[0].title
 
-export default function (el, vnode, config, onPrint) {
+export default function (el, config, { onPrint }) {
   const tileLayerOptions = baseLayerOptions(config)
   const baseLayers = createBaseLayers(tileLayerOptions)
 
@@ -38,10 +38,6 @@ export default function (el, vnode, config, onPrint) {
 
   map.on('browser-print-start', onPrint)
 
-  // Hack to make the map display
-  setTimeout(() => {
-    map.invalidateSize()
-  }, 100)
 
   return map
 }

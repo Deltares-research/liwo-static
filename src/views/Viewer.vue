@@ -71,7 +71,7 @@ import { showLayerInfoPopup } from '@/lib/leaflet-utils/popup'
 import { useMapTour } from '@/tour/use-map-tour'
 
 export default {
-  name: 'ViewerView',
+  name: 'ViewerPage',
   setup() {
     useMapTour().start()
   },
@@ -98,7 +98,7 @@ export default {
       selectedLayerId: null
     }
   },
-  async mounted () {
+  created () {
     this.$store.commit('setLayerSetId', this.id)
     this.$store.dispatch('loadLayerSetById', { id: this.id })
   },
