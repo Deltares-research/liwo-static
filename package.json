@@ -1,6 +1,6 @@
 {
   "name": "liwo-static",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": true,
   "scripts": {
     "serve": "vite",
@@ -14,6 +14,7 @@
     "release": "semantic-release"
   },
   "dependencies": {
+    "@semantic-release/git": "^10.0.1",
     "@vue-a11y/skip-to": "^3.0.3",
     "dom-to-image": "^2.6.0",
     "fast-equals": "^5.0.1",
