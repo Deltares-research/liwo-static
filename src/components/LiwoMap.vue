@@ -1,10 +1,8 @@
 <template>
   <leaflet-map
     class="liwo-map"
-    @marker:mouseover="$emit('marker:mouseover', $event)"
     @initMapObject="initMapObject"
     @print="onPrint"
-    @map:click="onClick"
     v-test="'map'"
     :layers="layers"
     :cluster="clusterMarkers"
@@ -65,10 +63,6 @@ export default {
     onPrint(evt) {
       const control = legendControl({ position: 'bottomright', el: this.$refs.legend })
       control.addTo(evt.printMap)
-    },
-    onClick (event) {
-      // TODO: click on what
-      this.$emit('map:click', event)
     },
     initMapObject (mapObject) {
       this.map = mapObject

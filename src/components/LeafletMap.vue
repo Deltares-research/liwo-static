@@ -45,7 +45,7 @@
       },
 
       onMarkerHover(marker) {
-        this.$emit('maker:mouseover', marker)
+        this.$emit('marker:mouseover', marker)
       },
 
       getChangedOpacities(newLayers, oldLayers) {
