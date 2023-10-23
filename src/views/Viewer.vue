@@ -70,7 +70,7 @@ import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
 import { showLayerInfoPopup } from '@/lib/leaflet-utils/popup'
 
 export default {
-  name: 'Viewer',
+  name: 'ViewerPage',
   components: {
     ExportPopup,
     LayerPanel,
