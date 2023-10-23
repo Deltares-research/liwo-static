@@ -13,11 +13,11 @@ import './cluster-icon.css'
 
 export default function createLayer (layer, callbacks, abortSignal) {
   if (layer.type === 'json' && layer.geojson) {
-    return createGeoJson(layer, callbacks, abortSignal)
+    return createGeoJson(layer)
   } else if (layer.type === 'cluster') {
-    return createCluster(layer, callbacks, abortSignal)
+    return createCluster(layer, callbacks)
   } else if (layer.type === 'tile') {
-    return createTile(layer, callbacks, abortSignal)
+    return createTile(layer)
   } else if (!layer.hideWms) {
     return createWms(layer, callbacks, abortSignal)
   } else {
