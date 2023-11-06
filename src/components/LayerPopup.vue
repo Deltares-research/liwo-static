@@ -1,5 +1,5 @@
 <template>
-  <pop-up class="layer-meta" title="Metadata" @popup="$emit('close')">
+  <pop-up class="layer-meta" title="Metadata">
     <template v-slot:icon>
       <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 64 64">
         <path fill="none" d="M0 0h64v64H0z"/>
