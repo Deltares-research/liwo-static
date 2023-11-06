@@ -12,14 +12,14 @@ async function getFeatures(url, jsonLayer ) {
   return geojson
 }
 
-export async function loadGeojson (jsonLayer, layerSetId) {
+export async function loadGeojson (jsonLayer) {
   // no json, nothing to do
   if (!['json', 'cluster'].includes(jsonLayer.type)) {
     return Promise.resolve(jsonLayer)
   }
 
   const url = `/data/${jsonLayer.layer.replace(/^gebiedsindeling_/, '')}.json`
-  const result = await getFeatures(url, jsonLayer, layerSetId)
+  const result = await getFeatures(url, jsonLayer)
 
   return result
 }
