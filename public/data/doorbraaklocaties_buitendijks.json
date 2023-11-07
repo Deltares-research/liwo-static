@@ -1,0 +1,218 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "gebiedsindeling_doorbraaklocaties_buitendijks.1157",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5853,
+          52.4307
+        ]
+      },
+      "geometry_name": "geom",
+      "properties": {
+        "id": 1157,
+        "breachtypes_id": 1,
+        "dijkringareas_id": null,
+        "openwaters_id": 74,
+        "name": "Hollandse kust",
+        "code": "BUIT",
+        "x": 100463,
+        "y": 493963,
+        "notify": null,
+        "lt30": 1,
+        "f30t300": 1,
+        "f300t3000": 1,
+        "f3000t30k": "1",
+        "gt30k": 0,
+        "dreigende_overstroming": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gebiedsindeling_doorbraaklocaties_buitendijks.1775",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.6982,
+          50.8462
+        ]
+      },
+      "geometry_name": "geom",
+      "properties": {
+        "id": 1775,
+        "breachtypes_id": 1,
+        "dijkringareas_id": null,
+        "openwaters_id": 85,
+        "name": "Maas",
+        "code": "BUIT",
+        "x": 176906,
+        "y": 317425,
+        "notify": null,
+        "lt30": 3,
+        "f30t300": 1,
+        "f300t3000": 2,
+        "f3000t30k": "2",
+        "gt30k": 0,
+        "dreigende_overstroming": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gebiedsindeling_doorbraaklocaties_buitendijks.1821",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.3854,
+          52.6564
+        ]
+      },
+      "geometry_name": "geom",
+      "properties": {
+        "id": 1821,
+        "breachtypes_id": 1,
+        "dijkringareas_id": null,
+        "openwaters_id": 49,
+        "name": "Meren",
+        "code": "BUIT",
+        "x": 154879,
+        "y": 518774,
+        "notify": null,
+        "lt30": 1,
+        "f30t300": 1,
+        "f300t3000": 1,
+        "f3000t30k": "1",
+        "gt30k": 0,
+        "dreigende_overstroming": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gebiedsindeling_doorbraaklocaties_buitendijks.2511",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3531,
+          51.8884
+        ]
+      },
+      "geometry_name": "geom",
+      "properties": {
+        "id": 2511,
+        "breachtypes_id": 1,
+        "dijkringareas_id": null,
+        "openwaters_id": 10,
+        "name": "Rijn-Maasmonding",
+        "code": "BUIT",
+        "x": 83810,
+        "y": 433828,
+        "notify": null,
+        "lt30": 1,
+        "f30t300": 1,
+        "f300t3000": 1,
+        "f3000t30k": "1",
+        "gt30k": 0,
+        "dreigende_overstroming": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gebiedsindeling_doorbraaklocaties_buitendijks.2517",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.9643,
+          51.9732
+        ]
+      },
+      "geometry_name": "geom",
+      "properties": {
+        "id": 2517,
+        "breachtypes_id": 1,
+        "dijkringareas_id": null,
+        "openwaters_id": 84,
+        "name": "Rijntakken",
+        "code": "BUIT",
+        "x": 194652,
+        "y": 442912,
+        "notify": null,
+        "lt30": 1,
+        "f30t300": 1,
+        "f300t3000": 1,
+        "f3000t30k": "1",
+        "gt30k": 0,
+        "dreigende_overstroming": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gebiedsindeling_doorbraaklocaties_buitendijks.3137",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.4244,
+          53.2255
+        ]
+      },
+      "geometry_name": "geom",
+      "properties": {
+        "id": 3137,
+        "breachtypes_id": 1,
+        "dijkringareas_id": null,
+        "openwaters_id": 74,
+        "name": "Waddenzee",
+        "code": "BUIT",
+        "x": 157486,
+        "y": 582105,
+        "notify": null,
+        "lt30": 1,
+        "f30t300": 1,
+        "f300t3000": 1,
+        "f3000t30k": "1",
+        "gt30k": 0,
+        "dreigende_overstroming": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gebiedsindeling_doorbraaklocaties_buitendijks.3389",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.9583,
+          51.5436
+        ]
+      },
+      "geometry_name": "geom",
+      "properties": {
+        "id": 3389,
+        "breachtypes_id": 1,
+        "dijkringareas_id": null,
+        "openwaters_id": 113,
+        "name": "Zeeuwse Delta",
+        "code": "BUIT",
+        "x": 55880,
+        "y": 395926,
+        "notify": null,
+        "lt30": 1,
+        "f30t300": 1,
+        "f300t3000": 1,
+        "f3000t30k": "1",
+        "gt30k": 0,
+        "dreigende_overstroming": 0
+      }
+    }
+  ],
+  "totalFeatures": 7,
+  "numberMatched": 7,
+  "numberReturned": 7,
+  "timeStamp": "2023-11-06T09:42:18.182Z",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:EPSG::4326"
+    }
+  }
+}
