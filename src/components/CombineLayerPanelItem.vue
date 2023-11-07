@@ -10,7 +10,7 @@
     </button>
   </h3>
 
-  <div class="layerpanel-item__info" v-if="!isCollapsed">
+  <div class="layerpanel-item__info" v-if="!isCollapsed && variantProperties.length > 1 && allVariants.length > 1">
     <dl class="layerpanel-item__prop-list" v-if="variantProperties.length > 1" v-test="'variantProperties'">
       <div v-for="{key, value} in variantProperties" :key="key" class="layerpanel-item__prop">
         <dt>{{key}}</dt>
@@ -27,10 +27,11 @@
     @select:layer="selectLayer"
     v-if="!isCollapsed"
   >
-    <template #layer-control="{ layer, updateLayer }">
+    <template #layer-control="{ layer, updateLayer, active }">
       <combine-layer-control
         :id="layer.breachBandId"
         :layer="layer"
+        :active="active"
         @update:layer="updateLayer"
         @select:layer="selectLayer"
         @select:variant="selectVariant"
@@ -130,7 +131,7 @@ export default {
       }
 
       const props = this.variantPropertiesToShow
-        .filter(key => variant.properties[key] !== null && variant.properties[key] !== undefined)
+        .filter(key => variant.properties?.[key] !== null && variant.properties?.[key] !== undefined)
         .map(key => {
           return {
             key,
