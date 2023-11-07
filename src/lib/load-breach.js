@@ -146,13 +146,30 @@ export async function getScenarioInfo (scenarioIds, featureInfoByScenarioId) {
   return data
 }
 
+let filterVariantsPromise = null;
+
+async function loadFilterVariants() {
+  if(!filterVariantsPromise) {
+    const services = await mapConfig.getServices()
+    const FILTERS_BASE_URL = services.WEBSERVICE_URL_V2
+    const FILTERS_API_URL = `${FILTERS_BASE_URL}/filter_variants`
+
+    filterVariantsPromise = fetch(FILTERS_API_URL, {
+      method: 'GET',
+      mode: 'cors',
+      credentials: 'omit',
+      headers
+    }).then(res => res.json())
+  }
+
+  return filterVariantsPromise
+}
+
 async function loadBreachLayer (breachId, layerName) {
   // Load the dataset  for a breach
   const services = await mapConfig.getServices()
   const BREACHES_BASE_URL = services.WEBSERVICE_URL
-  const FILTERS_BASE_URL = services.WEBSERVICE_URL_V2
   const BREACHES_API_URL = `${BREACHES_BASE_URL}/Tools/FloodImage.asmx/GetScenariosPerBreachGeneric`
-  const FILTERS_API_URL = `${FILTERS_BASE_URL}/filter_variants`
 
   const breachFetch = await fetch(BREACHES_API_URL, {
     method: 'POST',
@@ -163,17 +180,9 @@ async function loadBreachLayer (breachId, layerName) {
       breachid: breachId,
       layername: layerName
     })
-  })
+  }).then(res => res.json())
 
-  const filterFetch = await fetch(FILTERS_API_URL, {
-    method: 'GET',
-    mode: 'cors',
-    credentials: 'omit',
-    headers
-  })
-
-  const [breachData, filtersData] = await Promise.all([breachFetch, filterFetch])
-    .then(responses => responses.map(response => response.json()))
+  const [breachData, filtersData] = await Promise.all([breachFetch, loadFilterVariants()])
 
   const properties = await filtersData
 
@@ -181,7 +190,7 @@ async function loadBreachLayer (breachId, layerName) {
     store.commit('setVariantFilterProperties', { properties, breachId })
   }
 
-  const data = await breachData.then(data => JSON.parse(data.d))
+  const data = JSON.parse(breachData.d)
 
   // get the first layerset if available, otherwise return null
   let result = null

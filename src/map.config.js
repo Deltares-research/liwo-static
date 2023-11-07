@@ -85,13 +85,13 @@ const tileLayers = [
   },
 ];
 
-var services = null;
+var servicePromise = null;
 
 async function getServices() {
   // return the content of webconfig.json
   // return if we already fetched it (memoize0
-  if (services) {
-    return services;
+  if (servicePromise) {
+    return servicePromise;
   }
 
   let url = 'config/webconfig.json'
@@ -99,10 +99,8 @@ async function getServices() {
     url = 'config/webconfig-netlify.json'
   }
 
-  const resp = await fetch(url);
-  const result = await resp.json();
-  services = result;
-  return result;
+  servicePromise = fetch(url).then(res => res.json());
+  return servicePromise;
 }
 
 export default {
