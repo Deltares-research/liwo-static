@@ -74,6 +74,10 @@ export default {
     layer: {
       type: Object,
       required: true
+    },
+    active: {
+      type: Boolean,
+      default: false,
     }
   },
   data () {
@@ -93,7 +97,8 @@ export default {
     },
     classData () {
       return {
-        'layer-control': true
+        'layer-control': true,
+        'layer-control--active': this.active
       }
     },
     metadata () {

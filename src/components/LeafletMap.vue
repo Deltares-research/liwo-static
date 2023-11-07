@@ -1,5 +1,7 @@
 <template>
-  <div></div>
+  <div>
+    <slot></slot>
+  </div>
 </template>
 
 <script>
@@ -40,8 +42,8 @@
         this.$emit('map:click', event)
       },
 
-      onPrint() {
-        this.$emit('print')
+      onPrint(event) {
+        this.$emit('print', event)
       },
 
       onMarkerHover(marker) {

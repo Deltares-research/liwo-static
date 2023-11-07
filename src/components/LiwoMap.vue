@@ -62,6 +62,7 @@ export default {
   methods: {
     onPrint(evt) {
       const control = legendControl({ position: 'bottomright', el: this.$refs.legend })
+      console.log(this.$refs.legend)
       control.addTo(evt.printMap)
     },
     initMapObject (mapObject) {
