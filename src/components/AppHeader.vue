@@ -6,7 +6,7 @@
         <router-link :to="{name: 'accessibility'}">Toegankelijkheid</router-link>
         <a href="https://www.rijkswaterstaat.nl/cookies">Cookies</a>
       </nav>
-      <router-link :to="{ name: 'maps' }" class="logo">
+      <a href="https://www.rijksoverheid.nl/ministeries/ministerie-van-infrastructuur-en-waterstaat" rel="noreferrer noopener" class="logo" target="_blank">
         <img
           src="/assets/img/logo-nl.svg"
           width="270"
@@ -14,7 +14,7 @@
           alt="Rijkswaterstaat Ministerie van Infrastructuur en Waterstaat."
           class="accessibility"
         />
-      </router-link>
+      </a>
   </div>
   <div id="menu" class="app-header__menu">
     <div class="app-header__top-menu container">
