@@ -7,7 +7,7 @@
       <div class="export-popup__notification export-popup__notification--loading" v-if="exporting">
         <b>Uw export wordt gegenereerd.</b>
       </div>
-      <p class="export-popup__form-column-item">Exporteer als:</p>
+      <label class="export-popup__form-column-item" for="export-zip">Exporteer als:</label>
       <ul class="export-popup__form-column-item choice-cards export-popup__radio-group">
         <li class="choice-cards__item">
           <input type="radio" name="export" v-model="exportType"
