@@ -1,6 +1,6 @@
 <template>
   <button
-    title="Enlarge map"
+    :title="buttonTitle"
     class="leaflet-control-fill-window leaflet-bar"
     @click.prevent.stop="toggle"
   >
@@ -26,7 +26,7 @@ export default {
       fullscreenIcon,
       exitFullscreenIcon,
       windowWidth: 0,
-      windowHeight: 0
+      windowHeight: 0,
     }
   },
   computed: {
@@ -36,6 +36,9 @@ export default {
     activeStyles () {
       // width & height need to be numbers, otherwise leaflet-easyprint does not co-oparate well (height can not be determined)
       return `position:fixed;left:0;top:0;height:${this.windowHeight}px;width:${this.windowWidth}px;z-index:3000;background-color:#fff;`
+    },
+    buttonTitle() {
+      return !this.active ? 'Vergroten kaart' : 'Verkleinen kaart'
     }
   },
   watch: {
@@ -57,18 +60,18 @@ export default {
     // store initial styles so we use them when this.active is set to false
     this.initialStyles = container.style.cssText
 
-    this.windowWidth = window.innerWidth
-    this.windowHeight = window.innerHeight
-
-    this.listener = window.addEventListener('resize', () => {
-      this.windowWidth = window.innerWidth
-      this.windowHeight = window.innerHeight
-    })
+    window.addEventListener('resize', this.onResize)
+    this.onResize()
   },
   beforeUnmount () {
-    window.removeEventListener(this.listener)
+    window.removeEventListener(this.onResize)
   },
   methods: {
+    onResize() {
+      this.windowWidth = window.innerWidth
+      this.windowHeight = window.innerHeight
+    },
+
     toggle () {
       const container = this.map.getContainer()
 
