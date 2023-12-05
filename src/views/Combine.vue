@@ -23,6 +23,7 @@
       <layer-panel>
         <template v-slot:title>
           <button @click="showFilter = true" class="layer-control__button" v-test="'filter-toggle'">
+            <span class="sr-only">Filter doorbraaklocaties op kansklassen</span>
             <!-- icons are 32x32 but other icons don't fill up the space... -->
             <!-- TODO: use iconfont -->
             <svg class="icon" width="22" height="22" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
