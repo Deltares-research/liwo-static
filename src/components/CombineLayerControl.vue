@@ -38,6 +38,7 @@
         class="layer-control__transparancy-slider"
         value="0"
         @change.stop="setTransparancy"
+        aria-label="Transparantie"
       />
 
       <button
