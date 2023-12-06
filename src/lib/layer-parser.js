@@ -60,7 +60,8 @@ export function normalizeLayer (layer) {
     metadata: variant.metadata,
     properties: variant.properties,
     title: variant.title,
-    iscontrollayer: layer.iscontrollayer
+    iscontrollayer: layer.iscontrollayer,
+    variantNotification: variant.notification,
   }))
 
   // Create an id based on the layer in geoserver, or the layer  in  mapbox
