@@ -58,6 +58,11 @@ export default createStore({
       // store a notification
       const notifications = state.notificationsById[id] || []
 
+      // prevent duplicate notifications from being added
+      if(notifications.some(existingNotification => existingNotification.message === notification.message)) {
+        return
+      }
+
       state.notificationsById = {
         ...state.notificationsById,
         [id]: [
