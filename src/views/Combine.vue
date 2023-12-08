@@ -609,6 +609,10 @@ export default {
           return selectedIds.includes(layerSet.feature.id)
         })
         this.scenarioLayerSets = scenarioLayerSets
+
+        if(!this.scenarioLayerSets.length) {
+          this.layerSetCollapsed = false
+        }
       } else if(this.selectFeatureMode === 'multiple') { // we just selected this feature, add it to the list
         this.selectedFeatures.push(feature)
       } else {
