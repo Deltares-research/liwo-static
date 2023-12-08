@@ -1,51 +1,5 @@
 import _ from 'lodash'
 
-function buildFeatureNotifications (layers) {
-  // create a list of notifications based on the features
-
-  const featureNotificationsTree = layers
-  // for all layers that have geojson
-    .filter(layer => layer.geojson)
-    .map(
-      layer => layer.geojson.features
-        // for  all features  in each layer
-        .map(
-          feature => ({
-            id: feature.properties.id,
-            message: feature.properties.notify,
-            // split off the numbers
-            layerId: feature.id.replace(/(.+)(\.\d+)/, '$1'),
-            show: true
-          }))
-        .filter(
-          // replace items with zeros
-          (item) => {
-            let result = item.notification
-            if (item.notification === 'NULL') {
-              result = false
-            }
-            return result
-          }
-        )
-    )
-  const featureNotifications = _.flatten(featureNotificationsTree)
-  return featureNotifications
-}
-
-function buildLayerNotifications (layers) {
-  // create a list of notifications based on the layers
-  const layerNotifications = layers
-    .filter(layer => layer.layerObj.properties.notify)
-    .map(layer => {
-      return {
-        id: layer.layerObj.id,
-        message: layer.layerObj.properties.notify,
-        show: true
-      }
-    })
-  return layerNotifications
-}
-
 function buildLayerSetFeatureNotifications (layers) {
   // create a list of notifications based on the layerset features, the feature that was  used to create the layerSet
   let layerSetFeatureNotifications = layers
@@ -70,34 +24,28 @@ function buildLayerSetFeatureNotifications (layers) {
   return layerSetFeatureNotifications
 }
 
-function buildLayerSetNotifications (layers) {
+function buildVariantNotifications (layers) {
   // the list of notifications  on layerSet level
-  const layerSetNotifications = layers
-    .filter(layer => layer.layerSet.notify)
+  const variantNotifications = layers
+    .filter(layer => layer.variantNotification)
     .map(layer => {
       return {
-        id: layer.layerSet.id,
-        message: layer.layerSet.notify,
+        id: layer.layer,
+        message: layer.variantNotification,
         show: true
       }
     })
-  return layerSetNotifications
+  return variantNotifications
 }
 
 export default function buildNotifications (layers) {
-  // this method expects a flattened list of layers
-  // create a list of all the  notifications from the layers
-  const featureNotifications = buildFeatureNotifications(layers)
-  const layerNotifications = buildLayerNotifications(layers)
   const layerSetFeatureNotifications = buildLayerSetFeatureNotifications(layers)
-  const layerSetNotifications = buildLayerSetNotifications(layers)
+  const variantNotifications = buildVariantNotifications(layers)
 
   // concatenate all features
   let result = [
-    ...featureNotifications,
-    ...layerNotifications,
     ...layerSetFeatureNotifications,
-    ...layerSetNotifications
+    ...variantNotifications
   ]
 
   // remove any doubles

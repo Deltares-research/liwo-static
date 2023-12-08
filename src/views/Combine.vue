@@ -488,6 +488,18 @@ export default {
         // TODO: move band selection to more logic location, now it is magic...
         // TODO: move this to scenario module  in store
         this.updateLayersInScenarioLayerSets(scenarioLayerSetIndex, layerSet.layers)
+
+        // show the notification for this variant
+        const layers = flattenLayerSet(layerSet)
+        const notifications = buildLayerSetNotifications(layers)
+
+        _.each(
+          notifications,
+          (notification) => {
+            // add them to the main layerSetId number to show up
+            this.$store.commit('addNotificationById', { id: layerSet.id, notification })
+          }
+        )
       }
       // now that the new variant is selected we can update the path
       this.updatePath()
