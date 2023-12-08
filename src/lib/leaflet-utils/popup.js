@@ -21,10 +21,12 @@ export function showLayerInfoPopup ({ map, layerId, unit, selectedLayer, positio
       if (value !== null) {
         const formattedValue = value.toFixed(1)
 
-        L.popup()
+        const container = L.popup()
           .setLatLng(latlng)
           .setContent(`${formattedValue} [${unit}]`)
           .openOn(map)
+
+        container.getElement().querySelector('.leaflet-popup-close-button').setAttribute('aria-label', 'Sluiten')
       }
     })
 }

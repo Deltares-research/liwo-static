@@ -10,27 +10,29 @@
       <div class="export-popup__notification export-popup__notification--loading" v-if="exporting">
         <b>Uw export wordt gegenereerd.</b>
       </div>
-      <p class="export-popup__form-column-item">Exporteer als:</p>
+      <p id="export-as" class="export-popup__form-column-item">Exporteer als:</p>
       <ul class="export-popup__form-column-item choice-cards export-popup__radio-group">
         <li class="choice-cards__item">
           <input type="radio" name="export" v-model="exportType"
-            id="export-zip" value="zip"
+            value="zip"
             class="sr-only choice-cards__item__radio export-popup__export-input"
+            aria-labelledby="export-as export-zip"
           >
-          <label class="radio choice-cards__item__label export-popup__export-label" for="export-zip">
+          <span class="radio choice-cards__item__label export-popup__export-label">
             <span aria-hidden="true" class="icon icon-file-zip icon-2x"></span>
-            <span>Zip</span>
-          </label>
+            <span id="export-zip">Zip</span>
+          </span>
         </li>
         <!-- disable for now -->
         <li class="choice-cards__item" v-if="false">
           <input type="radio" name="export" v-model="exportType"
             id="export-print" value="print"
             class="sr-only choice-cards__item__radio export-popup__export-input"
+            aria-labelledby="export-as export-img"
           >
           <label class="choice-cards__item__label export-popup__export-label" for="export-print">
             <span aria-hidden="true" class="icon icon-file-pdf icon-2x"></span>
-            <span>Afbeelding</span>
+            <span id="export-img">Afbeelding</span>
           </label>
         </li>
       </ul>

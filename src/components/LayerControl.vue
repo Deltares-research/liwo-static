@@ -63,13 +63,13 @@
   </div>
   <div class="layer-control__options">
     <div class="layer-control__range" v-test="'transparancy-input'">
-      <label for="`layer-${id}-trans`">Transparantie: </label>
+      <label :for="`layer-${id}-trans`">Transparantie: </label>
       <input
         type="range"
         min="0"
         max="1"
         step="0.1"
-        :name="`layer-${id}-trans`"
+        :id="`layer-${id}-trans`"
         value="0"
         @change.stop="setTransparancy"
       />

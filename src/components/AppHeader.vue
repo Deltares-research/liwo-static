@@ -6,7 +6,7 @@
         <router-link :to="{name: 'accessibility'}">Toegankelijkheid</router-link>
         <a href="https://www.rijkswaterstaat.nl/cookies">Cookies</a>
       </nav>
-      <router-link :to="{ name: 'maps' }" class="logo">
+      <a href="https://www.rijksoverheid.nl/ministeries/ministerie-van-infrastructuur-en-waterstaat" rel="noreferrer noopener" class="logo" target="_blank">
         <img
           src="/assets/img/logo-nl.svg"
           width="270"
@@ -14,13 +14,11 @@
           alt="Rijkswaterstaat Ministerie van Infrastructuur en Waterstaat."
           class="accessibility"
         />
-      </router-link>
+      </a>
   </div>
   <div id="menu" class="app-header__menu">
     <div class="app-header__top-menu container">
-      <span class="app-header__app-title">
-        <strong>LIWO</strong>
-      </span>
+      <h1 class="app-header__app-title">LIWO</h1>
     </div>
     <nav role="navigation" class="app-header__nav">
       <ul class="container">
@@ -28,7 +26,7 @@
         <li><router-link :to="{ name: 'about' }">Over LIWO</router-link></li>
       </ul>
     </nav>
-    <h1 class="app-header__page-title container" v-test="'page-title'">{{ this.pageTitle }}</h1>
+    <h2 class="app-header__page-title container" v-test="'page-title'">{{ this.pageTitle }}</h2>
   </div>
   </header>
 </template>
@@ -49,6 +47,13 @@ export default {
 
   .app-header {
     min-width: 320px;
+  }
+
+  .app-header__app-title {
+    font-size: 1em;
+    font-weight: bold;
+    margin: 0;
+    line-height: 1.6;
   }
 
   .app-header .container {
@@ -146,6 +151,7 @@ export default {
   .app-header__page-title {
     color: #000;
     font-size: 2.2em;
+    font-weight: normal;
     margin: .25rem 0;
     min-height: 45px;
     text-align: left;
