@@ -28,7 +28,7 @@
             <label
               class="change-variant-popup__result-item"
               :for="`variant-${variant.layer}`">
-              <span v-test="'variantName'">{{ getWrappingTitle(variant) }}</span>
+              <span v-test="'variantName'" v-html="getWrappingTitle(variant)"></span>
 
               <dl class="change-variant-popup__result-item-props">
                 <div :key="name" v-for="{name, value} in getPropsForVariant(variant)">
