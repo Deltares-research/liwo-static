@@ -57,7 +57,7 @@
         </footer>
       </form>
   </pop-up>
-  </template>
+</template>
 
 <script>
 import { mapState } from 'vuex'
@@ -86,7 +86,6 @@ export default {
     }
   },
   methods: {
-
     selectVariant () {
       const variantIndex = this.allVariants.findIndex(variant => variant.layer === this.selectedVariant)
 
