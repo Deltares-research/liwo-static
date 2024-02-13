@@ -68,7 +68,6 @@
 <script>
 import { mapGetters, mapState } from 'vuex'
 import LayerPopup from '@/components/LayerPopup.vue'
-import _ from 'lodash'
 
 export default {
   props: {
@@ -84,17 +83,16 @@ export default {
   data () {
     return {
       infoPopupIsOpen: false,
-      selectedLayerIndex: null
     }
-  },
-  mounted () {
-    this.selectedLayerIndex = _.get(this.layer, 'properties.selectedVariant')
   },
   computed: {
     ...mapGetters(['variantFilterPropertiesIndex']),
     ...mapState(['variantFilterProperties', 'selectedProbabilities', 'selectedVariantIndexByBreachBandId', 'imminentFlood']),
     id () {
       return this.layer.breachBandId
+    },
+    selectedLayerIndex () {
+      return this.layer.properties.selectedVariant
     },
     classData () {
       return {
@@ -103,9 +101,8 @@ export default {
       }
     },
     metadata () {
-      const variant = _.get(this.layer.variants, this.selectedLayerIndex)
-      const result = _.get(variant, 'metadata')
-      return result
+      const variant = this.layer.variants[this.selectedLayerIndex]
+      return variant.metadata
     }
   },
   methods: {
