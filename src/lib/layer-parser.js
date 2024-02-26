@@ -21,16 +21,12 @@ export function flattenLayerSet (layerSet) {
 
     let variant = {}
     // select the variant
-    const selectedVariant = layer.properties.selectedVariant
-
-    // pick the first variant if there is only 1 variant
-    if (layer.variants.length === 1 || !selectedVariant) {
-      variant = layer.variants[0]
-    }
+    const selectedVariant = layer.properties.selectedVariant || layer.variants[0].layer
 
     // pick the selected variant
     if (selectedVariant) {
       variant = layer.variants.find((variant) => variant.layer === selectedVariant) || {}
+      layer.properties.selectedVariant = selectedVariant
     }
 
     // make a copy of the variant as a basis for the flattened layer
@@ -157,16 +153,20 @@ export function selectFirstVariantsByLayerId (layerSet) {
 }
 
 export function selectVariantsInLayerSet (layerSet, scenarioIds) {
+  // Define a variant to use in the selectedVariant property
+  let variantId = null
   // Loop over all layers and select variants based on the scenarioIds
   layerSet.layers.forEach(layer => {
     // loop until we found a scenarioId
     layer.variants.some((variant) => {
       const variantScenarioId = Number(variant.layer.replace('scenario_', ''))
-
       if (scenarioIds.includes(variant.map_id) || scenarioIds.includes(variantScenarioId)) {
-        layer.properties.selectedVariant = variant.layer
+        variantId = variant.layer
+        layer.properties.selectedVariant = variantId
         return true
       } else {
+        // Use the defined variant as default or the first variant
+        layer.properties.selectedVariant = variantId || variant.layer
         return false
       }
     })
