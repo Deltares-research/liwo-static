@@ -5,6 +5,9 @@ import {
 } from '@/lib/liwo-identifiers'
 
 export function flattenLayerSet (layerSet) {
+  if (!layerSet) {
+    return []
+  }
   // this method flattens a layerSet from
   // layerSet.layers[].variants[] to
   // [layers] with a layer for each variant or selected variant

@@ -305,6 +305,11 @@ export default {
       // a scenario can contain multiple layers (e.g. waterdepth, damage)
       // these ids correspond to the first layer (waterdepth) of the scenario
       this.scenarioLayerSets.forEach(layerSet => {
+        if (layerSet.layers.length === 0) {
+          console.warn('got back  unexpected empty layerSet from backend', layerSet)
+          return
+        }
+
         // Only select first layer
         // multiple layers in scenarios are bands
         const layer = _.first(layerSet.layers)
