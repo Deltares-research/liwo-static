@@ -477,12 +477,9 @@ export default {
       this.selectedLayer = layer
     },
     selectVariant ({ layer, layerSet, scenarioLayerSetIndex }) {
-      console.log('selectVariant', {layer, layerSet, scenarioLayerSetIndex})
       _.each(layerSet.layers, (layerSetLayer) => {
         layerSetLayer.properties.selectedVariant = layer
       })
-
-      console.log('layerSet', layerSet.layers)
 
       // Store new layers (which now contain the new active variant)
       if (layerSet === this.layerSet) {
@@ -672,7 +669,6 @@ export default {
     async loadFeature (feature) {
       // TODO: move this back the store in a scenario module
       // Load the layerSet for the breach and add it to the scenario list
-      console.log('loadFeatureFeature', feature)
       let layerSet = await loadBreach(feature)
       // normalize
       layerSet = normalizeLayerSet(layerSet)
@@ -688,7 +684,6 @@ export default {
 
       const layers = flattenLayerSet(layerSet)
       const notifications = buildLayerSetNotifications(layers)
-      console.log('loadFeature', layers)
 
       _.each(
         notifications,

@@ -20,13 +20,15 @@ export function flattenLayerSet (layerSet) {
     // get all variants
 
     let variant = {}
-    // pick the first varian if there is only 1 variant
-    if (layer.variants.length === 1) {
+    // select the variant
+    const selectedVariant = layer.properties.selectedVariant
+
+    // pick the first variant if there is only 1 variant
+    if (layer.variants.length === 1 || !selectedVariant) {
       variant = layer.variants[0]
     }
 
-    // select the variant
-    const selectedVariant = layer.properties.selectedVariant
+    // pick the selected variant
     if (selectedVariant) {
       variant = layer.variants.find((variant) => variant.layer === selectedVariant) || {}
     }
