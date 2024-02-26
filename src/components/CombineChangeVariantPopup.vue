@@ -87,12 +87,9 @@ export default {
   },
   methods: {
     selectVariant () {
-      const variantIndex = this.allVariants.findIndex(variant => variant.layer === this.selectedVariant)
+      const selectedVariant = this.allVariants.find(variant => variant.layer === this.selectedVariant)
 
-      this.$emit('select:variant', {
-        index: variantIndex,
-        ...this.allVariants[variantIndex]
-      })
+      this.$emit('select:variant', selectedVariant)
 
       this.$emit('close')
     },

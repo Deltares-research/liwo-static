@@ -18,19 +18,19 @@ export function flattenLayerSet (layerSet) {
     // get all layer properties
     const layerProperties = _.omit(layer, ['variants'])
     // get all variants
-    let variantIndex = _.get(layer.properties, 'selectedVariant', null)
 
+    let variant = {}
     // pick the first varian if there is only 1 variant
     if (layer.variants.length === 1) {
-      variantIndex = 0
+      variant = layer.variants[0]
     }
 
-    if (_.isNil(variantIndex)) {
-      console.warn('no variant index set for', layer.id)
-      variantIndex = 0
-    }
     // select the variant
-    const variant = layer.variants[variantIndex] || {}
+    const selectedVariant = layer.properties.selectedVariant
+    if (selectedVariant) {
+      variant = layer.variants.find((variant) => variant.layer === selectedVariant) || {}
+    }
+
     // make a copy of the variant as a basis for the flattened layer
     const newLayer = _.clone(variant)
     // copy layer properties in variant
@@ -121,7 +121,7 @@ export function cleanLayer (layer) {
   // select the first variant
   // If you update the selectedVariant, make sure you commit/$set back the layerSet
   // as it should trigger a reload of the map
-  layer.properties.selectedVariant = 0
+  layer.properties.selectedVariant = null
 
   return layer
 }
@@ -158,11 +158,11 @@ export function selectVariantsInLayerSet (layerSet, scenarioIds) {
   // Loop over all layers and select variants based on the scenarioIds
   layerSet.layers.forEach(layer => {
     // loop until we found a scenarioId
-    layer.variants.some((variant, i) => {
+    layer.variants.some((variant) => {
       const variantScenarioId = Number(variant.layer.replace('scenario_', ''))
 
       if (scenarioIds.includes(variant.map_id) || scenarioIds.includes(variantScenarioId)) {
-        layer.properties.selectedVariant = i
+        layer.properties.selectedVariant = variant.layer
         return true
       } else {
         return false

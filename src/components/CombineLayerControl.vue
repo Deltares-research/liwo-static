@@ -66,7 +66,6 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
 import LayerPopup from '@/components/LayerPopup.vue'
 
 export default {
@@ -86,12 +85,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['variantFilterPropertiesIndex']),
-    ...mapState(['variantFilterProperties', 'selectedProbabilities', 'selectedVariantIndexByBreachBandId', 'imminentFlood']),
     id () {
       return this.layer.breachBandId
     },
-    selectedLayerIndex () {
+    selectedVariant () {
       return this.layer.properties.selectedVariant
     },
     classData () {
@@ -100,10 +97,13 @@ export default {
         'layer-control--active': this.active
       }
     },
-    metadata () {
-      const variant = this.layer.variants[this.selectedLayerIndex]
-      return variant.metadata
-    }
+    metadata() {
+      const variant =
+        this.layer.variants.find(
+          (variant) => variant.layer === this.selectedVariant
+        ) || this.layer.variants[0];
+      return variant.metadata;
+    },
   },
   methods: {
     setTransparancy ({ target }) {

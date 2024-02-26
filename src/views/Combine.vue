@@ -307,9 +307,9 @@ export default {
       this.scenarioLayerSets.forEach(layerSet => {
         // Only select first layer
         // multiple layers in scenarios are bands
-        const layer = _.first(layerSet.layers)
-        const variantIndex = _.get(layer, 'properties.selectedVariant', 0)
-        const variant = layer.variants[variantIndex]
+        const layer = layerSet.layers[0]
+        const selectedVariant = layer.properties.selectedVariant
+        const variant = layer.variants.find(variant => variant.layer === selectedVariant) || layer.variants[0]
         // this is the scenario (breach + return period) id in the form scenario_number
         const scenario = variant.layer
         const scenarioRe = /^scenario_(\d+)$/
@@ -407,7 +407,6 @@ export default {
         // return the new layer
         return layer
       })
-
       // these are the extra scenarios
       let scenarioLayers = _.flatten(
         this.scenarioLayerSets.map(
@@ -427,10 +426,13 @@ export default {
 
       return selectedLayers
     },
-    selectedVariantId () {
-      const variantIndex = _.get(this.selectedLayer, 'properties.selectedVariant', 0)
-      const variant = _.get(this.selectedLayer, ['variants', variantIndex])
-      const id = _.get(variant, 'layer')
+    selectedVariantId() {
+      const selectedVariant = this.selectedLayer.properties.selectedVariant
+      const variant =
+        this.selectedLayer.variants.find(
+          (variant) => variant.layer === selectedVariant
+        ) || this.selectedLayer.variants[0]
+      const id = variant.layer
       return id
     },
     controlLayerSelected () {
@@ -474,10 +476,13 @@ export default {
     selectLayer (layer) {
       this.selectedLayer = layer
     },
-    selectVariant ({ index, layerSet, scenarioLayerSetIndex }) {
-      _.each(layerSet.layers, (layer) => {
-        layer.properties.selectedVariant = index
+    selectVariant ({ layer, layerSet, scenarioLayerSetIndex }) {
+      console.log('selectVariant', {layer, layerSet, scenarioLayerSetIndex})
+      _.each(layerSet.layers, (layerSetLayer) => {
+        layerSetLayer.properties.selectedVariant = layer
       })
+
+      console.log('layerSet', layerSet.layers)
 
       // Store new layers (which now contain the new active variant)
       if (layerSet === this.layerSet) {
@@ -667,6 +672,7 @@ export default {
     async loadFeature (feature) {
       // TODO: move this back the store in a scenario module
       // Load the layerSet for the breach and add it to the scenario list
+      console.log('loadFeatureFeature', feature)
       let layerSet = await loadBreach(feature)
       // normalize
       layerSet = normalizeLayerSet(layerSet)
@@ -682,6 +688,7 @@ export default {
 
       const layers = flattenLayerSet(layerSet)
       const notifications = buildLayerSetNotifications(layers)
+      console.log('loadFeature', layers)
 
       _.each(
         notifications,
