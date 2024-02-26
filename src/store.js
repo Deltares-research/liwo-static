@@ -71,8 +71,11 @@ export default createStore({
         ]
       }
     },
-    clearNotifications (state) {
-      state.notificationsById = {}
+    clearInfoNotificationsById (state, id) {
+      state.notificationsById[id] = state.notificationsById[id].filter(notification => notification.type !== 'info')
+    },
+    clearWarningNotificationsById (state, id) {
+      state.notificationsById[id] = state.notificationsById[id].filter(notification => notification.type !== 'warning')
     },
     setSelectedProbabilities (state, { probabilities }) {
       state.selectedProbabilities = probabilities
