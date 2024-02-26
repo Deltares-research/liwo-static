@@ -23,6 +23,11 @@ export function flattenLayerSet (layerSet) {
     // select the variant
     const selectedVariant = layer.properties.selectedVariant || layer.variants[0].layer
 
+    // If there is for any reason no variant, select the first one
+    if (!selectedVariant) {
+      variant = layer.variants[0]
+    }
+
     // pick the selected variant
     if (selectedVariant) {
       variant = layer.variants.find((variant) => variant.layer === selectedVariant) || {}
@@ -135,8 +140,10 @@ export function cleanLayerSet (layerSet) {
     _.each(layerSet.layers, layer => {
       layer.properties.visible = false
     })
-    // set the first layer as visible
-    _.first(layerSet.layers).properties.visible = true
+    if (layerSet.layers.length > 0) {
+      // set the first layer as visible
+      layerSet.layers[0].properties.visible = true
+    }
   }
 
   return layerSet
