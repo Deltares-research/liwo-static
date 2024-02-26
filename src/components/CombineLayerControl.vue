@@ -98,10 +98,9 @@ export default {
       }
     },
     metadata() {
-      const variant =
-        this.layer.variants.find(
-          (variant) => variant.layer === this.selectedVariant
-        ) || this.layer.variants[0];
+      const variant = this.layer.variants.find(
+        (variant) => variant.layer === this.selectedVariant
+      );
       return variant.metadata;
     },
   },
