@@ -8,7 +8,8 @@ function buildLayerSetFeatureNotifications (layers) {
       return {
         id: layer.layerSet.id,
         message: _.get(layer, 'layerSet.feature.properties.notify'),
-        show: true
+        show: true,
+        type: 'info'
       }
     })
   layerSetFeatureNotifications = _.filter(layerSetFeatureNotifications)
@@ -32,7 +33,8 @@ function buildVariantNotifications (layers) {
       return {
         id: layer.layer,
         message: layer.variantNotification,
-        show: true
+        show: true,
+        type: 'info'
       }
     })
   return variantNotifications
