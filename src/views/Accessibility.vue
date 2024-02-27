@@ -13,14 +13,14 @@
       <h2 data-class="section-head">Toegankelijkheidsverklaring</h2>
       <p>
         Basisinformatie-overstromingen.nl (LIWO) voldoet gedeeltelijk aan de eisen op het gebied van toegankelijkheid. In onze <a href="https://www.toegankelijkheidsverklaring.nl/register/2902" rel="noopener noreferrer" target="_blank">Toegankelijkheidsverklaring</a> lichten wij toe op welke punten wij nog niet volledig voldoen en op welke termijn wij verwachten de knelpunten op te lossen.
-        <a href="https://www.toegankelijkheidsverklaring.nl/register/2902"><img src="https://www.toegankelijkheidsverklaring.nl/files/verklaring/label/24d6cf59411ecf76f07b7125e1e86faa.2902.svg" alt="Het toegankelijkheidslabel van LIWO. Volg de link voor de toegankelijke versie van dit label." width="692" height="251" /></a>
+        <a href="https://www.toegankelijkheidsverklaring.nl/register/2902"><img src="https://www.toegankelijkheidsverklaring.nl/files/verklaring/label/24d6cf59411ecf76f07b7125e1e86faa.2902.svg?1694779207" alt="Status toegankelijkheidslabel van LIWO. Volg de link voor de volledige toegankelijkheidsverklaring." width="692" height="251" /></a>
       </p>
 
       <h2 data-class="section-head">Onderbouwing bij de toegankelijkheidsverklaring</h2>
       <p>
         De toegankelijkheidsverklaring voor Basisinformatie-overstromingen.nl (LIWO) is opgesteld op basis van onderzoek
         door een onafhankelijk toetsingsbureau.
-        De bevindingen hiervan zijn opgenomen in het meest recente <a href="https://www.helpdeskwater.nl/publish/pages/184976/check_8837_auto_rapport.pdf" rel="noopener noreferrer" target="_blank">onderzoeksrapport</a>.
+        De bevindingen hiervan zijn opgenomen in het meest recente <a href="https://iplo.nl/publish/pages/184976/check_8837_auto_rapport.pdf" rel="noopener noreferrer" target="_blank">onderzoeksrapport</a>.
       </p>
 
       <h2 data-class="section-head">Hoe werken wij aan toegankelijkheid?</h2>
@@ -41,7 +41,7 @@
       <h2 data-class="section-head">Problemen met toegankelijkheid melden</h2>
       <p>
         Heeft u vragen of opmerkingen? Of wilt u een pagina gebruiken op deze website die niet toegankelijk blijkt?
-        Neem dan <a href="https://www.helpdeskwater.nl/stel-vraag/" rel="noopener noreferrer" target="_blank">contact met ons</a> op.
+        Neem dan <a href="https://iplo.nl/contact/vragenformulier/" rel="noopener noreferrer" target="_blank">contact</a> met ons op.
       </p>
     </section>
   </div>

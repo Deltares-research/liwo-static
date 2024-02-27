@@ -6,6 +6,7 @@
   width: 60px;
   margin-left: auto;
   margin-right: .5rem;
+  cursor: pointer;
 }
 
 .layer-control__identifiers {
@@ -33,6 +34,7 @@
 .layer-control__vis-label {
   position: absolute;
   left: .5rem;
+  cursor: pointer;
 }
 
 .layer-control__range {
