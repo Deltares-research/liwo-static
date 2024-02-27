@@ -1,19 +1,21 @@
 <template>
   <ul :class="classData">
-    <li
-      class="layer-control-list__item"
-      v-for="(layer, index) in layers"
-      :key="layer.breachBandId"
-      @click="selectLayer(layer)"
-    >
-      <slot
-        name="layer-control"
-        v-if="layer"
-        :active="isActive(layer)"
-        :layer="layer"
-        :updateLayer="layer => updateLayer(layer, index)"
-      ></slot>
-    </li>
+    <template v-for="(layer, index) in layers">
+      <li
+        class="layer-control-list__item"
+        v-if="layerIsShown(layer)"
+        :key="layer.breachBandId"
+        @click="selectLayer(layer)"
+      >
+        <slot
+          name="layer-control"
+          v-if="layer"
+          :active="isActive(layer)"
+          :layer="layer"
+          :updateLayer="layer => updateLayer(layer, index)"
+        ></slot>
+      </li>
+    </template>
     <li v-if="$slots.default">
       <slot></slot>
     </li>
@@ -64,7 +66,18 @@ export default {
       }
 
       return this.selectedLayer.breachBandId === layer.breachBandId
-    }
+    },
+    layerIsShown (layer) {
+      // If no variant is selected show the layer
+      if (!layer?.properties?.selectedVariant) {
+        return true
+      }
+      // If a variant is selected check if it exists for the layer
+      const variant = layer.variants.find(
+        (variant) => variant.layer === layer.properties.selectedVariant
+      )
+      return Boolean(variant)
+    },
   },
   mounted () {
     const firstLayer = _.first(this.layers)

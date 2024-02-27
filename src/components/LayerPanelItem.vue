@@ -34,8 +34,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
-
 import LayerControlList from './LayerControlList.vue'
 import LayerControl from './LayerControl.vue'
 
@@ -81,7 +79,7 @@ export default {
   },
   methods: {
     selectFirstLayer () {
-      this.selectLayer(_.first(this.layerSet.layers))
+      this.selectLayer(this.layers[0])
     },
     updateLayers (layers) {
       this.$emit('update:layers', layers)

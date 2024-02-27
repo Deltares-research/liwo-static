@@ -18,19 +18,22 @@ export function flattenLayerSet (layerSet) {
     // get all layer properties
     const layerProperties = _.omit(layer, ['variants'])
     // get all variants
-    let variantIndex = _.get(layer.properties, 'selectedVariant', null)
 
-    // pick the first varian if there is only 1 variant
-    if (layer.variants.length === 1) {
-      variantIndex = 0
-    }
-
-    if (_.isNil(variantIndex)) {
-      console.warn('no variant index set for', layer.id)
-      variantIndex = 0
-    }
+    let variant = {}
     // select the variant
-    const variant = layer.variants[variantIndex] || {}
+    const selectedVariant = layer.properties.selectedVariant || layer.variants[0].layer
+
+    // If there is for any reason no variant, select the first one
+    if (!selectedVariant) {
+      variant = layer.variants[0]
+    }
+
+    // pick the selected variant
+    if (selectedVariant) {
+      variant = layer.variants.find((variant) => variant.layer === selectedVariant) || {}
+      layer.properties.selectedVariant = selectedVariant
+    }
+
     // make a copy of the variant as a basis for the flattened layer
     const newLayer = _.clone(variant)
     // copy layer properties in variant
@@ -121,7 +124,7 @@ export function cleanLayer (layer) {
   // select the first variant
   // If you update the selectedVariant, make sure you commit/$set back the layerSet
   // as it should trigger a reload of the map
-  layer.properties.selectedVariant = 0
+  layer.properties.selectedVariant = null
 
   return layer
 }
@@ -137,8 +140,10 @@ export function cleanLayerSet (layerSet) {
     _.each(layerSet.layers, layer => {
       layer.properties.visible = false
     })
-    // set the first layer as visible
-    _.first(layerSet.layers).properties.visible = true
+    if (layerSet.layers.length > 0) {
+      // set the first layer as visible
+      layerSet.layers[0].properties.visible = true
+    }
   }
 
   return layerSet
@@ -155,16 +160,20 @@ export function selectFirstVariantsByLayerId (layerSet) {
 }
 
 export function selectVariantsInLayerSet (layerSet, scenarioIds) {
+  // Define a variant to use in the selectedVariant property
+  let variantId = null
   // Loop over all layers and select variants based on the scenarioIds
   layerSet.layers.forEach(layer => {
     // loop until we found a scenarioId
-    layer.variants.some((variant, i) => {
+    layer.variants.some((variant) => {
       const variantScenarioId = Number(variant.layer.replace('scenario_', ''))
-
       if (scenarioIds.includes(variant.map_id) || scenarioIds.includes(variantScenarioId)) {
-        layer.properties.selectedVariant = i
+        variantId = variant.layer
+        layer.properties.selectedVariant = variantId
         return true
       } else {
+        // Use the defined variant as default or the first variant
+        layer.properties.selectedVariant = variantId || variant.layer
         return false
       }
     })

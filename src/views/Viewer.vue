@@ -103,10 +103,13 @@ export default {
       'layerSet',
       'currentNotifications'
     ]),
-    selectedVariantId () {
-      const variantIndex = _.get(this.selectedLayer, 'properties.selectedVariant', 0)
-      const variant = _.get(this.selectedLayer, ['variants', variantIndex])
-      const id = _.get(variant, 'layer')
+    selectedVariantId() {
+      const selectedVariant = this.selectedLayer.properties.selectedVariant
+      const variant =
+        this.selectedLayer.variants.find(
+          (variant) => variant.layer === selectedVariant
+        ) || this.selectedLayer.variants[0]
+      const id = variant.layer
       return id
     },
     selectedLayers () {
