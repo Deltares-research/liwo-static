@@ -498,6 +498,7 @@ export default {
         this.updateLayersInScenarioLayerSets(scenarioLayerSetIndex, layerSet.layers)
 
         // show the notification for this variant
+        this.$store.commit('clearInfoNotificationsById', this.layerSetId)
         const layers = flattenLayerSet(layerSet)
         const notifications = buildLayerSetNotifications(layers)
 
@@ -505,7 +506,7 @@ export default {
           notifications,
           (notification) => {
             // add them to the main layerSetId number to show up
-            this.$store.commit('addNotificationById', { id: layerSet.id, notification })
+            this.$store.commit('addNotificationById', { id: this.layerSetId, notification })
           }
         )
       }
@@ -581,6 +582,12 @@ export default {
       if (this.selectFeatureMode === 'disabled') {
         return
       }
+      // Set the loading icon
+      this.loading = true
+
+      // because a new feature is selected, we have to clear the old warning notifications
+      this.$store.commit('clearWarningNotificationsById', this.layerSetId)
+
       const feature = evt.target.feature
       // this is the code to enable/disable the markers
       // TODO: check if we need to use properties.id or feature.id
@@ -639,6 +646,9 @@ export default {
       // now manually load the layerSets that correspond to the current selection
       const layerSets = await this.loadScenarioLayerSetsByFeatures(this.selectedFeatures)
       this.scenarioLayerSets = layerSets
+      // we are done, hide the loading icon
+      this.loading = false
+
       // and update the path
       this.updatePath()
     },
@@ -674,7 +684,7 @@ export default {
     async loadFeature (feature) {
       // TODO: move this back the store in a scenario module
       // Load the layerSet for the breach and add it to the scenario list
-      let layerSet = await loadBreach(feature)
+      let layerSet = await loadBreach(feature, this.layerSetId)
       // normalize
       layerSet = normalizeLayerSet(layerSet)
       // and clean
@@ -685,7 +695,7 @@ export default {
       })
       layerSet = selectVariantsInLayerSet(layerSet, this.scenarioIds)
       // before showing new notifications, clear existing ones
-      this.$store.commit('clearNotifications')
+      this.$store.commit('clearInfoNotificationsById', this.layerSetId)
 
       const layers = flattenLayerSet(layerSet)
       const notifications = buildLayerSetNotifications(layers)
