@@ -71,6 +71,8 @@ export default createStore({
         ]
       }
     },
+    // Because notifications can be added in different places and on different times
+    // we need to be able to remove separate types of notifications
     clearInfoNotificationsById (state, id) {
       state.notificationsById[id] = state.notificationsById[id].filter(notification => notification.type !== 'info')
     },
