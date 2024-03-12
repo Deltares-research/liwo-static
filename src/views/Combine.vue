@@ -456,7 +456,7 @@ export default {
   methods: {
     updateLayersInLayerSet (layerSet, layers) {
       // send new layers to the store
-      this.$store.commit('setLayersByLayerSetId', { id: this.layerSet.id, layers })
+      this.$store.commit('setLayersByLayerSetId', { id: layerSet.id, layers })
     },
     updateLayersInScenarioLayerSets (index, layers) {
       this.scenarioLayerSets[index].layers = layers
