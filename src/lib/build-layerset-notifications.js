@@ -3,11 +3,16 @@ import _ from 'lodash'
 function buildLayerSetFeatureNotifications (layers) {
   // create a list of notifications based on the layerset features, the feature that was  used to create the layerSet
   let layerSetFeatureNotifications = layers
-    .filter(layer => _.get(layer, 'layerSet.feature.properties.notify'))
+    .filter(layer =>
+      layer.layerSet?.feature?.properties?.notify ||
+      layer.layerObj?.properties?.notify
+    )
     .map((layer) => {
       return {
         id: layer.layerSet.id,
-        message: _.get(layer, 'layerSet.feature.properties.notify'),
+        message:
+          layer.layerSet?.feature?.properties?.notify ||
+          layer.layerObj?.properties?.notify,
         show: true,
         type: 'info'
       }
