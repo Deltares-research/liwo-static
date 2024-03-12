@@ -41,10 +41,6 @@
   display: flex;
 }
 
-.layer-control__range input {
-  margin: .4rem;
-}
-
 .layer-control__options {
   display: none;
   flex-wrap: wrap;
