@@ -16,7 +16,7 @@ describe('Layers', () => {
 
     cy.wait('@layerSet').its('response.statusCode').should('eq', 200)
 
-    cy.get(`${selector('transparancy-input')} input`)
+    cy.get(`${selector('transparency-input')} input`)
       .invoke('val', 0.5)
       .trigger('change')
 

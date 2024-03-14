@@ -61,7 +61,7 @@
     </label>
   </div>
   <div class="layer-control__options">
-    <div class="layer-control__range" v-test="'transparancy-input'">
+    <div class="layer-control__range" v-test="'transparency-input'">
       <label :for="`layer-${id}-trans`">Transparantie: <span class="sr-only">Voor kaartlaag {{ layer.properties.title }}</span></label>
       <input
         type="range"
@@ -70,7 +70,7 @@
         step="0.1"
         :id="`layer-${id}-trans`"
         value="1"
-        @change.stop="setTransparancy"
+        @change.stop="setTransparency"
       />
     </div>
     <button
@@ -279,7 +279,7 @@ export default {
       })
       return indexes
     },
-    setTransparancy ({ target }) {
+    setTransparency ({ target }) {
       // Create a copy of the layer with the new opacity
       const layer = { ...this.layer }
       let opacity = 0 + parseFloat(target.value, 10)
