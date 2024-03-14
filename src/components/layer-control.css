@@ -35,6 +35,7 @@
 
 .layer-control__range input {
   margin: .4rem;
+  cursor: pointer;
 }
 
 .layer-control__options {

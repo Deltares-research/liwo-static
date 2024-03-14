@@ -53,7 +53,9 @@
       getChangedOpacities(newLayers, oldLayers) {
         return newLayers.filter((layer) => {
           // lookup the old layer in the old values
-          const oldLayer = oldLayers.find(l => l.layerObj.id === layer.layerObj.id)
+          const oldLayer = oldLayers.find(
+            l => l.layerObj.breachBandId === layer.layerObj.breachBandId
+          )
 
           if (oldLayer) {
             const opacity = layer.layerObj.properties.opacity
@@ -68,11 +70,38 @@
 
       updateOpacities(layers) {
         layers.forEach(layer => {
-          const mapLayer = this.layerGroup.getLayers().find(l => l.options.layers === layer.layer)
+          const mapLayer = this.layerGroup
+            .getLayers()
+            .find(l => l.options.breachBandId === layer.layerObj.breachBandId)
+          const layerOpacity = layer.layerObj.properties.opacity
 
-          // I added this check because sometimes mapLayer returned undefined
-          if(mapLayer) {
-            mapLayer.setOpacity(layer.layerObj.properties.opacity)
+          // Check because mapLayer can be undefined and opacity should only
+          // be updated if it's different from the current opacity
+          if (
+            !mapLayer ||
+            layerOpacity === undefined ||
+            layerOpacity === mapLayer.options.opacity
+          ) {
+            return
+          }
+
+          if (layer.type !== 'cluster') {
+            mapLayer.setOpacity(layerOpacity)
+          }
+
+          if (layer.type === 'cluster') {
+            this.layerGroup.removeLayer(mapLayer)
+
+            if (this.abortController) {
+              this.abortController.abort()
+            }
+            this.abortController = new AbortController()
+            createLayer(layer, {
+              onMarkerHover: this.onMarkerHover,
+              onClick: this.onClick,
+            }, this.abortController.signal).then((newLayer) => {
+              this.layerGroup.addLayer(newLayer)
+            })
           }
         })
       },
@@ -85,7 +114,7 @@
         /**
          * Abort previous loading layers
          * The issue was that some layers are async.
-         * If you quickly switched to another layer will the previous was still loading it would sometimes cause the old layer to be shown on top of the new one.
+         * If you quickly switched to another layer while the previous was still loading it would sometimes cause the old layer to be shown on top of the new one.
          * By using the AbortController we signal all old layers to stop loading.
          */
         if(this.abortController) {
@@ -121,7 +150,7 @@
         // manually change opacity of the layers where opacity changed
         // (this is very specific behaviour, but it improves the UX so much that it's worth it)
         const changedOpacities = this.getChangedOpacities(newLayers, oldLayers)
-        if(changedOpacities.length) {
+        if (changedOpacities.length) {
           this.updateOpacities(newLayers)
         } else {
           this.recreateLayersIfChanged(newLayers, oldLayers)
