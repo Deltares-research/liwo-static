@@ -81,7 +81,6 @@
           }
 
           if (layer.type === 'cluster' && layerOpacity >= 0) {
-            console.log('setting cluster opacity', layer.layerObj.properties.opacity, layerOpacity)
             this.layerGroup.removeLayer(mapLayer)
             mapLayer.options.opacity = layerOpacity
 
