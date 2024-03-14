@@ -1,5 +1,5 @@
 <template>
-  <pop-up class="export-popup" title="Exporteer al zip" @close="$emit('close')">
+  <pop-up class="export-popup" title="Exporteer als zip" @close="$emit('close')">
     <form class="export-popup__content export-popup__form-columns">
       <div class="export-popup__notification export-popup__notification--error" v-if="formErrors.length">
         <b>Graag de volgende velden aanvullen:</b>
