@@ -53,7 +53,9 @@
       getChangedOpacities(newLayers, oldLayers) {
         return newLayers.filter((layer) => {
           // lookup the old layer in the old values
-          const oldLayer = oldLayers.find(l => l.layerObj.id === layer.layerObj.id)
+          const oldLayer = oldLayers.find(
+            l => l.layerObj.breachBandId === layer.layerObj.breachBandId
+          )
 
           if (oldLayer) {
             const opacity = layer.layerObj.properties.opacity
@@ -68,11 +70,18 @@
 
       updateOpacities(layers) {
         layers.forEach(layer => {
-          const mapLayer = this.layerGroup.getLayers().find(l => l.options.layers === layer.layer)
+          const mapLayer = this.layerGroup
+            .getLayers()
+            .find(l => l.options.breachBandId === layer.layerObj.breachBandId)
           const layerOpacity = layer.layerObj.properties.opacity
 
-          // I added this check because sometimes mapLayer returned undefined
-          if (!mapLayer || mapLayer.options.opacity === layerOpacity) {
+          // Check because mapLayer can be undefined and opacity should only
+          // be updated if it's different from the current opacity
+          if (
+            !mapLayer ||
+            layerOpacity === undefined ||
+            layerOpacity === mapLayer.options.opacity
+          ) {
             return
           }
 
@@ -80,11 +89,10 @@
             mapLayer.setOpacity(layerOpacity)
           }
 
-          if (layer.type === 'cluster' && layerOpacity >= 0) {
+          if (layer.type === 'cluster') {
             this.layerGroup.removeLayer(mapLayer)
-            mapLayer.options.opacity = layerOpacity
 
-            if(this.abortController) {
+            if (this.abortController) {
               this.abortController.abort()
             }
             this.abortController = new AbortController()

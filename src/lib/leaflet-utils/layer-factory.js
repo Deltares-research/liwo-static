@@ -40,10 +40,7 @@ async function createCluster (layer, callbacks) {
   // LayerGroup -> [ MarkerCluster, Geojson ]
   // When selected the markers are filtered from the cluster and show up in the geojson layer
   // This makes it rather slow
-
-  // fully visible by default
-  const opacity = _.get(layer.layerObj, 'properties.opacity', 1)
-  const layerGroup = L.layerGroup([], { layers: layer.layer, opacity })
+  const layerGroup = L.layerGroup([], getLayerOptions(layer))
 
   // create the cluster  layer
   const clusterGroup = L.markerClusterGroup({
@@ -82,26 +79,23 @@ async function createCluster (layer, callbacks) {
 
 
 export async function createTile (layer) {
-  const opacity = _.get(layer.layerObj, 'properties.opacity', 1)
-  return L.tileLayer(layer.url, { opacity })
+  return L.tileLayer(layer.url, getLayerOptions(layer))
 }
 
 export async function createWms (layer, _callbacks, abortSignal) {
   // these options come frome the vaiant properties of the layer
   const { namespace, attribution, style } = layer
   // fully visible by default
-  const opacity = _.get(layer.layerObj, 'properties.opacity', 1)
   const url = await getGeoServerURL(namespace)
   abortSignal.throwIfAborted()
   return L.tileLayer.wms(url, {
     // TODO: layer is now sometimes a string, sometimes an object. Clean this up
-    layers: layer.layer,
+    ...getLayerOptions(layer),
     format: 'image/png',
     transparent: true,
     attribution,
     tiled: true,
     styles: style,
-    opacity
   })
 }
 
@@ -123,7 +117,7 @@ function pointToLayer (_feature, latlng, options) {
 function clusterIconCreateFunction (layer) {
   return function (cluster) {
     const childCount = cluster.getChildCount()
-    const opacity = _.get(layer.layerObj, 'properties.opacity', 1)
+    const opacity = layer.layerObj?.properties?.opacity || 1
     const type = layer.layer
     const icon = L.divIcon({
       html: `<div class="cluster-icon cluster-icon__${type}" style="opacity: ${opacity};"><span>${childCount}</span></div>`,
@@ -152,7 +146,7 @@ function createSelectedGeojson (layer, callbacks) {
 
 function createClusterGeoJson (layer, callbacks) {
   // create the geojson layer used as 0 level for the clusters
-  const opacity = _.get(layer.layerObj, 'properties.opacity', 1)
+  const opacity = layer.layerObj?.properties?.opacity || 1
   const markerOptions = {
     opacity
   }
@@ -202,5 +196,14 @@ function onEachFeature (feature, marker, { onClick, onMarkerHover }) {
     const layerType = getLayerType(feature)
     const icon = _.get(iconsByLayerType, layerType, defaultIcon)
     marker.setIcon(icon)
+  }
+}
+
+function getLayerOptions(layer) {
+  return {
+    // fully visible by default
+    opacity: layer.layerObj?.properties?.opacity || 1,
+    layers: layer.layer,
+    breachBandId: layer.layerObj?.breachBandId,
   }
 }
