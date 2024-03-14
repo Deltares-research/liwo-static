@@ -69,10 +69,31 @@
       updateOpacities(layers) {
         layers.forEach(layer => {
           const mapLayer = this.layerGroup.getLayers().find(l => l.options.layers === layer.layer)
+          const layerOpacity = layer.layerObj.properties.opacity
 
           // I added this check because sometimes mapLayer returned undefined
-          if(mapLayer) {
-            mapLayer.setOpacity(layer.layerObj.properties.opacity)
+          if (!mapLayer || mapLayer.options.opacity === layerOpacity) {
+            return
+          }
+
+          if (layer.type !== 'cluster') {
+            mapLayer.setOpacity(layerOpacity)
+          }
+
+          if (layer.type === 'cluster' && layerOpacity >= 0) {
+            this.layerGroup.removeLayer(mapLayer)
+            mapLayer.options.opacity = layerOpacity
+
+            if(this.abortController) {
+              this.abortController.abort()
+            }
+            this.abortController = new AbortController()
+            createLayer(layer, {
+              onMarkerHover: this.onMarkerHover,
+              onClick: this.onClick,
+            }, this.abortController.signal).then((newLayer) => {
+              this.layerGroup.addLayer(newLayer)
+            })
           }
         })
       },
@@ -85,7 +106,7 @@
         /**
          * Abort previous loading layers
          * The issue was that some layers are async.
-         * If you quickly switched to another layer will the previous was still loading it would sometimes cause the old layer to be shown on top of the new one.
+         * If you quickly switched to another layer while the previous was still loading it would sometimes cause the old layer to be shown on top of the new one.
          * By using the AbortController we signal all old layers to stop loading.
          */
         if(this.abortController) {
@@ -121,7 +142,7 @@
         // manually change opacity of the layers where opacity changed
         // (this is very specific behaviour, but it improves the UX so much that it's worth it)
         const changedOpacities = this.getChangedOpacities(newLayers, oldLayers)
-        if(changedOpacities.length) {
+        if (changedOpacities.length) {
           this.updateOpacities(newLayers)
         } else {
           this.recreateLayersIfChanged(newLayers, oldLayers)

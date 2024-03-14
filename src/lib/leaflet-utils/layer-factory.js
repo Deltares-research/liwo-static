@@ -40,7 +40,10 @@ async function createCluster (layer, callbacks) {
   // LayerGroup -> [ MarkerCluster, Geojson ]
   // When selected the markers are filtered from the cluster and show up in the geojson layer
   // This makes it rather slow
-  const layerGroup = L.layerGroup()
+
+  // fully visible by default
+  const opacity = _.get(layer.layerObj, 'properties.opacity', 1)
+  const layerGroup = L.layerGroup([], { layers: layer.layer, opacity })
 
   // create the cluster  layer
   const clusterGroup = L.markerClusterGroup({
