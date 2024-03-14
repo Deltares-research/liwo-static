@@ -1,5 +1,5 @@
 <template>
-  <pop-up class="export-popup" title="Exporteer" @close="$emit('close')">
+  <pop-up class="export-popup" title="Exporteer als zip" @close="$emit('close')">
     <form class="export-popup__content export-popup__form-columns">
       <div class="export-popup__notification export-popup__notification--error" v-if="formErrors.length">
         <b>Graag de volgende velden aanvullen:</b>
@@ -8,34 +8,8 @@
         </ul>
       </div>
       <div class="export-popup__notification export-popup__notification--loading" v-if="exporting">
-        <b>Uw export wordt gegenereerd.</b>
+        <b>Uw export wordt gegenereerd.</b><div class="lds-dual-ring export-popup__notification-loader"></div>
       </div>
-      <p id="export-as" class="export-popup__form-column-item">Exporteer als:</p>
-      <ul class="export-popup__form-column-item choice-cards export-popup__radio-group">
-        <li class="choice-cards__item">
-          <input type="radio" name="export" v-model="exportType"
-            value="zip"
-            class="sr-only choice-cards__item__radio export-popup__export-input"
-            aria-labelledby="export-as export-zip"
-          >
-          <span class="radio choice-cards__item__label export-popup__export-label">
-            <span aria-hidden="true" class="icon icon-file-zip icon-2x"></span>
-            <span id="export-zip">Zip</span>
-          </span>
-        </li>
-        <!-- disable for now -->
-        <li class="choice-cards__item" v-if="false">
-          <input type="radio" name="export" v-model="exportType"
-            id="export-print" value="print"
-            class="sr-only choice-cards__item__radio export-popup__export-input"
-            aria-labelledby="export-as export-img"
-          >
-          <label class="choice-cards__item__label export-popup__export-label" for="export-print">
-            <span aria-hidden="true" class="icon icon-file-pdf icon-2x"></span>
-            <span id="export-img">Afbeelding</span>
-          </label>
-        </li>
-      </ul>
       <label class="export-popup__form-column-item" for="export-name">
         Naam:<br><small class="help">De naam van het uitvoerbestand</small>
       </label>
@@ -64,29 +38,26 @@ export default {
     return {
       formErrors: [],
       exporting: false, // starts false and after form validates becomes true
-      exportType: 'zip',
       exportName: ''
     }
   },
   components: { PopUp },
   methods: {
     exportMap: function () {
-      if (!this.exportType) this.formErrors.push('Kies export type')
       if (!this.exportName) this.formErrors.push('Export naam is verplicht')
-
       if (this.formErrors && this.formErrors.length === 0) { this.exporting = true }
 
-      if (this.exportType === 'zip') {
-        const layers = this.mapLayers.map(
-          layer => {
-            // TODO: make this consistent
-            // this is actually the id of the variant
-            return layer.layer
-          }).join()
-        exportZip({ name: this.exportName, layers })
-      } else {
-        console.warn('export type not supported', this.exportType)
-      }
+      const layers = this.mapLayers.map(
+        layer => {
+          // TODO: make this consistent
+          // this is actually the id of the variant
+          return layer.layer
+        }).join()
+
+      exportZip({ name: this.exportName, layers })
+        .finally(() => {
+          this.exporting = false
+        })
     }
   }
 }
@@ -150,6 +121,13 @@ export default {
     background:red;
   }
   .export-popup__notification--loading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     background: #0b71ab;
+  }
+  .export-popup__notification .export-popup__notification-loader:after {
+    height: 1.5rem;
+    width: 1.5rem;
   }
 </style>
