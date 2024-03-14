@@ -35,9 +35,9 @@
         max="1"
         step="0.1"
         :name="`layer-${id}-trans`"
-        class="layer-control__transparancy-slider"
+        class="layer-control__transparency-slider"
         value="1"
-        @change.stop="setTransparancy"
+        @change.stop="setTransparency"
         :aria-label="`Transparantie voor kaartlaag ${layer.properties.title}`"
       />
 
@@ -105,7 +105,7 @@ export default {
     },
   },
   methods: {
-    setTransparancy ({ target }) {
+    setTransparency ({ target }) {
       // Create a copy of the layer with the new opacity
       const layer = { ...this.layer }
       let opacity = 0 + parseFloat(target.value, 10)
