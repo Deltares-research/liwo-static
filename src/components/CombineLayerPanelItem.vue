@@ -92,7 +92,7 @@ export default {
     }
   },
   watch: {
-    collapsed (val) {
+    collapsed () {
       this.isCollapsed = !!this.collapsed
     },
     isCollapsed (val) {
