@@ -136,7 +136,7 @@ function geoCoderControl(map) {
 function printControl() {
   const control = L.control.browserPrint({
     position: 'topright',
-    printModes: ['Landscape'],
+    printModes: [L.BrowserPrint.Mode.Landscape()],
     title: 'Kaart afdrukken'
   })
 
