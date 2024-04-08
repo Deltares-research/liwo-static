@@ -1,11 +1,14 @@
 import VueMatomo from "vue-matomo";
 import router from "../router";
 
+// eslint-disable-next-line no-undef -- VUE_APP_MATOMO_SITE_ID is defined in the vite.config.js
+const siteId = VUE_APP_MATOMO_SITE_ID;
+
 const install = (app) => {
   app.use(VueMatomo, {
     // Configure your matomo server and site by providing
     host: "https://statistiek.rijksoverheid.nl",
-    siteId: "2",
+    siteId,
 
     // Changes the default .js and .php endpoint's filename
     // Default: 'matomo'
