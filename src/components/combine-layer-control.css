@@ -2,10 +2,11 @@
   background-color: var(--white);
 }
 
-.layer-control__transparancy-slider {
+.layer-control__transparency-slider {
   width: 60px;
   margin-left: auto;
   margin-right: .5rem;
+  cursor: pointer;
 }
 
 .layer-control__identifiers {
@@ -33,14 +34,11 @@
 .layer-control__vis-label {
   position: absolute;
   left: .5rem;
+  cursor: pointer;
 }
 
 .layer-control__range {
   display: flex;
-}
-
-.layer-control__range input {
-  margin: .4rem;
 }
 
 .layer-control__options {

@@ -6,7 +6,7 @@
     >
     <span>{{ title }}</span>
     <button class="layerpanel-item__collapse" @click.stop="toggleCollapse">
-      <img class="layerpanel-item__collapse-icon" :src="`${publicPath}icons/baseline-keyboard_arrow_up-24px.svg`" />
+      <img class="layerpanel-item__collapse-icon" :src="`${publicPath}icons/baseline-keyboard_arrow_up-24px.svg`" alt="Klap kaartlagen in of uit" />
     </button>
   </h3>
   <layer-control-list
@@ -34,8 +34,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
-
 import LayerControlList from './LayerControlList.vue'
 import LayerControl from './LayerControl.vue'
 
@@ -81,7 +79,7 @@ export default {
   },
   methods: {
     selectFirstLayer () {
-      this.selectLayer(_.first(this.layerSet.layers))
+      this.selectLayer(this.layers[0])
     },
     updateLayers (layers) {
       this.$emit('update:layers', layers)

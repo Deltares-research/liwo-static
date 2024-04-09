@@ -13,6 +13,8 @@ import installMatamo from './plugins/vue-matomo.js'
 // // Directives
 import installTestDirective from './directives/test.js'
 
+// test
+
 const app = createApp(App)
 app.use(VueSkipTo)
 app.use(router)

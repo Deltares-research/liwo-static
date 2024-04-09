@@ -6,7 +6,7 @@
     >
     <span>{{ title }}</span>
     <button class="layerpanel-item__collapse" @click.stop="toggleCollapse">
-      <img class="layerpanel-item__collapse-icon" :src="`${publicPath}icons/baseline-keyboard_arrow_up-24px.svg`" alt="" />
+      <img class="layerpanel-item__collapse-icon" :src="`${publicPath}icons/baseline-keyboard_arrow_up-24px.svg`" alt="Klap kaartlagen in of uit" />
     </button>
   </h3>
 
@@ -55,8 +55,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
-
 import LayerControlList from './LayerControlList.vue'
 import CombineLayerControl from './CombineLayerControl.vue'
 import CombineChangeVariantPopup from './CombineChangeVariantPopup.vue'
@@ -94,7 +92,7 @@ export default {
     }
   },
   watch: {
-    collapsed (val) {
+    collapsed () {
       this.isCollapsed = !!this.collapsed
     },
     isCollapsed (val) {
@@ -106,7 +104,6 @@ export default {
   },
   computed: {
     ...mapState(['variantFilterProperties']),
-
     // Get all the variants
     allVariants () {
       return this.layers[0].variants
@@ -116,8 +113,8 @@ export default {
       if (!this.layers.length) {
         return null
       }
-      const index = this.layers[0].properties.selectedVariant
-      return this.allVariants[index]
+      const selectedVariant = this.layers[0].properties.selectedVariant
+      return this.allVariants.find(variant => variant.layer === selectedVariant) || this.allVariants[0]
     },
     variantPropertiesToShow () {
       const layerBreachIds = Object.keys(this.variantFilterProperties)
@@ -156,7 +153,7 @@ export default {
       this.changeVariantPopupShown = false
     },
     selectFirstLayer () {
-      this.selectLayer(_.first(this.layerSet.layers))
+      this.selectLayer(this.layers[0])
     },
     updateLayers (layers) {
       this.$emit('update:layers', layers)

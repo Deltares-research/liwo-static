@@ -7,7 +7,7 @@ import mapConfig from '../map.config'
 
 const headers = { Accept: 'application/json', 'Content-Type': 'application/json' }
 
-export async function loadBreach (feature) {
+export async function loadBreach (feature, layerSetId) {
   // Load breach data from the geoserver
 
   // the breach id is hidden here
@@ -25,7 +25,8 @@ export async function loadBreach (feature) {
   }
 
   const promises = breachLayers.map(
-    layerName => loadBreachLayer(breachId, layerName)
+    // pass along  layerSetId for notifications
+    layerName => loadBreachLayer(breachId, layerName, layerSetId)
   )
 
   // the layers are a bit out of order, so restructure them
@@ -165,7 +166,7 @@ async function loadFilterVariants() {
   return filterVariantsPromise
 }
 
-async function loadBreachLayer (breachId, layerName) {
+async function loadBreachLayer (breachId, layerName, layerSetId) {
   // Load the dataset  for a breach
   const services = await mapConfig.getServices()
   const BREACHES_BASE_URL = services.WEBSERVICE_URL
@@ -180,7 +181,18 @@ async function loadBreachLayer (breachId, layerName) {
       breachid: breachId,
       layername: layerName
     })
-  }).then(res => res.json())
+  })
+  .then(res => res.json())
+  .catch(() => {
+    const notification = {
+      message: `Het laden van de kaartlaag "${layerName}" is niet gelukt. Probeer het opnieuw door de kaartlaag nog eens te selecteren.`,
+      type: 'warning',
+      show: true
+    }
+    store.commit('addNotificationById', { id: layerSetId, notification })
+    console.warn('Fetching breach layer failed', `"${layerName}"`)
+    return null
+  })
 
   const [breachData, filtersData] = await Promise.all([breachFetch, loadFilterVariants()])
 
@@ -190,7 +202,7 @@ async function loadBreachLayer (breachId, layerName) {
     store.commit('setVariantFilterProperties', { properties, breachId })
   }
 
-  const data = JSON.parse(breachData.d)
+  const data = breachData && JSON.parse(breachData.d)
 
   // get the first layerset if available, otherwise return null
   let result = null

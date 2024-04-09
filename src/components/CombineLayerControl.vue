@@ -35,9 +35,10 @@
         max="1"
         step="0.1"
         :name="`layer-${id}-trans`"
-        class="layer-control__transparancy-slider"
-        value="0"
-        @change.stop="setTransparancy"
+        class="layer-control__transparency-slider"
+        value="1"
+        @change.stop="setTransparency"
+        :aria-label="`Transparantie voor kaartlaag ${layer.properties.title}`"
       />
 
       <button
@@ -65,9 +66,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
 import LayerPopup from '@/components/LayerPopup.vue'
-import _ from 'lodash'
 
 export default {
   props: {
@@ -83,17 +82,14 @@ export default {
   data () {
     return {
       infoPopupIsOpen: false,
-      selectedLayerIndex: null
     }
   },
-  mounted () {
-    this.selectedLayerIndex = _.get(this.layer, 'properties.selectedVariant')
-  },
   computed: {
-    ...mapGetters(['variantFilterPropertiesIndex']),
-    ...mapState(['variantFilterProperties', 'selectedProbabilities', 'selectedVariantIndexByBreachBandId', 'imminentFlood']),
     id () {
       return this.layer.breachBandId
+    },
+    selectedVariant () {
+      return this.layer.properties.selectedVariant
     },
     classData () {
       return {
@@ -101,17 +97,18 @@ export default {
         'layer-control--active': this.active
       }
     },
-    metadata () {
-      const variant = _.get(this.layer.variants, this.selectedLayerIndex)
-      const result = _.get(variant, 'metadata')
-      return result
-    }
+    metadata() {
+      const variant = this.layer.variants.find(
+        (variant) => variant.layer === this.selectedVariant
+      );
+      return variant.metadata;
+    },
   },
   methods: {
-    setTransparancy ({ target }) {
+    setTransparency ({ target }) {
       // Create a copy of the layer with the new opacity
       const layer = { ...this.layer }
-      let opacity = 1 - parseFloat(target.value, 10)
+      let opacity = 0 + parseFloat(target.value, 10)
 
       if (opacity < 0) {
         opacity = 0

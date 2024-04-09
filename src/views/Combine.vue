@@ -23,6 +23,7 @@
       <layer-panel>
         <template v-slot:title>
           <button @click="showFilter = true" class="layer-control__button" v-test="'filter-toggle'">
+            <span class="sr-only">Filter doorbraaklocaties op kansklassen</span>
             <!-- icons are 32x32 but other icons don't fill up the space... -->
             <!-- TODO: use iconfont -->
             <svg class="icon" width="22" height="22" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -304,11 +305,16 @@ export default {
       // a scenario can contain multiple layers (e.g. waterdepth, damage)
       // these ids correspond to the first layer (waterdepth) of the scenario
       this.scenarioLayerSets.forEach(layerSet => {
+        if (layerSet.layers.length === 0) {
+          console.warn('got back  unexpected empty layerSet from backend', layerSet)
+          return
+        }
+
         // Only select first layer
         // multiple layers in scenarios are bands
-        const layer = _.first(layerSet.layers)
-        const variantIndex = _.get(layer, 'properties.selectedVariant', 0)
-        const variant = layer.variants[variantIndex]
+        const layer = layerSet.layers[0]
+        const selectedVariant = layer.properties.selectedVariant
+        const variant = layer.variants.find(variant => variant.layer === selectedVariant) || layer.variants[0]
         // this is the scenario (breach + return period) id in the form scenario_number
         const scenario = variant.layer
         const scenarioRe = /^scenario_(\d+)$/
@@ -406,7 +412,6 @@ export default {
         // return the new layer
         return layer
       })
-
       // these are the extra scenarios
       let scenarioLayers = _.flatten(
         this.scenarioLayerSets.map(
@@ -426,10 +431,13 @@ export default {
 
       return selectedLayers
     },
-    selectedVariantId () {
-      const variantIndex = _.get(this.selectedLayer, 'properties.selectedVariant', 0)
-      const variant = _.get(this.selectedLayer, ['variants', variantIndex])
-      const id = _.get(variant, 'layer')
+    selectedVariantId() {
+      const selectedVariant = this.selectedLayer.properties.selectedVariant
+      const variant =
+        this.selectedLayer.variants.find(
+          (variant) => variant.layer === selectedVariant
+        ) || this.selectedLayer.variants[0]
+      const id = variant.layer
       return id
     },
     controlLayerSelected () {
@@ -448,7 +456,7 @@ export default {
   methods: {
     updateLayersInLayerSet (layerSet, layers) {
       // send new layers to the store
-      this.$store.commit('setLayersByLayerSetId', { id: this.layerSet.id, layers })
+      this.$store.commit('setLayersByLayerSetId', { id: layerSet.id, layers })
     },
     updateLayersInScenarioLayerSets (index, layers) {
       this.scenarioLayerSets[index].layers = layers
@@ -473,9 +481,9 @@ export default {
     selectLayer (layer) {
       this.selectedLayer = layer
     },
-    selectVariant ({ index, layerSet, scenarioLayerSetIndex }) {
-      _.each(layerSet.layers, (layer) => {
-        layer.properties.selectedVariant = index
+    selectVariant ({ layer, layerSet, scenarioLayerSetIndex }) {
+      _.each(layerSet.layers, (layerSetLayer) => {
+        layerSetLayer.properties.selectedVariant = layer
       })
 
       // Store new layers (which now contain the new active variant)
@@ -488,6 +496,19 @@ export default {
         // TODO: move band selection to more logic location, now it is magic...
         // TODO: move this to scenario module  in store
         this.updateLayersInScenarioLayerSets(scenarioLayerSetIndex, layerSet.layers)
+
+        // show the notification for this variant
+        this.$store.commit('clearInfoNotificationsById', this.layerSetId)
+        const layers = flattenLayerSet(layerSet)
+        const notifications = buildLayerSetNotifications(layers)
+
+        _.each(
+          notifications,
+          (notification) => {
+            // add them to the main layerSetId number to show up
+            this.$store.commit('addNotificationById', { id: this.layerSetId, notification })
+          }
+        )
       }
       // now that the new variant is selected we can update the path
       this.updatePath()
@@ -561,6 +582,12 @@ export default {
       if (this.selectFeatureMode === 'disabled') {
         return
       }
+      // Set the loading icon
+      this.loading = true
+
+      // because a new feature is selected, we have to clear the old warning notifications
+      this.$store.commit('clearWarningNotificationsById', this.layerSetId)
+
       const feature = evt.target.feature
       // this is the code to enable/disable the markers
       // TODO: check if we need to use properties.id or feature.id
@@ -596,6 +623,10 @@ export default {
           return selectedIds.includes(layerSet.feature.id)
         })
         this.scenarioLayerSets = scenarioLayerSets
+
+        if(!this.scenarioLayerSets.length) {
+          this.layerSetCollapsed = false
+        }
       } else if(this.selectFeatureMode === 'multiple') { // we just selected this feature, add it to the list
         this.selectedFeatures.push(feature)
       } else {
@@ -615,6 +646,9 @@ export default {
       // now manually load the layerSets that correspond to the current selection
       const layerSets = await this.loadScenarioLayerSetsByFeatures(this.selectedFeatures)
       this.scenarioLayerSets = layerSets
+      // we are done, hide the loading icon
+      this.loading = false
+
       // and update the path
       this.updatePath()
     },
@@ -650,7 +684,7 @@ export default {
     async loadFeature (feature) {
       // TODO: move this back the store in a scenario module
       // Load the layerSet for the breach and add it to the scenario list
-      let layerSet = await loadBreach(feature)
+      let layerSet = await loadBreach(feature, this.layerSetId)
       // normalize
       layerSet = normalizeLayerSet(layerSet)
       // and clean
@@ -661,7 +695,7 @@ export default {
       })
       layerSet = selectVariantsInLayerSet(layerSet, this.scenarioIds)
       // before showing new notifications, clear existing ones
-      this.$store.commit('clearNotifications')
+      this.$store.commit('clearInfoNotificationsById', this.layerSetId)
 
       const layers = flattenLayerSet(layerSet)
       const notifications = buildLayerSetNotifications(layers)

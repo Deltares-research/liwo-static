@@ -40,9 +40,9 @@
         <layer-control-select
           :key="index"
           name="layer-variant"
-          :options="getLayerVariantOptionsWithFallback(variant, breachBandId, title)"
-          :modelValue="selectedVariantIndexByBreachBandId[breachBandId][title]"
-          @update:modelValue="setLayerVariant(breachBandId, title, $event)"
+          :options="getLayerVariantOptionsWithFallback(variant, id, title)"
+          :modelValue="selectedVariantIndexByBreachBandId[id][title]"
+          @update:modelValue="setLayerVariant(id, title, $event)"
           v-test="'variant-select'"
           data-tour-id="layer-variant-select"
         />
@@ -56,8 +56,7 @@
       <layer-control-select
         name="layer-variant"
         :options="layerOptions"
-        v-model="selectedLayerIndex"
-        :modelValue="selectedLayerIndex"
+        :modelValue="selectedVariant"
         @update:modelValue="selectLayerOption($event)"
         v-test="'variant-select'"
         data-tour-id="layer-variant-select"
@@ -65,17 +64,17 @@
     </label>
   </div>
   <div class="layer-control__options">
-    <div class="layer-control__range" v-test="'transparancy-input'">
-      <label for="`layer-${id}-trans`">Transparantie: </label>
+    <div class="layer-control__range" v-test="'transparency-input'">
+      <label :for="`layer-${id}-trans`">Transparantie: <span class="sr-only">Voor kaartlaag {{ layer.properties.title }}</span></label>
       <input
         type="range"
         min="0"
         max="1"
         step="0.1"
-        :name="`layer-${id}-trans`"
-        value="0"
-        @change.stop="setTransparancy"
+        :id="`layer-${id}-trans`"
+        value="1"
         data-tour-id="layer-transparency"
+        @change.stop="setTransparency"
       />
     </div>
     <button
@@ -125,24 +124,17 @@ export default {
     return {
       popupIsOpen: false,
       noDataAvailableForSelection: false,
-      selectedLayerIndex: null,
-      breachId: null,
-      breachBandId: null,
       layerVariantOptions: {}
     }
   },
   mounted () {
-    this.breachId = _.get(this.layer, 'breachId')
-    this.breachBandId = _.get(this.layer, 'breachBandId')
-    this.selectedLayerIndex = _.get(this.layer, 'properties.selectedVariant')
-
     if (this.breachId) {
       let indexes = this.variantFilterPropertiesIndex(this.breachId)
-      if (typeof this.selectedLayerIndex === 'number') {
-        indexes = this.getOptionsByVariantId(this.selectedLayerIndex)
+      if (this.selectedVariant) {
+        indexes = this.getOptionsByVariantId(this.selectedVariant)
       }
 
-      store.commit('setSelectedVariantIndexByBreachBandId', { selectedIndex: indexes, breachBandId: this.breachBandId })
+      store.commit('setSelectedVariantIndexByBreachBandId', { selectedIndex: indexes, breachBandId: this.id })
     }
 
     this.setLayerVariantOptions()
@@ -153,6 +145,12 @@ export default {
     id () {
       return this.layer.breachBandId
     },
+    breachId () {
+      return this.layer.breachId
+    },
+    selectedVariant () {
+      return this.layer.properties.selectedVariant
+    },
     classData () {
       return {
         'layer-control': true,
@@ -162,22 +160,23 @@ export default {
     layerSetId () {
       return parseInt(this.$route.params.id, 10)
     },
-    metadata () {
-      const variant = _.get(this.layer.variants, this.selectedLayerIndex)
-      const result = _.get(variant, 'metadata')
-      return result
+    metadata() {
+      const variant = this.layer.variants.find(
+        (variant) => variant.layer === this.selectedVariant
+      );
+      return variant.metadata;
     },
     showLayers () {
       return this.layer.variants.map(vari => {
-        return this.variantFilterProperties[_.get(this.layer, 'breachId')].map(prop => {
+        return this.variantFilterProperties[this.breachId].map(prop => {
           return vari.properties[prop]
         })
       })
     },
     layerOptions () {
-      const variants = _.get(this.layer, 'variants', [])
-      return variants.map((variant, index) => {
-        return { value: index, title: variant.title }
+      const variants = this.layer.variants || []
+      return variants.map((variant) => {
+        return { value: variant.layer, title: variant.title }
       })
     }
   },
@@ -187,7 +186,7 @@ export default {
       return _.isEmpty(obj)
     },
     selectedLayerVariantOptions () {
-      const indexes = this.selectedVariantIndexByBreachBandId[this.breachBandId]
+      const indexes = this.selectedVariantIndexByBreachBandId[this.id]
 
       return Object.entries(indexes).map(([key, value]) => {
         const layerVariantOptions = _.get(this.layerVariantOptions, key, {})
@@ -206,8 +205,10 @@ export default {
         return
       }
       const variantOptions = {}
-      const currentVariant = this.layer.variants[this.selectedLayerIndex]
-      this.variantFilterProperties[_.get(this.layer, 'breachId')].forEach(prop => {
+      const currentVariant = this.layer.variants.find(
+        (variant) => variant.layer === this.selectedVariant
+      );
+      this.variantFilterProperties[this.breachId].forEach(prop => {
         this.layer.variants.forEach(variant => {
           // If the property is empty, don't show
           if (variant.properties[prop] === undefined || variant.properties[prop] === null) { return }
@@ -270,8 +271,10 @@ export default {
 
       return variantOptions
     },
-    getOptionsByVariantId (variantIndex) {
-      const variant = this.layer.variants[variantIndex]
+    getOptionsByVariantId (variantId) {
+      const variant = this.layer.variants.find(
+        (variant) => variant.layer === variantId
+      );
       const indexes = {}
       Object.entries(_.get(this.variantFilterProperties, this.breachId, {})).forEach(filter => {
         const options = _.get(this.setLayerVariantOptions(), filter[1], []).find(options => {
@@ -281,10 +284,10 @@ export default {
       })
       return indexes
     },
-    setTransparancy ({ target }) {
+    setTransparency ({ target }) {
       // Create a copy of the layer with the new opacity
       const layer = { ...this.layer }
-      let opacity = 1 - parseFloat(target.value, 10)
+      let opacity = 0 + parseFloat(target.value, 10)
 
       if (opacity < 0) {
         opacity = 0
@@ -322,23 +325,20 @@ export default {
       const index = this.layer.variants
         .findIndex(object => object.layer === variant.layer)
 
-      this.selectedLayerIndex = index
       this.selectLayerOption(index)
 
       if (this.breachId) {
         let indexes = this.variantFilterPropertiesIndex(this.breachId)
 
-        if (typeof this.selectedLayerIndex === 'number') {
-          indexes = this.getOptionsByVariantId(this.selectedLayerIndex)
+        if (this.selectedVariant) {
+          indexes = this.getOptionsByVariantId(this.selectedVariant)
         }
 
-        store.commit('setSelectedVariantIndexByBreachBandId', { selectedIndex: indexes, breachBandId: this.breachBandId })
+        store.commit('setSelectedVariantIndexByBreachBandId', { selectedIndex: indexes, breachBandId: this.id })
         this.setSelectedVariantIndexes({ selectedIndex: indexes })
       }
     },
     selectLayerOption (index) {
-      this.selectedLayerIndex = index
-
       this.$emit('select:variant', {
         layer: this.layer,
         variant: this.layer.variants[index],
@@ -364,7 +364,7 @@ export default {
       if (!newVal) { return }
       if (newVal !== oldVal) {
         if(this.layerVariantOptions.Overschrijdingsfrequentie) {
-          const variantIndex = _.get(this.selectedVariantIndexByBreachBandId, `[${this.breachBandId}].Overschrijdingsfrequentie`, 0)
+          const variantIndex = _.get(this.selectedVariantIndexByBreachBandId, `[${this.id}].Overschrijdingsfrequentie`, 0)
           this.setLayerVariant('Overschrijdingsfrequentie', this.layerVariantOptions.Overschrijdingsfrequentie[variantIndex].value)
         }
       }

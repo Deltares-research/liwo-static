@@ -28,7 +28,7 @@
             <label
               class="change-variant-popup__result-item"
               :for="`variant-${variant.layer}`">
-              <span v-test="'variantName'">{{ variant.metadata.title }}</span>
+              <span v-test="'variantName'" v-html="getWrappingTitle(variant)"></span>
 
               <dl class="change-variant-popup__result-item-props">
                 <div :key="name" v-for="{name, value} in getPropsForVariant(variant)">
@@ -57,7 +57,7 @@
         </footer>
       </form>
   </pop-up>
-  </template>
+</template>
 
 <script>
 import { mapState } from 'vuex'
@@ -86,14 +86,10 @@ export default {
     }
   },
   methods: {
-
     selectVariant () {
-      const variantIndex = this.allVariants.findIndex(variant => variant.layer === this.selectedVariant)
+      const selectedVariant = this.allVariants.find(variant => variant.layer === this.selectedVariant)
 
-      this.$emit('select:variant', {
-        index: variantIndex,
-        ...this.allVariants[variantIndex]
-      })
+      this.$emit('select:variant', selectedVariant)
 
       this.$emit('close')
     },
@@ -144,7 +140,12 @@ export default {
             value: variant.properties[prop]
           }
         })
-    }
+    },
+
+    getWrappingTitle(variant) {
+      /* Add a zero width space after underscore to force a break */
+      return variant.metadata.title.replace(/_/g, '_&#8203;')
+    },
   },
   computed: {
     ...mapState(['variantFilterProperties']),
@@ -176,7 +177,7 @@ export default {
         return Object.entries(this.groupedFilters).every(([prop, filters]) => {
           // Active filter values within the group
           const activeFilterValues = Object.entries(filters)
-            .filter(([_, { filtered }]) => filtered)
+            .filter(([, { filtered }]) => filtered)
             .map(([value]) => value)
 
           return activeFilterValues.length === 0 || activeFilterValues.some(value => variant.properties[prop] === value)

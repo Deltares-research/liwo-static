@@ -29,7 +29,11 @@ export default function (el, config, { onPrint }) {
   map.addControl(roseControl())
   map.addControl(fillWindowControl())
   map.addControl(geoCoderControl(map))
-  map.addControl(L.control.zoom({ position: 'topright' }))
+  map.addControl(L.control.zoom({
+    position: 'topright',
+    zoomInTitle: 'Kaart inzoomen',
+    zoomOutTitle: 'Kaart uitzoomen'
+  }))
   map.addControl(L.control.scale({ position: 'bottomleft', imperial: false }))
 
   map.addControl(printControl())
@@ -132,7 +136,8 @@ function geoCoderControl(map) {
 function printControl() {
   const control = L.control.browserPrint({
     position: 'topright',
-    printModes: ['Landscape'],
+    printModes: [L.BrowserPrint.Mode.Landscape()],
+    title: 'Kaart afdrukken'
   })
 
   function makeFocusable(el) {
@@ -164,12 +169,18 @@ function layerControl(layers) {
   }
 
   return whenReady(control, (el) => {
+    const link = el.querySelector('a')
+    if(link) {
+      link.setAttribute('title', 'Lagen')
+    }
     addListener(el)
   })
 }
 
 function fillWindowControl() {
-  const control = L.control({ position: 'topright' })
+  const control = L.control({
+    position: 'topright'
+  })
 
   control.onAdd = function (map) {
     const div = L.DomUtil.create('div', '')

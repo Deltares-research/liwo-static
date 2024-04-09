@@ -1,6 +1,11 @@
 <template>
     <transition name="popup-fade">
-      <div class="pop-up" :class="{'popup--disable-scrollbar': disableScrollbar}" @keydown.esc="$emit('close')">
+      <div
+        class="pop-up"
+        :class="{'popup--disable-scrollbar': disableScrollbar}"
+        @keydown.esc="$emit('close')"
+        v-if="isOpen"
+      >
         <div class="pop-up__backdrop" @click="$emit('close')"></div>
         <div class="pop-up__modal" ref="popUp">
           <header class="pop-up__header">
@@ -35,6 +40,10 @@ export default {
     },
     disableScrollbar: {
       type: Boolean
+    },
+    isOpen: {
+      type: Boolean,
+      default: true
     }
   },
   data () {

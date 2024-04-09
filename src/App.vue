@@ -12,7 +12,7 @@
     </main>
 
     <footer class="site-footer noindex">
-      <img src="/assets/img/logo-footer.svg" width="500" height="24" alt="Water. Wegen. Werken. Rijkswaterstaat." class="accessibility">
+      <img src="/assets/img/logo-footer.svg" width="500" height="24" alt="" class="accessibility">
       <div class="site-footer__content">
         <cookie-law
           v-if="cookieBanner"

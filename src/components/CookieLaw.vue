@@ -275,7 +275,7 @@
     flex-direction: column;
 
     > * {
-      margin: rem(15) 0;
+      margin: .15rem 0;
       align-self: center;
     }
 
@@ -299,21 +299,16 @@
     left: 0;
     right: 0;
   }
+
   .Cookie__buttons {
     display: flex;
     flex-direction: column;
 
-    > * {
-      margin: rem(5) 0;
-    }
-
     @media screen and (min-width: 768px) {
       flex-direction: row;
-      > * {
-        margin: 0 rem(15);
-      }
     }
   }
+
   .Cookie__button {
     cursor: pointer;
     align-self: center;
