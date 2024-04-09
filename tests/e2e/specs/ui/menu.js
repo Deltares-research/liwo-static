@@ -26,7 +26,7 @@ describe('Menu', () => {
         cy.get('a').each($a => {
           const anchor = new URL($a[0].href)
           const path = anchor.hash ? `/${anchor.hash}` : anchor.href
-          const hasCorrectHref = pages.find(([title, url]) => url === path)
+          const hasCorrectHref = pages.find(([, url]) => url === path)
           const url = anchor.hash ? window.location.origin + path : anchor.href
 
           cy.request(url)
