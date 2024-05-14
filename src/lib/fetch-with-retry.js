@@ -2,10 +2,10 @@ function wait(delay) {
   return new Promise((resolve) => setTimeout(resolve, delay));
 }
 
-export function fetchRetry(url, options = {}, retries) {
+export function fetchWithRetry(url, options = {}, retries = 1) {
   function onError(error) {
     if (retries > 0) {
-      return wait(1000).then(() => fetchRetry(url, options, retries - 1));
+      return wait(1000).then(() => fetchWithRetry(url, options, retries - 1));
     }
     throw new Error(error);
   }
