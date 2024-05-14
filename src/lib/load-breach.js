@@ -4,6 +4,7 @@ import store from '@/store'
 
 import { BREACH_LAYERS_EN, BREACH_LAYERS_NL, BREACH_REGIONAL, BREACH_PRIMARY, getLayerType } from '@/lib/liwo-identifiers'
 import mapConfig from '../map.config'
+import { fetchRetry } from './fetch-retry'
 
 const headers = { Accept: 'application/json', 'Content-Type': 'application/json' }
 
@@ -172,17 +173,20 @@ async function loadBreachLayer (breachId, layerName, layerSetId) {
   const BREACHES_BASE_URL = services.WEBSERVICE_URL
   const BREACHES_API_URL = `${BREACHES_BASE_URL}/Tools/FloodImage.asmx/GetScenariosPerBreachGeneric`
 
-  const breachFetch = await fetch(BREACHES_API_URL, {
-    method: 'POST',
-    mode: 'cors',
-    credentials: 'omit',
-    headers,
-    body: JSON.stringify({
-      breachid: breachId,
-      layername: layerName
-    })
-  })
-  .then(res => res.json())
+  const breachFetch = await fetchRetry(
+    BREACHES_API_URL,
+    {
+      method: "POST",
+      mode: "cors",
+      credentials: "omit",
+      headers,
+      body: JSON.stringify({
+        breachid: breachId,
+        layername: layerName,
+      }),
+    },
+    1
+  )
   .catch(() => {
     const notification = {
       message: `Het laden van de kaartlaag "${layerName}" is niet gelukt. Probeer het opnieuw door de kaartlaag nog eens te selecteren.`,
