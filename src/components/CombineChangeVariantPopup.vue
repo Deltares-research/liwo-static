@@ -121,7 +121,7 @@ export default {
           if (!filters[prop][valueInVariant]) {
             filters[prop][valueInVariant] = {
               count: 0,
-              filtered: true
+              filtered: prop === 'Overschrijdingsfrequentie' ? true : false
             }
           }
           filters[prop][valueInVariant].count = filters[prop][valueInVariant].count + 1
