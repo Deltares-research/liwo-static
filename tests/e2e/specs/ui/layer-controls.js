@@ -20,7 +20,7 @@ describe('Layers', () => {
     })
 
     cy.wait(100).then(() => {
-      expect(opacityValues.some(value => value === '0.5')).should('be.true')
+      expect(opacityValues.some(value => value === '0.5')).to.be.true
     })
   })
 
