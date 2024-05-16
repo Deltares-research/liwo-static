@@ -1,3 +1,5 @@
+import { generateSelector as selector } from '../../lib/generate-selector'
+
 const topMenuPages = [
   ['Contact', '/#/contact'],
   ['Cookies', 'https://www.rijkswaterstaat.nl/cookies'],
@@ -13,7 +15,7 @@ describe('Nav', () => {
   it('Top menu contains correct pages', () => {
     cy.visit('/')
 
-    cy.get('[data-test="top-menu"]')
+    cy.get(selector('top-menu'))
       .within(() => {
         topMenuPages.forEach(([title]) => {
           cy.get('a').contains(title).should('be.visible')
@@ -24,7 +26,7 @@ describe('Nav', () => {
   it('Main menu contains', () => {
     cy.visit('/')
 
-    cy.get('[data-test="main-menu"]')
+    cy.get(selector('main-menu'))
       .within(() => {
         mainMenuPages.forEach(([title]) => {
           cy.get('a').contains(title).should('be.visible')
@@ -35,7 +37,7 @@ describe('Nav', () => {
   it('Navigates to the correct pages', () => {
     cy.visit('/')
 
-    cy.get('[data-test="top-menu"]')
+    cy.get(selector('top-menu'))
       .within(() => {
         cy.get('a').each($a => {
           const anchor = new URL($a[0].href)
@@ -52,7 +54,7 @@ describe('Nav', () => {
         })
       })
 
-    cy.get('[data-test="main-menu"]')
+    cy.get(selector('main-menu'))
       .within(() => {
         cy.get('a').each($a => {
           const anchor = new URL($a[0].href)
@@ -73,7 +75,7 @@ describe('Nav', () => {
   it('Has correct page titles', () => {
     cy.visit('/')
 
-    cy.get('[data-test="top-menu"]')
+    cy.get(selector('top-menu'))
       .within(() => {
         cy.get('a').each($a => {
           const hasCorrectTitle = topMenuPages.find(([title]) => $a[0].innerHTML === title)
@@ -83,7 +85,7 @@ describe('Nav', () => {
         })
       })
 
-      cy.get('[data-test="main-menu"]')
+      cy.get(selector('main-menu'))
       .within(() => {
         cy.get('a').each($a => {
           const hasCorrectTitle = mainMenuPages.find(([title]) => $a[0].innerHTML === title)

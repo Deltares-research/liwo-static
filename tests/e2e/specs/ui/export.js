@@ -12,7 +12,7 @@ describe('Maps export', () => {
       },
     })
 
-    cy.get('[data-test="layerpanel"]').should('be.visible')
+    cy.get(selector('layerpanel')).should('be.visible')
     cy.wait('@map', { timeout: 4000 })
   })
 

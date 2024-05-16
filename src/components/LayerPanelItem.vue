@@ -3,7 +3,8 @@
   <h3
     class="layerpanel-item__title"
     @click="selectFirstLayer"
-    >
+    v-test="'layerpanel'"
+  >
     <span>{{ title }}</span>
     <button class="layerpanel-item__collapse" @click.stop="toggleCollapse">
       <img class="layerpanel-item__collapse-icon" :src="`${publicPath}icons/baseline-keyboard_arrow_up-24px.svg`" alt="Klap kaartlagen in of uit" />

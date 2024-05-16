@@ -1,4 +1,5 @@
 import mockLayerSetData from '../../mock/layerset.json'
+import { generateSelector as selector } from '../../lib/generate-selector'
 
 const url = '/#/viewer/1?center=52,5&zoom=4'
 
@@ -13,7 +14,7 @@ describe('URL', () => {
 
     cy.visit(url)
 
-    cy.get('[data-test="layerpanel"]').should('be.visible')
+    cy.get(selector('layerpanel')).should('be.visible')
     cy.wait('@map', { timeout: 20000 })
 
     cy.window()
@@ -33,9 +34,9 @@ describe('URL', () => {
     cy.intercept(new RegExp(/GetLayerSet/), mockLayerSetData).as('layerset')
     cy.visit('/#/combine/7/19422,19428?center=52.38608,5.34897&zoom=10')
 
-    cy.get('[data-test="layerpanel"]').should('be.visible')
+    cy.get(selector('layerpanel')).should('be.visible')
     cy.wait('@layerset', { timeout: 20000 })
-    cy.get('[data-test="layerpanel-info"]').should('be.visible')
+    cy.get(selector('layerpanel-info')).should('be.visible')
 
     // Get active leaflet marker icon
     cy.get('.leaflet-marker-icon[src*="yellow"]')
