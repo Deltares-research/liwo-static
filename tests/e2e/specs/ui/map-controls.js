@@ -16,7 +16,7 @@ describe('Map', () => {
 
     cy.visit(url)
 
-    cy.get(selector('layerpanel')).should('be.visible')
+    cy.get(selector('layer-panel')).should('be.visible')
     cy.wait('@map', { timeout: 4000 })
   })
 
@@ -66,11 +66,11 @@ describe('Map', () => {
 
   it('Renders scale indicator', () => {
     cy.visit('/#/viewer/1?center=52,5&zoom=3')
-    cy.get(selector('layerpanel')).should('be.visible')
+    cy.get(selector('layer-panel')).should('be.visible')
     cy.get('.leaflet-control-scale-line').contains('30 km')
 
     cy.visit('/#/viewer/1?center=52,5&zoom=7')
-    cy.get(selector('layerpanel')).should('be.visible')
+    cy.get(selector('layer-panel')).should('be.visible')
     cy.get('.leaflet-control-scale-line').contains('2 km')
   })
 

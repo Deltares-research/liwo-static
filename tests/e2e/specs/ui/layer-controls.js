@@ -6,7 +6,7 @@ describe('Layers', () => {
     const url = '/#/viewer/1?center=52.15382,4.88242&zoom=2'
     cy.intercept(new RegExp(/GetMap/), '').as('map')
     cy.visit(url)
-    cy.get(selector('layerpanel')).should('be.visible')
+    cy.get(selector('layer-panel')).should('be.visible')
     cy.wait('@map', { timeout: 4000 })
 
     cy.get(`${selector('transparency-input')} input`)
@@ -28,7 +28,7 @@ describe('Layers', () => {
     const url = '/#/viewer/18?center=52.15382,4.88242&zoom=2'
     cy.intercept(new RegExp(/GetMap/), '').as('map')
     cy.visit(url)
-    cy.get(selector('layerpanel')).should('be.visible')
+    cy.get(selector('layer-panel')).should('be.visible')
     cy.wait('@map', { timeout: 4000 })
 
     cy.get(`${selector('legend')} img`).invoke('attr', 'src').then(initSrc => {

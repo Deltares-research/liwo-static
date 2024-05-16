@@ -14,8 +14,8 @@ describe('URL', () => {
 
     cy.visit(url)
 
-    cy.get(selector('layerpanel')).should('be.visible')
-    cy.wait('@map', { timeout: 20000 })
+    cy.get(selector('layer-panel')).should('be.visible')
+    cy.wait('@map', { timeout: 4000 })
 
     cy.window()
       .then(($win) => {
@@ -32,11 +32,13 @@ describe('URL', () => {
 
   it('Changes when scenario ID is changed', () => {
     cy.intercept(new RegExp(/GetLayerSet/), mockLayerSetData).as('layerset')
+    cy.intercept(new RegExp(/GetMap/), '').as('map')
     cy.visit('/#/combine/7/19422,19428?center=52.38608,5.34897&zoom=10')
 
-    cy.get(selector('layerpanel')).should('be.visible')
-    cy.wait('@layerset', { timeout: 20000 })
-    cy.get(selector('layerpanel-info')).should('be.visible')
+    cy.get(selector('layer-panel')).should('be.visible')
+    cy.wait('@layerset', { timeout: 4000 })
+    cy.wait('@map', { timeout: 4000 })
+    cy.get(selector('layer-panel-info')).should('be.visible')
 
     // Get active leaflet marker icon
     cy.get('.leaflet-marker-icon[src*="yellow"]')
