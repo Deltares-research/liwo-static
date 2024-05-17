@@ -3,7 +3,6 @@
   <h3
     class="layerpanel-item__title"
     @click="selectFirstLayer"
-    v-test="'layerpanel'"
   >
     <span>{{ title }}</span>
     <button class="layerpanel-item__collapse" @click.stop="toggleCollapse">
@@ -14,7 +13,7 @@
   <div
     v-if="!isCollapsed && variantProperties.length > 1 && allVariants.length > 1"
     class="layerpanel-item__info"
-    v-test="'layerpanel-info'"
+    v-test="'layer-panel-info'"
   >
     <dl class="layerpanel-item__prop-list" v-if="variantProperties.length > 1" v-test="'variantProperties'">
       <div v-for="{key, value} in variantProperties" :key="key" class="layerpanel-item__prop">

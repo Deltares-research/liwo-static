@@ -3,7 +3,6 @@
   <h3
     class="layerpanel-item__title"
     @click="selectFirstLayer"
-    v-test="'layerpanel'"
   >
     <span>{{ title }}</span>
     <button class="layerpanel-item__collapse" @click.stop="toggleCollapse">
