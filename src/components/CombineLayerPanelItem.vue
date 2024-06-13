@@ -3,14 +3,18 @@
   <h3
     class="layerpanel-item__title"
     @click="selectFirstLayer"
-    >
+  >
     <span>{{ title }}</span>
     <button class="layerpanel-item__collapse" @click.stop="toggleCollapse">
       <img class="layerpanel-item__collapse-icon" :src="`${publicPath}icons/baseline-keyboard_arrow_up-24px.svg`" alt="Klap kaartlagen in of uit" />
     </button>
   </h3>
 
-  <div class="layerpanel-item__info" v-if="!isCollapsed && variantProperties.length > 1 && allVariants.length > 1">
+  <div
+    v-if="!isCollapsed && variantProperties.length > 1 && allVariants.length > 1"
+    class="layerpanel-item__info"
+    v-test="'layer-panel-info'"
+  >
     <dl class="layerpanel-item__prop-list" v-if="variantProperties.length > 1" v-test="'variantProperties'">
       <div v-for="{key, value} in variantProperties" :key="key" class="layerpanel-item__prop">
         <dt>{{key}}</dt>

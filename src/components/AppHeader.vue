@@ -1,7 +1,7 @@
 <template>
   <header class="app-header">
     <div role="banner" class="site-header">
-      <nav class="app-header__top-nav">
+      <nav class="app-header__top-nav" v-test="'top-menu'">
         <router-link :to="{name: 'contact'}">Contact</router-link>
         <router-link :to="{name: 'accessibility'}">Toegankelijkheid</router-link>
         <a href="https://www.rijkswaterstaat.nl/cookies">Cookies</a>
@@ -20,7 +20,7 @@
     <div class="app-header__top-menu container">
       <h1 class="app-header__app-title">LIWO</h1>
     </div>
-    <nav role="navigation" class="app-header__nav">
+    <nav role="navigation" class="app-header__nav" v-test="'main-menu'">
       <ul class="container">
         <li><router-link :to="{ name: 'maps' }">Kaarten</router-link></li>
         <li><router-link :to="{ name: 'about' }">Over LIWO</router-link></li>

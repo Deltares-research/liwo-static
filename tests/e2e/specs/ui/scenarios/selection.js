@@ -1,18 +1,17 @@
 import { generateSelector as selector } from '../../../lib/generate-selector'
-import mockLayersetData from '../../../mock/layerset.json'
-import mockFeaturesData from '../../../mock/featureCollection.json'
+import mockLayerSetData from '../../../mock/layerset.json'
 
 const url = '/#/scenarios/7?center=52.32401,5.35995&zoom=10'
 
 describe('Scenarios: marker selection', () => {
   beforeEach(() => {
-    cy.intercept(new RegExp(/GetLayerSet/), mockLayersetData).as('layerset')
-    cy.intercept(new RegExp(/getFeature/), mockFeaturesData).as('features')
-
+    cy.intercept(new RegExp(/GetMap/), '').as('map')
+    cy.intercept(new RegExp(/GetLayerSet/), mockLayerSetData).as('layerset')
     cy.visit(url)
 
-    cy.wait('@layerset', { timeout: 20000 })
-    cy.wait('@features', { timeout: 20000 })
+    cy.get(selector('layer-panel')).should('be.visible')
+    cy.wait('@layerset', { timeout: 4000 })
+    cy.wait('@map', { timeout: 4000 })
   })
 
   it('Changes marker image on click', () => {
@@ -29,13 +28,11 @@ describe('Scenarios: marker selection', () => {
   })
 
   it('Opens correct layers in panel', () => {
-    const name = mockFeaturesData.features[0].properties.name
+    const name = "Rijntakken"
 
     cy.get('.leaflet-marker-icon')
       .eq(3)
       .click()
-
-    cy.wait(500)
 
     cy.contains(selector('layer-panel'), name)
 
