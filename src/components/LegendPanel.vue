@@ -1,15 +1,25 @@
 <template>
-  <aside class="legend-panel" @mouseenter="showLegend" @mouseleave="hideLegend">
+  <aside
+    :class="{
+      'legend-panel': true,
+      'legend-panel--active': legendIsShown,
+    }"
+    @mouseenter="showLegend"
+    @mouseleave="hideLegend"
+  >
     <button
-      :class="{
-        'legend-panel__title': true,
-        'legend-panel__title--active': legendIsShown,
-      }"
+      class="legend-panel__title"
       aria-controls="legend"
       :aria-expanded="legendIsShown"
       @click="toggleLegend"
     >
       Legenda
+      <img
+        v-if="formattedLayers.length > 1"
+        class="legend-panel__collapse-icon"
+        :src="`${publicPath}icons/baseline-keyboard_arrow_up-24px.svg`"
+        :alt="`Klap legenda ${legendIsShown ? 'in' : 'uit'}`"
+      />
     </button>
     <template v-if="legendIsShown">
       <figure
@@ -56,8 +66,10 @@ export default {
   data() {
     return {
       services: null,
-      legendIsShown: false,
+      isOpen: false,
       loadedImages: [],
+      // path where the server runs (should end in a /)
+      publicPath: import.meta.env.BASE_URL,
     };
   },
   async created() {
@@ -72,17 +84,24 @@ export default {
       }
     },
     showLegend() {
-      this.legendIsShown = true;
+      if (this.formattedLayers.length > 1) {
+        this.isOpen = true;
+      }
     },
     hideLegend() {
-      this.loadedImages = [];
-      this.legendIsShown = false;
+      if (this.formattedLayers.length > 1) {
+        this.loadedImages = [];
+        this.isOpen = false;
+      }
     },
     addLoadedImageByLayerId(layerId) {
       this.loadedImages.push(layerId);
     },
   },
   computed: {
+    legendIsShown() {
+      return this.formattedLayers.length === 1 || this.isOpen;
+    },
     formattedLayers() {
       const uniqueLayers = this.layers.filter(
         (layer, index, self) =>
@@ -124,20 +143,30 @@ export default {
   font-size: 1rem;
 }
 
+@media print {
+  .legend-panel {
+    display: none;
+  }
+
+  .legend-panel--active {
+    display: block;
+  }
+}
+
 .legend-panel__title {
   margin: 0;
   padding: 0.5rem;
   width: 100%;
   background-color: var(--white);
   color: var(--black);
-  border-radius: .25rem;
+  border-radius: 0.25rem;
   border: 2px solid var(--light-gray);
   text-align: center;
   font-weight: bold;
   cursor: pointer;
 }
 
-.legend-panel__title--active {
+.legend-panel--active .legend-panel__title {
   background-color: var(--lighter-gray);
   border-radius: 0;
   border: none;
@@ -165,5 +194,13 @@ export default {
 .legend-panel .legend-panel__image-loader:after {
   width: 20px;
   height: 20px;
+}
+
+.legend-panel__collapse-icon {
+  transition: transform 0.25s ease-in-out;
+}
+
+.legend-panel--active .legend-panel__collapse-icon {
+  transform: rotate(180deg);
 }
 </style>
