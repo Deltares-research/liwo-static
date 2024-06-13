@@ -128,12 +128,10 @@ export default {
   margin: 0;
   padding: 0.5rem;
   width: 100%;
-  border: none;
   background-color: var(--white);
   color: var(--black);
   border-radius: .25rem;
   border: 2px solid var(--light-gray);
-  font-weight: normal;
   text-align: center;
   font-weight: bold;
   cursor: pointer;
