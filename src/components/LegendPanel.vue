@@ -175,6 +175,7 @@ export default {
 .legend-panel__legend {
   padding: 7px;
   padding-bottom: 10px;
+  margin: 0;
 }
 
 .legend-panel__legend:not(:last-child) {
