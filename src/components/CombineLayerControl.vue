@@ -1,6 +1,6 @@
 <template>
 <div
-  :class="classData"
+  class="layer-control"
   :data-name="layer.properties.title"
   >
   <form class="layer-control__main" v-test="'layer-toggle'">
@@ -90,12 +90,6 @@ export default {
     },
     selectedVariant () {
       return this.layer.properties.selectedVariant
-    },
-    classData () {
-      return {
-        'layer-control': true,
-        'layer-control--active': this.active
-      }
     },
     metadata() {
       const variant = this.layer.variants.find(

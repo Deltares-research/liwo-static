@@ -17,6 +17,7 @@
 <script>
 import createMapConfig from '@/lib/leaflet-utils/mapconfig-factory'
 import { legendControl } from '@/lib/leaflet-utils/legend'
+import L from '@/lib/leaflet-utils/leaf'
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
 import LeafletMap from './LeafletMap.vue'
 
@@ -55,6 +56,10 @@ export default {
     this.mapConfig = createMapConfig({
       projection: this.projection
     })
+  },
+  mounted() {
+      // Makes sure there is scroll on the legend
+      L.DomEvent.disableScrollPropagation(this.$refs.legend)
   },
   beforeUnmount () {
     this.removePositionListeners()
