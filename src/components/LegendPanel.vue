@@ -143,6 +143,7 @@ export default {
   background-color: var(--white);
   font-family: RijksoverheidSansText, Verdana, Arial, sans-serif;
   font-size: 1rem;
+  border-radius: 0.25rem;
 }
 
 @media print {
@@ -161,7 +162,6 @@ export default {
   width: 100%;
   background-color: var(--white);
   color: var(--black);
-  border-radius: 0.25rem;
   border: 2px solid var(--light-gray);
   text-align: center;
   font-weight: bold;
@@ -201,6 +201,12 @@ export default {
 
 .legend-panel__collapse-icon {
   transition: transform 0.25s ease-in-out;
+}
+
+@media print {
+  .legend-panel__collapse-icon {
+    display: none;
+  }
 }
 
 .legend-panel--active .legend-panel__collapse-icon {
