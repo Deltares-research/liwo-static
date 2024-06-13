@@ -9,8 +9,8 @@
       >
         <template v-slot:legend>
           <legend-panel
-            :layers="[selectedLayer]"
-            v-if="selectedLayer"
+            :layers="selectedLayers.map(layer => layer.layerObj)"
+            v-if="selectedLayers.length > 0"
           />
         </template>
       </liwo-map>

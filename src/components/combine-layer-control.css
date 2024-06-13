@@ -91,14 +91,6 @@
   fill: var(--black);
 }
 
-.layer-control--active {
-  background-color: var(--light-yellow);
-}
-
-.layer-control--active .layer-control__options {
-  display: flex;
-}
-
 .layer-control__marker-icon {
   margin-left: auto;
 }

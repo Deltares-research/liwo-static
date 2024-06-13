@@ -121,7 +121,10 @@ export default {
           if (!filters[prop][valueInVariant]) {
             filters[prop][valueInVariant] = {
               count: 0,
-              filtered: true
+              // We know that Overschrijdingsfrequentie is always present in the variantPropertiesToShow
+              // As default only filters with the prop Overschrijdingsfrequentie should be active
+              // that way all variants are shown by default
+              filtered: prop === 'Overschrijdingsfrequentie'
             }
           }
           filters[prop][valueInVariant].count = filters[prop][valueInVariant].count + 1

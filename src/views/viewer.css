@@ -40,10 +40,10 @@
 
 .viewer .legend-panel {
   position: absolute;
-  right: 2rem;
+  right: 10px; /* margin of leaflet controlls */
   bottom: 2rem;
-  z-index: 500;
+  z-index: 9999;
   box-shadow: var(--shadow);
-  max-height: calc(100% - 220px); /* height of leaflet controlls */
+  max-height: calc(100% - 100px); /* height of legend header */
   overflow-y: auto;
 }
