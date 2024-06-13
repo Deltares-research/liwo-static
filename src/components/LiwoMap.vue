@@ -16,7 +16,7 @@
 
 <script>
 import createMapConfig from '@/lib/leaflet-utils/mapconfig-factory'
-import { legendControl } from '@/lib/leaflet-utils/legend'
+import { addLegendControl, legendControlPrint } from '@/lib/leaflet-utils/legend'
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
 import LeafletMap from './LeafletMap.vue'
 
@@ -56,12 +56,15 @@ export default {
       projection: this.projection
     })
   },
+  mounted() {
+    addLegendControl({ el: this.$refs.legend })
+  },
   beforeUnmount () {
     this.removePositionListeners()
   },
   methods: {
     onPrint(evt) {
-      const control = legendControl({ position: 'bottomright', el: this.$refs.legend })
+      const control = legendControlPrint({ position: 'bottomright', el: this.$refs.legend })
       control.addTo(evt.printMap)
     },
     initMapObject (mapObject) {
