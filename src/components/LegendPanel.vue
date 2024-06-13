@@ -11,6 +11,7 @@
       class="legend-panel__title"
       aria-controls="legend"
       :aria-expanded="legendIsShown"
+      :aria-label="`Klap legenda ${legendIsShown ? 'in' : 'uit'}`"
       @click="toggleLegend"
     >
       Legenda
@@ -18,7 +19,8 @@
         v-if="formattedLayers.length > 1"
         class="legend-panel__collapse-icon"
         :src="`${publicPath}icons/baseline-keyboard_arrow_up-24px.svg`"
-        :alt="`Klap legenda ${legendIsShown ? 'in' : 'uit'}`"
+        role="presentation"
+        alt=""
       />
     </button>
     <template v-if="legendIsShown">
