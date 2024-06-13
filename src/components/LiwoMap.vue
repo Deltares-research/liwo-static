@@ -16,7 +16,8 @@
 
 <script>
 import createMapConfig from '@/lib/leaflet-utils/mapconfig-factory'
-import { addLegendControl, legendControlPrint } from '@/lib/leaflet-utils/legend'
+import { legendControl } from '@/lib/leaflet-utils/legend'
+import L from '@/lib/leaflet-utils/leaf'
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
 import LeafletMap from './LeafletMap.vue'
 
@@ -57,14 +58,15 @@ export default {
     })
   },
   mounted() {
-    addLegendControl({ el: this.$refs.legend })
+      // Makes sure there is scroll on the legend
+      L.DomEvent.disableScrollPropagation(this.$refs.legend)
   },
   beforeUnmount () {
     this.removePositionListeners()
   },
   methods: {
     onPrint(evt) {
-      const control = legendControlPrint({ position: 'bottomright', el: this.$refs.legend })
+      const control = legendControl({ position: 'bottomright', el: this.$refs.legend })
       control.addTo(evt.printMap)
     },
     initMapObject (mapObject) {
