@@ -1,6 +1,6 @@
 <template>
 <div
-  class="layer-control"
+  :class="classData"
   :data-name="layer.properties.title"
   >
   <form class="layer-control__main" v-test="'layer-toggle'">
@@ -145,6 +145,12 @@ export default {
     },
     selectedVariant () {
       return this.layer.properties.selectedVariant
+    },
+    classData () {
+      return {
+        'layer-control': true,
+        'layer-control--active': this.active
+      }
     },
     layerSetId () {
       return parseInt(this.$route.params.id, 10)
