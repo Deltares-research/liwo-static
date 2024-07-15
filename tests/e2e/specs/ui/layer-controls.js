@@ -33,10 +33,11 @@ describe('Layers', () => {
 
     cy.get(`${selector('legend')} img`).invoke('attr', 'src').then(initSrc => {
       cy.get(`${selector('layer-toggle')} label`)
-        .eq(2)
-        .click()
+      .eq(2)
+      .click()
 
-      cy.get(`${selector('legend')} img`).invoke('attr', 'src').then(newSrc => {
+      cy.get(`${selector('legend-button')}`).click()
+      cy.get(`${selector('legend')} img`).eq(1).invoke('attr', 'src').then(newSrc => {
         expect(initSrc).to.not.equal(newSrc)
       })
     })
