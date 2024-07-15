@@ -1,8 +1,8 @@
 <template>
 <div
-  :class="classData"
+  class="layer-control"
   :data-name="layer.properties.title"
-  >
+>
   <form class="layer-control__main" v-test="'layer-toggle'">
     <input
       type="checkbox"
@@ -28,8 +28,40 @@
       <p class="layer-control__title">
         {{ layer.properties.title }}
       </p>
+
+      <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.1"
+        :name="`layer-${id}-trans`"
+        class="layer-control__transparency-slider"
+        value="1"
+        @change.stop="setTransparency"
+        :aria-label="`Transparantie voor kaartlaag ${layer.properties.title}`"
+      />
+
+      <button
+        v-if="metadata"
+        class="layer-control__info"
+        v-test="'info-toggle'"
+        @click="toggleInfoPopup"
+        type="button"
+      >
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 64 64">
+          <path fill="none" d="M0 0h64v64H0z"/>
+          <path d="M53.9 14.1c-.4-2-2-3.6-4-4-6-1-16-1-17.9-1-2 0-12 0-17.9 1-2 .4-3.6 2-4 4-1 6-1 16-1 17.9s0 12 1 17.9c.4 2 2 3.6 4 4 6 1 16 1 17.9 1 2 0 12 0 17.9-1 2-.4 3.6-2 4-4 1-6 1-16 1-17.9 0-6 0-12-1-17.9zM35 48h-6.6l.6-14v-8h6v22zm-3-26c-2.2 0-3.5-1.3-3.5-3.5 0-2 1.2-3.5 3.5-3.5 2.2 0 3.5 1.2 3.5 3.5 0 2-1.2 3.5-3.5 3.5z"/>
+        </svg>
+      </button>
+
+      <layer-popup
+        v-if="infoPopupIsOpen"
+        :metadata="metadata"
+        @close="toggleInfoPopup"
+      />
     </div>
   </form>
+
   <!-- TODO: this is not a layer setting. Move this to an application settings pane. -->
   <div v-if="!isEmptyObject(layerVariantOptions)" class="layer-control__options">
     <!-- TODO: this now  shows up for each band reorganize -->
@@ -47,6 +79,7 @@
       </label>
     </template>
   </div>
+
     <!-- TODO: this is not a layer setting. Move this to an application settings pane. -->
   <div v-if="!breachId && layerOptions.length > 1" class="layer-control__options">
     <!-- TODO: this now  shows up for each band reorganize -->
@@ -59,36 +92,6 @@
         v-test="'variant-select'"
       />
     </label>
-  </div>
-  <div class="layer-control__options">
-    <div class="layer-control__range" v-test="'transparency-input'">
-      <label :for="`layer-${id}-trans`">Transparantie: <span class="sr-only">Voor kaartlaag {{ layer.properties.title }}</span></label>
-      <input
-        type="range"
-        min="0"
-        max="1"
-        step="0.1"
-        :id="`layer-${id}-trans`"
-        value="1"
-        @change.stop="setTransparency"
-      />
-    </div>
-    <button
-      v-if="metadata"
-      class="layer-control__info"
-      v-test="'info-toggle'"
-      @click="togglePopup"
-    >
-      <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 64 64">
-        <path fill="none" d="M0 0h64v64H0z"/>
-        <path d="M53.9 14.1c-.4-2-2-3.6-4-4-6-1-16-1-17.9-1-2 0-12 0-17.9 1-2 .4-3.6 2-4 4-1 6-1 16-1 17.9s0 12 1 17.9c.4 2 2 3.6 4 4 6 1 16 1 17.9 1 2 0 12 0 17.9-1 2-.4 3.6-2 4-4 1-6 1-16 1-17.9 0-6 0-12-1-17.9zM35 48h-6.6l.6-14v-8h6v22zm-3-26c-2.2 0-3.5-1.3-3.5-3.5 0-2 1.2-3.5 3.5-3.5 2.2 0 3.5 1.2 3.5 3.5 0 2-1.2 3.5-3.5 3.5z"/>
-      </svg>
-    </button>
-    <layer-popup
-      v-if="popupIsOpen"
-      :metadata="metadata"
-      @close="togglePopup"
-    />
   </div>
 </div>
 </template>
@@ -117,7 +120,7 @@ export default {
   },
   data () {
     return {
-      popupIsOpen: false,
+      infoPopupIsOpen: false,
       noDataAvailableForSelection: false,
       layerVariantOptions: {}
     }
@@ -145,12 +148,6 @@ export default {
     },
     selectedVariant () {
       return this.layer.properties.selectedVariant
-    },
-    classData () {
-      return {
-        'layer-control': true,
-        'layer-control--active': this.active
-      }
     },
     layerSetId () {
       return parseInt(this.$route.params.id, 10)
@@ -344,8 +341,8 @@ export default {
       this.layer.properties.visible = !this.layer.properties.visible
       this.$emit('update:layer', this.layer)
     },
-    togglePopup () {
-      this.popupIsOpen = !this.popupIsOpen
+    toggleInfoPopup () {
+      this.infoPopupIsOpen = !this.infoPopupIsOpen
     }
   },
   watch: {

@@ -1,8 +1,8 @@
 <template>
 <div
-  :class="classData"
+  class="layer-control"
   :data-name="layer.properties.title"
-  >
+>
   <form class="layer-control__main" v-test="'layer-toggle'">
     <input
       type="checkbox"
@@ -25,9 +25,9 @@
       <span class="sr-only">Zichtbaarheid</span>
     </label>
     <div class="layer-control__identifiers">
-      <span class="layer-control__title">
+      <p class="layer-control__title">
         {{ layer.properties.title }}
-      </span>
+      </p>
 
       <input
         type="range"
@@ -91,12 +91,6 @@ export default {
     selectedVariant () {
       return this.layer.properties.selectedVariant
     },
-    classData () {
-      return {
-        'layer-control': true,
-        'layer-control--active': this.active
-      }
-    },
     metadata() {
       const variant = this.layer.variants.find(
         (variant) => variant.layer === this.selectedVariant
@@ -145,5 +139,5 @@ export default {
 
 <style>
 @import './variables.css';
-@import 'combine-layer-control.css';
+@import 'layer-control.css';
 </style>
