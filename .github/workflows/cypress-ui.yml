@@ -63,8 +63,8 @@ jobs:
         with:
           # we have already installed all dependencies above
           install: false
-          start: npm run serve
-          wait-on: "http://127.0.0.1:5173"
+          start: npm run serve -- --host
+          wait-on: "http://localhost:5173"
           wait-on-timeout: 120
           browser: chrome
           record: true
@@ -112,8 +112,8 @@ jobs:
         with:
           # we have already installed all dependencies above
           install: false
-          start: npm run serve
-          wait-on: "http://127.0.0.1:5173"
+          start: npm run serve -- --host
+          wait-on: "http://localhost:5173"
           wait-on-timeout: 120
           browser: firefox
           record: true
