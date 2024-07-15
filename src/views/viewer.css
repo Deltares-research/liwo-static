@@ -27,7 +27,7 @@
   position: absolute;
   top: 1rem;
   left: 2rem;
-  z-index: 1000;
+  z-index: 1001;
   box-shadow: var(--shadow);
 }
 
@@ -42,7 +42,7 @@
   position: absolute;
   right: 10px; /* margin of leaflet controlls */
   bottom: 2rem;
-  z-index: 9999;
+  z-index: 1001;
   box-shadow: var(--shadow);
   max-height: calc(100% - 100px); /* height of legend header */
   overflow-y: auto;
