@@ -18,6 +18,10 @@ describe('Combine: combine selection', () => {
       .eq(3)
       .click({ force: true })
 
+    cy.get('.leaflet-marker-icon')
+      .eq(4)
+      .click({ force: true })
+
     cy.get(selector('combine-button'))
       .click()
 
@@ -33,6 +37,10 @@ describe('Combine: combine selection', () => {
   it('Combines results', () => {
     cy.get('.leaflet-marker-icon')
       .eq(3)
+      .click({ force: true })
+
+    cy.get('.leaflet-marker-icon')
+      .eq(4)
       .click({ force: true })
 
     cy.get(selector('combine-button'))
