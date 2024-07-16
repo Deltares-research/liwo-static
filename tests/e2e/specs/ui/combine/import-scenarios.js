@@ -54,19 +54,18 @@ describe('Combine: Import combined scenarios', () => {
     cy.url()
       .should('contain', '/combine/7/20932,21498', { timeout: 4000 })
       .then(() => {
-
         cy.get('.leaflet-marker-icon')
-          .eq(6)
+          .eq(7)
           .invoke('attr', 'src')
           .then((srcVal) => {
             cy.get('.leaflet-marker-icon')
-              .eq(6)
+              .eq(7)
               .click({ force: true })
               .invoke('attr', 'src')
               .should('not.eq', srcVal)
           })
       })
 
-    cy.url().should('contain', '/combine/7/21498', { timeout: 4000 })
+    cy.url().should('contain', '/combine/7/20932', { timeout: 4000 })
   })
 })
