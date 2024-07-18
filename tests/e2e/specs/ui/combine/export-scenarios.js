@@ -1,37 +1,51 @@
 import { generateSelector as selector } from '../../../lib/generate-selector'
-import mockLayerSetData from '../../../mock/layerset.json'
-import mockDoubleFeaturesData from '../../../mock/doubleFeatureCollection.json'
+import mockLayersetData from '../../../mock/layerset.json'
+import mockScenarioData from '../../../mock/scenarios.json'
 
-const url = '/#/combine/7?center=52.32401,5.35995&zoom=10'
-const exportUrl = '/#/combine/7/19422'
+const url = '/#/combine/7'
+const exportUrl = '/#/combine/7/21498,20932'
 
 describe('Combine: Export combined scenarios', () => {
-  it('Exports scenario', () => {
-    cy.intercept(new RegExp(/GetLayerSet/), mockLayerSetData)
-    cy.intercept(new RegExp(/getFeature/), mockDoubleFeaturesData).as('features')
+  beforeEach(() => {
+    cy.intercept(new RegExp(/GetLayerSet/), mockLayersetData).as('layerset')
+    cy.intercept("POST", new RegExp(/GetScenariosPerBreachGeneric/), (req) => {
+      const { body } = req
+
+      req.continue((res) => {
+        if (body.breachid === 3408) {
+          return res.send(mockScenarioData['3408'])
+        }
+
+        if (body.breachid === 1782) {
+          return res.send(mockScenarioData['1782'])
+        }
+      })
+    })
+    .as('scenario')
+
     cy.visit(url)
 
-    cy.wait('@features', { timeout: 20000 })
+    cy.get(selector('layer-panel')).should('be.visible')
+    cy.wait('@layerset', { timeout: 4000 })
+  })
 
+  it('Exports scenario', () => {
     cy.get('.leaflet-marker-icon')
       .eq(3)
       .click({ force: true })
+    cy.wait('@scenario', { timeout: 4000 })
 
     cy.get('.leaflet-marker-icon')
       .eq(4)
       .click({ force: true })
+    cy.wait('@scenario', { timeout: 4000 })
 
-    cy.wait(1000)
-
-    cy.url().should('contain', exportUrl, { timeout: 30000 })
+    cy.url().should('contain', exportUrl, )
 
     cy.get(selector('export-selection-button')).click()
 
-    cy.wait(1000)
-
-    cy.get(selector('export-selection-url'))
-      .then(($el) => {
-        expect($el[0].value).to.contain(exportUrl)
-      })
+    cy.get(selector('export-selection-url')).then(($el) => {
+      expect($el[0].value).to.contain(exportUrl)
+    })
   })
 })

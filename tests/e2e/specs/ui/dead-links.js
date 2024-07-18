@@ -9,7 +9,7 @@ describe('Dead links', () => {
     })
   })
 
-  it.skip('Links to existing links', () => {
+  it('Links to existing links', () => {
     const pages = ['/', '/#/contact', '/#/accessibility', '/#/about']
 
     pages.forEach(page => {
