@@ -9,7 +9,7 @@ describe('Layers', () => {
     cy.get(selector('layer-panel')).should('be.visible')
     cy.wait('@map', { timeout: 4000 })
 
-    cy.get(`${selector('transparency-input')} input`)
+    cy.get(selector('transparency-input'))
       .invoke('val', 0.5)
       .trigger('change')
 

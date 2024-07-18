@@ -36,6 +36,7 @@
         step="0.1"
         :name="`layer-${id}-trans`"
         class="layer-control__transparency-slider"
+        v-test="'transparency-input'"
         value="1"
         @change.stop="setTransparency"
         :aria-label="`Transparantie voor kaartlaag ${layer.properties.title}`"
