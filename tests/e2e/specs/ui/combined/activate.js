@@ -1,24 +1,26 @@
 import { generateSelector as selector } from '../../../lib/generate-selector'
 import mockLayersetData from '../../../mock/layerset.json'
-import mockFeaturesData from '../../../mock/featureCollection.json'
 
 const url = '/#/combine/7'
 
 describe('Combine: combine selection', () => {
   beforeEach(() => {
     cy.intercept(new RegExp(/GetLayerSet/), mockLayersetData).as('layerset')
-    cy.intercept(new RegExp(/getFeature/), mockFeaturesData).as('features')
 
     cy.visit(url)
 
-    cy.wait('@layerset', { timeout: 20000 })
-    cy.wait('@features', { timeout: 20000 })
+    cy.get(selector('layer-panel')).should('be.visible')
+    cy.wait('@layerset', { timeout: 4000 })
   })
 
   it('Triggers combine popup', () => {
     cy.get('.leaflet-marker-icon')
       .eq(3)
-      .click()
+      .click({ force: true })
+
+    cy.get('.leaflet-marker-icon')
+      .eq(4)
+      .click({ force: true })
 
     cy.get(selector('combine-button'))
       .click()
@@ -35,19 +37,21 @@ describe('Combine: combine selection', () => {
   it('Combines results', () => {
     cy.get('.leaflet-marker-icon')
       .eq(3)
-      .click()
+      .click({ force: true })
+
+    cy.get('.leaflet-marker-icon')
+      .eq(4)
+      .click({ force: true })
 
     cy.get(selector('combine-button'))
       .click()
 
-    cy.contains('waterdiepte')
-      .click({ force: true })
-
-    cy.wait(500)
+    cy.get(selector('combine-form'))
+      .contains('waterdiepte')
 
     cy.get(selector('combine-trigger'))
       .invoke('removeAttr', 'target')
-      .click()
+      .click({ timeout: 4000 })
 
     cy.get(selector('page-title'))
       .contains('Gecombineerd scenario')

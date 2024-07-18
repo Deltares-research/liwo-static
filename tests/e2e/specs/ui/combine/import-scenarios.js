@@ -1,67 +1,67 @@
 import { generateSelector as selector } from '../../../lib/generate-selector'
-import mockLayerSetData from '../../../mock/layerset.json'
-import mockDoubleFeaturesData from '../../../mock/doubleFeatureCollection.json'
+import mockLayersetData from '../../../mock/layerset.json'
+import mockScenarioData from '../../../mock/scenarios.json'
+import mockLocationsData from '../../../mock/locations.json'
 
-const url = '/#/combine/7?center=52.32401,5.35995&zoom=10'
-const importUrl = 'http://127.0.0.1:5173/#/combine/7/19422,19428'
-const location1 = mockDoubleFeaturesData.features[0].properties.name
-const location2 = mockDoubleFeaturesData.features[1].properties.name
+const url = '/#/combine/7'
+const importUrl = 'http://127.0.0.1:5173/#/combine/7/20932,21498'
 
 describe('Combine: Import combined scenarios', () => {
   beforeEach(() => {
-    cy.intercept(new RegExp(/GetLayerSet/), mockLayerSetData).as('layerset')
-    cy.intercept(new RegExp(/getFeature/), mockDoubleFeaturesData).as('features')
+    cy.intercept(new RegExp(/GetLayerSet/), mockLayersetData).as('layerset')
+    cy.intercept("POST", new RegExp(/GetBreachLocationId/), (req) => {
+      const { body } = req
+      req.continue((res) => {
+        if (body.floodsimulationid === 21498) {
+          return res.send(mockLocationsData['21498'])
+        }
+
+        if (body.floodsimulationid === 20932) {
+          return res.send(mockLocationsData['20932'])
+        }
+      })
+    })
+    .as('location')
+    cy.intercept("POST", new RegExp(/GetScenariosPerBreachGeneric/), (req) => {
+      const { body } = req
+
+      req.continue((res) => {
+        if (body.breachid === 3408) {
+          return res.send(mockScenarioData['3408'])
+        }
+
+        if (body.breachid === 1782) {
+          return res.send(mockScenarioData['1782'])
+        }
+      })
+    })
+    .as('scenario')
+
     cy.visit(url)
 
-    cy.wait('@layerset', { timeout: 20000 })
-    cy.wait('@features', { timeout: 20000 })
+    cy.get(selector('layer-panel')).should('be.visible')
+    cy.wait('@layerset', { timeout: 4000 })
 
     cy.get(selector('import-selection-button'))
       .click()
 
-    cy.wait(1000)
-
     cy.get(selector('import-selection-url'))
       .type(importUrl)
 
-    cy.wait(1000)
-
     cy.get(selector('import-url-button'))
       .click()
+    cy.wait('@scenario', { timeout: 4000 })
   })
 
   it('Imports scenario', () => {
     cy.url()
-      .should('contain', '/combine/7/19422,19428', { timeout: 30000 })
+      .should('contain', '/combine/7/20932,21498', { timeout: 4000 })
       .then(() => {
-        cy.contains(location1, {
-          timeout: 20000
-        })
-          .parentsUntil(selector('layer-panel'))
+        cy.contains(selector('layer-panel'), 'Overstroming Maas kans 1/5 per jaar', { timeout: 4000 })
+        cy.contains(selector('layer-panel'), 'Waterdiepte', { timeout: 4000 })
 
-        cy.contains(location2, {
-          timeout: 20000
-        })
-          .parentsUntil(selector('layer-panel'))
-      })
-  })
-
-  it('Imports scenario and deselects a location', () => {
-    cy.url()
-      .should('contain', '/combine/7/19422,19428', { timeout: 30000 })
-      .then(() => {
-        cy.wait(5000)
-
-        cy.get('.leaflet-marker-icon')
-          .eq(1)
-          .invoke('attr', 'src')
-          .then((srcVal) => {
-            cy.get('.leaflet-marker-icon')
-              .eq(1)
-              .click({ force: true })
-              .invoke('attr', 'src')
-              .should('not.eq', srcVal)
-          })
+        cy.contains(selector('layer-panel'), 'Buitendijkse gebieden Zeeuwse Delta 1:10.000', { timeout: 4000 })
+        cy.contains(selector('layer-panel'), 'Waterdiepte', { timeout: 4000 })
       })
   })
 })

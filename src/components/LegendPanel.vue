@@ -8,6 +8,7 @@
     <button
       class="legend-panel__title"
       aria-controls="legend"
+      v-test="'legend-button'"
       :aria-expanded="legendIsShown"
       :aria-label="`Klap legenda ${legendIsShown ? 'in' : 'uit'}`"
       @click="toggleLegend"
