@@ -77,7 +77,7 @@ export default {
     padding: 40px 20px 20px 20px;
     width: 100vw;
     height: 100vh;
-    z-index: 10000;
+    z-index: 9999;
     display: flex;
     flex-direction: column;
   }
