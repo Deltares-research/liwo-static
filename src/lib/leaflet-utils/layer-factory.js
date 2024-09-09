@@ -100,7 +100,7 @@ async function getWmsSettings (layer) {
     transparent: true,
   }
 
-  if (customMapConfig[layer.layer] && customMapConfig[layer.layer].url) {
+  if (customMapConfig?.[layer.layer]?.url) {
     return {
         url: customMapConfig[layer.layer].url,
         options: {
