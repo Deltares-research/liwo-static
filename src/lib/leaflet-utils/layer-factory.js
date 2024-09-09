@@ -83,29 +83,44 @@ export async function createTile (layer) {
 }
 
 export async function createWms (layer, _callbacks, abortSignal) {
-  // these options come frome the vaiant properties of the layer
-  const { namespace, attribution, style } = layer
-  // fully visible by default
-  const url = await getGeoServerURL(namespace)
+  const { url, options } = await getWmsSettings(layer)
   abortSignal.throwIfAborted()
+
   return L.tileLayer.wms(url, {
-    // TODO: layer is now sometimes a string, sometimes an object. Clean this up
-    ...getLayerOptions(layer),
-    format: 'image/png',
-    transparent: true,
-    attribution,
-    tiled: true,
-    styles: style,
+    ...options,
   })
 }
 
-async function getGeoServerURL (namespace) {
+async function getWmsSettings (layer) {
   const services = await mapConfig.getServices()
-  const DYNAMIC_GEOSERVER_URL = services.DYNAMIC_GEOSERVER_URL
-  const STATIC_GEOSERVER_URL = services.STATIC_GEOSERVER_URL
-  return namespace === 'LIWO_Operationeel'
-    ? DYNAMIC_GEOSERVER_URL
-    : STATIC_GEOSERVER_URL
+  const customMapConfig = mapConfig.getCustomMapConfig(services)
+  const defaultOptions = {
+    ...getLayerOptions(layer),
+    format: 'image/png',
+    transparent: true,
+  }
+
+  if (customMapConfig[layer.layer] && customMapConfig[layer.layer].url) {
+    return {
+        url: customMapConfig[layer.layer].url,
+        options: {
+          ...defaultOptions,
+          ...customMapConfig[layer.layer].config
+      }
+    }
+  }
+
+  return {
+    url: layer.namespace === 'LIWO_Operationeel'
+      ? services.DYNAMIC_GEOSERVER_URL
+      : services.STATIC_GEOSERVER_URL,
+    options: {
+      ...defaultOptions,
+      attribution: layer.attribution,
+      tiled: true,
+      styles: layer.style
+    }
+  }
 }
 
 function pointToLayer (_feature, latlng, options) {
