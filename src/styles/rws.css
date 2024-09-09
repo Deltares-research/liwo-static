@@ -11031,7 +11031,6 @@ video::-webkit-media-text-track-display {
         visibility: hidden
     }
     * {
-        background: 0 0!important;
         color: #000!important;
         -webkit-box-shadow: none!important;
         box-shadow: none!important;

@@ -6,7 +6,7 @@ on:
 jobs:
   install:
     runs-on: ubuntu-latest
-    container: cypress/browsers:node16.5.0-chrome97-ff96
+    container: cypress/browsers:node-20.9.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -19,7 +19,7 @@ jobs:
           restore-keys: npm-
 
       - name: Cypress install
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v6
         with:
           runTests: false
       # report machine parameters
@@ -32,7 +32,7 @@ jobs:
   ui-chrome-tests:
     timeout-minutes: 15
     runs-on: ubuntu-latest
-    container: cypress/browsers:node16.5.0-chrome97-ff96
+    container: cypress/browsers:node-20.9.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1
     needs: install
     strategy:
       # when one test fails, DO NOT cancel the other
@@ -57,11 +57,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: "UI Tests - Chrome"
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v6
         with:
           # we have already installed all dependencies above
           install: false
-          start: npm run serve
+          start: npm run serve -- --host
           wait-on: "http://localhost:5173"
           wait-on-timeout: 120
           browser: chrome

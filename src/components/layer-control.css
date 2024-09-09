@@ -2,15 +2,23 @@
   background-color: var(--white);
 }
 
+.layer-control__transparency-slider {
+  width: 60px;
+  margin-left: auto;
+  margin-right: .5rem;
+  cursor: pointer;
+}
+
 .layer-control__identifiers {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .layer-control__title {
-  display: flex;
-  align-items: center;
+  min-width: 0;
   margin: 0;
-  padding: 0;
+  margin-right: .5rem;
 }
 
 .layer-control__main,
@@ -27,19 +35,15 @@
 .layer-control__vis-label {
   position: absolute;
   left: .5rem;
+  cursor: pointer;
 }
 
 .layer-control__range {
   display: flex;
 }
 
-.layer-control__range input {
-  margin: .4rem;
-  cursor: pointer;
-}
-
 .layer-control__options {
-  display: none;
+  display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   border-top: 1px solid var(--white);
@@ -58,6 +62,7 @@
 
 .layer-control__options select {
   margin: 0;
+  margin-bottom: 10px;
   padding: 1px 7px 0;
 }
 
@@ -86,14 +91,6 @@
 
 .layer-control__vis-checkbox:checked + .layer-control__vis-label svg {
   fill: var(--black);
-}
-
-.layer-control--active {
-  background-color: var(--light-yellow);
-}
-
-.layer-control--active .layer-control__options {
-  display: flex;
 }
 
 .layer-control__marker-icon {

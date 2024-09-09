@@ -11,8 +11,8 @@
       >
         <template v-slot:legend>
           <legend-panel
-            :layers="controlLayerSelected ? controlLayers : [selectedLayer]"
-            v-if="controlLayers.length || selectedLayer"
+            :layers="selectedLayers.map(layer => layer.layerObj)"
+            v-if="selectedLayers.length > 0"
           >
             <img :src="`legends/${band}.png`" v-if="band">
           </legend-panel>
@@ -427,7 +427,7 @@ export default {
       })
 
       // Now  that we have all layers combine  them
-      const selectedLayers = [...scenarioLayers, ...layers]
+      const selectedLayers = [...layers, ...scenarioLayers]
 
       return selectedLayers
     },
