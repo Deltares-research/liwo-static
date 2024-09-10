@@ -144,18 +144,12 @@ export default {
       // add a tooltip if the map is clicked
       this.mapObject = mapObject
       this.mapObject.on('click', (event) => {
-        let unit = '[-]'
-        if (_.has(this.selectedLayer, 'legend.title')) {
-          unit = extractUnit(this.selectedLayer.legend.title)
-        }
-        showLayerInfoPopup({
+        showLayersInfoPopup({
           map: mapObject,
-          // TODO: make consistent, here we mix up two types of layers.
-          layerId: this.selectedVariantId,
-          unit: unit,
-          selectedLayer: this.selectedLayer,
+          selectedLayers: this.selectedLayers,
           position: event.containerPoint,
-          latlng: event.latlng
+          latlng: event.latlng,
+          showTitle: false
         })
       })
     },

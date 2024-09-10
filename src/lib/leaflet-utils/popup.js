@@ -1,66 +1,109 @@
 import L from '@/lib/leaflet-utils/leaf'
 import getFeatureInfo from '@/lib/get-feature-info'
+import { extractUnit } from '@/lib/load-layersets'
 import { getLayerInfoValue } from './get-layer-info-value'
 
-import mapConfig from '../../map.config.js'
+import getCombinedFeatureInfo from '../get-combined-feature-info.js'
 
-export function showLayerInfoPopup ({ map, layerId, unit, selectedLayer, position, latlng }) {
+export async function showLayersInfoPopup ({ map, selectedLayers, position, latlng, showTitle = true }) {
   const bounds = map.getBounds()
 
-  getFeatureInfo({
-    bounds,
-    x: position.x,
-    y: position.y,
-    width: map._size.x,
-    height: map._size.y,
-    layer: layerId
-  })
-    .then(data => {
-      const value = getLayerInfoValue(data, layerId, selectedLayer)
+  const promises = selectedLayers.map(selectedLayer => {
+    return getFeatureInfo({
+      bounds,
+      x: position.x,
+      y: position.y,
+      width: map._size.x,
+      height: map._size.y,
+      layer: selectedLayer.layer
+    }).then(data => {
+      const value = getLayerInfoValue(data, selectedLayer.layer, selectedLayer.layerObj)
 
-      if (value !== null) {
-        const formattedValue = value.toFixed(1)
+      if (value === null || value === -9999) {
+        return
+      }
 
-        const container = L.popup()
-          .setLatLng(latlng)
-          .setContent(`${formattedValue} [${unit}]`)
-          .openOn(map)
+      const formattedValue = formatLayerValue(value)
+      const formattedUnit = formatUnit(selectedLayer.layerObj)
 
-        container.getElement().querySelector('.leaflet-popup-close-button').setAttribute('aria-label', 'Sluiten')
+      return {
+        unit: formattedUnit,
+        title: selectedLayer.layerObj.properties.name,
+        layerTitle: selectedLayer.layerSet.name,
+        value: formattedValue
       }
     })
-}
+  })
 
-export async function showCombinedLayerInfoPopup ({ coordinates, layer, map }) {
-  const band = layer.variants[0].metadata.band
-  const imageId = layer.variants[0].metadata.data_id
-  const services = await mapConfig.getServices()
-  const HYDRO_ENGINE_URL = services.HYDRO_ENGINE_URL
-  const { lat, lng } = coordinates
-  const url = `${HYDRO_ENGINE_URL}/get_feature_info`
-  const options = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      imageId,
-      bbox: {
-        type: 'Point',
-        coordinates: [lng, lat]
-      },
-      band
+  const data = await Promise.all(promises)
+  const filteredData = data.filter(d => d)
+
+  if (filteredData.length === 1) {
+    filteredData.forEach(item => {
+      L.popup()
+        .setLatLng(latlng)
+        .setContent(formatValue(item, false))
+        .openOn(map)
     })
   }
 
-  fetch(url, options)
-    .then(response => response.json())
-    .then((json) => {
-      const value = Object.values(json)
-      const content = value[0] ? value[0].toFixed(2).toString() : 'Geen data beschikbaar'
+  if (filteredData.length > 1) {
+    const content = filteredData.map(item => formatValue(item, showTitle)).join('<br>')
 
-      L.popup()
-        .setLatLng(coordinates)
-        .setContent(content)
-        .openOn(map)
+    L.popup()
+      .setLatLng(latlng)
+      .setContent(content)
+      .openOn(map)
+  }
+
+  return
+}
+
+export async function showCombinedLayersInfoPopup ({ map, selectedLayers, latlng }) {
+  const promises = selectedLayers.map(selectedLayer => {
+    return getCombinedFeatureInfo({ lat: latlng.lat, lng: latlng.lng, selectedLayer })
+      .then((value) => {
+        if (!value?.[0]) {
+          return
+        }
+
+        const formattedValue = formatLayerValue(value[0])
+        const formattedUnit = formatUnit(selectedLayer.layerObj)
+
+        return {
+          unit: formattedUnit,
+          value: formattedValue,
+        }
     })
-    .catch(error => console.log('error', error))
+  })
+
+  const data = await Promise.all(promises)
+  const filteredData = data.filter(d => d)
+
+  filteredData.forEach(item => {
+    L.popup()
+      .setLatLng(latlng)
+      .setContent(formatValue(item))
+      .openOn(map)
+  })
+
+  return
+}
+
+function formatLayerValue (value) {
+  return value.toFixed(2).toString()
+}
+
+function formatUnit (layer) {
+    if (layer?.legend?.title) {
+        return extractUnit(layer.legend.title)
+    }
+
+    return '-'
+}
+
+function formatValue ({ value, layerTitle, title, unit }, showTitle = true) {
+  return showTitle && title && layerTitle
+    ? `${title} <em>(${layerTitle})</em>: <b>${value} [${unit}]</b>`
+    : `<b>${value} [${unit}]</b>`
 }

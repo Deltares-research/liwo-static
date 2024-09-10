@@ -734,24 +734,18 @@ export default {
       this.mapObject = mapObject
       // TODO: implement in GEE
       this.mapObject.on('click', (event) => {
-        let unit = '[-]'
-        if (_.has(this.selectedLayer, 'legend.title')) {
-          unit = extractUnit(this.selectedLayer.legend.title)
-        }
-        const activeLayer = _.get(this.selectedLayer, 'legend.layer')
-        if (_.isNil(activeLayer)) {
-          showCombinedLayerInfoPopup({
+        if (this.scenarioMode === 'compute') {
+          showCombinedLayersInfoPopup({
             map: mapObject,
-            layer: this.selectedLayer,
-            coordinates: event.latlng
+            selectedLayers: this.selectedLayers,
+            latlng: event.latlng
           })
           return
         }
-        showLayerInfoPopup({
+
+        showLayersInfoPopup({
           map: mapObject,
-          layerId: this.selectedVariantId,
-          unit: unit,
-          selectedLayer: this.selectedLayer,
+          selectedLayers: this.selectedLayers,
           position: event.containerPoint,
           latlng: event.latlng
         })
