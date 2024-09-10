@@ -36,7 +36,7 @@
           <figcaption class="legend-panel__caption">
             {{ layer.legend.title }}
           </figcaption>
-          <slot></slot>
+          <slot v-if="!layer.legendImageSrc"></slot>
           <!-- lookup legend if slot is empty -->
           <img
             class="legend-panel__image"
@@ -128,7 +128,7 @@ export default {
 
         return {
           ...layer,
-          legendImageSrc: url
+          legendImageSrc: url && layerId
             ? `${url}/${namespace}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=${layerId}&STYLE=${styleName}&HEIGHT=16&WIDTH=16&LEGEND_OPTIONS=fontAntiAliasing:true;fontSize:14;mx:0;dx:10;fontName:Verdana;`
             : "",
         };

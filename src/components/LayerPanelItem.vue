@@ -1,9 +1,6 @@
 <template>
 <div class="layerpanel-item" :class="{'layerpanel-item--collapsed': isCollapsed}" v-test="'layer-panel'">
-  <h3
-    class="layerpanel-item__title"
-    @click="selectFirstLayer"
-  >
+  <h3 class="layerpanel-item__title">
     <span>{{ title }}</span>
     <button class="layerpanel-item__collapse" @click.stop="toggleCollapse">
       <img class="layerpanel-item__collapse-icon" :src="`${publicPath}icons/baseline-keyboard_arrow_up-24px.svg`" alt="Klap kaartlagen in of uit" />
@@ -11,16 +8,12 @@
   </h3>
   <layer-control-list
     :layers="layers"
-    :selectedLayer="selectedLayer"
-    @select:layer="selectLayer"
     @update:layers="updateLayers"
-
     v-if="!isCollapsed"
   >
-    <template #layer-control="{ layer, active, updateLayer }">
+    <template #layer-control="{ layer, updateLayer }">
       <layer-control
         :id="layer.breachBandId"
-        :active="active"
         :layer="layer"
         @update:layer="updateLayer"
         @select:variant="selectVariant"
@@ -51,10 +44,6 @@ export default {
       type: Boolean,
       default: false
     },
-    selectedLayer: {
-      type: Object,
-      default: () => ({})
-    }
   },
   data () {
     return {
@@ -83,9 +72,6 @@ export default {
     },
     updateLayers (layers) {
       this.$emit('update:layers', layers)
-    },
-    selectLayer (layer) {
-      this.$emit('select:layer', layer)
     },
     selectVariant (variant) {
       this.$emit('select:variant', variant)

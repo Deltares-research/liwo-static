@@ -19,9 +19,7 @@
         <template v-slot:default>
           <layer-panel-item
             :layers="layerSet.layers"
-            :selectedLayer="selectedLayer"
             @update:layers="updateLayers(layerSet, $event)"
-            @select:layer="selectLayer"
             @select:variant="selectVariant"
           />
         </template>
@@ -64,10 +62,9 @@ import LiwoMap from '@/components/LiwoMap.vue'
 import LegendPanel from '@/components/LegendPanel.vue'
 import NotificationBar from '@/components/NotificationBar.vue'
 import { flattenLayerSet } from '@/lib/layer-parser'
-import { extractUnit } from '@/lib/load-layersets'
 
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
-import { showLayerInfoPopup } from '@/lib/leaflet-utils/popup'
+import { showLayersInfoPopup } from '@/lib/leaflet-utils/popup'
 
 export default {
   name: 'ViewerPage',
@@ -90,8 +87,6 @@ export default {
       isMounted: false,
       showExport: false,
       projection: EPSG_28992,
-      // allows to select a layer (for the unit panel)
-      selectedLayerId: null
     }
   },
   created () {
@@ -103,15 +98,6 @@ export default {
       'layerSet',
       'currentNotifications'
     ]),
-    selectedVariantId() {
-      const selectedVariant = this.selectedLayer.properties.selectedVariant
-      const variant =
-        this.selectedLayer.variants.find(
-          (variant) => variant.layer === selectedVariant
-        ) || this.selectedLayer.variants[0]
-      const id = variant.layer
-      return id
-    },
     selectedLayers () {
       if (!this.layerSet) {
         return []
@@ -123,21 +109,6 @@ export default {
       })
       return result
     },
-    selectedLayer () {
-      // return the selected layer
-      // return null if we have no layerSet yet
-      if (_.isNil(this.layerSet)) {
-        return null
-      }
-      // if we have not selected a layer, no layer is set
-      if (_.isNil(this.selectedLayerId)) {
-        return null
-      }
-      // if we have both, search for the layer  and return it
-      const result = _.find(this.layerSet.layers, ['id', this.selectedLayerId])
-
-      return result
-    }
   },
   methods: {
     setMapObject (mapObject) {
@@ -156,9 +127,6 @@ export default {
     updateLayers (layerSet, layers) {
       // store the new layers
       this.$store.commit('setLayersByLayerSetId', { id: layerSet.id, layers })
-    },
-    selectLayer (layer) {
-      this.selectedLayerId = layer.id
     },
     selectVariant ({ layer, index }) {
       // store the index of the active variant in the layer
