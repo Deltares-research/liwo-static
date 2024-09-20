@@ -30,7 +30,7 @@
     "proj4leaflet": "^1.0.2",
     "query-string": "^9.0.0",
     "tiny-cookie": "^2.5.1",
-    "vue": "^3.4.31",
+    "vue": "^3.5.7",
     "vue-cookie-law": "^1.13.3",
     "vue-matomo": "^4.2.0",
     "vue-router": "^4.4.3",
