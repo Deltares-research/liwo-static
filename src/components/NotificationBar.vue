@@ -1,5 +1,9 @@
 <template>
-<ul class="viewer__notifications" v-if="cleanNotifications && cleanNotifications.length">
+<ul
+  class="viewer__notifications"
+  v-if="cleanNotifications && cleanNotifications.length"
+  data-tour-id="notifications"
+>
   <template v-for="(notification, index) in cleanNotifications">
     <li
       v-if="notification.show"

@@ -17,6 +17,7 @@
       class="layer-control__vis-label"
       :for="`layer-${id}-vis`"
       v-test="'layer-control'"
+      data-tour-id="layer-visibility"
     >
       <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 64 64">
         <path fill="none" d="M0 0h64v64H0z"/>
