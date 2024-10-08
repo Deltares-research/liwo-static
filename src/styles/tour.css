@@ -1,0 +1,14 @@
+.driver-popover-footer {
+  gap: 5px;
+}
+
+.driver-popover-progress-text {
+  flex-shrink: 0;
+}
+
+.driver-popover-navigation-btns {
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+

@@ -1,67 +1,38 @@
-import { driver } from 'driver.js'
-import { onMounted, onUnmounted } from 'vue'
+import { driver } from "driver.js";
+import { waitUntilVisible } from "./helpers";
 import "driver.js/dist/driver.css";
+import '../styles/tour.css';
+
+export let driverInstance;
 
 export function useTour(steps) {
-  let driverInstance
-  let autoStart = false
+  let autoStart = false;
 
-  onMounted(() => {
-    driverInstance = driver({
-      steps
-    })
+  driverInstance = driver({
+    showProgress: true,
+    progressText: "{{current}} van {{total}}",
+    popoverOffset: 20,
+    showButtons: ["next", "close"],
+    nextBtnText: "Volgende",
+    prevBtnText: "Vorige",
+    doneBtnText: "Sluit",
+  });
 
-    if(autoStart) {
-      waitUntilVisible(steps[0].element).then(() => {
-        driverInstance.drive()
-      })
-    }
-  })
-
-  onUnmounted(() => {
-    driverInstance.destroy()
-  })
+  driverInstance.setSteps(steps(driverInstance));
+  if (autoStart) {
+    waitUntilVisible(steps(driverInstance)[0].element).then(() => {
+      driverInstance.drive();
+    });
+  }
 
   return {
-    start() {
-      autoStart = true
-      if(driverInstance) {
-        waitUntilVisible(steps[0].element).then(() => {
-          driverInstance.drive()
-        })
+    start(step = 0) {
+      autoStart = true;
+      if (driverInstance) {
+        waitUntilVisible(steps(driverInstance)[step].element).then(() => {
+          driverInstance.drive(step);
+        });
       }
     },
-  }
-}
-
-
-function waitUntilVisible(element) {
-  const timeInterval = 300
-  const timeout = 2000
-  let timeTaken = 0
-  return new Promise((resolve, reject) => {
-    const interval = setInterval(() => {
-      return checkIfVisible(element)
-        .then(el => {
-          clearInterval(interval)
-          resolve(el)
-        })
-        .catch(() => {
-          timeTaken += timeInterval
-          if (timeTaken > timeout) {
-            clearInterval(interval)
-            reject('waitUntilVisible timed out')
-          }
-        })
-    }, timeInterval)
-  })
-}
-
-function checkIfVisible(element) {
-  const foundElement = document.querySelector(element)
-  if (foundElement) {
-    return Promise.resolve(foundElement)
-  } else {
-    return Promise.reject()
-  }
+  };
 }
