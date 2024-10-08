@@ -367,7 +367,7 @@ export default {
               const extraInfo = this.scenarioInfo.features.find((f) => f.properties.breachlocationid === feature.properties.id)
               // english band name
               const bandNeeded = BREACH_LAYERS_EN[this.band]
-              const availableBands = extraInfo.properties['system:band_names']
+              const availableBands = extraInfo.properties.band_names
               const bandMissing = availableBands && !availableBands.includes(bandNeeded)
               if (bandMissing) {
                 feature.properties.missing = true
