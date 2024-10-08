@@ -13,12 +13,33 @@
       <label class="export-popup__form-column-item" for="export-name">
         Naam:<br><small class="help">De naam van het uitvoerbestand</small>
       </label>
-      <input type="text" name="name"
-        id="export-name" autocomplete="off" v-model="exportName"
-        class="export-popup__form-column-item export-popup__textfield" v-test="'name-input'">
+      <input
+        class="export-popup__form-column-item export-popup__textfield"
+        type="text"
+        name="name"
+        id="export-name"
+        autocomplete="off"
+        v-model="exportName"
+        v-test="'name-input'"
+        data-tour-id="layer-export-name"
+      >
       <footer class="export-popup__footer">
-        <button class="btn primary" @click.prevent="exportMap" v-test="'export-file-button'">Exporteer</button>
-        <button class="btn secondary" type="reset" @click="$emit('close')">Annuleer</button>
+        <button
+          class="btn primary"
+          @click.prevent="exportMap"
+          v-test="'export-file-button'"
+          data-tour-id="layer-export-button"
+        >
+          Exporteer
+        </button>
+        <button
+          class="btn secondary"
+          type="reset"
+          @click="$emit('close')"
+          data-tour-id="layer-export-cancel-button"
+        >
+          Annuleer
+        </button>
       </footer>
     </form>
   </pop-up>

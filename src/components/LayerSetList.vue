@@ -1,13 +1,18 @@
 <template>
 <section class="layerset-list">
-  <h3>{{ title }}</h3>
+  <h3 class="layerset-list__header" :data-tour-id="`layerset-${index}`">{{ title }}</h3>
   <ul class="layerset-list__list">
     <li class="layerset-list__list-item"
         v-for="item in items"
         :key="item.id"
         >
       <!-- id here is a layerSetId -->
-      <router-link :to="{ name: getName(item), params: {id: item.id} }">{{ item.name }}</router-link>
+      <router-link
+        :to="{ name: getName(item), params: {id: item.id} }"
+        :data-tour-id="`layerset-map-${item.id}-link`"
+      >
+        {{ item.name }}
+      </router-link>
     </li>
   </ul>
 </section>
@@ -21,6 +26,10 @@ export default {
   props: {
     title: {
       type: String,
+      required: true
+    },
+    index: {
+      type: Number,
       required: true
     },
     items: {
@@ -43,6 +52,11 @@ export default {
   margin-left: 1em;
   margin-bottom: 1rem;
 }
+
+.layerset-list__header {
+  width: max-content;
+}
+
 .layerset-list__list-item::before {
   content: "›";
   float: left;

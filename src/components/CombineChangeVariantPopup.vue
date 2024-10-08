@@ -5,7 +5,10 @@
     @close="$emit('close')"
     disable-scrollbar
     >
-      <aside class="change-variant-popup__filters">
+      <aside
+        class="change-variant-popup__filters"
+        data-tour-id="change-variant-filters"
+      >
         <h3>Filter op variant eigenschappen</h3>
 
         <div v-for="{ title, values } in sidebarFilters" :key="title" class="change-variant-popup__filter-type">
@@ -21,13 +24,25 @@
       <form class="change-variant-popup__results">
         <h3>Beschikbare varianten: ({{ filteredVariants.length  }}):</h3>
 
-        <ul class="change-variant-popup__result-list change-variant-popup__scrollable-list">
+        <ul
+          class="change-variant-popup__result-list change-variant-popup__scrollable-list"
+          data-tour-id="change-variant-options"
+        >
           <li v-for="variant in filteredVariants" :key="variant.metadata.title" v-test="'resultItem'">
-            <input type="radio" class="accessibility" name="variant" :value="variant.layer" v-model="selectedVariant" :id="`variant-${variant.layer}`" />
+            <input
+              class="accessibility"
+              type="radio"
+              name="variant"
+              :value="variant.layer"
+              v-model="selectedVariant"
+              :id="`variant-${variant.layer}`"
+            />
 
             <label
               class="change-variant-popup__result-item"
-              :for="`variant-${variant.layer}`">
+              :for="`variant-${variant.layer}`"
+              data-tour-id="variant-select"
+            >
               <span v-test="'variantName'" v-html="getWrappingTitle(variant)"></span>
 
               <dl class="change-variant-popup__result-item-props">
@@ -44,6 +59,7 @@
           <button
             class="btn primary"
             @click.prevent="selectVariant"
+            data-tour-id="variant-select-button"
           >
             Variant selecteren
           </button>

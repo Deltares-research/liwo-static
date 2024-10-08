@@ -2,11 +2,26 @@
   <header class="app-header">
     <div role="banner" class="site-header">
       <nav class="app-header__top-nav" v-test="'top-menu'">
-        <router-link :to="{name: 'contact'}">Contact</router-link>
-        <router-link :to="{name: 'accessibility'}">Toegankelijkheid</router-link>
-        <a href="https://www.rijkswaterstaat.nl/cookies">Cookies</a>
+        <router-link :to="{ name: 'contact' }" data-tour-id="contact-header"
+          >Contact</router-link
+        >
+        <router-link
+          :to="{ name: 'accessibility' }"
+          data-tour-id="toegankelijkheid-header"
+          >Toegankelijkheid</router-link
+        >
+        <a
+          href="https://www.rijkswaterstaat.nl/cookies"
+          data-tour-id="cookies-header"
+          >Cookies</a
+        >
       </nav>
-      <a href="https://www.rijksoverheid.nl/ministeries/ministerie-van-infrastructuur-en-waterstaat" rel="noreferrer noopener" class="logo" target="_blank">
+      <a
+        href="https://www.rijksoverheid.nl/ministeries/ministerie-van-infrastructuur-en-waterstaat"
+        rel="noreferrer noopener"
+        class="logo"
+        target="_blank"
+      >
         <img
           src="/assets/img/logo-nl.svg"
           width="270"
@@ -18,26 +33,59 @@
   </div>
   <div id="menu" class="app-header__menu">
     <div class="app-header__top-menu container">
-      <h1 class="app-header__app-title">LIWO</h1>
+      <h1 class="app-header__app-title" data-tour-id="liwo-header">LIWO</h1>
     </div>
     <nav role="navigation" class="app-header__nav" v-test="'main-menu'">
       <ul class="container">
-        <li><router-link :to="{ name: 'maps' }" data-tour-id="kaarten-link">Kaarten</router-link></li>
-        <li><router-link :to="{ name: 'about' }" data-tour-id="over-liwo-link">Over LIWO</router-link></li>
+        <li class="app-header__nav-link">
+          <router-link
+            :to="{ name: 'maps' }"
+            data-tour-id="kaarten-header"
+          >
+            Kaarten
+          </router-link>
+        </li>
+        <li class="app-header__nav-link">
+          <router-link
+            :to="{ name: 'about' }"
+            data-tour-id="over-liwo-header"
+          >
+            Over LIWO
+          </router-link>
+        </li>
+        <li class="app-header__nav-link">
+          <router-link
+            :to="{ name: 'maps' }"
+            @click="useGeneralTour().start()"
+          >
+            Start tour
+          </router-link>
+        </li>
       </ul>
     </nav>
-    <h2 class="app-header__page-title container" v-test="'page-title'">{{ this.pageTitle }}</h2>
+    <h2
+      class="app-header__page-title container"
+      v-test="'page-title'"
+      data-tour-id="page-title"
+    >
+      {{ this.pageTitle }}
+    </h2>
   </div>
   </header>
 </template>
 
 <script>
+import { useGeneralTour } from '@/tour/use-general-tour'
+
 export default {
   props: {
     pageTitle: {
       type: String,
       default: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
     }
+  },
+  methods: {
+    useGeneralTour
   }
 }
 </script>
@@ -128,7 +176,6 @@ export default {
 
   .app-header__nav li {
     list-style: none;
-    margin: 0;
   }
 
   .app-header__nav a {
@@ -143,9 +190,18 @@ export default {
     }
   }
 
-  .app-header__nav a:hover,
-  .app-header__nav a.router-link-active {
+  .app-header__nav-link a:hover,
+  .app-header__nav-link:last-child a.router-link-active:hover,
+  .app-header__nav-link a.router-link-active {
     background-color: var(--light-yellow);
+  }
+
+  .app-header__nav-link:last-child a.router-link-active {
+    background-color: transparent;
+  }
+
+  .app-header__nav-link:last-child {
+    margin-left: auto;
   }
 
   .app-header__page-title {

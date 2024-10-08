@@ -30,7 +30,8 @@
             class="layer-panel__action"
             @click="showExport = true"
             v-test="'init-export-button'"
-            >
+            data-tour-id="layer-export"
+          >
             <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
               <path fill="none" d="M0 0h24v24H0z"/>
               <path d="M18 17v2H6v-2H3v4c0 .6.4 1 1 1h16c.6 0 1-.4 1-1v-4h-3z"/>
@@ -68,13 +69,9 @@ import { extractUnit } from '@/lib/load-layersets'
 
 import { EPSG_28992 } from '@/lib/leaflet-utils/projections'
 import { showLayerInfoPopup } from '@/lib/leaflet-utils/popup'
-import { useMapTour } from '@/tour/use-map-tour'
 
 export default {
   name: 'ViewerPage',
-  setup() {
-    useMapTour().start()
-  },
   components: {
     ExportPopup,
     LayerPanel,

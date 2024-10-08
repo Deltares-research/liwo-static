@@ -90,6 +90,7 @@
             v-if="selectedFeatures.length && selectFeatureMode === 'single'"
             class="layer-panel__action"
             @click="showExport = true"
+            data-tour-id="scenario-export"
           >
             Scenario exporteren
           </button>
