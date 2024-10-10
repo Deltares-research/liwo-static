@@ -121,14 +121,6 @@ function getCustomMapConfig(services) {
       },
       legendImageSrc: services.PDOK_PROVINCIES_LEGEND,
     },
-    administratieve_grenzen_waterschappen: {
-      url: services.PDOK_WATERSCHAPPEN_URL,
-      config: {
-        layers: 'AU.AdministrativeUnit',
-        styles: 'default',
-      },
-      legendImageSrc: services.PDOK_WATERSCHAPPEN_LEGEND,
-    },
     infrastructuur_spoorwegen_nederland: {
       url: services.PDOK_SPOORWEGEN_URL,
       config: {
