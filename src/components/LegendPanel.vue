@@ -73,6 +73,7 @@ export default {
   data() {
     return {
       services: null,
+      customMapConfig: null,
       isOpen: false,
       loadedImages: [],
       // path where the server runs (should end in a /)
@@ -81,6 +82,7 @@ export default {
   },
   async created() {
     this.services = await mapConfig.getServices();
+    this.customMapConfig = mapConfig.getCustomMapConfig(this.services);
   },
   methods: {
     toggleLegend() {
@@ -121,16 +123,25 @@ export default {
           return {};
         }
 
-        const namespace = layer.legend.namespace;
-        const styleName = layer.legend.style;
-        const layerId = layer.legend.layer;
-        const url = this.services && this.services.LEGEND_URL;
+        let legendImageSrc = '';
+
+        if (this.customMapConfig?.[layer.id]) {
+          legendImageSrc = this.customMapConfig[layer.id].legendImageSrc || '';
+        }
+
+        if (!legendImageSrc) {
+          const namespace = layer.legend.namespace;
+          const styleName = layer.legend.style;
+          const layerId = layer.legend.layer;
+          const url = this.services && this.services.LEGEND_URL;
+          legendImageSrc = url
+            ? `${url}/${namespace}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=${layerId}&STYLE=${styleName}&HEIGHT=16&WIDTH=16&LEGEND_OPTIONS=fontAntiAliasing:true;fontSize:14;mx:0;dx:10;fontName:Verdana;`
+            : '';
+        }
 
         return {
           ...layer,
-          legendImageSrc: url && layerId
-            ? `${url}/${namespace}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=${layerId}&STYLE=${styleName}&HEIGHT=16&WIDTH=16&LEGEND_OPTIONS=fontAntiAliasing:true;fontSize:14;mx:0;dx:10;fontName:Verdana;`
-            : "",
+          legendImageSrc,
         };
       });
     },

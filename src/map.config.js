@@ -103,7 +103,37 @@ async function getServices() {
   return servicePromise;
 }
 
+function getCustomMapConfig(services) {
+  return {
+    administratieve_grenzen_gemeenten: {
+      url: services.PDOK_KADASTER_URL,
+      config: {
+        layers: 'Gemeentegebied',
+        styles: 'default',
+      },
+      legendImageSrc: services.PDOK_GEMEENTEN_LEGEND,
+    },
+    administratieve_grenzen_provincies: {
+      url: services.PDOK_KADASTER_URL,
+      config: {
+        layers: 'Provinciegebied',
+        styles: 'default',
+      },
+      legendImageSrc: services.PDOK_PROVINCIES_LEGEND,
+    },
+    infrastructuur_spoorwegen_nederland: {
+      url: services.PDOK_SPOORWEGEN_URL,
+      config: {
+        layers: 'trace',
+        styles: 'default',
+      },
+      legendImageSrc: services.PDOK_SPOORWEGEN_LEGEND,
+    }
+  }
+}
+
 export default {
+  getCustomMapConfig,
   attribution,
   center,
   maxZoom,
