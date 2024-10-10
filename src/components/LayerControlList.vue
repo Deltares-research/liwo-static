@@ -1,16 +1,14 @@
 <template>
-  <ul :class="classData">
+  <ul class="layer-control-list">
     <template v-for="(layer, index) in layers">
       <li
         class="layer-control-list__item"
         v-if="layerIsShown(layer)"
         :key="layer.breachBandId"
-        @click="selectLayer(layer)"
       >
         <slot
           name="layer-control"
           v-if="layer"
-          :active="isActive(layer)"
           :layer="layer"
           :updateLayer="layer => updateLayer(layer, index)"
         ></slot>
@@ -32,23 +30,6 @@ export default {
       type: Array,
       required: true
     },
-    // whether to show this list as an active list
-    active: {
-      type: Boolean,
-      default: true
-    },
-    selectedLayer: {
-      type: Object,
-      default: () => ({})
-    }
-  },
-  computed: {
-    classData () {
-      return {
-        'layer-control-list': true,
-        'layer-control-list--active': this.active
-      }
-    }
   },
   methods: {
     updateLayer (layer, index) {
@@ -56,16 +37,6 @@ export default {
       const layers = _.clone(this.layers)
       layers[index] = layer
       this.$emit('update:layers', layers)
-    },
-    selectLayer (layer) {
-      this.$emit('select:layer', layer)
-    },
-    isActive (layer) {
-      if (!this.selectedLayer) {
-        return false
-      }
-
-      return this.selectedLayer.breachBandId === layer.breachBandId
     },
     layerIsShown (layer) {
       // If no variant is selected show the layer
@@ -78,12 +49,6 @@ export default {
       )
       return Boolean(variant)
     },
-  },
-  mounted () {
-    const firstLayer = _.first(this.layers)
-    if (firstLayer) {
-      this.selectLayer(firstLayer)
-    }
   }
 }
 </script>
@@ -91,12 +56,8 @@ export default {
 <style>
 .layer-control-list {
   background-color: white;
-  height: 0;
-  overflow: hidden;
-}
-
-.layer-control-list--active {
   height: auto;
+  overflow: hidden;
 }
 
 .layer-control-list__item {
