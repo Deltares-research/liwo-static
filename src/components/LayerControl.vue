@@ -114,10 +114,6 @@ export default {
       type: Object,
       required: true
     },
-    active: {
-      type: Boolean,
-      default: false
-    }
   },
   data () {
     return {
@@ -157,7 +153,7 @@ export default {
       const variant = this.layer.variants.find(
         (variant) => variant.layer === this.selectedVariant
       );
-      return variant.metadata;
+      return variant?.metadata;
     },
     showLayers () {
       return this.layer.variants.map(vari => {
@@ -347,12 +343,6 @@ export default {
     }
   },
   watch: {
-    // Always close meta when switching layers
-    active (isActive) {
-      if (!isActive) {
-        this.popupIsOpen = false
-      }
-    },
     selectedProbabilities (newVal, oldVal) {
       if (!newVal) { return }
       if (newVal !== oldVal) {

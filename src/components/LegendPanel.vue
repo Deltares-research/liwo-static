@@ -36,7 +36,7 @@
           <figcaption class="legend-panel__caption">
             {{ layer.legend.title }}
           </figcaption>
-          <slot></slot>
+          <slot v-if="!layer.legendImageSrc"></slot>
           <!-- lookup legend if slot is empty -->
           <img
             class="legend-panel__image"
