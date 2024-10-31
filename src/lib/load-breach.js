@@ -129,7 +129,7 @@ export async function getScenarioInfo (scenarioIds, featureInfoByScenarioId) {
     return
   }
 
-  const bandCounts = _.countBy(data.features.flatMap((x) => x.propertiesband_names))
+  const bandCounts = _.countBy(data.features.flatMap((x) => x.properties.band_names))
 
   const featureCollectionProperties = _.get(data, 'properties', {})
   featureCollectionProperties.bandCounts = bandCounts
