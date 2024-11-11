@@ -79,10 +79,11 @@ export default {
             return layer.layer
           }).join()
 
-      exportZip({ name: this.exportName, layers })
-        .finally(() => {
-          this.exporting = false
-        })
+        exportZip({ name: this.exportName, layers })
+          .finally(() => {
+            this.exporting = false
+            this.$emit('close')
+          })
       }
     }
   }
