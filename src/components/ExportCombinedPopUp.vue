@@ -1,6 +1,16 @@
 <template>
   <pop-up class="export-combined-popup" title="Exporteer als zip" @close="$emit('close')">
     <form class="export-combined-popup__content export-combined-popup__form-columns">
+      <div
+        class="export-combined-popup__notification export-combined-popup__notification--error"
+        role="alert"
+        aria-live="assertive"
+      >
+        <ul v-if="formErrors.length">
+          <li v-for="(error, index) in formErrors" :key="index">
+            {{ error }}
+          </li>
+        </ul>
       </div>
       <div
         class="export-combined-popup__notification export-combined-popup__notification--loading"
@@ -58,7 +68,7 @@ export default {
   },
   data () {
     return {
-      exportType: 'zip',
+      formErrors: [],
       exportScale: 50,
       exporting: false
     }
@@ -80,67 +90,75 @@ export default {
   },
   methods: {
     async exportMap () {
-      this.exporting = true
-      const eeLayer = this.eeLayer
-      const body = {
-        liwo_ids: eeLayer.metadata.liwo_ids,
-        band: eeLayer.metadata.band,
-        scale: parseFloat(this.exportScale),
-        export: true
-      }
-      const requestOptions = {
-        method: 'POST',
-        mode: 'cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
+      if (!this.exportName && !this.formErrors.includes("Schaal is verplicht")) {
+        this.formErrors.push("Schaal is verplicht")
+      } else if (this.exportName) {
+        this.formErrors = []
       }
 
-      // Lookup the hydro engine url
-      const services = await mapConfig.getServices()
-      const hydroEngine = services.HYDRO_ENGINE_URL
-      const url = `${hydroEngine}/get_liwo_scenarios`
+      if (this.formErrors.length === 0 && !this.exporting) {
+        this.exporting = true
+        const eeLayer = this.eeLayer
+        const body = {
+          liwo_ids: eeLayer.metadata.liwo_ids,
+          band: eeLayer.metadata.band,
+          scale: parseFloat(this.exportScale),
+          export: true
+        }
+        const requestOptions = {
+          method: 'POST',
+          mode: 'cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        }
 
-      /* get the id of the layerSet */
-      const layerSetId = this.otherLayers[0].layerSet.id
+        // Lookup the hydro engine url
+        const services = await mapConfig.getServices()
+        const hydroEngine = services.HYDRO_ENGINE_URL
+        const url = `${hydroEngine}/get_liwo_scenarios`
 
-      const promise = fetch(url, requestOptions)
-        .then(resp => {
-          this.exporting = false
-          return resp.json()
-        })
-        .then(json => {
-          const result = json
-          if (result.error) {
+        /* get the id of the layerSet */
+        const layerSetId = this.otherLayers[0].layerSet.id
+
+        const promise = fetch(url, requestOptions)
+          .then(resp => {
+            this.exporting = false
+            return resp.json()
+          })
+          .then(json => {
+            const result = json
+            if (result.error) {
+              const notification = {
+                message: 'Het door u gevraagde gecombineerde resultaat kan niet geëxporteerd worden. Probeer de schaal te vergroten.',
+                type: 'warning',
+                show: true
+              }
+              store.commit('addNotificationById', { id: layerSetId, notification })
+            }
+            return result
+          })
+          .catch((error) => {
+            this.exporting = false
             const notification = {
-              message: 'Het door u gevraagde gecombineerde resultaat kan niet geëxporteerd worden. Probeer de schaal te vergroten.',
+              message: 'Het door u gevraagde gecombineerde resultaat kon niet worden geëxporteerd. Probeer de schaal te vergroten.',
               type: 'warning',
               show: true
             }
+            console.warn('Combined result failed:', error)
+            // notifiy of failure
             store.commit('addNotificationById', { id: layerSetId, notification })
-          }
-          return result
-        })
-        .catch((error) => {
-          this.exporting = false
-          const notification = {
-            message: 'Het door u gevraagde gecombineerde resultaat kon niet worden geëxporteerd. Probeer de schaal te vergroten.',
-            type: 'warning',
-            show: true
-          }
-          console.warn('Combined result failed:', error)
-          // notifiy of failure
-          store.commit('addNotificationById', { id: layerSetId, notification })
-          return null
-        })
+            return null
+          })
 
-      promise.then(
-        result => {
-          if (result.export_url) {
-            window.location = result.export_url
+        promise.then(
+          result => {
+            if (result.export_url) {
+              window.location = result.export_url
+            }
+            this.$emit('close')
           }
-          this.$emit('close')
-        }
-      )
+        )
+      }
     }
   }
 }
