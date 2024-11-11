@@ -1,32 +1,32 @@
 <template>
-  <pop-up class="export-popup" title="Exporteer" @close="$emit('close')">
-    <form class="export-popup__content export-popup__form-columns">
-      <div class="export-popup__notification export-popup__notification--loading" v-if="!eeLayer">
-        <b>Wacht tot de data geladen is.</b>
+  <pop-up class="export-combined-popup" title="Exporteer als zip" @close="$emit('close')">
+    <form class="export-combined-popup__content export-combined-popup__form-columns">
       </div>
-      <div class="export-popup__notification export-popup__notification--loading" v-if="exporting">
-        <b>Uw export wordt gegenereerd.</b>
+      <div
+        class="export-combined-popup__notification export-combined-popup__notification--loading"
+        role="status"
+        aria-live="polite"
+      >
+        <template v-if="exporting || !eeLayer">
+          <p v-if="exporting" class="export-combined-popup__notification-text">Uw export wordt gegenereerd.</p>
+          <p v-if="!eeLayer" class="export-combined-popup__notification-text">Data wordt geladen.</p>
+          <div class="lds-dual-ring export-combined-popup__notification-loader" />
+        </template>
       </div>
-      <label class="export-popup__form-column-item" for="export-zip">Exporteer als:</label>
-      <ul class="export-popup__form-column-item choice-cards export-popup__radio-group">
-        <li class="choice-cards__item">
-          <input type="radio" name="export" v-model="exportType"
-            id="export-zip" value="zip"
-            class="sr-only choice-cards__item__radio export-popup__export-input"
-          >
-          <label class="radio choice-cards__item__label export-popup__export-label" for="export-zip">
-            <span aria-hidden="true" class="icon icon-file-zip icon-2x"></span>
-            <span>Zip</span>
-          </label>
-        </li>
-      </ul>
-      <label class="export-popup__form-column-item" for="export-name">
-        Schaal:<br><small class="help">Schaal in meters</small>
+      <label class="export-combined-popup__form-column-item" for="export-name">
+        <span>Schaal:</span>
+        <span class="help">Schaal in meters</span>
       </label>
-      <input type="number" name="scale"
-        id="export-scale" autocomplete="off" v-model="exportScale"
-        class="export-popup__form-column-item export-popup__textfield">
-      <footer v-if="eeLayer" class="export-popup__footer">
+      <input
+        class="export-combined-popup__form-column-item export-combined-popup__textfield"
+        type="number"
+        name="scale"
+        id="export-scale"
+        autocomplete="off"
+        v-model="exportScale"
+        required
+      />
+      <footer v-if="eeLayer" class="export-combined-popup__footer">
         <button
           class="btn primary"
           @click.prevent="exportMap"
@@ -147,63 +147,77 @@ export default {
 </script>
 
 <style>
-  .export-popup__content {
+  .export-combined-popup__content {
     padding: 1.5rem;
   }
-
-  .export-popup__form-columns {
+  .export-combined-popup__form-columns {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     margin-bottom: 0;
   }
-  .export-popup__form-columns > * {
+  .export-combined-popup__form-columns > * {
     width: 100%;
     margin: 0 0 1rem 0;
     padding: 0;
   }
-  .export-popup__form-column-item {
-    display: block;
+  .export-combined-popup__form-column-item {
+    display: flex;
+    flex-direction: column;
     width: calc(50% - 1rem);
   }
-  .export-popup .choice-cards {
+  .export-combined-popup .choice-cards {
     display: flex;
     justify-content: space-between;
     text-align: left;
   }
-  .export-popup .choice-cards__item {
+  .export-combined-popup .choice-cards__item {
     width: 100%;
     flex: 0 1 100%;
     margin-bottom: 10px;
   }
-  .export-popup .choice-cards__item__label {
+  .export-combined-popup .choice-cards__item__label {
     text-align: left;
     margin: 0;
     padding: 8px 16px;
   }
-  .export-popup .choice-cards__item__radio:checked+.choice-cards__item__label:after {
+  .export-combined-popup .choice-cards__item__radio:checked+.choice-cards__item__label:after {
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
     border-radius: 3px;
   }
-  .export-popup .btn:focus {
+  .export-combined-popup .btn:focus {
     text-decoration: none;
   }
-  .export-popup__footer button {
+  .export-combined-popup__footer button {
     margin-right: 10px;
   }
-  .export-popup__notification {
+  .export-combined-popup__notification {
     color: #ffffff;
     background: gray;
     padding: 10px;
     border-radius: 3px;
+    font-weight: bold;
   }
-  .export-popup__notification--error {
+  .export-combined-popup__notification:empty {
+    display: none;
+  }
+  .export-combined-popup__notification--error {
     background:red;
   }
-  .export-popup__notification--loading {
+  .export-combined-popup__notification--loading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     background: #0b71ab;
+  }
+  .export-combined-popup__notification-text {
+    margin: 0;
+  }
+  .export-combined-popup__notification .export-combined-popup__notification-loader:after {
+    height: 1.5rem;
+    width: 1.5rem;
   }
 </style>
