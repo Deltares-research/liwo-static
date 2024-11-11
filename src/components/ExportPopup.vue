@@ -1,21 +1,41 @@
 <template>
   <pop-up class="export-popup" title="Exporteer als zip" @close="$emit('close')">
     <form class="export-popup__content export-popup__form-columns">
-      <div class="export-popup__notification export-popup__notification--error" v-if="formErrors.length">
-        <b>Graag de volgende velden aanvullen:</b>
-        <ul>
-          <li v-for="(error, index) in formErrors" :key="index">{{ error }}</li>
+      <div
+        class="export-popup__notification export-popup__notification--error"
+        role="alert"
+        aria-live="assertive"
+      >
+        <ul v-if="formErrors.length">
+          <li v-for="(error, index) in formErrors" :key="index">
+            {{ error }}
+          </li>
         </ul>
       </div>
-      <div class="export-popup__notification export-popup__notification--loading" v-if="exporting">
-        <b>Uw export wordt gegenereerd.</b><div class="lds-dual-ring export-popup__notification-loader"></div>
+      <div
+        class="export-popup__notification export-popup__notification--loading"
+        role="status"
+        aria-live="polite"
+      >
+        <template v-if="exporting">
+          <p class="export-popup__notification-text">Uw export wordt gegenereerd.</p>
+          <div class="lds-dual-ring export-popup__notification-loader" />
+        </template>
       </div>
       <label class="export-popup__form-column-item" for="export-name">
-        Naam:<br><small class="help">De naam van het uitvoerbestand</small>
+        <span>Naam:</span>
+        <span class="help">De naam van het uitvoerbestand</span>
       </label>
-      <input type="text" name="name"
-        id="export-name" autocomplete="off" v-model="exportName"
-        class="export-popup__form-column-item export-popup__textfield" v-test="'name-input'">
+      <input
+        id="export-name"
+        class="export-popup__form-column-item export-popup__textfield"
+        name="name"
+        autocomplete="off"
+        v-model="exportName"
+        type="text"
+        v-test="'name-input'"
+        required
+      />
       <footer class="export-popup__footer">
         <button class="btn primary" @click.prevent="exportMap" v-test="'export-file-button'">Exporteer</button>
         <button class="btn secondary" type="reset" @click="$emit('close')">Annuleer</button>
@@ -44,20 +64,26 @@ export default {
   components: { PopUp },
   methods: {
     exportMap: function () {
-      if (!this.exportName) this.formErrors.push('Export naam is verplicht')
-      if (this.formErrors && this.formErrors.length === 0) { this.exporting = true }
+      if (!this.exportName && !this.formErrors.includes("Export naam is verplicht")) {
+        this.formErrors.push("Export naam is verplicht")
+      } else if (this.exportName) {
+        this.formErrors = []
+      }
 
-      const layers = this.mapLayers.map(
-        layer => {
-          // TODO: make this consistent
-          // this is actually the id of the variant
-          return layer.layer
-        }).join()
+      if (this.formErrors.length === 0 && !this.exporting) {
+        this.exporting = true
+        const layers = this.mapLayers.map(
+          layer => {
+            // TODO: make this consistent
+            // this is actually the id of the variant
+            return layer.layer
+          }).join()
 
       exportZip({ name: this.exportName, layers })
         .finally(() => {
           this.exporting = false
         })
+      }
     }
   }
 }
@@ -80,7 +106,8 @@ export default {
     padding: 0;
   }
   .export-popup__form-column-item {
-    display: block;
+    display: flex;
+    flex-direction: column;
     width: calc(50% - 1rem);
   }
   .export-popup .choice-cards {
@@ -116,6 +143,10 @@ export default {
     background: gray;
     padding: 10px;
     border-radius: 3px;
+    font-weight: bold;
+  }
+  .export-popup__notification:empty {
+    display: none;
   }
   .export-popup__notification--error {
     background:red;
@@ -125,6 +156,9 @@ export default {
     align-items: center;
     gap: 10px;
     background: #0b71ab;
+  }
+  .export-popup__notification-text {
+    margin: 0;
   }
   .export-popup__notification .export-popup__notification-loader:after {
     height: 1.5rem;
