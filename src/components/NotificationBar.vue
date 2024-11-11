@@ -5,7 +5,6 @@
       v-if="notification.show"
       :key="index"
       class="viewer__notification"
-      @click="notification.show = false"
     >
       <aside
         class="notification-bar"
@@ -17,7 +16,9 @@
           <p class="notification-bar__message" v-html="notification.message" />
           <button
             class="pop-up__close panel-close"
-            v-test="'notification-button'">
+            v-test="'notification-button'"
+            @click="notification.show = false"
+          >
             <span class="icon-close-big" aria-hidden="true"></span>
             <span class="sr-only">Sluiten</span>
           </button>
