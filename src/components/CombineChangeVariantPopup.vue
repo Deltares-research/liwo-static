@@ -27,8 +27,9 @@
 
             <label
               class="change-variant-popup__result-item"
-              :for="`variant-${variant.layer}`">
-              <span v-test="'variantName'" v-html="getWrappingTitle(variant)"></span>
+              :for="`variant-${variant.layer}`"
+            >
+              <span v-test="'variantName'">{{variant.metadata.title.replace(/_/g, '_&#8203;')}}</span>
 
               <dl class="change-variant-popup__result-item-props">
                 <div :key="name" v-for="{name, value} in getPropsForVariant(variant)">
@@ -143,11 +144,6 @@ export default {
             value: variant.properties[prop]
           }
         })
-    },
-
-    getWrappingTitle(variant) {
-      /* Add a zero width space after underscore to force a break */
-      return variant.metadata.title.replace(/_/g, '_&#8203;')
     },
   },
   computed: {
