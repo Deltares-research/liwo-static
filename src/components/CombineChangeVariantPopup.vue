@@ -136,7 +136,7 @@ export default {
     },
 
     getPropsForVariant (variant) {
-      return this.variantPropertiesToShow
+      const props = this.variantPropertiesToShow
         .filter(prop => variant.properties[prop] !== null && variant.properties[prop] !== undefined)
         .map(prop => {
           return {
@@ -144,6 +144,16 @@ export default {
             value: variant.properties[prop]
           }
         })
+
+      return [
+        ...(variant.properties?.["Scenario ID"]
+          ? [{
+              name: "Scenario ID",
+              value: variant.properties["Scenario ID"],
+            }]
+          : []),
+        ...props
+      ]
     },
   },
   computed: {
