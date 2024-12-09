@@ -1,17 +1,14 @@
 <template>
   <pop-up class="export-popup" title="Exporteer als zip" @close="$emit('close')">
-    <form class="export-popup__content export-popup__form-columns">
+    <form class="export-popup__content export-popup__form-columns" @submit.prevent="exportMap">
       <div
         class="export-popup__notification export-popup__notification--error"
         role="alert"
         aria-live="assertive"
       >
-        <ul v-if="formErrors.length">
-          <li v-for="(error, index) in formErrors" :key="index">
-            {{ error }}
-          </li>
-        </ul>
+        <p v-if="hasError" class="export-popup__notification-text">Export naam is verplicht</p>
       </div>
+
       <div
         class="export-popup__notification export-popup__notification--loading"
         role="status"
@@ -22,6 +19,7 @@
           <div class="lds-dual-ring export-popup__notification-loader" />
         </template>
       </div>
+
       <label class="export-popup__form-column-item" for="export-name">
         <span>Naam:</span>
         <span class="help">De naam van het uitvoerbestand</span>
@@ -37,7 +35,7 @@
         required
       />
       <footer class="export-popup__footer">
-        <button class="btn primary" @click.prevent="exportMap" v-test="'export-file-button'">Exporteer</button>
+        <button class="btn primary" type="submit" @click="validateForm" v-test="'export-file-button'">Exporteer</button>
         <button class="btn secondary" type="reset" @click="$emit('close')">Annuleer</button>
       </footer>
     </form>
@@ -56,21 +54,22 @@ export default {
   },
   data () {
     return {
-      formErrors: [],
+      hasError:false,
       exporting: false, // starts false and after form validates becomes true
       exportName: ''
     }
   },
   components: { PopUp },
   methods: {
-    exportMap: function () {
-      if (!this.exportName && !this.formErrors.includes("Export naam is verplicht")) {
-        this.formErrors.push("Export naam is verplicht")
+    validateForm () {
+      if (!this.exportName ) {
+        this.hasError = true
       } else if (this.exportName) {
-        this.formErrors = []
+        this.hasError = false
       }
-
-      if (this.formErrors.length === 0 && !this.exporting) {
+    },
+    exportMap () {
+      if (!this.hasError && !this.exporting) {
         this.exporting = true
         const layers = this.mapLayers.map(
           layer => {
@@ -150,7 +149,7 @@ export default {
     display: none;
   }
   .export-popup__notification--error {
-    background:red;
+    background: red;
   }
   .export-popup__notification--loading {
     display: flex;

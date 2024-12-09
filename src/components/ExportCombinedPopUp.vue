@@ -1,17 +1,14 @@
 <template>
   <pop-up class="export-combined-popup" title="Exporteer als zip" @close="$emit('close')">
-    <form class="export-combined-popup__content export-combined-popup__form-columns">
+    <form class="export-combined-popup__content export-combined-popup__form-columns" @submit.prevent="exportMap">
       <div
         class="export-combined-popup__notification export-combined-popup__notification--error"
         role="alert"
         aria-live="assertive"
       >
-        <ul v-if="formErrors.length">
-          <li v-for="(error, index) in formErrors" :key="index">
-            {{ error }}
-          </li>
-        </ul>
+        <p v-if="hasError" class="export-popup__notification-text">Schaal is verplicht</p>
       </div>
+
       <div
         class="export-combined-popup__notification export-combined-popup__notification--loading"
         role="status"
@@ -39,7 +36,7 @@
       <footer v-if="eeLayer" class="export-combined-popup__footer">
         <button
           class="btn primary"
-          @click.prevent="exportMap"
+          @click="validateForm"
           v-test="'export-combined-button'"
         >
           Exporteer
@@ -68,7 +65,7 @@ export default {
   },
   data () {
     return {
-      formErrors: [],
+      hasError: false,
       exportScale: 50,
       exporting: false
     }
@@ -89,14 +86,15 @@ export default {
     }
   },
   methods: {
-    async exportMap () {
-      if (!this.exportName && !this.formErrors.includes("Schaal is verplicht")) {
-        this.formErrors.push("Schaal is verplicht")
-      } else if (this.exportName) {
-        this.formErrors = []
+    validateForm () {
+      if (!this.exportScale) {
+        this.hasError = true
+      } else if (this.exportScale) {
+        this.hasError = false
       }
-
-      if (this.formErrors.length === 0 && !this.exporting) {
+    },
+    async exportMap () {
+      if (!this.hasError && !this.exporting) {
         this.exporting = true
         const eeLayer = this.eeLayer
         const body = {
@@ -223,7 +221,7 @@ export default {
     display: none;
   }
   .export-combined-popup__notification--error {
-    background:red;
+    background: red;
   }
   .export-combined-popup__notification--loading {
     display: flex;
