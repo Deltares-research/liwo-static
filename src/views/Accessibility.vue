@@ -20,7 +20,7 @@
       <p>
         De toegankelijkheidsverklaring voor Basisinformatie-overstromingen.nl (LIWO) is opgesteld op basis van onderzoek
         door een onafhankelijk toetsingsbureau.
-        De bevindingen hiervan zijn opgenomen in het meest recente <a href="https://iplo.nl/publish/pages/184976/check_8837_auto_rapport.pdf" rel="noopener noreferrer" target="_blank">onderzoeksrapport</a>.
+        De bevindingen hiervan zijn opgenomen in het meest recente <a href="https://iplo.nl/publish/pages/230566/wcag-2-1-aa-inspectie-basisinformatie-overstromingen-nl.pdf" rel="noopener noreferrer" target="_blank">onderzoeksrapport</a>.
       </p>
 
       <h2 data-class="section-head">Hoe werken wij aan toegankelijkheid?</h2>
