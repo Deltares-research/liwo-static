@@ -22,7 +22,12 @@
       <notification-bar :notifications="currentNotifications"/>
       <layer-panel>
         <template v-slot:title>
-          <button @click="showFilter = true" class="layer-control__button" v-test="'filter-toggle'">
+          <button
+            @click="showFilter = true"
+            class="layer-control__button"
+            v-test="'filter-toggle'"
+            data-tour-id="filter-toggle"
+          >
             <span class="sr-only">Filter doorbraaklocaties op kansklassen</span>
             <!-- icons are 32x32 but other icons don't fill up the space... -->
             <!-- TODO: use iconfont -->
@@ -71,6 +76,7 @@
             class="layer-panel__action"
             @click="showCombine = true"
             v-test="'combine-button'"
+            data-tour-id="combine-button"
           >
             Selectie combineren
           </button>
@@ -79,6 +85,7 @@
             class="layer-panel__action"
             @click="showExportCombine = true"
             v-test="'export-selection-button'"
+            data-tour-id="export-selection-button"
           >
             Selectie exporteren
           </button>
@@ -108,6 +115,7 @@
             class="layer-panel__action"
             @click="showImportCombine = true"
             v-test="'import-selection-button'"
+            data-tour-id="import-selection-button"
           >
             Selectie importeren
           </button>

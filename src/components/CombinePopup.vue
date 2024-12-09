@@ -7,7 +7,7 @@
     <fieldset>
       <fieldset class="control-group">
         <legend class="control-label">Kies het thema waarvoor u scenario's <span v-if="bandCounts">(n={{ featureCount }})</span> wilt combineren:</legend>
-        <div class="controls">
+        <div class="controls" data-tour-id="combine-controls">
           <label
             class="radio block"
             v-for="option in options"
@@ -34,14 +34,16 @@
             @click="$emit('close')"
             class="btn primary"
             v-test="'combine-trigger'"
-            >
+            data-tour-id="combine-controls-combine-button"
+          >
             Combineren
           </router-link>
           <button
             type="button"
             class="btn secondary"
             @click="$emit('close')"
-            >
+            data-tour-id="combine-controls-cancel-button"
+          >
             Annuleer
           </button>
         </div>
