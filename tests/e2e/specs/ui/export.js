@@ -54,6 +54,7 @@ describe('Maps export', () => {
     cy.readFile(path.join(downloadsFolder, `${fileName}.zip`))
       .should('exist')
 
-    cy.get(selector('close-button')).click()
+    cy.get(selector('close-button'))
+      .should('not.exist')
   })
 })
