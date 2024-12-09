@@ -1,6 +1,5 @@
 import { selector } from "./helpers";
 import { useLayersTour } from "./use-layers-tour";
-import { useScenariosTour } from "./use-scenarios-tour";
 import { useTour } from "./use-tour";
 
 export function useGeneralTour() {
@@ -11,33 +10,6 @@ export function useGeneralTour() {
         title: "Landelijk Informatiesysteem Water en Overstromingen",
         description:
           "Welkom op het Landelijk Informatiesysteem Water en Overstromingen. LIWO bevat kaartenlagen voor professionals die zich bezig houden met wateroverlast en overstromingen.",
-        showButtons: ['close'],
-        progressText: "",
-        onPopoverRender: (popover) => {
-          const firstButton = document.createElement("button");
-          const secondButton = document.createElement("button");
-          const thirdButton = document.createElement("button");
-          firstButton.innerText = "Start algemene tour";
-          secondButton.innerText = "Start kaartlagen tour";
-          thirdButton.innerText = "Start scenario's tour";
-          popover.footerButtons.appendChild(firstButton);
-          popover.footerButtons.appendChild(secondButton);
-          popover.footerButtons.appendChild(thirdButton);
-
-          firstButton.addEventListener("click", () => {
-            driverObj.moveNext();
-          });
-
-          secondButton.addEventListener("click", () => {
-            driverObj.destroy();
-            useLayersTour().start();
-          });
-
-          thirdButton.addEventListener("click", () => {
-            driverObj.destroy();
-            useScenariosTour().start();
-          });
-        },
       },
     },
     {

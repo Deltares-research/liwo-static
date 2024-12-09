@@ -56,7 +56,8 @@
         <li class="app-header__nav-link">
           <router-link
             :to="{ name: 'maps' }"
-            @click="useGeneralTour().start()"
+            @click="useStartTour().start()"
+            data-tour-id="start-tour-header"
           >
             Start tour
           </router-link>
@@ -75,7 +76,7 @@
 </template>
 
 <script>
-import { useGeneralTour } from '@/tour/use-general-tour'
+import { useStartTour } from '@/tour/use-start-tour'
 
 export default {
   props: {
@@ -85,7 +86,7 @@ export default {
     }
   },
   methods: {
-    useGeneralTour
+    useStartTour
   }
 }
 </script>
