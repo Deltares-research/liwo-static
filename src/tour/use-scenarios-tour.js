@@ -1,7 +1,6 @@
 import router from "../router";
 import { selector, waitUntilVisible } from "./helpers";
-import { useGeneralTour } from "./use-general-tour";
-import { useLayersTour } from "./use-layers-tour";
+import { useCombineTour } from "./use-combine-tour";
 import { useTour } from "./use-tour";
 
 export function useScenariosTour() {
@@ -14,33 +13,15 @@ export function useScenariosTour() {
           "Klik hier om individuele overstromingsscenario's te bekijken.",
         nextBtnText: "Open kaartlaag",
         onNextClick: () => {
-          router.push({
-            path: "/scenarios/6/13538",
-            query: {
-              center: "51.84797,4.65657",
-              zoom: "13",
-            },
-          });
-          waitUntilVisible(selector("layer-panel")).then(() => {
+          router.push("/scenarios/6/13538?center=51.84797,4.65657&zoom=13");
+          waitUntilVisible(".viewer__map-wrapper").then(() => {
             driverObj.moveNext();
-          });
-        },
-        onPopoverRender: (popover) => {
-          const firstButton = document.createElement("button");
-          firstButton.innerText = "Start kaartlagen tour";
-          popover.footerButtons.insertAdjacentElement(
-            "afterbegin",
-            firstButton
-          );
-          firstButton.addEventListener("click", () => {
-            driverObj.destroy();
-            useLayersTour().start();
           });
         },
       },
     },
     {
-      element: selector("layer-panel"),
+      element: ".viewer__map-wrapper",
       popover: {
         title: "Bekijken scenario's",
         description:
@@ -74,24 +55,7 @@ export function useScenariosTour() {
       popover: {
         title: "Bekijken scenario's",
         description:
-          "De algemene kaartlagen zijn (voor de overzichtelijkheid) ingeklapt. Klik hier om deze zichtbaar te maken.",
-        nextBtnText: "Maak kaartlagen zichtbaar",
-        onNextClick: (element) => {
-          element.click();
-          driverObj.moveNext();
-        },
-      },
-    },
-    {
-      element: selector("layer-panel-collapse"),
-      popover: {
-        title: "Bekijken scenario's",
-        description: "Klik hier om dit overzicht weer te verbergen.",
-        nextBtnText: "Verberg kaartlagen",
-        onNextClick: (element) => {
-          element.click();
-          driverObj.moveNext();
-        },
+          "De algemene kaartlagen zijn (voor de overzichtelijkheid) ingeklapt. Klik hier om deze zichtbaar te maken en om het overzicht weer te verbergen.",
       },
     },
     {
@@ -185,13 +149,13 @@ export function useScenariosTour() {
     {
       element: selector("kaarten-header"),
       popover: {
-        title: "Kaartlaag",
+        title: "Bekijken scenario's",
         description: "Keer terug naar het overzicht met alle LIWO kaarten.",
-        doneBtnText: "Ga terug naar algemene tour",
+        doneBtnText: "Start combineren scenario's tour",
         onNextClick: (element) => {
           element.click();
           driverObj.destroy();
-          useGeneralTour().start();
+          useCombineTour().start();
         },
         onPopoverRender: (popover) => {
           const firstButton = document.createElement("button");

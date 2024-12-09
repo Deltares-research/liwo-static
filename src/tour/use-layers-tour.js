@@ -1,5 +1,4 @@
 import { selector, waitUntilVisible } from "./helpers";
-import { useGeneralTour } from "./use-general-tour";
 import { useScenariosTour } from "./use-scenarios-tour";
 import { useTour } from "./use-tour";
 
@@ -12,18 +11,6 @@ export function useLayersTour() {
           title: "Kaartlagen",
           description:
             "Hier zijn alle samengestelde waterdiepte kaarten weergegeven. Dit zijn specifieke combinaties van de individuele overstromingsscenario's. Er wordt onderscheid gemaakt in type A t/m D.",
-          onPopoverRender: (popover) => {
-            const firstButton = document.createElement("button");
-            firstButton.innerText = "Start algemene tour";
-            popover.footerButtons.insertAdjacentElement(
-              "afterbegin",
-              firstButton
-            );
-            firstButton.addEventListener("click", () => {
-              driverObj.destroy();
-              useGeneralTour().start();
-            });
-          },
         },
       },
       {
@@ -98,6 +85,13 @@ export function useLayersTour() {
         },
       },
       {
+        element: ".leaflet-browser-print",
+        popover: {
+          title: "Kaartlaag",
+          description: "Klik hier om de getoonde kaartlaag af te drukken.",
+        },
+      },
+      {
         element: ".leaflet-control-zoom",
         popover: {
           title: "Kaartlaag",
@@ -116,32 +110,8 @@ export function useLayersTour() {
         element: ".leaflet-control-fill-window",
         popover: {
           title: "Kaartlaag",
-          description: "Klik hier om de kaart schermvullend weer te geven.",
-          nextBtnText: "Maak schermvullend",
-          onNextClick: (element) => {
-            element.click();
-            driverObj.moveNext();
-          },
-        },
-      },
-      {
-        element: ".leaflet-control-fill-window",
-        popover: {
-          title: "Kaartlaag",
           description:
-            "Klik hier om terug te keren van de schermvullende weergave.",
-          nextBtnText: "Sluit schermvullend",
-          onNextClick: (element) => {
-            element.click();
-            driverObj.moveNext();
-          },
-        },
-      },
-      {
-        element: ".leaflet-browser-print",
-        popover: {
-          title: "Kaartlaag",
-          description: "Klik hier om de getoonde kaartlaag af te drukken.",
+            "Met deze knop kun je de kaartlaag schermvullend weergeven en weer terug keren naar een niet schermvullende weergave.",
         },
       },
       {
