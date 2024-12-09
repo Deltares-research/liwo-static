@@ -263,6 +263,8 @@
 </script>
 
 <style lang="scss">
+  @use 'sass:color';
+
   .Cookie {
     position: fixed;
     overflow: hidden;
@@ -336,19 +338,19 @@
           font-size: 1em;
 
           &:hover {
-            background: darken($buttonBackgroundColor, 10%);
+            background: color.adjust($buttonBackgroundColor, $lightness: -10%);
           }
       }
       .Cookie__button--decline {
           background: transparent;
           padding: 0.625em 3.125em;
-          color: darken($backgroundColor, 50%);
+          color: color.adjust($backgroundColor, $lightness: -50%);
           border-radius: $buttonRadius;
           border: 0;
           font-size: 1em;
 
           &:hover {
-            background: darken($backgroundColor, 15%);
+            background: color.adjust($backgroundColor, $lightness: -15%);
           }
       }
     }
