@@ -19,7 +19,7 @@
     "dom-to-image": "^2.6.0",
     "fast-equals": "^5.0.1",
     "file-saver": "^2.0.5",
-    "focus-trap": "^7.5.4",
+    "focus-trap": "^7.6.2",
     "leaflet": "^1.9.4",
     "leaflet-control-geocoder": "^2.4.0",
     "leaflet-easyprint": "^2.1.9",
