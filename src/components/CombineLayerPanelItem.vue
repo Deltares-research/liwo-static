@@ -162,6 +162,12 @@ export default {
           key: 'Variant',
           value: variant.metadata.title
         },
+        ...(variant.properties?.["Scenario ID"]
+          ? [{
+              key: "Scenario ID",
+              value: variant.properties["Scenario ID"],
+            }]
+          : []),
         ...props
       ]
     }

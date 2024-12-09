@@ -27,18 +27,8 @@ describe('Notifications', () => {
       .should('exist')
   })
 
-  it('Can be closed by clicking on them', () => {
-
-    cy.get(selector('notification-button'))
-      .should('exist')
-      .click()
-
-    cy.get(selector('notification-button'))
-      .should('not.exist')
-  })
-
   it('Can be closed using the close button', () => {
-    cy.get(selector('notification'))
+    cy.get(selector('notification-button'))
       .should('exist')
       .click()
 

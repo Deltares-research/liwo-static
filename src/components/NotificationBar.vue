@@ -9,7 +9,6 @@
       v-if="notification.show"
       :key="index"
       class="viewer__notification"
-      @click="notification.show = false"
     >
       <aside
         class="notification-bar"
@@ -18,10 +17,14 @@
       >
         <div class="container">
           <img class="notification-bar__icon" :src="`${publicPath}icons/baseline-${notification.type}-24px.svg`" alt="" />
-          <p class="notification-bar__message">{{ notification.message }}</p>
+          <p class="notification-bar__message">
+            {{ notification.message }}
+          </p>
           <button
             class="pop-up__close panel-close"
-            v-test="'notification-button'">
+            v-test="'notification-button'"
+            @click="notification.show = false"
+          >
             <span class="icon-close-big" aria-hidden="true"></span>
             <span class="sr-only">Sluiten</span>
           </button>

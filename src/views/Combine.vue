@@ -39,10 +39,8 @@
             v-if="layerSet"
             :layers="layerSet.layers"
             @update:layers="updateLayersInLayerSet(layerSet, $event)"
-            @select:layer="selectLayer"
             @select:variant="selectVariant({ ...$event, layerSet })"
             v-model:collapsed="layerSetCollapsed"
-            :selectedLayer="selectedLayer"
             :key="layerSet.id"
           >
           </combine-layer-panel-item>
@@ -56,10 +54,8 @@
             v-for="(layerSet_, index) in scenarioLayerSets"
             :layers="layerSet_.layers"
             @update:layers="updateLayersInScenarioLayerSets(index, $event)"
-            @select:layer="selectLayer"
             @select:variant="selectVariant({...$event, layerSet: layerSet_, scenarioLayerSetIndex: index})"
             :title="layerSet_.title"
-            :selectedLayer="selectedLayer"
             :key="(layerSet_.feature && layerSet_.feature.id) || layerSet_.id"
           >
             <!-- add scenario layer control options -->
@@ -179,12 +175,11 @@ import FilterPopup from '@/components/FilterPopup.vue'
 import { flattenLayerSet, normalizeLayerSet, cleanLayerSet, selectVariantsInLayerSet } from '@/lib/layer-parser'
 import buildLayerSetNotifications from '@/lib/build-layerset-notifications'
 import { loadBreach, getScenarioInfo, computeCombinedScenario, getFeatureIdsByScenarioIds } from '@/lib/load-breach'
-import { extractUnit } from '@/lib/load-layersets'
 
 import { getLayerType, BREACH_LAYERS_EN } from '@/lib/liwo-identifiers'
 import { iconsByLayerType, redIcon, defaultIcon } from '@/lib/leaflet-utils/markers'
 import { EPSG_3857 } from '@/lib/leaflet-utils/projections'
-import { showLayerInfoPopup, showCombinedLayerInfoPopup } from '@/lib/leaflet-utils/popup'
+import { showLayersInfoPopup, showCombinedLayersInfoPopup } from '@/lib/leaflet-utils/popup'
 
 export default {
   name: 'CombinePage',
@@ -233,9 +228,6 @@ export default {
       scenarioInfo: {},
       // the main layerSet collapse
       layerSetCollapsed: false,
-
-      // allows to select a layer (for the unit panel)
-      selectedLayer: null,
 
       // features loaded by Url, constructed during mount
       featureIds: [],
@@ -368,7 +360,7 @@ export default {
               const extraInfo = this.scenarioInfo.features.find((f) => f.properties.breachlocationid === feature.properties.id)
               // english band name
               const bandNeeded = BREACH_LAYERS_EN[this.band]
-              const availableBands = extraInfo.properties['system:band_names']
+              const availableBands = extraInfo.properties.band_names
               const bandMissing = availableBands && !availableBands.includes(bandNeeded)
               if (bandMissing) {
                 feature.properties.missing = true
@@ -432,18 +424,6 @@ export default {
 
       return selectedLayers
     },
-    selectedVariantId() {
-      const selectedVariant = this.selectedLayer.properties.selectedVariant
-      const variant =
-        this.selectedLayer.variants.find(
-          (variant) => variant.layer === selectedVariant
-        ) || this.selectedLayer.variants[0]
-      const id = variant.layer
-      return id
-    },
-    controlLayerSelected () {
-      return this.selectedLayer && this.selectedLayer.iscontrollayer
-    },
     controlLayers () {
       if (!this.layers) {
         return []
@@ -478,9 +458,6 @@ export default {
         },
         query: this.$route.query
       })
-    },
-    selectLayer (layer) {
-      this.selectedLayer = layer
     },
     selectVariant ({ layer, layerSet, scenarioLayerSetIndex }) {
       _.each(layerSet.layers, (layerSetLayer) => {
@@ -735,24 +712,18 @@ export default {
       this.mapObject = mapObject
       // TODO: implement in GEE
       this.mapObject.on('click', (event) => {
-        let unit = '[-]'
-        if (_.has(this.selectedLayer, 'legend.title')) {
-          unit = extractUnit(this.selectedLayer.legend.title)
-        }
-        const activeLayer = _.get(this.selectedLayer, 'legend.layer')
-        if (_.isNil(activeLayer)) {
-          showCombinedLayerInfoPopup({
+        if (this.scenarioMode === 'compute') {
+          showCombinedLayersInfoPopup({
             map: mapObject,
-            layer: this.selectedLayer,
-            coordinates: event.latlng
+            selectedLayers: this.selectedLayers,
+            latlng: event.latlng
           })
           return
         }
-        showLayerInfoPopup({
+
+        showLayersInfoPopup({
           map: mapObject,
-          layerId: this.selectedVariantId,
-          unit: unit,
-          selectedLayer: this.selectedLayer,
+          selectedLayers: this.selectedLayers,
           position: event.containerPoint,
           latlng: event.latlng
         })
