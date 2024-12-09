@@ -62,11 +62,7 @@ export default {
   components: { PopUp },
   methods: {
     validateForm () {
-      if (!this.exportName ) {
-        this.hasError = true
-      } else if (this.exportName) {
-        this.hasError = false
-      }
+      this.hasError = !this.exportName
     },
     exportMap () {
       if (!this.hasError && !this.exporting) {

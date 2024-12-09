@@ -20,7 +20,7 @@
           <div class="lds-dual-ring export-combined-popup__notification-loader" />
         </template>
       </div>
-      <label class="export-combined-popup__form-column-item" for="export-name">
+      <label class="export-combined-popup__form-column-item" for="export-scale">
         <span>Schaal:</span>
         <span class="help">Schaal in meters</span>
       </label>
@@ -87,11 +87,7 @@ export default {
   },
   methods: {
     validateForm () {
-      if (!this.exportScale) {
-        this.hasError = true
-      } else if (this.exportScale) {
-        this.hasError = false
-      }
+      this.hasError = !this.exportScale
     },
     async exportMap () {
       if (!this.hasError && !this.exporting) {
