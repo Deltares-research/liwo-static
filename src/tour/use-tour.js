@@ -1,11 +1,15 @@
 import { driver } from "driver.js";
 import { waitUntilVisible } from "./helpers";
 import "driver.js/dist/driver.css";
-import '../styles/tour.css';
+import "../styles/tour.css";
 
 export let driverInstance;
 
 export function useTour(steps) {
+  if (driverInstance?.isActive()) {
+    driverInstance.destroy();
+  }
+
   let autoStart = false;
 
   driverInstance = driver({
