@@ -9,6 +9,7 @@ const topMenuPages = [
 const mainMenuPages = [
   ['Kaarten', '/#/maps'],
   ['Over LIWO', '/#/about'],
+  ['Start tour', '/#/maps']
 ]
 
 describe('Nav', () => {

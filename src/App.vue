@@ -1,5 +1,5 @@
 <template>
-<div class="site-outer-wrapper">
+<div class="site-outer-wrapper" data-tour-id="site">
   <vue-skip-to class="skip-link" to="#content" label="Direct naar hoofdinhoud" />
   <vue-skip-to class="skip-link" to="#nav" label="Direct naar hoofdnavigatie" />
 
