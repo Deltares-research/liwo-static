@@ -1,4 +1,4 @@
-import { selector } from "./helpers";
+import { createButton, selector } from "./helpers";
 import { useLayersTour } from "./use-layers-tour";
 import { useTour } from "./use-tour";
 
@@ -42,14 +42,14 @@ export function useGeneralTour() {
         title: "Algemeen",
         description:
           "Hier leest u meer over de achtergrond van LIWO en het gebruik van informatie uit LIWO.",
+        doneBtnText: "Start kaartlagen tour",
+        onNextClick: () => {
+          driverObj.destroy();
+          useLayersTour().start();
+        },
         onPopoverRender: (popover) => {
-          const firstButton = document.createElement("button");
-          firstButton.innerText = "Start kaartlagen tour";
-          popover.footerButtons.appendChild(firstButton);
-
-          firstButton.addEventListener("click", () => {
+          createButton(popover.footerButtons, "Sluit tour", () => {
             driverObj.destroy();
-            useLayersTour().start();
           });
         },
       },

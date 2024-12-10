@@ -1,5 +1,5 @@
 import router from "../router";
-import { selector, waitUntilVisible } from "./helpers";
+import { createButton, selector, waitUntilVisible } from "./helpers";
 import { useExpertTour } from "./use-expert-tour";
 import { useTour } from "./use-tour";
 
@@ -14,14 +14,14 @@ export function useCombineTour() {
         nextBtnText: "Open kaartlaag",
         onNextClick: () => {
           router.push("/combine/7/19435,19431?center=52.40661,5.40390&zoom=10");
-          waitUntilVisible(".viewer__map-wrapper").then(() => {
+          waitUntilVisible(selector("liwo-map-combine")).then(() => {
             driverObj.moveNext();
           });
         },
       },
     },
     {
-      element: ".viewer__map-wrapper",
+      element: selector("liwo-map-combine"),
       popover: {
         title: "Scenario's combineren",
         description:
@@ -57,12 +57,14 @@ export function useCombineTour() {
         title: "Scenario's combineren",
         description:
           "Kies welke type kaartlaag gecombineerd moet worden (standaard is dit de waterdiepte). Tussen haakjes staan een aantal weergegeven die aangeeft bij hoeveel van de geselecteerde scenario's de gekozen kaartlaag beschikbaar is.",
-          onNextClick: () => {
-            waitUntilVisible(selector("combine-controls-combine-button")).then(() => {
+        onNextClick: () => {
+          waitUntilVisible(selector("combine-controls-combine-button")).then(
+            () => {
               driverObj.moveNext();
-            });
-          },
+            }
+          );
         },
+      },
     },
     {
       element: selector("combine-controls-combine-button"),
@@ -162,30 +164,14 @@ export function useCombineTour() {
       popover: {
         title: "Scenario's combineren",
         description: "Sluit het scherm met deze knop.",
-        nextBtnText: "Sluit importeren",
-        onNextClick: (element) => {
-          element.click();
-          driverObj.moveNext();
-        },
-      },
-    },
-    {
-      element: selector("kaarten-header"),
-      popover: {
-        title: "Scenario's combineren",
         doneBtnText: "Start expert tour",
-        onNextClick: () => {
+        onNextClick: (element) => {
           driverObj.destroy();
+          element.click();
           useExpertTour().start();
         },
         onPopoverRender: (popover) => {
-          const firstButton = document.createElement("button");
-          firstButton.innerText = "Sluit";
-          popover.footerButtons.insertAdjacentElement(
-            "afterbegin",
-            firstButton
-          );
-          firstButton.addEventListener("click", () => {
+          createButton(popover.footerButtons, "Sluit tour", () => {
             driverObj.destroy();
           });
         },

@@ -32,3 +32,11 @@ function checkIfVisible(element) {
     return Promise.reject();
   }
 }
+
+export function createButton(putBeforeElement, text, onClick) {
+  const button = document.createElement("button");
+  button.innerText = text;
+  putBeforeElement.insertAdjacentElement("afterbegin", button);
+  button.addEventListener("click", onClick);
+  return button;
+}

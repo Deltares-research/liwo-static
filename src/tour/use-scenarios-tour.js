@@ -1,5 +1,5 @@
 import router from "../router";
-import { selector, waitUntilVisible } from "./helpers";
+import { createButton, selector, waitUntilVisible } from "./helpers";
 import { useCombineTour } from "./use-combine-tour";
 import { useTour } from "./use-tour";
 
@@ -14,14 +14,14 @@ export function useScenariosTour() {
         nextBtnText: "Open kaartlaag",
         onNextClick: () => {
           router.push("/scenarios/6/13538?center=51.84797,4.65657&zoom=13");
-          waitUntilVisible(".viewer__map-wrapper").then(() => {
+          waitUntilVisible(selector("liwo-map-combine")).then(() => {
             driverObj.moveNext();
           });
         },
       },
     },
     {
-      element: ".viewer__map-wrapper",
+      element: selector("liwo-map-combine"),
       popover: {
         title: "Bekijken scenario's",
         description:
@@ -158,13 +158,7 @@ export function useScenariosTour() {
           useCombineTour().start();
         },
         onPopoverRender: (popover) => {
-          const firstButton = document.createElement("button");
-          firstButton.innerText = "Sluit";
-          popover.footerButtons.insertAdjacentElement(
-            "afterbegin",
-            firstButton
-          );
-          firstButton.addEventListener("click", () => {
+          createButton(popover.footerButtons, "Sluit tour", () => {
             driverObj.destroy();
           });
         },

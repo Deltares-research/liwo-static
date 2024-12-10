@@ -1,4 +1,4 @@
-import { selector, waitUntilVisible } from "./helpers";
+import { createButton, selector, waitUntilVisible } from "./helpers";
 import { useScenariosTour } from "./use-scenarios-tour";
 import { useTour } from "./use-tour";
 
@@ -218,7 +218,7 @@ export function useLayersTour() {
         },
       },
       {
-        element: ".viewer__map-wrapper",
+        element: selector("liwo-map-viewer"),
         popover: {
           title: "Kaartlaag",
           description:
@@ -245,13 +245,7 @@ export function useLayersTour() {
             useScenariosTour().start();
           },
           onPopoverRender: (popover) => {
-            const firstButton = document.createElement("button");
-            firstButton.innerText = "Sluit";
-            popover.footerButtons.insertAdjacentElement(
-              "afterbegin",
-              firstButton
-            );
-            firstButton.addEventListener("click", () => {
+            createButton(popover.footerButtons, "Sluit tour", () => {
               driverObj.destroy();
             });
           },

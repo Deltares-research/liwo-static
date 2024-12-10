@@ -1,6 +1,6 @@
 <template>
   <div class="viewer" :class="{'viewer--has-notificaton': currentNotifications.length}">
-    <div class="viewer__map-wrapper">
+    <div class="viewer__map-wrapper" data-tour-id="liwo-map-combine">
       <liwo-map
         :projection="projection"
         :clusterMarkers="true"

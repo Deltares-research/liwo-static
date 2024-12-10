@@ -47,9 +47,10 @@ export function useExpertTour() {
       },
     },
     {
-      element: selector("site"),
+      element: selector("liwo-map-combine"),
       popover: {
         title: "Expert",
+        doneBtnText: "Sluit tour",
         description:
           "Kopieer het gehele LIWO URL adres, om kaartbeelden met andere gebruikers uit te wissselen. Wanneer andere gebruikers exact dezelfde URL gebruiken, zien zijn dezelfde kaart (bereik en zoomlevel).",
       },

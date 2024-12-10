@@ -1,5 +1,5 @@
 import router from "../router";
-import { selector, waitUntilVisible } from "./helpers";
+import { createButton, selector, waitUntilVisible } from "./helpers";
 import { useLayersTour } from "./use-layers-tour";
 import { useScenariosTour } from "./use-scenarios-tour";
 import { useCombineTour } from "./use-combine-tour";
@@ -16,43 +16,7 @@ export function useStartTour() {
         showButtons: ["close"],
         progressText: "",
         onPopoverRender: (popover) => {
-          const firstButton = document.createElement("button");
-          const secondButton = document.createElement("button");
-          const thirdButton = document.createElement("button");
-          const fourthButton = document.createElement("button");
-          const fifthButton = document.createElement("button");
-          firstButton.innerText = "Start algemene tour";
-          secondButton.innerText = "Start kaartlagen tour";
-          thirdButton.innerText = "Start scenario's tour";
-          fourthButton.innerText = "Start combineren scenario's tour";
-          fifthButton.innerText = "Start expert tour";
-          popover.footerButtons.appendChild(firstButton);
-          popover.footerButtons.appendChild(secondButton);
-          popover.footerButtons.appendChild(thirdButton);
-          popover.footerButtons.appendChild(fourthButton);
-          popover.footerButtons.appendChild(fifthButton);
-
-          firstButton.addEventListener("click", () => {
-            driverObj.moveNext();
-            useGeneralTour().start();
-          });
-
-          secondButton.addEventListener("click", () => {
-            driverObj.destroy();
-            useLayersTour().start();
-          });
-
-          thirdButton.addEventListener("click", () => {
-            driverObj.destroy();
-            useScenariosTour().start();
-          });
-
-          fourthButton.addEventListener("click", () => {
-            driverObj.destroy();
-            useCombineTour().start();
-          });
-
-          fifthButton.addEventListener("click", () => {
+          createButton(popover.footerButtons, "Start expert tour", () => {
             router.push(
               "/combine/7/19435,19431?center=52.40661,5.40390&zoom=10"
             );
@@ -61,6 +25,26 @@ export function useStartTour() {
               driverObj.destroy();
               useExpertTour().start();
             });
+          });
+          createButton(
+            popover.footerButtons,
+            "Start combineren scenario's tour",
+            () => {
+              driverObj.destroy();
+              useCombineTour().start();
+            }
+          );
+          createButton(popover.footerButtons, "Start scenario's tour", () => {
+            driverObj.destroy();
+            useScenariosTour().start();
+          });
+          createButton(popover.footerButtons, "Start kaartlagen tour", () => {
+            driverObj.destroy();
+            useLayersTour().start();
+          });
+          createButton(popover.footerButtons, "Start algemene tour", () => {
+            driverObj.moveNext();
+            useGeneralTour().start();
           });
         },
       },
