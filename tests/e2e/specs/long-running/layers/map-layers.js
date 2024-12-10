@@ -109,7 +109,7 @@ describe('Layer functionalities', () => {
             })
 
           cy.get(selector('close-button'))
-            .click({ force: true })
+            .should('not.exist')
         }
       })
     })

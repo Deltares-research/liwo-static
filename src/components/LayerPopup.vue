@@ -13,7 +13,7 @@
         :key="key"
       >
         <th>{{titleCase(key)}}</th>
-        <td v-html="value"></td>
+        <td v-html="sanitizedValue(value)"></td>
       </tr>
     </table>
   </pop-up>
@@ -21,6 +21,7 @@
 
 <script>
 import PopUp from '@/components/PopUp.vue'
+import sanitizeValue from '@/lib/sanitize-value'
 
 export default {
   props: {
@@ -32,6 +33,9 @@ export default {
     titleCase (string) {
       const s = string.replace(/_/g, ' ').trim()
       return `${s[0].toUpperCase()}${s.substring(1)}`
+    },
+    sanitizedValue (value) {
+      return sanitizeValue(value)
     }
   },
   computed: {
