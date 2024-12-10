@@ -41,26 +41,20 @@
           <router-link
             :to="{ name: 'maps' }"
             data-tour-id="kaarten-header"
-          >
-            Kaarten
-          </router-link>
+            >Kaarten</router-link>
         </li>
         <li class="app-header__nav-link">
           <router-link
             :to="{ name: 'about' }"
             data-tour-id="over-liwo-header"
-          >
-            Over LIWO
-          </router-link>
+          >Over LIWO</router-link>
         </li>
         <li class="app-header__nav-link">
           <router-link
             :to="{ name: 'maps' }"
             @click="useStartTour().start()"
             data-tour-id="start-tour-header"
-          >
-            Start tour
-          </router-link>
+          >Start tour</router-link>
         </li>
       </ul>
     </nav>
