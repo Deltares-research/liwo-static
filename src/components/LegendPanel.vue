@@ -134,9 +134,10 @@ export default {
           const styleName = layer.legend.style;
           const layerId = layer.legend.layer;
           const url = this.services && this.services.LEGEND_URL;
-          legendImageSrc = url
-            ? `${url}/${namespace}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=${layerId}&STYLE=${styleName}&HEIGHT=16&WIDTH=16&LEGEND_OPTIONS=fontAntiAliasing:true;fontSize:14;mx:0;dx:10;fontName:Verdana;`
-            : '';
+          legendImageSrc =
+            url && namespace && styleName && layerId
+              ? `${url}/${namespace}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=${layerId}&STYLE=${styleName}&HEIGHT=16&WIDTH=16&LEGEND_OPTIONS=fontAntiAliasing:true;fontSize:14;mx:0;dx:10;fontName:Verdana;`
+              : '';
         }
 
         return {
