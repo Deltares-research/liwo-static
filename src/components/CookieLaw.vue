@@ -164,7 +164,7 @@
             window.localStorage.setItem(test, test)
             window.localStorage.removeItem(test)
           }
-        } catch (e) {
+        } catch {
           console.info('Local storage is not supported, falling back to cookie use')
           this.supportsLocalStorage = false
         }

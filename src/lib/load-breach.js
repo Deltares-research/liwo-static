@@ -69,7 +69,7 @@ export async function computeCombinedScenario (scenarioIds, band, layerSetId) {
   bands = _.filter(bands)
 
   // convert bands to layerlike objects
-  const layers = _.map(bands, (band) => {
+  const layers = bands.map((band) => {
     // if it looks like a layer, then it is a layer
     // lookup the translation
     const bandNl = _.get(BREACH_LAYERS_EN, band.band)
@@ -78,7 +78,8 @@ export async function computeCombinedScenario (scenarioIds, band, layerSetId) {
     band.metadata = _.clone(band)
     band.map = {
       type: 'tile',
-      url: band.url
+      url: band.url,
+      namespace: 'LIWO_MEGO',
     }
     const layer = {
       id: band.mapid,
@@ -86,7 +87,6 @@ export async function computeCombinedScenario (scenarioIds, band, layerSetId) {
       title: title,
       legend: {
         title: 'Gecombineerd Scenario [-]',
-        namespace: 'LIWO_MEGO'
       }
     }
     return layer
