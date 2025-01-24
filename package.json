@@ -17,7 +17,7 @@
     "@semantic-release/git": "^10.0.1",
     "@vue-a11y/skip-to": "^3.0.3",
     "dom-to-image": "^2.6.0",
-    "fast-equals": "^5.0.1",
+    "fast-equals": "^5.2.2",
     "file-saver": "^2.0.5",
     "focus-trap": "^7.6.2",
     "leaflet": "^1.9.4",
