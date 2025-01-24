@@ -48,7 +48,7 @@
     "eslint-plugin-vue": "^9.32.0",
     "happy-dom": "^15.11.7",
     "imports-loader": "^5.0.0",
-    "jsdom": "^25.0.1",
+    "jsdom": "^26.0.0",
     "lint-staged": "^15.2.10",
     "mocha": "^11.0.1",
     "mochawesome": "^7.1.3",
