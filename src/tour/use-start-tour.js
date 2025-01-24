@@ -12,42 +12,81 @@ export function useStartTour() {
     {
       element: selector("start-tour-header"),
       popover: {
-        title: "Tour het Landelijk Informatiesysteem Water en Overstromingen",
+        title: "Landelijk Informatiesysteem Water en Overstromingen (LIWO)",
         showButtons: ["close"],
         progressText: "",
         onPopoverRender: (popover) => {
-          createButton(popover.footerButtons, "Start expert tour", () => {
-            router.push(
-              "/combine/7/19435,19431?center=52.40661,5.40390&zoom=10"
-            );
+          const container = document.createElement("div");
+          container.classList.add("driver-popover-buttons");
+          popover.footerButtons.insertAdjacentElement("afterbegin", container);
 
-            waitUntilVisible(selector("layer-panel")).then(() => {
+          const generalTour = createTourSummary(
+            "Krijg een algemene impressie van de website: ",
+            "Start algemene tour",
+            () => {
+              driverObj.moveNext();
+              useGeneralTour().start();
+            }
+          );
+
+          const layersTour = createTourSummary(
+            "Bekijk hoe je kaartlagen kan gebruiken: ",
+            "Start kaartlagen tour",
+            () => {
               driverObj.destroy();
-              useExpertTour().start();
-            });
-          });
-          createButton(
-            popover.footerButtons,
-            "Start combineren scenario's tour",
+              useLayersTour().start();
+            }
+          );
+
+          const scenariosTour = createTourSummary(
+            "Bekijk hoe je verschillende scenario's kan bekijken: ",
+            "Start scenario's tour",
+            () => {
+              driverObj.destroy();
+              useScenariosTour().start();
+            }
+          );
+
+          const combineTour = createTourSummary(
+            "Bekijk hoe je scenario's kan combineren: ",
+            "Start combineren tour",
             () => {
               driverObj.destroy();
               useCombineTour().start();
             }
           );
-          createButton(popover.footerButtons, "Start scenario's tour", () => {
-            driverObj.destroy();
-            useScenariosTour().start();
-          });
-          createButton(popover.footerButtons, "Start kaartlagen tour", () => {
-            driverObj.destroy();
-            useLayersTour().start();
-          });
-          createButton(popover.footerButtons, "Start algemene tour", () => {
-            driverObj.moveNext();
-            useGeneralTour().start();
-          });
+
+          const expertTour = createTourSummary(
+            "Bekijk hoe je nog meer uit LIWO kan halen: ",
+            "Start expert tour",
+            () => {
+              router.push(
+                "/combine/7/19435,19431?center=52.40661,5.40390&zoom=10"
+              );
+
+              waitUntilVisible(selector("layer-panel")).then(() => {
+                driverObj.destroy();
+                useExpertTour().start();
+              });
+            }
+          );
+
+          const tours = [expertTour, combineTour, scenariosTour, layersTour, generalTour];
+          tours.forEach(tour => container.insertAdjacentElement("afterbegin", tour));
         },
       },
     },
   ]);
+}
+
+function createTourSummary(text, buttonText, buttonCallback) {
+  const buttonContainer = document.createElement("div");
+  buttonContainer.classList.add("driver-popover-buttons-container");
+  createButton(buttonContainer, buttonText, buttonCallback);
+  const description = document.createElement("span");
+  description.classList.add("driver-popover-description");
+  description.innerText = text;
+  buttonContainer.insertAdjacentElement("afterbegin", description);
+
+  return buttonContainer;
 }

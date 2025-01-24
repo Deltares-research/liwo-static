@@ -19,9 +19,21 @@
       </p>
       <h2 data-class="section-head">Tips voor sitebezoek</h2>
       <p>
-        Voor gedetailleerde informatie over het gebruik van deze website verwijzen
-        we u naar de gebruikershandleiding. De handleiding vindt u op de
-        <a href="https://iplo.nl/thema/water/applicaties-modellen/berichtgeving-crisismanagement/liwo/" target="_blank" rel="nofollow noopener">website Informatiepunt Leefomgeving (iplo.nl)</a>.
+        Voor meer achtergrondinformatie en het laatste nieuws over LIWO kijkt u
+        op de website
+        <a
+          href="https://iplo.nl/thema/water/applicaties-modellen/berichtgeving-crisismanagement/liwo/"
+          target="_blank"
+          rel="nofollow noopener"
+        >
+          Informatiepunt Leefomgeving (iplo.nl)</a
+        >. Gebruik de
+        <router-link
+          :to="{ name: 'maps' }"
+          @click="useStartTour().start()"
+          >interactieve tour</router-link
+        >
+        voor een uitleg over het gebruik van LIWO.
       </p>
       <h2 data-class="section-head">Auteursrecht</h2>
       <p>
@@ -56,6 +68,7 @@
 
 <script>
 import mapConfig from '../map.config'
+import { useStartTour } from '@/tour/use-start-tour'
 
 export default {
   name: 'AboutPage',
@@ -67,6 +80,9 @@ export default {
   async mounted () {
     const services = await mapConfig.getServices()
     this.version = services.VERSION
+  },
+  methods: {
+    useStartTour
   }
 }
 
