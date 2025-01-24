@@ -11,4 +11,17 @@
   gap: 5px;
 }
 
+.driver-popover-buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 5px;
+}
 
+.driver-popover-buttons-container {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  gap: 5px;
+  margin-block-end: 15px;
+}
