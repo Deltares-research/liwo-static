@@ -132,7 +132,7 @@ function pointToLayer (_feature, latlng, options) {
 function clusterIconCreateFunction (layer) {
   return function (cluster) {
     const childCount = cluster.getChildCount()
-    const opacity = layer.layerObj?.properties?.opacity || 1
+    const opacity = layer.layerObj?.properties?.opacity ?? 1
     const type = layer.layer
     const icon = L.divIcon({
       html: `<div class="cluster-icon cluster-icon__${type}" style="opacity: ${opacity};"><span>${childCount}</span></div>`,
@@ -161,7 +161,7 @@ function createSelectedGeojson (layer, callbacks) {
 
 function createClusterGeoJson (layer, callbacks) {
   // create the geojson layer used as 0 level for the clusters
-  const opacity = layer.layerObj?.properties?.opacity || 1
+  const opacity = layer.layerObj?.properties?.opacity ?? 1
   const markerOptions = {
     opacity
   }
@@ -217,7 +217,7 @@ function onEachFeature (feature, marker, { onClick, onMarkerHover }) {
 function getLayerOptions(layer) {
   return {
     // fully visible by default
-    opacity: layer.layerObj?.properties?.opacity || 1,
+    opacity: layer.layerObj?.properties?.opacity ?? 1,
     layers: layer.layer,
     breachBandId: layer.layerObj?.breachBandId,
   }
