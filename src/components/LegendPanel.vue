@@ -4,6 +4,7 @@
       'legend-panel': true,
       'legend-panel--active': legendIsShown,
     }"
+    v-click-outside="hideLegend"
   >
     <button
       class="legend-panel__title"
@@ -53,11 +54,6 @@
       </figure>
     </template>
   </aside>
-  <div
-    v-if="legendIsShown"
-    class="legend-panel__overlay"
-    @click="hideLegend"
-  ></div>
 </template>
 
 <script>
@@ -228,13 +224,5 @@ export default {
 
 .legend-panel--active .legend-panel__collapse-icon {
   transform: rotate(180deg);
-}
-
-.legend-panel__overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
 }
 </style>
