@@ -4,19 +4,29 @@
       <div class="contact">
         <p>
           Heeft u inhoudelijke of functionele vragen over LIWO: dan kunt u
-          hiervoor contact opnemen met de Helpdesk Water, telefonisch bereikbaar
-          op telefoonnummer 088-7970790 en per
+          hiervoor gebruik maken van het
           <a
             href="https://iplo.nl/contact/vragenformulier/"
             target="_blank"
             rel="noreferrer noopener"
             >contactformulier</a
+          >
+          op
+          <a
+            href="https://iplo.nl/thema/water/applicaties-modellen/berichtgeving-crisismanagement/liwo/"
+            target="_blank"
+            rel="noreferrer noopener"
+            >Informatiepunt Leefomgeving (iplo.nl)</a
           >.
         </p>
         <p>
           Is er sprake van een technische storing? Bel dan de landelijke
-          informatielijn van Rijkswaterstaat (0800-8002). Meer
-          achtergrondinformatie over LIWO vindt u op de website
+          informatielijn van Rijkswaterstaat (<a href="tel:0800-8002"
+            >0800-8002</a
+          >).
+        </p>
+        <p>
+          Aanvullende achtergrondinformatie over LIWO vindt u ook op de website
           <a
             href="https://iplo.nl/thema/water/applicaties-modellen/berichtgeving-crisismanagement/liwo/"
             target="_blank"
@@ -31,8 +41,8 @@
 
 <script>
 export default {
-  name: 'ContactPage'
-}
+  name: "ContactPage",
+};
 </script>
 
 <style>
