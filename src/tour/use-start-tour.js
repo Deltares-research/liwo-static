@@ -20,7 +20,7 @@ export function useStartTour() {
           container.classList.add("driver-popover-buttons");
           popover.footerButtons.insertAdjacentElement("afterbegin", container);
 
-          const generalTour = createButtonWithText(
+          const generalTour = createTourSummary(
             "Krijg een algemene impressie van de website: ",
             "Start algemene tour",
             () => {
@@ -29,7 +29,7 @@ export function useStartTour() {
             }
           );
 
-          const layersTour = createButtonWithText(
+          const layersTour = createTourSummary(
             "Bekijk hoe je kaartlagen kan gebruiken: ",
             "Start kaartlagen tour",
             () => {
@@ -38,7 +38,7 @@ export function useStartTour() {
             }
           );
 
-          const scenariosTour = createButtonWithText(
+          const scenariosTour = createTourSummary(
             "Bekijk hoe je verschillende scenario's kan bekijken: ",
             "Start scenario's tour",
             () => {
@@ -47,7 +47,7 @@ export function useStartTour() {
             }
           );
 
-          const combineTour = createButtonWithText(
+          const combineTour = createTourSummary(
             "Bekijk hoe je scenario's kan combineren: ",
             "Start combineren tour",
             () => {
@@ -56,7 +56,7 @@ export function useStartTour() {
             }
           );
 
-          const expertTour = createButtonWithText(
+          const expertTour = createTourSummary(
             "Bekijk hoe je nog meer uit LIWO kan halen: ",
             "Start expert tour",
             () => {
@@ -82,7 +82,7 @@ export function useStartTour() {
   ]);
 }
 
-function createButtonWithText(text, buttonText, buttonCallback) {
+function createTourSummary(text, buttonText, buttonCallback) {
   const buttonContainer = document.createElement("div");
   buttonContainer.classList.add("driver-popover-buttons-container");
   createButton(buttonContainer, buttonText, buttonCallback);
