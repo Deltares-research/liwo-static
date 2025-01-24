@@ -71,11 +71,8 @@ export function useStartTour() {
             }
           );
 
-          container.insertAdjacentElement("afterbegin", expertTour);
-          container.insertAdjacentElement("afterbegin", combineTour);
-          container.insertAdjacentElement("afterbegin", scenariosTour);
-          container.insertAdjacentElement("afterbegin", layersTour);
-          container.insertAdjacentElement("afterbegin", generalTour);
+          const tours = [expertTour, combineTour, scenariosTour, layersTour, generalTour];
+          tours.forEach(tour => container.insertAdjacentElement("afterbegin", tour));
         },
       },
     },
