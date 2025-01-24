@@ -1,7 +1,7 @@
 <template>
 <pop-up class="filter-popup" title="Filter" @close="$emit('close')">
   <form class="filter-popup__form" id="genericform" novalidate="novalidate">
-    <fieldset class="control-group" @change="onProbabilitiesChange">
+    <fieldset class="control-group" @change="onProbabilitiesChange" data-tour-id="filter-form-probabilities">
       <legend class="control-label">Kansklasse:</legend>
       <ul class="choice-options">
         <li
@@ -34,6 +34,7 @@
         v-test="'filter-item'"
         class="choice-options__item__label"
         for="probability-imminent-flood"
+        data-tour-id="filter-form-flood"
       >
         <input
           class="choice-options__item__checkbox"

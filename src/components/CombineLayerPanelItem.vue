@@ -5,7 +5,11 @@
     @click="selectFirstLayer"
   >
     <span>{{ title }}</span>
-    <button class="layerpanel-item__collapse" @click.stop="toggleCollapse">
+    <button
+      class="layerpanel-item__collapse"
+      @click.stop="toggleCollapse"
+      data-tour-id="layer-panel-collapse"
+    >
       <img class="layerpanel-item__collapse-icon" :src="`${publicPath}icons/baseline-keyboard_arrow_up-24px.svg`" alt="Klap kaartlagen in of uit" />
     </button>
   </h3>
@@ -16,12 +20,25 @@
     v-test="'layer-panel-info'"
   >
     <dl class="layerpanel-item__prop-list" v-if="variantProperties.length > 1" v-test="'variantProperties'">
-      <div v-for="{key, value} in variantProperties" :key="key" class="layerpanel-item__prop">
+      <div
+        v-for="{key, value} in variantProperties"
+        :key="key"
+        class="layerpanel-item__prop"
+        data-tour-id="layerpanel-item"
+      >
         <dt>{{key}}</dt>
         <dd :title="value">{{value}}</dd>
       </div>
     </dl>
-    <button v-test="'change-variant'" v-if="allVariants.length > 1" @click.stop="showChangeVariantPopup" class="btn primary">Wijzig variant</button>
+    <button
+      v-if="allVariants.length > 1"
+      class="btn primary"
+      @click.stop="showChangeVariantPopup"
+      v-test="'change-variant'"
+      data-tour-id="change-variant"
+    >
+      Wijzig variant
+      </button>
   </div>
 
   <layer-control-list

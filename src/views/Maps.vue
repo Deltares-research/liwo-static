@@ -38,10 +38,11 @@
 
     <div class="maps__sections">
       <layer-set-list
-        v-for="layerSet in layerSets"
+        v-for="(layerSet, index) in layerSets"
         :key="layerSet.id"
         :title="layerSet.name"
         :items="layerSet.layerset"
+        :index="index"
       />
     </div>
     <div class="notifaction-bar">

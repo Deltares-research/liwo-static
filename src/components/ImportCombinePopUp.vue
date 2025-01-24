@@ -18,6 +18,7 @@
               name="url"
               v-model="url"
               v-test="'import-selection-url'"
+              data-tour-id="import-selection-url"
             >
             <em v-if="showError" class="errortext">{{ errorText }}</em>
           </div>
@@ -25,7 +26,7 @@
           <p>U kunt hier een LIWO-Link invoeren die u eerder heeft opgevraagd of die u van iemand hebt ontvangen. Door op importeren te klikken worden de scenario's aan uw bestaande selectie toegevoegd.</p>
         </div>
 
-        <div class="combine-popup__combine-selected" v-if="currentSelectedIds">
+        <div class="combine-popup__combine-selected" v-if="currentSelectedIds" data-tour-id="import-url-checkbox">
           <label>
             <input
               type="checkbox"
@@ -40,6 +41,7 @@
             <button
               class="btn primary"
               v-test="'import-url-button'"
+              data-tour-id="import-url-button"
             >
               Importeren
             </button>
@@ -47,6 +49,7 @@
               type="button"
               class="btn secondary"
               @click="$emit('close')"
+              data-tour-id="import-url-cancel-button"
             >
               Annuleer
             </button>

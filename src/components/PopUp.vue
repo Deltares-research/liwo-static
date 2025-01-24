@@ -18,6 +18,7 @@
               @click="$emit('close')"
               class="pop-up__close icon-close-big panel-close"
               v-test="'close-button'"
+              data-tour-id="popup-close"
             >
               <span class="sr-only">Sluiten</span>
             </button>
@@ -32,6 +33,7 @@
 
 <script>
 import * as focusTrap from 'focus-trap'
+import { driverInstance } from '@/tour/use-tour'
 
 export default {
   props: {
@@ -53,16 +55,20 @@ export default {
     }
   },
   mounted () {
-    this.focusElBeforeOpen = document.activeElement
-    this.trap = focusTrap.createFocusTrap(this.$refs.popUp)
-    this.trap.activate()
+    if (!driverInstance?.isActive()) {
+      this.focusElBeforeOpen = document.activeElement
+      this.trap = focusTrap.createFocusTrap(this.$refs.popUp)
+      this.trap.activate()
+    }
   },
   beforeUnmount () {
     if (this.focusElBeforeOpen) {
       this.focusElBeforeOpen.focus()
     }
 
-    this.trap.deactivate()
+    if (this.trap) {
+      this.trap.deactivate()
+    }
   }
 }
 </script>

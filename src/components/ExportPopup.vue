@@ -25,18 +25,33 @@
         <span class="help">De naam van het uitvoerbestand</span>
       </label>
       <input
-        id="export-name"
         class="export-popup__form-column-item export-popup__textfield"
+        type="text"
         name="name"
+        id="export-name"
         autocomplete="off"
         v-model="exportName"
-        type="text"
         v-test="'name-input'"
         required
-      />
+        data-tour-id="layer-export-name"
+      >
       <footer class="export-popup__footer">
-        <button class="btn primary" type="submit" @click="validateForm" v-test="'export-file-button'">Exporteer</button>
-        <button class="btn secondary" type="reset" @click="$emit('close')">Annuleer</button>
+        <button
+          class="btn primary"
+          @click="validateForm"
+          v-test="'export-file-button'"
+          data-tour-id="layer-export-button"
+        >
+          Exporteer
+        </button>
+        <button
+          class="btn secondary"
+          type="reset"
+          @click="$emit('close')"
+          data-tour-id="layer-export-cancel-button"
+        >
+          Annuleer
+        </button>
       </footer>
     </form>
   </pop-up>
