@@ -3,36 +3,16 @@
     <section class="section">
       <div class="contact">
         <p>
-          Heeft u inhoudelijke of functionele vragen over LIWO: dan kunt u
-          hiervoor gebruik maken van het
+          Heeft u inhoudelijke, technische (incl. storing) of functionele vragen
+          over LIWO, of wilt u een opleiding op maat, dan kunt u hiervoor
+          gebruik maken van het
           <a
-            href="https://iplo.nl/contact/vragenformulier/"
+            href="https://iplo.nl/thema/water/applicaties-modellen/berichtgeving-crisismanagement/liwo/contact-liwo/contact-liwo/"
             target="_blank"
             rel="noreferrer noopener"
             >contactformulier</a
           >
-          op
-          <a
-            href="https://iplo.nl/thema/water/applicaties-modellen/berichtgeving-crisismanagement/liwo/"
-            target="_blank"
-            rel="noreferrer noopener"
-            >Informatiepunt Leefomgeving (iplo.nl)</a
-          >.
-        </p>
-        <p>
-          Is er sprake van een technische storing? Bel dan de landelijke
-          informatielijn van Rijkswaterstaat (<a href="tel:0800-8002"
-            >0800-8002</a
-          >).
-        </p>
-        <p>
-          Aanvullende achtergrondinformatie over LIWO vindt u ook op de website
-          <a
-            href="https://iplo.nl/thema/water/applicaties-modellen/berichtgeving-crisismanagement/liwo/"
-            target="_blank"
-            rel="noreferrer noopener"
-            >Informatiepunt Leefomgeving (iplo.nl)</a
-          >.
+          van LIWO.
         </p>
       </div>
     </section>
