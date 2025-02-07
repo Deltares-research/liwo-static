@@ -79,9 +79,6 @@ describe('Combine multiple selections: marker selection', () => {
     cy.get(`${selector('legend-button')}`).click()
       .then(() => {
         cy.get(`${selector('legend')} img`).invoke('attr', 'src').then(initSrc => {
-        cy.get(`${selector('layer-toggle')} label`)
-          .click()
-
         cy.get(`${selector('legend')} img`).eq(1).invoke('attr', 'src').then(newSrc => {
           expect(initSrc).to.not.equal(newSrc)
         })

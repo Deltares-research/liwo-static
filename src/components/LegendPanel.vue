@@ -4,6 +4,7 @@
       'legend-panel': true,
       'legend-panel--active': legendIsShown,
     }"
+    v-click-outside="hideLegend"
   >
     <button
       class="legend-panel__title"
@@ -53,11 +54,6 @@
       </figure>
     </template>
   </aside>
-  <div
-    v-if="legendIsShown"
-    class="legend-panel__overlay"
-    @click="hideLegend"
-  ></div>
 </template>
 
 <script>
@@ -134,9 +130,10 @@ export default {
           const styleName = layer.legend.style;
           const layerId = layer.legend.layer;
           const url = this.services && this.services.LEGEND_URL;
-          legendImageSrc = url
-            ? `${url}/${namespace}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=${layerId}&STYLE=${styleName}&HEIGHT=16&WIDTH=16&LEGEND_OPTIONS=fontAntiAliasing:true;fontSize:14;mx:0;dx:10;fontName:Verdana;`
-            : '';
+          legendImageSrc =
+            url && namespace && styleName && layerId
+              ? `${url}/${namespace}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=${layerId}&STYLE=${styleName}&HEIGHT=16&WIDTH=16&LEGEND_OPTIONS=fontAntiAliasing:true;fontSize:14;mx:0;dx:10;fontName:Verdana;`
+              : '';
         }
 
         return {
@@ -227,13 +224,5 @@ export default {
 
 .legend-panel--active .legend-panel__collapse-icon {
   transform: rotate(180deg);
-}
-
-.legend-panel__overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
 }
 </style>

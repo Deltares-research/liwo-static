@@ -149,7 +149,7 @@ export default {
         .filter(({ enabled }) => enabled)
         .map(({ className }) => className)
       // exclude enabled controls from list of classes to hide
-      // eslint-disable-next-line no-unused-vars
+       
       const disabledControlClasses = allControls.filter(controlClass => !enabledControlClasses.includes(controlClass))
       this.map.printPlugin.options.hideClasses = [...this.map.printPlugin.options.hideClasses, ...disabledControlClasses]
 

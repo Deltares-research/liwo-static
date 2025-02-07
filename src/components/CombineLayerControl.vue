@@ -36,7 +36,7 @@
         step="0.1"
         :name="`layer-${id}-trans`"
         class="layer-control__transparency-slider"
-        value="1"
+        :value="layer.properties?.opacity ?? 1"
         @change.stop="setTransparency"
         :aria-label="`Transparantie voor kaartlaag ${layer.properties.title}`"
       />
