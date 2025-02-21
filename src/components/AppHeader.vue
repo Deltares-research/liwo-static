@@ -1,6 +1,6 @@
 <template>
   <header class="app-header">
-    <div role="banner" class="site-header">
+    <div role="banner" class="site-header" data-tour-id="site-header">
       <nav class="app-header__top-nav" v-test="'top-menu'">
         <router-link :to="{ name: 'contact' }" data-tour-id="contact-header"
           >Contact</router-link

@@ -47,7 +47,7 @@ export function useExpertTour() {
       },
     },
     {
-      element: selector("liwo-map-combine"),
+      element: selector("site-header"),
       popover: {
         title: "Expert",
         doneBtnText: "Sluit tour",
