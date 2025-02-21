@@ -18,7 +18,7 @@ export function useLayersTour() {
         popover: {
           title: "Kaartlagen",
           description:
-            "Hier zijn kunt u de individuele overstromingsscenario's bekijken en heeft u de mogelijkheid om individuele overstromingsscenario's te combineren om een 'eigen' samengestelde waterdieptekaart te maken.",
+            "Hier kunt u de individuele overstromingsscenario's bekijken en heeft u de mogelijkheid om individuele overstromingsscenario's te combineren om een 'eigen' samengestelde waterdieptekaart te maken.",
         },
       },
       {
@@ -26,7 +26,7 @@ export function useLayersTour() {
         popover: {
           title: "Kaartlagen",
           description:
-            "Hier zijn kaartlagen opgenomen met die voor specifieke projectdoeleinden zijn vastgesteld.",
+            "Hier zijn kaartlagen opgenomen die voor specifieke projectdoeleinden zijn vastgesteld.",
         },
       },
       {
@@ -34,7 +34,7 @@ export function useLayersTour() {
         popover: {
           title: "Kaartlagen",
           description:
-            "Hier treft u kaartlagen aan met informatie over overstromingskansen voor de huidige situatie, voor de situatie dat de waterkeringen voldoen aan de norm (2050) en voor 2100, rekeninghoudend met klimaatverandering.",
+            "Hier treft u kaartlagen aan met informatie over overstromingskansen voor de huidige situatie, voor de situatie in 2050 (de waterkeringen voldoen aan de norm) en voor de situatie in 2100, rekeninghoudend met klimaatverandering.",
         },
       },
       {

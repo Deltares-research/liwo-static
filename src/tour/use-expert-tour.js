@@ -8,7 +8,7 @@ export function useExpertTour() {
       popover: {
         title: "Expert",
         description:
-          "Klik op het filter icoon om de doorbraaklocaties en scenario's in het scherm bekijken of combineren van scenarios's te filteren.",
+          "Klik op het filter icoon om een scherm te openen, waarmee je een filter kan activeren op de zichtbare doorbraaklocaties en scenario’s.",
         nextBtnText: "Open filter",
         onNextClick: (element) => {
           element.click();
@@ -23,7 +23,7 @@ export function useExpertTour() {
       popover: {
         title: "Expert",
         description:
-          "Maak een selectie van kans van de overstromingsscenario's waarvoor u de doorbraaklocaties op de kaart wilt zien.",
+          "Maak een selectie van de kansklasse van overstromingsscenario's waarvoor u de doorbraaklocaties op de kaart wilt zien.",
       },
     },
     {

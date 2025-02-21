@@ -56,7 +56,7 @@ export function useCombineTour() {
       popover: {
         title: "Scenario's combineren",
         description:
-          "Kies welke type kaartlaag gecombineerd moet worden (standaard is dit de waterdiepte). Tussen haakjes staan een aantal weergegeven die aangeeft bij hoeveel van de geselecteerde scenario's de gekozen kaartlaag beschikbaar is.",
+          "Kies welke type kaartlaag gecombineerd moet worden (standaard is dit de waterdiepte). Tussen haakjes staat een aantal weergegeven dat aangeeft bij hoeveel van de geselecteerde scenario's de gekozen kaartlaag beschikbaar is.",
         onNextClick: () => {
           waitUntilVisible(selector("combine-controls-combine-button")).then(
             () => {
