@@ -19,6 +19,7 @@
               @focus="selectUrl"
               @click="selectUrl"
               v-test="'export-selection-url'"
+              data-tour-id="export-selection-url"
             >
           </div>
           <p>Deze link bevat de gemaakte selectie. U kunt deze opslaan en op een later moment importeren om een selectie aan te passen en een gecombineerd scenario opnieuw te maken. U kunt de selectie ook delen met anderen om zo samen met anderen een selectie te maken. Let op, u dient deze link zelf op te slaan.</p>
@@ -30,6 +31,7 @@
               type="button"
               class="btn secondary"
               @click="$emit('close')"
+              data-tour-id="export-selection-cancel-button"
             >
               Sluiten
             </button>
