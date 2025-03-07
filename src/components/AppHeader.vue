@@ -54,6 +54,7 @@
             :to="{ name: 'maps' }"
             @click="useStartTour().start()"
             data-tour-id="start-tour-header"
+            v-test="'start-tour'"
           >Start tour</router-link>
         </li>
       </ul>
