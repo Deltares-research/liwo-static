@@ -4,16 +4,18 @@
       'legend-panel': true,
       'legend-panel--active': legendIsShown,
     }"
+    data-tour-id="legend-panel"
     v-click-outside="hideLegend"
   >
     <button
       class="legend-panel__title"
       aria-controls="legend"
-      v-test="'legend-button'"
       :aria-expanded="legendIsShown"
       :aria-label="`Klap legenda ${legendIsShown ? 'in' : 'uit'}`"
       @click="toggleLegend"
       :disabled="formattedLayers.length === 1"
+      v-test="'legend-button'"
+      data-tour-id="legend-button"
     >
       Legenda
       <img

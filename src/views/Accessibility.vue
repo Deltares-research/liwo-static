@@ -31,7 +31,6 @@
           <li><p>Kennis medewerkers: onze medewerkers houden hun kennis over toegankelijkheid op peil en passen dit toe waar nodig.</p></li>
         </ul>
 
-
       <h2 data-class="section-head">Overzicht toegankelijkheidsverklaringen Rijkswaterstaat</h2>
       <p>
         Toegankelijkheidsverklaringen van andere websites dan Basisinformatie-overstromingen.nl die eveneens

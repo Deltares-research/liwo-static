@@ -17,6 +17,7 @@
       class="layer-control__vis-label"
       :for="`layer-${id}-vis`"
       v-test="'layer-control'"
+      data-tour-id="layer-visibility"
     >
       <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 64 64">
         <path fill="none" d="M0 0h64v64H0z"/>
@@ -40,6 +41,7 @@
         :value="layer.properties?.opacity ?? 1"
         @change.stop="setTransparency"
         :aria-label="`Transparantie voor kaartlaag ${layer.properties.title}`"
+        data-tour-id="layer-transparency"
       />
 
       <button
@@ -48,6 +50,7 @@
         v-test="'info-toggle'"
         @click="toggleInfoPopup"
         type="button"
+        data-tour-id="layer-metadata"
       >
         <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 64 64">
           <path fill="none" d="M0 0h64v64H0z"/>
@@ -76,6 +79,7 @@
           :modelValue="selectedVariantIndexByBreachBandId[id][title]"
           @update:modelValue="setLayerVariant(id, title, $event)"
           v-test="'variant-select'"
+          data-tour-id="layer-variant-select"
         />
       </label>
     </template>
@@ -91,6 +95,7 @@
         :modelValue="selectedVariant"
         @update:modelValue="selectLayerOption($event)"
         v-test="'variant-select'"
+        data-tour-id="layer-variant-select"
       />
     </label>
   </div>

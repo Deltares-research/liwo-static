@@ -76,6 +76,7 @@ export const redIcon = L.icon({
 })
 
 export const yellowIcon = L.icon({
+  className: 'icon-active',
   iconUrl: yellowIconUrl,
   iconRetinaUrl: yellowRetinaIconUrl,
   ...iconDefaults
