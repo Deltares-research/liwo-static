@@ -1,5 +1,5 @@
 import router from "../router";
-import { createButton, selector, waitUntilVisible } from "./helpers";
+import { createTourSummary, selector, waitUntilVisible } from "./helpers";
 import { useLayersTour } from "./use-layers-tour";
 import { useScenariosTour } from "./use-scenarios-tour";
 import { useCombineTour } from "./use-combine-tour";
@@ -71,22 +71,18 @@ export function useStartTour() {
             }
           );
 
-          const tours = [expertTour, combineTour, scenariosTour, layersTour, generalTour];
-          tours.forEach(tour => container.insertAdjacentElement("afterbegin", tour));
+          const tours = [
+            expertTour,
+            combineTour,
+            scenariosTour,
+            layersTour,
+            generalTour,
+          ];
+          tours.forEach((tour) =>
+            container.insertAdjacentElement("afterbegin", tour)
+          );
         },
       },
     },
   ]);
-}
-
-function createTourSummary(text, buttonText, buttonCallback) {
-  const buttonContainer = document.createElement("div");
-  buttonContainer.classList.add("driver-popover-buttons-container");
-  createButton(buttonContainer, buttonText, buttonCallback);
-  const description = document.createElement("span");
-  description.classList.add("driver-popover-description");
-  description.innerText = text;
-  buttonContainer.insertAdjacentElement("afterbegin", description);
-
-  return buttonContainer;
 }

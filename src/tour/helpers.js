@@ -24,7 +24,7 @@ export function waitUntilVisible(element) {
   });
 }
 
-function checkIfVisible(element) {
+export function checkIfVisible(element) {
   const foundElement = document.querySelector(element);
   if (foundElement) {
     return Promise.resolve(foundElement);
@@ -37,7 +37,20 @@ export function createButton(putBeforeElement, text, onClick) {
   const button = document.createElement("button");
   button.innerText = text;
   button.type = "button";
+  button.dataset.test = text;
   putBeforeElement.insertAdjacentElement("afterbegin", button);
   button.addEventListener("click", onClick);
   return button;
+}
+
+export function createTourSummary(text, buttonText, buttonCallback) {
+  const buttonContainer = document.createElement("div");
+  buttonContainer.classList.add("driver-popover-buttons-container");
+  createButton(buttonContainer, buttonText, buttonCallback);
+  const description = document.createElement("span");
+  description.classList.add("driver-popover-description");
+  description.innerText = text;
+  buttonContainer.insertAdjacentElement("afterbegin", description);
+
+  return buttonContainer;
 }
