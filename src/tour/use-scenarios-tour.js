@@ -127,7 +127,7 @@ export function useScenariosTour() {
       popover: {
         title: "Bekijken scenario's",
         description:
-          "Klik hier om een scenario te exporten van de geselecteerde variant. De naam van het gexporteerde bestand is standaard 'scenario_13535.tiff'.",
+          "Klik hier om een scenario te exporten van de geselecteerde variant. De naam van het geëxporteerde bestand is standaard 'scenario_13535.tiff'.",
       },
     },
     {
