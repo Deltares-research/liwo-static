@@ -8,12 +8,35 @@
     </template>
 
     <table class="layer-meta__table" v-test="'meta-table'">
-      <tr
-        v-for="(value, key) in noIdMetadata"
-        :key="key"
-      >
-        <th>{{titleCase(key)}}</th>
-        <td v-html="sanitizedValue(value)"></td>
+      <tr v-for="(value, key) in noIdMetadata" :key="key">
+        <template v-if="key === 'link'">
+          <th>GisLink</th>
+          <td class="layer-meta__link">
+            <div v-html="sanitizedValue(value)"></div>
+            <button
+              class="btn primary layer-meta__copy"
+              @click="() => handleCopy(getHrefFromString(value))"
+              :disabled="isCopied"
+            >
+             <template v-if="!isCopied">
+                <span class="sr-only">Kopieer GisLink</span>
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 448 512">
+                  <path d="M208 0L332.1 0c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9L448 336c0 26.5-21.5 48-48 48l-192 0c-26.5 0-48-21.5-48-48l0-288c0-26.5 21.5-48 48-48zM48 128l80 0 0 64-64 0 0 256 192 0 0-32 64 0 0 48c0 26.5-21.5 48-48 48L48 512c-26.5 0-48-21.5-48-48L0 176c0-26.5 21.5-48 48-48z"/>                </svg>
+             </template>
+
+              <template v-else>
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 448 512">
+                  <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/>                </svg>
+                <span class="sr-only">Gekopieerd</span>
+              </template>
+            </button>
+          </td>
+        </template>
+        <template v-else>
+          <th>{{ titleCase(key) }}</th>
+
+          <td v-html="sanitizedValue(value)"></td>
+        </template>
       </tr>
     </table>
   </pop-up>
@@ -29,6 +52,11 @@ export default {
       Type: Object
     }
   },
+  data () {
+    return {
+      isCopied: false,
+    }
+  },
   methods: {
     titleCase (string) {
       const s = string.replace(/_/g, ' ').trim()
@@ -36,6 +64,23 @@ export default {
     },
     sanitizedValue (value) {
       return sanitizeValue(value)
+    },
+    handleCopy (value) {
+      navigator.clipboard.writeText(value)
+        .then(() => {
+          this.isCopied = true
+          setTimeout(() => {
+            this.isCopied = false
+          }, 2000)
+        })
+        .catch(err => {
+          console.error('Error copying text: ', err)
+        })
+    },
+    getHrefFromString (value) {
+      const regex = /<a[^>]*href="([^"]*)"/i;
+      const match = value.match(regex);
+      return match ? match[1] : ''
     }
   },
   computed: {
@@ -77,5 +122,17 @@ export default {
   .layer-meta__table td {
     vertical-align: top;
     background: none;
+  }
+
+  .layer-meta__link {
+    display: flex;
+    align-items: center;
+  }
+
+  .btn.layer-meta__copy [class*=icon] {
+    fill: currentColor;
+    margin: 0;
+    width: 20px;
+    height: 20px;
   }
 </style>
