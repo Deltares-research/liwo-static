@@ -17,6 +17,7 @@
               class="btn primary layer-meta__copy"
               @click="() => handleCopy(getHrefFromString(value))"
               :disabled="isCopied"
+              type="button"
             >
              <template v-if="!isCopied">
                 <span class="sr-only">Kopieer GisLink</span>
@@ -127,6 +128,11 @@ export default {
   .layer-meta__link {
     display: flex;
     align-items: center;
+    gap: .5rem;
+  }
+
+  .btn.layer-meta__copy {
+    margin-left: auto;
   }
 
   .btn.layer-meta__copy [class*=icon] {
