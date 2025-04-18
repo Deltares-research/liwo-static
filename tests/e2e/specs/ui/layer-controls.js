@@ -10,6 +10,7 @@ describe('Layers', () => {
     cy.wait('@map', { timeout: 4000 })
 
     cy.get(selector('transparency-input'))
+      .first()
       .invoke('val', 0.5)
       .trigger('change')
 

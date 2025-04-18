@@ -114,7 +114,7 @@ describe('Map', () => {
   it('Can change base layer of map', () => {
     cy.viewport(800, 1000)
     // turn off layer so background is visible
-    cy.get(selector('layer-control')).click()
+    cy.get(selector('layer-control')).first().click()
 
     cy.get('.leaflet-control-layers-toggle').click()
     cy.get('.leaflet-control-layers-list input').each($input => {
