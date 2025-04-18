@@ -30,7 +30,7 @@
     "portal-vue": "^3.0.0",
     "proj4leaflet": "^1.0.2",
     "query-string": "^9.1.0",
-    "sanitize-html": "^2.14.0",
+    "sanitize-html": "^2.16.0",
     "tiny-cookie": "^2.5.1",
     "vue": "^3.5.13",
     "vue-cookie-law": "^1.13.3",
