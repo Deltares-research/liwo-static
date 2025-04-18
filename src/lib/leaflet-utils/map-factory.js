@@ -21,6 +21,10 @@ export default function (el, config, { onPrint }) {
     layers: [baseLayers[INITIAL_BASELAYER]],
   })
 
+  // This hides the attribution prefix
+  // (e.g. "leaflet") from the attribution control
+  map.attributionControl.setPrefix(false)
+
   // When we change the baselayer we want it to be in the back
   map.on('baselayerchange', (e) => e.layer.bringToBack())
   // map.addLayer(baseLayers[INITIAL_BASELAYER])
