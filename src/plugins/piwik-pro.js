@@ -1,10 +1,11 @@
-
 import VuePiwikPro, { UserManagement } from '@piwikpro/vue-piwik-pro'
+import mapConfig from '../map.config'
 
-const install = () => {
+const install = async () => {
+  const services = await mapConfig.getServices()
   VuePiwikPro.initialize(
-    import.meta.env.VITE_PIWIK_PRO_CONTAINER_ID,
-    import.meta.env.VITE_PIWIK_PRO_CONTAINER_URL
+    services.PIWIK_CONTAINER_ID,
+    services.PIWIK_CONTAINER_URL
   )
   UserManagement.setUserIsAnonymous(true)
 }
