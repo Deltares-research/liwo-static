@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import { UserManagement } from '@piwikpro/vue-piwik-pro'
 import { mapGetters } from 'vuex'
 import AppHeader from '../src/components/AppHeader.vue'
 import CookieLaw from './components/CookieLaw.vue'
@@ -59,7 +60,7 @@ export default {
   },
   methods: {
     consentGiven () {
-      this.$matomo && this.$matomo.rememberConsentGiven()
+      UserManagement.deanonymizeUser()
     }
   },
   watch: {
