@@ -8,14 +8,15 @@
     </template>
 
     <table class="layer-meta__table" v-test="'meta-table'">
-      <tr v-for="(value, key) in noIdMetadata" :key="key">
-        <template v-if="key === 'link'">
+      <tr v-for="(value, key) in filteredMetadata" :key="key">
+        <template v-if="key === 'gislink'">
           <th class="layer-meta__link">GisLink</th>
           <td class="layer-meta__link">
             <div v-html="sanitizedValue(value)"></div>
             <button
+              v-if="metadata.link"
               class="btn primary layer-meta__copy"
-              @click="() => handleCopy(getHrefFromString(value))"
+              @click="() => handleCopy(metadata.link)"
               :disabled="isCopied"
               type="button"
             >
@@ -41,6 +42,7 @@
             </button>
           </td>
         </template>
+
         <template v-else>
           <th>{{ titleCase(key) }}</th>
 
@@ -86,21 +88,19 @@ export default {
           console.error('Error copying text: ', err)
         })
     },
-    getHrefFromString (value) {
-      const regex = /<a[^>]*href="([^"]*)"/i;
-      const match = value.match(regex);
-      return match ? match[1] : ''
-    }
   },
   computed: {
-    noIdMetadata () {
+    filteredMetadata () {
       const asArray = Object.entries(this.metadata)
 
       // filter values
       const nonId = asArray.filter(([key]) => (key !== 'id'))
 
+      // filter link value
+      const nonLink = nonId.filter(([key]) => (key !== 'link'))
+
       // Convert the key/value array back to an object:
-      const result = Object.fromEntries(nonId)
+      const result = Object.fromEntries(nonLink)
       return result
     }
   },
@@ -151,5 +151,9 @@ export default {
     margin: 0;
     width: 20px;
     height: 20px;
+  }
+
+  .btn.layer-meta__copy:disabled {
+    cursor: pointer;
   }
 </style>
