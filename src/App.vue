@@ -97,6 +97,7 @@ export default {
 @import './styles/rws-embedded.css';
 @import './styles/liwo.css';
 @import './styles/skip-links.css';
+@import './styles/animations.css';
 
 .sr-only {
   position: absolute;
