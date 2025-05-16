@@ -31,5 +31,8 @@
   "DATASET_VERSION": "projects/deltares-rws/liwo/2021_0_3",
   "_comment9": "// backend version",
   "BACKEND_VERSION": "FILL IN DURING DEPLOY",
-  "COOKIE_BANNER": true
+  "_comment10": "// Tracking settings",
+  "COOKIE_BANNER": true,
+  "PIWIK_CONTAINER_URL": "",
+  "PIWIK_CONTAINER_ID": ""
 }
