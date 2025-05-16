@@ -150,4 +150,8 @@ export default {
     width: 20px;
     height: 20px;
   }
+
+  .btn.layer-meta__copy:disabled {
+    cursor: pointer;
+  }
 </style>
