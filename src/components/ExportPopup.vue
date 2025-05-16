@@ -6,7 +6,7 @@
         role="alert"
         aria-live="assertive"
       >
-        <p v-if="hasError" class="export-popup__notification-text">Export naam is verplicht</p>
+        <p v-if="exportError" class="export-popup__notification-text">{{exportError}}</p>
       </div>
 
       <div
@@ -15,8 +15,8 @@
         aria-live="polite"
       >
         <template v-if="exporting">
-          <p class="export-popup__notification-text">Uw export wordt gegenereerd.</p>
-          <div class="lds-dual-ring export-popup__notification-loader" />
+          <div class="export-popup__notification-background loading-bar" />
+          <p class="export-popup__notification-text">Uw export wordt gegenereerd. Dit duurt maximaal 3 minuten.</p>
         </template>
       </div>
 
@@ -47,7 +47,7 @@
         <button
           class="btn secondary"
           type="reset"
-          @click="$emit('close')"
+          @click="cancelExport"
           data-tour-id="layer-export-cancel-button"
         >
           Annuleer
@@ -60,7 +60,7 @@
 <script>
 import PopUp from '@/components/PopUp.vue'
 
-import exportZip from '@/lib/export-map-zip'
+import { controller, downloadZipFileDataLayers } from '@/lib/export-map-zip'
 
 export default {
   props: {
@@ -69,7 +69,7 @@ export default {
   },
   data () {
     return {
-      hasError:false,
+      exportError: '',
       exporting: false, // starts false and after form validates becomes true
       exportName: ''
     }
@@ -77,10 +77,10 @@ export default {
   components: { PopUp },
   methods: {
     validateForm () {
-      this.hasError = !this.exportName
+      this.exportError = !this.exportName ? 'Export naam is verplicht' : ''
     },
     exportMap () {
-      if (!this.hasError && !this.exporting) {
+      if (!this.exportError && !this.exporting) {
         this.exporting = true
         const layers = this.mapLayers.map(
           layer => {
@@ -89,12 +89,23 @@ export default {
             return layer.layer
           }).join()
 
-        exportZip({ name: this.exportName, layers })
-          .finally(() => {
+        downloadZipFileDataLayers({ name: this.exportName, layers })
+          .then(() => {
             this.exporting = false
             this.$emit('close')
           })
+          .catch(() => {
+            this.exportError = 'Er is een fout opgetreden bij het exporteren van de kaart. Probeer het later opnieuw.'
+            this.exporting = false
+          })
       }
+    },
+    cancelExport () {
+      this.exporting = false
+      if (controller) {
+        controller.abort()
+      }
+      this.$emit('close')
     }
   }
 }
@@ -163,12 +174,18 @@ export default {
     background: red;
   }
   .export-popup__notification--loading {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: #0b71ab;
+    position: relative;
+  }
+  .export-popup__notification-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 0;
   }
   .export-popup__notification-text {
+    position: relative;
     margin: 0;
   }
   .export-popup__notification .export-popup__notification-loader:after {
