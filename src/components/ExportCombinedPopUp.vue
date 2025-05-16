@@ -1,12 +1,12 @@
 <template>
-  <pop-up class="export-combined-popup" title="Exporteer als zip" @close="$emit('close')">
+  <pop-up class="export-combined-popup" title="Exporteer als zip" @close="cancelExport">
     <form class="export-combined-popup__content export-combined-popup__form-columns" @submit.prevent="exportMap">
       <div
         class="export-combined-popup__notification export-combined-popup__notification--error"
         role="alert"
         aria-live="assertive"
       >
-        <p v-if="hasError" class="export-popup__notification-text">Schaal is verplicht</p>
+        <p v-if="exportError" class="export-popup__notification-text">{{exportError}}</p>
       </div>
 
       <div
@@ -14,10 +14,15 @@
         role="status"
         aria-live="polite"
       >
-        <template v-if="exporting || !eeLayer">
-          <p v-if="exporting" class="export-combined-popup__notification-text">Uw export wordt gegenereerd.</p>
-          <p v-if="!eeLayer" class="export-combined-popup__notification-text">Data wordt geladen.</p>
+        <template v-if="!eeLayer">
+          <div class="export-combined-popup__notification-background" />
+          <p class="export-combined-popup__notification-text">Data wordt geladen.</p>
           <div class="lds-dual-ring export-combined-popup__notification-loader" />
+        </template>
+
+        <template v-if="exporting">
+          <div class="export-combined-popup__notification-background loading-bar" />
+          <p class="export-combined-popup__notification-text">Uw export wordt gegenereerd.</p>
         </template>
       </div>
       <label class="export-combined-popup__form-column-item" for="export-scale">
@@ -44,7 +49,7 @@
         <button
           class="btn secondary"
           type="reset"
-          @click="$emit('close')"
+          @click="cancelExport"
         >
           Annuleer
         </button>
@@ -55,8 +60,8 @@
 
 <script>
 import PopUp from '@/components/PopUp.vue'
-import mapConfig from '../map.config'
-import store from '@/store'
+
+import { controller, downloadLiwoScenarios } from '@/lib/export-map-zip'
 
 export default {
   props: {
@@ -65,7 +70,7 @@ export default {
   },
   data () {
     return {
-      hasError: false,
+      exportError: '',
       exportScale: 50,
       exporting: false
     }
@@ -87,72 +92,41 @@ export default {
   },
   methods: {
     validateForm () {
-      this.hasError = !this.exportScale
+      this.exportError = !this.exportScale ? 'Schaal is verplicht' : ''
     },
     async exportMap () {
-      if (!this.hasError && !this.exporting) {
+      if (!this.exportError && !this.exporting) {
         this.exporting = true
-        const eeLayer = this.eeLayer
-        const body = {
-          liwo_ids: eeLayer.metadata.liwo_ids,
-          band: eeLayer.metadata.band,
-          scale: parseFloat(this.exportScale),
-          export: true
-        }
-        const requestOptions = {
-          method: 'POST',
-          mode: 'cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body)
-        }
 
-        // Lookup the hydro engine url
-        const services = await mapConfig.getServices()
-        const hydroEngine = services.HYDRO_ENGINE_URL
-        const url = `${hydroEngine}/get_liwo_scenarios`
-
-        /* get the id of the layerSet */
-        const layerSetId = this.otherLayers[0].layerSet.id
-
-        const promise = fetch(url, requestOptions)
-          .then(resp => {
-            this.exporting = false
-            return resp.json()
-          })
+        downloadLiwoScenarios({
+          scale: this.exportScale,
+          band: this.eeLayer.metadata.band,
+          liwoIds: this.eeLayer.metadata.liwo_ids,
+        })
           .then(json => {
             const result = json
-            if (result.error) {
-              const notification = {
-                message: 'Het door u gevraagde gecombineerde resultaat kan niet geëxporteerd worden. Probeer de schaal te vergroten.',
-                type: 'warning',
-                show: true
-              }
-              store.commit('addNotificationById', { id: layerSetId, notification })
-            }
-            return result
-          })
-          .catch((error) => {
             this.exporting = false
-            const notification = {
-              message: 'Het door u gevraagde gecombineerde resultaat kon niet worden geëxporteerd. Probeer de schaal te vergroten.',
-              type: 'warning',
-              show: true
+            if (result.error) {
+              this.exportError = 'Het door u gevraagde gecombineerde resultaat kan niet geëxporteerd worden. Probeer de schaal te vergroten.'
             }
-            console.warn('Combined result failed:', error)
-            // notifiy of failure
-            store.commit('addNotificationById', { id: layerSetId, notification })
-            return null
-          })
-
-        promise.then(
-          result => {
             if (result.export_url) {
               window.location = result.export_url
+              this.$emit('close')
             }
-            this.$emit('close')
-          }
-        )
+          })
+          .catch((error) => {
+            this.exportError = 'Het door u gevraagde gecombineerde resultaat kon niet worden geëxporteerd. Probeer de schaal te vergroten.'
+            this.exporting = false
+            console.warn('Combined result failed:', error)
+          })
       }
+    },
+    cancelExport () {
+      this.exporting = false
+      if (controller) {
+        controller.abort()
+      }
+      this.$emit('close')
     }
   }
 }
@@ -223,9 +197,19 @@ export default {
     display: flex;
     align-items: center;
     gap: 10px;
-    background: #0b71ab;
+    position: relative;
+  }
+  .export-combined-popup__notification-background {
+    background-color: #0b71ab;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
   }
   .export-combined-popup__notification-text {
+    position: relative;
     margin: 0;
   }
   .export-combined-popup__notification .export-combined-popup__notification-loader:after {
