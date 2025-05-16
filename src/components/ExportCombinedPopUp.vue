@@ -1,5 +1,5 @@
 <template>
-  <pop-up class="export-combined-popup" title="Exporteer als zip" @close="$emit('close')">
+  <pop-up class="export-combined-popup" title="Exporteer als zip" @close="cancelExport">
     <form class="export-combined-popup__content export-combined-popup__form-columns" @submit.prevent="exportMap">
       <div
         class="export-combined-popup__notification export-combined-popup__notification--error"
