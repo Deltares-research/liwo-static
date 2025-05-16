@@ -14,6 +14,7 @@
           <td class="layer-meta__link">
             <div v-html="sanitizedValue(value)"></div>
             <button
+              v-if="metadata.link"
               class="btn primary layer-meta__copy"
               @click="() => handleCopy(metadata.link)"
               :disabled="isCopied"
@@ -41,6 +42,7 @@
             </button>
           </td>
         </template>
+
         <template v-else>
           <th>{{ titleCase(key) }}</th>
 
