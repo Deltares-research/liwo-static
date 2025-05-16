@@ -26,7 +26,7 @@
   "_comment6": "// URL for combining scenario's",
   "HYDRO_ENGINE_URL": "https://hydro-engine.ey.r.appspot.com/v3",
   "_comment7": "// application version (whole set)",
-  "VERSION": "v3.23.0",
+  "VERSION": "v2.9.0-w1",
   "_comment8": "// dataset version (GEE)",
   "DATASET_VERSION": "projects/deltares-rws/liwo/2021_0_3",
   "_comment9": "// backend version",
