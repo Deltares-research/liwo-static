@@ -1,0 +1,21 @@
+.loading-bar {
+  background: linear-gradient(-45deg, #0b71ab 40%, #0a8bd5, #0b71ab 60%) right /
+    500% 100%;
+  animation: loading 180s cubic-bezier(0, 1, 0.3, 0.95) forwards,
+    skeleton-loading 1s linear infinite;
+}
+
+@keyframes loading {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes skeleton-loading {
+  to {
+    background-position: left;
+  }
+}
