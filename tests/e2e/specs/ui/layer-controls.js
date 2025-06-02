@@ -26,7 +26,7 @@ describe('Layers', () => {
   })
 
   it('Changes visibility of layer', () => {
-    const url = '/#/viewer/18?center=52.15382,4.88242&zoom=2'
+    const url = '/#/viewer/1?center=52.15382,4.88242&zoom=2'
     cy.intercept(new RegExp(/GetMap/), '').as('map')
     cy.visit(url)
     cy.get(selector('layer-panel')).should('be.visible')
