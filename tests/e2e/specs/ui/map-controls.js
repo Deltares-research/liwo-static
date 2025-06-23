@@ -94,7 +94,7 @@ describe('Map', () => {
     cy.get('.leaflet-control-geocoder button').click()
     cy.get('.leaflet-control-geocoder-form input')
       .type('Amsterdam')
-      .trigger('keydown', { keyCode: 13 })
+      .type('{enter}')
       .then(() => {
         cy.get('.leaflet-control-geocoder-alternatives li a')
           .first()
@@ -105,9 +105,11 @@ describe('Map', () => {
       const params = getParams(loc.hash)
 
       const [lat, lng] = params.get('center').split(',')
+      const zoom = params.get('zoom')
 
       expect(parseFloat(lat, 10)).to.be.within(52, 53)
       expect(parseFloat(lng, 10)).to.be.within(4, 5)
+      expect(parseInt(zoom, 10)).to.equal(7)
     })
   })
 
