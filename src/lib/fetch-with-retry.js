@@ -13,7 +13,7 @@ export function fetchWithRetry(url, options = {}, retries = 1) {
   return fetch(url, options)
     .then((res) => {
       if (res.ok) {
-        return res.json();
+        return res
       }
       return onError(res.status)
     })
