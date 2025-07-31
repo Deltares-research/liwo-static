@@ -186,6 +186,7 @@ async function loadBreachLayer (breachId, layerName, layerSetId) {
       }),
     }
   )
+  .then(res => res.json())
   .catch(() => {
     const notification = {
       message: `Het laden van de kaartlaag "${layerName}" is niet gelukt. Probeer het opnieuw door de kaartlaag nog eens te selecteren.`,
