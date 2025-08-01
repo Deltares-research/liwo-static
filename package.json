@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@cypress/skip-test": "^2.6.1",
-    "@vitejs/plugin-vue": "^5.2.4",
+    "@vitejs/plugin-vue": "^6.0.1",
     "@vue/test-utils": "^2.4.5",
     "chai-things": "^0.2.0",
     "cypress": "^14.5.3",
@@ -57,7 +57,7 @@
     "sass": "^1.89.2",
     "sass-loader": "^16.0.5",
     "semantic-release": "^24.2.7",
-    "vite": "^6.3.5",
+    "vite": "^7.0.6",
     "vitest": "^3.2.4"
   }
 }

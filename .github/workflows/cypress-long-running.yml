@@ -6,7 +6,7 @@ on:
 jobs:
   install:
     runs-on: ubuntu-latest
-    container: cypress/browsers:node-20.9.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1
+    container: cypress/browsers:node-22.14.0-chrome-135.0.7049.95-1-ff-137.0.2-edge-135.0.3179.85-1
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,7 +32,7 @@ jobs:
   ui-chrome-tests:
     timeout-minutes: 15
     runs-on: ubuntu-latest
-    container: cypress/browsers:node-20.9.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1
+    container: cypress/browsers:node-22.14.0-chrome-135.0.7049.95-1-ff-137.0.2-edge-135.0.3179.85-1
     needs: install
     strategy:
       # when one test fails, DO NOT cancel the other
