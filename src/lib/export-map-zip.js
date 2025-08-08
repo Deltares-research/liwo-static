@@ -1,5 +1,6 @@
 import downloadBlob from './download-blob'
 import mapConfig from '../map.config'
+import { fetchWithRetry } from './fetch-with-retry'
 
 const headers = { Accept: '*/*', 'Content-Type': 'application/json' }
 
@@ -15,7 +16,7 @@ export async function downloadZipFileDataLayers({ layers, name }) {
   const services = await mapConfig.getServices()
   const apiBase = services.WEBSERVICE_URL
   const body = JSON.stringify({ layers, name })
-  return fetch(`${apiBase}/Maps.asmx/DownloadZipFileDataLayers`, {
+  return fetchWithRetry(`${apiBase}/Maps.asmx/DownloadZipFileDataLayers`, {
     method: 'POST',
     mode: 'cors',
     headers,
@@ -47,7 +48,7 @@ export async function downloadLiwoScenarios({ scale, band, liwoIds }) {
     scale,
     export: true
   })
-  return fetch(`${apiBase}/get_liwo_scenarios`, {
+  return fetchWithRetry(`${apiBase}/get_liwo_scenarios`, {
     method: 'POST',
     mode: 'cors',
     headers,
