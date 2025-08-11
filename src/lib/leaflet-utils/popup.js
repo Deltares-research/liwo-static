@@ -1,6 +1,5 @@
 import L from '@/lib/leaflet-utils/leaf'
 import getFeatureInfo from '@/lib/get-feature-info'
-import { extractUnit } from '@/lib/load-layersets'
 import { getLayerInfoValue } from './get-layer-info-value'
 
 import getCombinedFeatureInfo from '../get-combined-feature-info.js'
@@ -24,7 +23,7 @@ export async function showLayersInfoPopup ({ map, selectedLayers, position, latl
       }
 
       const formattedValue = formatLayerValue(value)
-      const formattedUnit = formatUnit(selectedLayer.layerObj)
+      const formattedUnit = formatUnit(selectedLayer.legendTitle || selectedLayer.layerObj?.properties?.legend?.title)
 
       return {
         unit: formattedUnit,
@@ -68,7 +67,7 @@ export async function showCombinedLayersInfoPopup ({ map, selectedLayers, latlng
         }
 
         const formattedValue = formatLayerValue(value[0])
-        const formattedUnit = formatUnit(selectedLayer.layerObj)
+        const formattedUnit = formatUnit(selectedLayer.legendTitle || selectedLayer.layerObj?.properties?.legend?.title)
 
         return {
           unit: formattedUnit,
@@ -94,9 +93,9 @@ function formatLayerValue (value) {
   return value.toFixed(2).toString()
 }
 
-function formatUnit (layer) {
-    if (layer?.legend?.title) {
-        return extractUnit(layer.legend.title)
+function formatUnit (title) {
+    if (title) {
+        return title.split('[').pop().split(']')[0]
     }
 
     return '-'
