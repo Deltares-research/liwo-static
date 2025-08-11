@@ -23,7 +23,7 @@ export async function showLayersInfoPopup ({ map, selectedLayers, position, latl
       }
 
       const formattedValue = formatLayerValue(value)
-      const formattedUnit = formatUnit(selectedLayer.legendTitle || selectedLayer.layerObj?.properties?.legend?.title)
+      const formattedUnit = formatUnit(selectedLayer.mapTitle || selectedLayer.layerObj?.properties?.legend?.title)
 
       return {
         unit: formattedUnit,
@@ -67,7 +67,7 @@ export async function showCombinedLayersInfoPopup ({ map, selectedLayers, latlng
         }
 
         const formattedValue = formatLayerValue(value[0])
-        const formattedUnit = formatUnit(selectedLayer.legendTitle || selectedLayer.layerObj?.properties?.legend?.title)
+        const formattedUnit = formatUnit(selectedLayer.mapTitle || selectedLayer.layerObj?.properties?.legend?.title)
 
         return {
           unit: formattedUnit,

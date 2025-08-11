@@ -36,7 +36,7 @@
         aria-live="polite"
       >
         <figcaption class="legend-panel__caption">
-          {{ layer.legendTitle || layer.layerObj?.properties?.legend?.title }}
+          {{ layer.mapTitle || layer.layerObj?.properties?.legend?.title }}
         </figcaption>
         <slot v-if="!layer.legendImageSrc"></slot>
         <!-- lookup legend if slot is empty -->

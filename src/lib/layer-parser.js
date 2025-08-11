@@ -58,7 +58,7 @@ export function normalizeLayer (layer) {
   // - Set move layer properties  to .properties
   const variants = layer.variants.map(variant => ({
     ...variant.map,
-    legendTitle: variant.map?.title,
+    mapTitle: variant.map?.title,
     metadata: variant.metadata,
     properties: variant.properties,
     title: variant.title,
