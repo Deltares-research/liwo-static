@@ -108,10 +108,6 @@ export async function loadLayerSets () {
     .then(data => data.layersets)
 }
 
-export function extractUnit (title) {
-  return title.split('[').pop().split(']')[0]
-}
-
 export default {
   loadLayerSetById,
   loadLayerSets
