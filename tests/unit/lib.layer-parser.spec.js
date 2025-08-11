@@ -10,7 +10,7 @@ it('normalizes layerSets', () => {
   expect(normalizedLayerSet).to.have.property('id')
   expect(normalizedLayerSet).toHaveProperty(['layers', '0', 'properties'])
   expect(normalizedLayerSet).toHaveProperty(['layers', '0', 'variants'])
-  expect(normalizedLayerSet).toHaveProperty(['layers', '0', 'legend'])
+  expect(normalizedLayerSet).toHaveProperty(['layers', '0', 'variants', '0', 'legendTitle'])
 })
 
 it('cleans a layerSet', () => {
