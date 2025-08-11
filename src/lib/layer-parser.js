@@ -54,15 +54,11 @@ export function flattenLayerSet (layerSet) {
 export function normalizeLayer (layer) {
   //
   // This method restructures the objecs, please add  motivation if you add something here.
-  // - Take the namespace of the  first variants map
   // - Take the properties of the map and move them to the variant (drop the map)
   // - Set move layer properties  to .properties
-  // - Add the namespace to the layer legend
-  const firstVariant = _.first(layer.variants)
-  // namespace should be available to legend
-  const namespace = _.get(firstVariant, 'map.namespace', '')
   const variants = layer.variants.map(variant => ({
     ...variant.map,
+    legendTitle: variant.map.title,
     metadata: variant.metadata,
     properties: variant.properties,
     title: variant.title,
@@ -70,28 +66,25 @@ export function normalizeLayer (layer) {
     variantNotification: variant.notification,
   }))
 
+  // Create an id from the first variant, because we need a unique identifier to
+  // select the correct layers. This needs to the layer id since there is functionality
+  // to select layers based on their id (i.e. startsWith BREACH_PREFIX)
+  const firstVariant = variants[0]
   // Create an id based on the layer in geoserver, or the layer  in  mapbox
-  let id = _.get(layer, 'legend.layer', layer.id)
+  let id = firstVariant.layer || layer.id
 
   // Create an extra id of the combination with bands (referenced by style in geoserver)
-  const breachBandId = id + '__' + layer.legend.style
+  const breachBandId = id + '__' + firstVariant.style
 
   // for  google earth layers take the mapid  of the layer
-  if (variants.length === 1 && _.has(layer.variants[0], 'mapid')) {
+  if (variants.length === 1 && layer.variants[0]?.mapid) {
     id = layer.variants[0].mapid
   }
   const result = {
-    // TODO: check why  we are  getting the layer from the legend...
-
     id: id,
     breachBandId,
-    // copy the rest  of  the layer properties
-    properties: _.omit(layer, ['variants']),
-    iscontrollayer: layer.iscontrollayer,
-    legend: {
-      ...layer.legend,
-      namespace: namespace
-    },
+    // copy the rest of the layer properties
+    properties: _.omit(layer, ['variants', 'iscontrollayer']),
     variants
   }
 
