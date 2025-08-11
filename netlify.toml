@@ -1,6 +1,6 @@
 [build.environment]
   # Environment variables are set here
-  NODE_VERSION = "20.9.0"
+  NODE_VERSION = "22.14.0"
 
 [[headers]]
   # Define which paths this specific [[headers]] block will cover.
