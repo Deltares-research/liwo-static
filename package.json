@@ -44,7 +44,7 @@
     "@vue/test-utils": "^2.4.5",
     "chai-things": "^0.2.0",
     "cypress": "^15.0.0",
-    "eslint": "^9.32.0",
+    "eslint": "^9.33.0",
     "eslint-plugin-cypress": "^5.1.0",
     "eslint-plugin-vue": "^10.4.0",
     "happy-dom": "^18.0.1",
