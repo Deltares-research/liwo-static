@@ -77,6 +77,7 @@ export async function computeCombinedScenario (scenarioIds, band, layerSetId) {
     band.title = title
     band.metadata = _.clone(band)
     band.map = {
+      title: `Gecombineerd Scenario [${getUnitByBand(band)}]`,
       type: 'tile',
       url: band.url,
       namespace: 'LIWO_MEGO',
@@ -85,9 +86,6 @@ export async function computeCombinedScenario (scenarioIds, band, layerSetId) {
       id: band.mapid,
       variants: [band],
       title: title,
-      legend: {
-        title: 'Gecombineerd Scenario [-]',
-      }
     }
     return layer
   })
@@ -294,4 +292,25 @@ export async function getFeatureIdsByScenarioIds (scenarioIds) {
     results[response.scenarioId] = response
   })
   return results
+}
+
+function getUnitByBand(band) {
+  switch (band.band) {
+    case 'affected':
+      return '#/ha'
+    case 'arrivaltime':
+      return 'uur'
+    case 'damage':
+      return '€/ha'
+    case 'fatalities':
+      return '#/ha'
+    case 'riserate':
+      return 'm/h'
+    case 'velocity':
+      return 'm/s'
+    case 'waterdepth':
+      return 'm'
+    default:
+      return '-'
+  }
 }

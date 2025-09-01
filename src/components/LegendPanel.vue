@@ -29,30 +29,28 @@
     <template v-if="legendIsShown">
       <figure
         v-for="layer in formattedLayers"
-        :key="layer.id"
+        :key="layer.layer"
         id="legend"
         class="legend-panel__legend"
         v-test="'legend'"
         aria-live="polite"
       >
-        <template v-if="layer.legend">
-          <figcaption class="legend-panel__caption">
-            {{ layer.legend.title }}
-          </figcaption>
-          <slot v-if="!layer.legendImageSrc"></slot>
-          <!-- lookup legend if slot is empty -->
-          <img
-            class="legend-panel__image"
-            :src="layer.legendImageSrc"
-            alt=""
-            @load="() => addLoadedImageByLayerId(layer.id)"
-            @error="() => addLoadedImageByLayerId(layer.id)"
-          />
-          <div
-            v-if="loadedImages.indexOf(layer.id) < 0"
-            class="legend-panel__image-loader lds-dual-ring"
-          ></div>
-        </template>
+        <figcaption class="legend-panel__caption">
+          {{ layer.mapTitle || layer.layerObj?.properties?.legend?.title }}
+        </figcaption>
+        <slot v-if="!layer.legendImageSrc"></slot>
+        <!-- lookup legend if slot is empty -->
+        <img
+          class="legend-panel__image"
+          :src="layer.legendImageSrc"
+          alt=""
+          @load="() => addLoadedImageByLayerId(layer.layer)"
+          @error="() => addLoadedImageByLayerId(layer.layer)"
+        />
+        <div
+          v-if="loadedImages.indexOf(layer.layer) < 0"
+          class="legend-panel__image-loader lds-dual-ring"
+        ></div>
       </figure>
     </template>
   </aside>
@@ -110,32 +108,36 @@ export default {
       return this.formattedLayers.length === 1 || this.isOpen;
     },
     formattedLayers() {
+      if (!this.services) {
+        return [];
+      }
+
       const uniqueLayers = this.layers.filter(
         (layer, index, self) =>
-          index ===
-          self.findIndex((item) => item.legend.title === layer.legend.title)
+          index === self.findIndex((item) => item.style === layer.style)
       );
 
       return uniqueLayers.map((layer) => {
-        if (!layer || !layer.legend) {
+        if (!layer) {
           return {};
         }
 
-        let legendImageSrc = '';
+        const layerId = layer.layer;
+        let legendImageSrc = "";
 
-        if (this.customMapConfig?.[layer.id]) {
-          legendImageSrc = this.customMapConfig[layer.id].legendImageSrc || '';
+        if (this.customMapConfig?.[layerId]) {
+          legendImageSrc = this.customMapConfig[layerId].legendImageSrc || "";
         }
 
         if (!legendImageSrc) {
-          const namespace = layer.legend.namespace;
-          const styleName = layer.legend.style;
-          const layerId = layer.legend.layer;
-          const url = this.services && this.services.LEGEND_URL;
+          const namespace = layer.namespace;
+          const styleName = layer.style;
+          const url = this.services.LEGEND_URL;
+
           legendImageSrc =
             url && namespace && styleName && layerId
               ? `${url}/${namespace}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=${layerId}&STYLE=${styleName}&HEIGHT=16&WIDTH=16&LEGEND_OPTIONS=fontAntiAliasing:true;fontSize:14;mx:0;dx:10;fontName:Verdana;`
-              : '';
+              : "";
         }
 
         return {

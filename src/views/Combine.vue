@@ -11,7 +11,7 @@
       >
         <template v-slot:legend>
           <legend-panel
-            :layers="selectedLayers.map(layer => layer.layerObj)"
+            :layers="selectedLayers"
             v-if="selectedLayers.length > 0"
           >
             <img :src="`legends/${band}.png`" v-if="band">
