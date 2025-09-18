@@ -4,7 +4,7 @@
   <vue-skip-to class="skip-link" to="#nav" label="Direct naar hoofdnavigatie" />
 
   <div class="site-container" id="app">
-    <app-header :page-title="title" />
+    <app-header :page-title="title" :global-notification="globalNotification" />
     <main id="content" role="main">
       <!-- main content goes here, based on router view -->
       <!-- make sure we  reload when changing the route name -->
@@ -51,12 +51,14 @@ export default {
   },
   data () {
     return {
-      cookieBanner: false
+      cookieBanner: false,
+      globalNotification: ''
     }
   },
   async mounted () {
     const services = await mapConfig.getServices()
     this.cookieBanner = services.COOKIE_BANNER
+    this.globalNotification = services.GLOBAL_NOTIFICATION
   },
   methods: {
     consentGiven () {

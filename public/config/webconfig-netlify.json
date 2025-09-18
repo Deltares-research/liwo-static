@@ -34,5 +34,6 @@
   "_comment10": "// Tracking settings",
   "COOKIE_BANNER": true,
   "PIWIK_CONTAINER_URL": "",
-  "PIWIK_CONTAINER_ID": ""
+  "PIWIK_CONTAINER_ID": "",
+  "GLOBAL_NOTIFICATION": "Je bekijkt deze website op een test omgeving. De gegevens die je hier ziet zijn mogelijk verouderd of incompleet. Gebruik deze omgeving niet voor officiële rapportages of besluitvorming."
 }

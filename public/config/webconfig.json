@@ -34,5 +34,6 @@
   "_comment10": "// Tracking settings",
   "COOKIE_BANNER": true,
   "PIWIK_CONTAINER_URL": "https://statistiek.rijksoverheid.nl",
-  "PIWIK_CONTAINER_ID": "FILL IN DURING DEPLOY"
+  "PIWIK_CONTAINER_ID": "FILL IN DURING DEPLOY",
+  "GLOBAL_NOTIFICATION": ""
 }
