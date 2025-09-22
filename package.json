@@ -57,7 +57,7 @@
     "sass": "^1.92.1",
     "sass-loader": "^16.0.5",
     "semantic-release": "^24.2.8",
-    "vite": "^7.1.5",
+    "vite": "^7.1.7",
     "vitest": "^3.2.4"
   }
 }
