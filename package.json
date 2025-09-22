@@ -46,7 +46,7 @@
     "cypress": "^15.2.0",
     "eslint": "^9.35.0",
     "eslint-plugin-cypress": "^5.1.1",
-    "eslint-plugin-vue": "^10.4.0",
+    "eslint-plugin-vue": "^10.5.0",
     "happy-dom": "^18.0.1",
     "imports-loader": "^5.0.0",
     "jsdom": "^27.0.0",
