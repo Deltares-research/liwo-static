@@ -5,6 +5,7 @@
         :projection="projection"
         :clusterMarkers="true"
         :layers="selectedLayers"
+        :getCustomSearchResults="getCustomSearchResults"
         @map:click="selectFeature"
         @marker:mouseover="handleMouseOver"
         @initMap="setMapObject"
@@ -188,6 +189,7 @@ import { getLayerType, BREACH_LAYERS_EN } from '@/lib/liwo-identifiers'
 import { iconsByLayerType, redIcon, defaultIcon } from '@/lib/leaflet-utils/markers'
 import { EPSG_3857 } from '@/lib/leaflet-utils/projections'
 import { showLayersInfoPopup, showCombinedLayersInfoPopup } from '@/lib/leaflet-utils/popup'
+import { getScenarioSearchResults } from '@/lib/leaflet-utils/scenario-search-results'
 
 export default {
   name: 'CombinePage',
@@ -440,7 +442,14 @@ export default {
       return this.layers
         .filter(layer => layer.iscontrollayer)
         .map(({ layerObj }) => layerObj)
-    }
+    },
+    getCustomSearchResults() {
+      return (query) =>
+        getScenarioSearchResults(query, {
+          selectFeatureMode: this.selectFeatureMode,
+          mapId: this.$route.params.id,
+        });
+    },
   },
   methods: {
     updateLayersInLayerSet (layerSet, layers) {

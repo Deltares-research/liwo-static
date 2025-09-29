@@ -7,6 +7,7 @@
     :layers="layers"
     :cluster="clusterMarkers"
     :config="mapConfig"
+    :getCustomSearchResults="getCustomSearchResults"
   >
     <div ref="legend">
       <slot name="legend"></slot>
@@ -37,6 +38,10 @@ export default {
     clusterMarkers: {
       type: Boolean,
       default: true
+    },
+    getCustomSearchResults: {
+      type: Function,
+      default: null
     }
   },
   data () {

@@ -21,6 +21,10 @@
       config: {
         type: Object,
       },
+      getCustomSearchResults: {
+        type: Function,
+        default: null,
+      }
     },
     created() {
       this.abortController = null
@@ -30,6 +34,7 @@
         onPrint: this.onPrint,
         onClick: this.onClick,
         onMarkerHover: this.onMarkerHover,
+        getCustomSearchResults: this.getCustomSearchResults
       })
 
       this.layerGroup = L.layerGroup().addTo(this.map)
