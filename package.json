@@ -1,6 +1,6 @@
 {
   "name": "liwo-static",
-  "version": "3.27.0",
+  "version": "3.28.0",
   "private": true,
   "scripts": {
     "serve": "vite",
@@ -30,7 +30,7 @@
     "lodash": "^4.17.21",
     "portal-vue": "^3.0.0",
     "proj4leaflet": "^1.0.2",
-    "query-string": "^9.2.2",
+    "query-string": "^9.3.1",
     "sanitize-html": "^2.17.0",
     "tiny-cookie": "^2.5.1",
     "vue": "^3.5.21",
@@ -44,20 +44,20 @@
     "@vue/test-utils": "^2.4.6",
     "chai-things": "^0.2.0",
     "cypress": "^15.2.0",
-    "eslint": "^9.35.0",
+    "eslint": "^9.36.0",
     "eslint-plugin-cypress": "^5.1.1",
-    "eslint-plugin-vue": "^10.4.0",
+    "eslint-plugin-vue": "^10.5.0",
     "happy-dom": "^18.0.1",
     "imports-loader": "^5.0.0",
     "jsdom": "^27.0.0",
     "lint-staged": "^16.1.6",
     "mocha": "^11.7.2",
-    "mochawesome": "^7.1.3",
+    "mochawesome": "^7.1.4",
     "postcss-import": "^16.1.1",
     "sass": "^1.92.1",
     "sass-loader": "^16.0.5",
     "semantic-release": "^24.2.8",
-    "vite": "^7.1.5",
+    "vite": "^7.1.7",
     "vitest": "^3.2.4"
   }
 }
