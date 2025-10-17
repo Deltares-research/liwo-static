@@ -1,3 +1,4 @@
+import sanitizeValue from '../../lib/sanitize-value'
 import { getFeatureIdByScenarioId } from "../load-breach";
 
 export async function getScenarioSearchResults(query, { selectFeatureMode, mapId }) {
@@ -11,7 +12,7 @@ export async function getScenarioSearchResults(query, { selectFeatureMode, mapId
         name: result.breachlocationname,
         id: result.scenarioId,
         link: `/${selectFeatureMode === 'single' ? 'scenarios' : 'combine'}/${mapId}/${result.scenarioId}`,
-        html: `<span>${result.breachlocationname}</span><br/><span class="leaflet-control-geocoder-address-context">Scenario id: ${result.scenarioId}</span>`,
+        html: sanitizeValue(`<span>${result.breachlocationname}</span><br/><span class="leaflet-control-geocoder-address-context">Scenario id: ${result.scenarioId}</span>`),
         })).catch(() => undefined)
     })
   )
@@ -23,7 +24,7 @@ export async function getScenarioSearchResults(query, { selectFeatureMode, mapId
         name: `Combineer ${commaSeparatedIds}`,
         id: commaSeparatedIds,
         link: `/combine/${mapId}/${commaSeparatedIds}`,
-        html: `<span>Combineer scenario ids: ${commaSeparatedIds}</span><br/><span class="leaflet-control-geocoder-address-context">${results.map(r => r.name).join(', ')}</span>`,
+        html: sanitizeValue(`<span>Combineer scenario ids: ${commaSeparatedIds}</span><br/><span class="leaflet-control-geocoder-address-context">${results.map(r => r.name).join(', ')}</span>`),
       }]
     }
 

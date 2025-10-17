@@ -3,6 +3,7 @@ import L from '@/lib/leaflet-utils/leaf'
 
 import '@/lib/leaflet-hack'
 import mapConfig from '@/map.config'
+import sanitizeValue from '../../lib/sanitize-value'
 import { EPSG_3857 } from '../../lib/leaflet-utils/projections'
 import createCrs from '../../lib/leaflet-utils/create-crs'
 import MapFillWindowControl from '../../components/MapFillWindowControl.vue'
@@ -101,7 +102,7 @@ function getNomatimResults(query) {
         const bbox = item.boundingbox;
         return {
           name: item.display_name,
-          html: geocoders.nominatim().options.htmlTemplate(item),
+          html: sanitizeValue(geocoders.nominatim().options.htmlTemplate(item)),
           bbox: new L.LatLngBounds([+bbox[0], +bbox[2]], [+bbox[1], +bbox[3]]),
         };
       });
