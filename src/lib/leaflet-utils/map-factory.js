@@ -3,15 +3,17 @@ import L from '@/lib/leaflet-utils/leaf'
 
 import '@/lib/leaflet-hack'
 import mapConfig from '@/map.config'
+import sanitizeValue from '../../lib/sanitize-value'
 import { EPSG_3857 } from '../../lib/leaflet-utils/projections'
 import createCrs from '../../lib/leaflet-utils/create-crs'
 import MapFillWindowControl from '../../components/MapFillWindowControl.vue'
 import northIcon from '../../img/north-arrow.svg'
 import { createApp } from 'vue'
+import { geocoders } from 'leaflet-control-geocoder'
 
 const INITIAL_BASELAYER = mapConfig.tileLayers[0].title
 
-export default function (el, config, { onPrint }) {
+export default function (el, config, { onPrint, getCustomSearchResults }) {
   const tileLayerOptions = baseLayerOptions(config)
   const baseLayers = createBaseLayers(tileLayerOptions)
 
@@ -32,7 +34,7 @@ export default function (el, config, { onPrint }) {
 
   map.addControl(roseControl())
   map.addControl(fillWindowControl())
-  map.addControl(geoCoderControl(map))
+  map.addControl(geoCoderControl(map, { getCustomSearchResults }))
   map.addControl(L.control.zoom({
     position: 'topright',
     zoomInTitle: 'Kaart inzoomen',
@@ -90,23 +92,58 @@ function whenReady(control, cb) {
   })
 }
 
-function geoCoderControl(map) {
+function getNomatimResults(query) {
+  return fetch(
+    `https://nominatim.openstreetmap.org/search?q=${query}&limit=5&format=json&addressdetails=1&countrycodes=nl&accept-language=nl`
+  )
+    .then((res) => res.json())
+    .then((data) => {
+      const results = data.map((item) => {
+        const bbox = item.boundingbox;
+        return {
+          name: item.display_name,
+          html: sanitizeValue(geocoders.nominatim().options.htmlTemplate(item)),
+          bbox: new L.LatLngBounds([+bbox[0], +bbox[2]], [+bbox[1], +bbox[3]]),
+        };
+      });
+      return results;
+    })
+    .catch(() => []);
+}
+
+function geoCoderControl(map, { getCustomSearchResults }) {
   let containerListenerInitialized = false
+
+  const geocoder = {
+    geocode: function (query) {
+      return Promise.all([
+        getCustomSearchResults ? getCustomSearchResults(query) : Promise.resolve([]),
+        getNomatimResults(query)
+      ]).then((results) => results.flat())
+    }
+  }
 
   const control = L.Control.geocoder({
     position: 'topright',
     defaultMarkGeocode: false,
     iconLabel: 'Start een nieuwe zoekopdracht',
     placeholder: 'Zoeken',
-  }).on('markgeocode', function (e) {
-    const bbox = e.geocode.bbox
-    const poly = L.polygon([
-      bbox.getSouthEast(),
-      bbox.getNorthEast(),
-      bbox.getNorthWest(),
-      bbox.getSouthWest(),
-    ])
-    map.fitBounds(poly.getBounds())
+    geocoder
+  })
+  .on('markgeocode', function ({ geocode }) {
+    if (geocode.bbox) {
+      const bbox = geocode.bbox
+      const poly = L.polygon([
+        bbox.getSouthEast(),
+        bbox.getNorthEast(),
+        bbox.getNorthWest(),
+        bbox.getSouthWest(),
+      ])
+      map.fitBounds(poly.getBounds())
+    } else if (geocode.link) {
+        window.location.href = `/#${geocode.link}`
+        window.location.reload()
+    }
   })
 
   // add listeners for a11y

@@ -66,6 +66,15 @@
     >
       {{ this.pageTitle }}
     </h2>
+    <div
+      v-if="globalNotification"
+      class="app-header__global-notification"
+    >
+      <div class="container app-header__global-notification-content">
+        <img class="app-header__global-notification-icon" :src="`${publicPath}icons/baseline-error-24px.svg`" alt="" />
+        <p>{{ globalNotification }}</p>
+      </div>
+    </div>
   </div>
   </header>
 </template>
@@ -78,6 +87,15 @@ export default {
     pageTitle: {
       type: String,
       default: 'LIWO – Landelijk Informatiesysteem Water en Overstromingen'
+    },
+    globalNotification: {
+      type: String,
+      default: ''
+    }
+  },
+  data () {
+    return {
+      publicPath: import.meta.env.BASE_URL
     }
   },
   methods: {
@@ -207,5 +225,20 @@ export default {
     margin: .25rem 0;
     min-height: 45px;
     text-align: left;
+  }
+
+  .app-header__global-notification {
+    background-color: #f9dfdd;
+    padding: 1rem 0;
+  }
+
+  .app-header__global-notification-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .app-header__global-notification-content p {
+    margin: 0;
   }
 </style>
