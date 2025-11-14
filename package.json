@@ -19,7 +19,7 @@
     "@vue-a11y/skip-to": "^3.0.3",
     "dom-to-image": "^2.6.0",
     "driver.js": "^1.3.6",
-    "fast-equals": "^5.2.2",
+    "fast-equals": "^5.3.3",
     "file-saver": "^2.0.5",
     "focus-trap": "^7.6.5",
     "leaflet": "^1.9.4",
