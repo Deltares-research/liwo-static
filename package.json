@@ -56,7 +56,7 @@
     "postcss-import": "^16.1.1",
     "sass": "^1.94.0",
     "sass-loader": "^16.0.6",
-    "semantic-release": "^25.0.0",
+    "semantic-release": "^25.0.2",
     "vite": "^7.2.2",
     "vitest": "^3.2.4"
   }
