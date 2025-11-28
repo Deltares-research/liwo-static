@@ -1,6 +1,13 @@
 import L from '@/lib/leaflet-utils/leaf'
 
-import { BREACH_PRIMARY, BREACH_REGIONAL, BREACH_OUTSIDE_DIKE, BREACH_FLOODING, BREACH_WATERSYSTEM } from '@/lib/liwo-identifiers'
+import {
+  BREACH_PRIMARY,
+  BREACH_REGIONAL,
+  BREACH_OUTSIDE_DIKE,
+  BREACH_FLOODING,
+  BREACH_STRESS,
+  BREACH_WATERSYSTEM,
+} from "@/lib/liwo-identifiers"
 
 import blackIconUrl from '../../img/markers/marker-icon-black.png'
 import blackRetinaIconUrl from '../../img/markers/marker-icon-2x-black.png'
@@ -175,6 +182,7 @@ export const icon_330_60_60 = L.icon({
 export const iconsByLayerType = {
   [BREACH_PRIMARY]: icon_210_60_60,
   [BREACH_REGIONAL]: icon_90_60_38,
+  [BREACH_STRESS]: icon_30_60_60,
   [BREACH_FLOODING]: icon_30_60_60,
   [BREACH_WATERSYSTEM]: icon_0_60_60,
   [BREACH_OUTSIDE_DIKE]: icon_270_60_60,
