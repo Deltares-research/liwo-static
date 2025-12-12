@@ -38,8 +38,8 @@ export const BREACH_LAYERS_EN = {
   damage: 'schade',
   fatalities: 'slachtoffers',
   affected: 'getroffenen',
-  arrivaltime: 'aankomsttijd'
-
+  arrivaltime: 'aankomsttijd',
+  duration: 'duur'
 }
 
 export const BREACH_LAYERS_NL = [
@@ -49,7 +49,8 @@ export const BREACH_LAYERS_NL = [
   'schade',
   'slachtoffers',
   'getroffenen',
-  'aankomsttijd'
+  'aankomsttijd',
+  'duur'
 ]
 
 export const BREACHES_IDS = [
