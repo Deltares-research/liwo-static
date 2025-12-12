@@ -2,7 +2,14 @@ import _ from 'lodash'
 
 import store from '@/store'
 
-import { BREACH_LAYERS_EN, BREACH_LAYERS_NL, BREACH_REGIONAL, BREACH_PRIMARY, getLayerType } from '@/lib/liwo-identifiers'
+import {
+  BREACH_LAYERS_EN,
+  BREACH_LAYERS_NL,
+  BREACH_REGIONAL,
+  BREACH_PRIMARY,
+  BREACH_STRESS,
+  getLayerType,
+} from "@/lib/liwo-identifiers";
 import mapConfig from '../map.config'
 import { fetchWithRetry } from './fetch-with-retry'
 
@@ -19,7 +26,11 @@ export async function loadBreach (feature, layerSetId) {
 
   // we have different breach layers, depending on the type
   let breachLayers = []
-  if (layerType === BREACH_PRIMARY || layerType === BREACH_REGIONAL) {
+  if (
+    layerType === BREACH_PRIMARY ||
+    layerType === BREACH_REGIONAL ||
+    layerType === BREACH_STRESS
+  ) {
     breachLayers = BREACH_LAYERS_NL
   } else {
     breachLayers = [`${layerType}.${breachId}`]

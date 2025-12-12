@@ -3,6 +3,7 @@ export const BREACH_PRIMARY = BREACH_PREFIX + '_primair'
 export const BREACH_REGIONAL = BREACH_PREFIX + '_regionaal'
 export const BREACH_OUTSIDE_DIKE = BREACH_PREFIX + '_buitendijks'
 export const BREACH_FLOODING = BREACH_PREFIX + '_wateroverlast'
+export const BREACH_STRESS = BREACH_PREFIX + '_bovenregiostress'
 export const BREACH_WATERSYSTEM = BREACH_PREFIX + '_regionaalwatersysteem'
 export const BREACH_SELECTED = 'selected_marker'
 export const BREACHES_PRIMARY_LAYER_ID = 'gebiedsindeling_doorbraaklocaties_primair'
@@ -37,8 +38,8 @@ export const BREACH_LAYERS_EN = {
   damage: 'schade',
   fatalities: 'slachtoffers',
   affected: 'getroffenen',
-  arrivaltime: 'aankomsttijd'
-
+  arrivaltime: 'aankomsttijd',
+  duration: 'duur'
 }
 
 export const BREACH_LAYERS_NL = [
@@ -48,7 +49,8 @@ export const BREACH_LAYERS_NL = [
   'schade',
   'slachtoffers',
   'getroffenen',
-  'aankomsttijd'
+  'aankomsttijd',
+  'duur'
 ]
 
 export const BREACHES_IDS = [
@@ -56,6 +58,7 @@ export const BREACHES_IDS = [
   BREACH_REGIONAL,
   BREACH_OUTSIDE_DIKE,
   BREACH_FLOODING,
+  BREACH_STRESS,
   BREACH_WATERSYSTEM,
   BREACH_SELECTED
 ]
