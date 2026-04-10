@@ -106,8 +106,6 @@
 import { mapActions, mapGetters, mapState } from 'vuex'
 import _ from 'lodash'
 
-import store from '@/store'
-
 import LayerPopup from '@/components/LayerPopup.vue'
 import LayerControlSelect from '@/components/LayerControlSelect.vue'
 
@@ -134,7 +132,7 @@ export default {
         indexes = this.getOptionsByVariantId(this.selectedVariant)
       }
 
-      store.commit('setSelectedVariantIndexByBreachBandId', { selectedIndex: indexes, breachBandId: this.id })
+      this.$store.commit('setSelectedVariantIndexByBreachBandId', { selectedIndex: indexes, breachBandId: this.id })
     }
 
     this.setLayerVariantOptions()
@@ -328,7 +326,7 @@ export default {
           indexes = this.getOptionsByVariantId(this.selectedVariant)
         }
 
-        store.commit('setSelectedVariantIndexByBreachBandId', { selectedIndex: indexes, breachBandId: this.id })
+        this.$store.commit('setSelectedVariantIndexByBreachBandId', { selectedIndex: indexes, breachBandId: this.id })
         this.setSelectedVariantIndexes({ selectedIndex: indexes })
       }
     },
