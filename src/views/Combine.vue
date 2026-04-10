@@ -165,7 +165,6 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex'
-import { deepEqual } from 'fast-equals'
 
 import LiwoMap from '@/components/LiwoMap.vue'
 import NotificationBar from '@/components/NotificationBar.vue'
@@ -184,6 +183,7 @@ import FilterPopup from '@/components/FilterPopup.vue'
 import { flattenLayerSet, normalizeLayerSet, cleanLayerSet, selectVariantsInLayerSet } from '@/lib/layer-parser'
 import buildLayerSetNotifications from '@/lib/build-layerset-notifications'
 import { loadBreach, getScenarioInfo, computeCombinedScenario, getFeatureIdsByScenarioIds } from '@/lib/load-breach'
+import { uniq, deepEqual } from '@/lib/utils'
 
 import { getLayerType, BREACH_LAYERS_EN } from '@/lib/liwo-identifiers'
 import { iconsByLayerType, redIcon, defaultIcon } from '@/lib/leaflet-utils/markers'
@@ -520,7 +520,7 @@ export default {
       const featureInfoByScenarioId = await getFeatureIdsByScenarioIds(this.scenarioIds)
       const featureIds = Object.values(featureInfoByScenarioId).map(v => v.breachlocationid).filter(Boolean)
       // get all uniq ids
-      this.featureIds = [...new Set(featureIds)]
+      this.featureIds = uniq(featureIds)
 
       if (this.scenarioMode === 'compute') {
         // if we are  computing, we can pass them on

@@ -62,6 +62,7 @@
 
 <script>
 import PopUp from './PopUp.vue'
+import { uniq } from '@/lib/utils'
 
 export default {
   props: {
@@ -92,9 +93,9 @@ export default {
         const currentIds = this.currentSelectedIds.split(',')
         if (this.combineWithCurrentSelectedIds) {
           /* TODO: make sure this works for id == 0 */
-          newIds = [...new Set([...currentIds, ...newIds].filter(x => x))]
+          newIds = uniq([...currentIds, ...newIds].filter(x => x))
         } else {
-          newIds = [...new Set(newIds.filter(x => x))]
+          newIds = uniq(newIds.filter(x => x))
         }
 
         // go to the new page

@@ -1,6 +1,7 @@
 import {
   BREACH_PREFIX
 } from '@/lib/liwo-identifiers'
+import { omit } from '@/lib/utils'
 
 export function flattenLayerSet (layerSet) {
   if (!layerSet) {
@@ -13,11 +14,11 @@ export function flattenLayerSet (layerSet) {
   // You can pass this to leaflet.
 
   // get all the layerSet properties
-  const layerSetProperties = Object.fromEntries(Object.entries(layerSet).filter(([k]) => k !== 'layers'))
+  const layerSetProperties = omit(layerSet, ['layers'])
   // loop over all layers
   const layers = layerSet.layers.map(layer => {
     // get all layer properties
-    const layerProperties = Object.fromEntries(Object.entries(layer).filter(([k]) => k !== 'variants'))
+    const layerProperties = omit(layer, ['variants'])
     // get all variants
 
     let variant = {}
@@ -78,7 +79,7 @@ export function normalizeLayer (layer) {
   if (variants.length === 1 && layer.variants[0]?.mapid) {
     id = layer.variants[0].mapid
   }
-  const layerProps = Object.fromEntries(Object.entries(layer).filter(([k]) => !['variants', 'iscontrollayer'].includes(k)))
+  const layerProps = omit(layer, ['variants', 'iscontrollayer'])
   const result = {
     id: id,
     breachBandId,

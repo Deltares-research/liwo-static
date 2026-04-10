@@ -1,4 +1,4 @@
-import { deepEqual } from 'fast-equals'
+import { deepEqual } from '@/lib/utils'
 
 function buildLayerSetFeatureNotifications (layers) {
   // create a list of notifications based on the layerset features, the feature that was  used to create the layerSet

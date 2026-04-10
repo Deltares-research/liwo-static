@@ -106,3 +106,22 @@ export const wrapInProperty = property => value => ({ [property]: value })
 export const apply = fns => value => fns.map(fn => fn(value))
 
 export const isPromise = (value) => Boolean(value && typeof value.then === 'function')
+
+/**
+ * Returns a copy of the object without the specified keys.
+ *
+ * @example
+ * omit({ a: 1, b: 2, c: 3 }, ['b', 'c']) // { a: 1 }
+ */
+export const omit = (obj, keys) =>
+  Object.fromEntries(Object.entries(obj).filter(([k]) => !keys.includes(k)))
+
+/**
+ * Returns an array with duplicate values removed.
+ *
+ * @example
+ * uniq([1, 2, 2, 3]) // [1, 2, 3]
+ */
+export const uniq = arr => [...new Set(arr)]
+
+export { deepEqual } from 'fast-equals'
