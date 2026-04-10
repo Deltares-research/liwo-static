@@ -1,8 +1,6 @@
 //import Vue from 'vue'
 import { createStore } from 'vuex'
 
-import _ from 'lodash'
-
 import { loadLayerSetById } from './lib/load-layersets'
 import { flattenLayerSet, normalizeLayerSet, cleanLayerSet } from './lib/layer-parser'
 import buildLayerSetNotifications from './lib/build-layerset-notifications'
@@ -102,7 +100,7 @@ export default createStore({
     },
     async loadLayerSetById ({ commit, state }, { id }) {
       // Skip if we already loaded this layerSet
-      if (_.has(state.layerSetsById, id)) {
+      if (id in state.layerSetsById) {
         return
       }
       // Load a layerSet
@@ -135,7 +133,7 @@ export default createStore({
   },
   getters: {
     variantFilterPropertiesIndex: (state) => (breachId) => {
-      const props = _.get(state.variantFilterProperties, breachId, [])
+      const props = state.variantFilterProperties[breachId] ?? []
       return props
         .reduce((arr, val) => ({ ...arr, [val]: 0 }), {})
     },

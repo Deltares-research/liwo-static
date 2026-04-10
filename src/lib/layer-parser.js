@@ -1,8 +1,7 @@
-import _ from 'lodash'
-
 import {
   BREACH_PREFIX
 } from '@/lib/liwo-identifiers'
+import { omit } from '@/lib/utils'
 
 export function flattenLayerSet (layerSet) {
   if (!layerSet) {
@@ -15,11 +14,11 @@ export function flattenLayerSet (layerSet) {
   // You can pass this to leaflet.
 
   // get all the layerSet properties
-  const layerSetProperties = _.omit(layerSet, ['layers'])
+  const layerSetProperties = omit(layerSet, ['layers'])
   // loop over all layers
-  const layers = _.map(layerSet.layers, layer => {
+  const layers = layerSet.layers.map(layer => {
     // get all layer properties
-    const layerProperties = _.omit(layer, ['variants'])
+    const layerProperties = omit(layer, ['variants'])
     // get all variants
 
     let variant = {}
@@ -38,7 +37,7 @@ export function flattenLayerSet (layerSet) {
     }
 
     // make a copy of the variant as a basis for the flattened layer
-    const newLayer = _.clone(variant)
+    const newLayer = { ...variant }
     // copy layer properties in variant
     newLayer.layerObj = layerProperties
     newLayer.layerSet = layerSetProperties
@@ -48,7 +47,7 @@ export function flattenLayerSet (layerSet) {
   // now we have layers[variants[]]
   // so we just need to flatten
 
-  return _.flatten(layers)
+  return layers.flat()
 }
 
 export function normalizeLayer (layer) {
@@ -80,11 +79,12 @@ export function normalizeLayer (layer) {
   if (variants.length === 1 && layer.variants[0]?.mapid) {
     id = layer.variants[0].mapid
   }
+  const layerProps = omit(layer, ['variants', 'iscontrollayer'])
   const result = {
     id: id,
     breachBandId,
     // copy the rest of the layer properties
-    properties: _.omit(layer, ['variants', 'iscontrollayer']),
+    properties: layerProps,
     variants
   }
 
@@ -103,7 +103,7 @@ export function cleanLayer (layer) {
   // Change layer type to cluster
   if (layer.id.startsWith(BREACH_PREFIX)) {
     // if we have a breach, add the cluster behaviour
-    _.each(layer.variants, (variant) => {
+    layer.variants.forEach((variant) => {
       variant.type = 'cluster'
     })
   }
@@ -112,7 +112,7 @@ export function cleanLayer (layer) {
     layer.hideWms = true
   }
 
-  if (_.isNil(layer.properties.title)) {
+  if (layer.properties.title == null) {
     // sometimes the title is not available, fill it in using the name
     layer.properties.title = layer.properties.name
   }
@@ -131,9 +131,9 @@ export function cleanLayerSet (layerSet) {
   )
 
   // some scenario layersets have the wrong visibility set
-  if (_.has(layerSet, 'feature')) {
+  if ('feature' in layerSet) {
     // Set all layers as invisible and ...
-    _.each(layerSet.layers, layer => {
+    layerSet.layers.forEach(layer => {
       layer.properties.visible = false
     })
     if (layerSet.layers.length > 0) {
