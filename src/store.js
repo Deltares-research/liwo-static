@@ -1,8 +1,6 @@
 //import Vue from 'vue'
 import { createStore } from 'vuex'
 
-import _ from 'lodash'
-
 import { loadLayerSetById } from './lib/load-layersets'
 import { flattenLayerSet, normalizeLayerSet, cleanLayerSet } from './lib/layer-parser'
 import buildLayerSetNotifications from './lib/build-layerset-notifications'
@@ -14,15 +12,11 @@ export default createStore({
     // active/current -> currently loaded TODO: use consistent
     // selected -> selected by user
 
-    // current/active/selected layer,
-    // changing these triggers a load of the corresponding data
-    layerSetId: 0,
-
+    // We keep track of some state across pages.
+    // all layer data (stored so it doesn't need to fetch on changing pages)
     // TODO: consider storing layers by id separate, then  we don't need breach layers
     layerSetsById: {},
 
-    // We keep track of some state across pages.
-    // all layer data (stored so it doesn't need to fetch on changing pages)
     // all notifications, by LayerSetId
     notificationsById: {},
 
@@ -30,7 +24,6 @@ export default createStore({
     selectedProbabilities: ['lt30', 'f30t300', 'f300t3000', 'f3000t30k', 'gt30k'],
     // This is a specific filter from 'overig' special on imminent flood
     imminentFlood: false,
-    probabilityFilter: '',
 
     // These are the variants used to filter the layer variant options
     variantFilterProperties: {},
@@ -41,9 +34,6 @@ export default createStore({
     setLayerSetById (state, { id, layerSet }) {
       // always update the selected variants and selected id's at the smae time
       state.layerSetsById[id] = layerSet
-    },
-    setLayerSetId (state, id) {
-      state.layerSetId = id
     },
     setLayersByLayerSetId (state, { id, layers }) {
       // update the layers in layerSet id
@@ -102,7 +92,7 @@ export default createStore({
     },
     async loadLayerSetById ({ commit, state }, { id }) {
       // Skip if we already loaded this layerSet
-      if (_.has(state.layerSetsById, id)) {
+      if (state.layerSetsById?.[id]) {
         return
       }
       // Load a layerSet
@@ -135,26 +125,10 @@ export default createStore({
   },
   getters: {
     variantFilterPropertiesIndex: (state) => (breachId) => {
-      const props = _.get(state.variantFilterProperties, breachId, [])
+      const props = state.variantFilterProperties?.[breachId] || []
+
       return props
         .reduce((arr, val) => ({ ...arr, [val]: 0 }), {})
-    },
-    layerSet ({ layerSetsById, layerSetId }) {
-      // return the current layerSet
-      return layerSetsById[layerSetId]
-    },
-    layers (state, { layerSet }) {
-      // flatten all layers and return
-      if (!layerSet) {
-        return []
-      }
-      return flattenLayerSet(layerSet)
-    },
-    currentNotifications (state) {
-      const { layerSetId, notificationsById } = state
-      const notifications = notificationsById[layerSetId] || []
-
-      return notifications
     }
   }
 })
