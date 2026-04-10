@@ -61,7 +61,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import PopUp from './PopUp.vue'
 
 export default {
@@ -93,9 +92,9 @@ export default {
         const currentIds = this.currentSelectedIds.split(',')
         if (this.combineWithCurrentSelectedIds) {
           /* TODO: make sure this works for id == 0 */
-          newIds = _.uniq([...currentIds, ...newIds].filter(x => x))
+          newIds = [...new Set([...currentIds, ...newIds].filter(x => x))]
         } else {
-          newIds = _.uniq(newIds.filter(x => x))
+          newIds = [...new Set(newIds.filter(x => x))]
         }
 
         // go to the new page

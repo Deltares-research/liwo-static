@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import L from '@/lib/leaflet-utils/leaf'
 
 import 'leaflet.markercluster'
@@ -149,7 +148,7 @@ function createSelectedGeojson (layer, callbacks) {
     onEachFeature: (feature, marker) => onEachFeature(feature, marker, callbacks),
     pointToLayer: (feature, latlng) => pointToLayer(feature, latlng, {})
   }
-  if (_.has(layer, 'filter')) {
+  if ('filter' in layer) {
     options.filter = layer.filter
   }
   const selectedGeoJson = {
@@ -170,7 +169,7 @@ function createClusterGeoJson (layer, callbacks) {
     onEachFeature: (feature, marker) => onEachFeature(feature, marker, callbacks),
     pointToLayer: (feature, latlng) => pointToLayer(feature, latlng, markerOptions)
   }
-  if (_.has(layer, 'filter')) {
+  if ('filter' in layer) {
     options.filter = layer.filter
   }
   const unselectedGeoJson = {
@@ -209,7 +208,7 @@ function onEachFeature (feature, marker, { onClick, onMarkerHover }) {
     marker.setIcon(yellowIcon)
   } else {
     const layerType = getLayerType(feature)
-    const icon = _.get(iconsByLayerType, layerType, defaultIcon)
+    const icon = iconsByLayerType[layerType] ?? defaultIcon
     marker.setIcon(icon)
   }
 }

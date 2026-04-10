@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { deepEqual } from 'fast-equals'
 
 function buildLayerSetFeatureNotifications (layers) {
   // create a list of notifications based on the layerset features, the feature that was  used to create the layerSet
@@ -42,7 +42,9 @@ export default function buildNotifications (layers) {
   ]
 
   // remove any doubles
-  result = _.uniqWith(result, _.isEqual)
+  result = result.filter((item, index, self) =>
+    self.findIndex(other => deepEqual(other, item)) === index
+  )
   return result
 }
 

@@ -165,7 +165,7 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex'
-import _ from 'lodash'
+import { deepEqual } from 'fast-equals'
 
 import LiwoMap from '@/components/LiwoMap.vue'
 import NotificationBar from '@/components/NotificationBar.vue'
@@ -341,17 +341,17 @@ export default {
 
       layers = layers.filter(layer => {
         // toss  out the invisible layers
-        const layerVisible = _.get(layer.layerObj.properties, 'visible', true)
+        const layerVisible = layer.layerObj.properties?.visible ?? true
         return layerVisible
       })
 
-      // make a deep clone (this is faster than lodash deepClone)
+      // make a deep clone using JSON serialization
       // this is needed so we can remove features
       // TODO: optimize this (using omit?)
       layers = JSON.parse(JSON.stringify(layers))
 
       layers = layers.map(layer => {
-        if (!_.has(layer, 'geojson')) {
+        if (!('geojson' in layer)) {
           return layer
         }
         // TODO: do this using stylesheet
@@ -359,11 +359,11 @@ export default {
         const geojson = layer.geojson
         if (this.filterByIds) {
           // this is true for the combined scenario
-          geojson.features = _.filter(geojson.features, (feature) => {
+          geojson.features = geojson.features.filter((feature) => {
             // if we are filtering by Id
             return (this.featureIds.includes(feature.properties.id))
           })
-          geojson.features = _.map(geojson.features, (feature) => {
+          geojson.features = geojson.features.map((feature) => {
             feature.properties.selected = true
             // find extra info from the loaded scenarioInfo
             if (this.scenarioInfo.features) {
@@ -387,7 +387,7 @@ export default {
 
         // if feature is not selected, filter by probabilities
         if (this.selectedProbabilities.length || this.imminentFlood) {
-          geojson.features = _.filter(geojson.features, (feature) => {
+          geojson.features = geojson.features.filter((feature) => {
             const checkProbabilities = this.selectedProbabilities.some(item => feature.properties[item] > 0)
             let checkImminentFlood = false
             if (this.imminentFlood) {
@@ -402,8 +402,8 @@ export default {
           geojson.features = []
         }
 
-        const selectedFeatureIds = _.map(this.selectedFeatures, 'properties.id')
-        geojson.features = _.map(geojson.features, (feature) => {
+        const selectedFeatureIds = this.selectedFeatures.map(f => f.properties.id)
+        geojson.features = geojson.features.map((feature) => {
           // set feature selected to true
           if (selectedFeatureIds.includes(feature.properties.id)) {
             feature.properties.selected = true
@@ -416,16 +416,14 @@ export default {
         return layer
       })
       // these are the extra scenarios
-      let scenarioLayers = _.flatten(
-        this.scenarioLayerSets.map(
-          // flatten all layers
-          flattenLayerSet
-        )
+      let scenarioLayers = this.scenarioLayerSets.flatMap(
+        // flatten all layers
+        flattenLayerSet
       )
 
       // also filter these by visibility
       scenarioLayers = scenarioLayers.filter(layer => {
-        const layerVisible = _.get(layer.layerObj.properties, 'visible', true)
+        const layerVisible = layer.layerObj.properties?.visible ?? true
         return layerVisible
       })
 
@@ -477,7 +475,7 @@ export default {
       })
     },
     selectVariant ({ layer, layerSet, scenarioLayerSetIndex }) {
-      _.each(layerSet.layers, (layerSetLayer) => {
+      layerSet.layers.forEach((layerSetLayer) => {
         layerSetLayer.properties.selectedVariant = layer
       })
 
@@ -497,8 +495,7 @@ export default {
         const layers = flattenLayerSet(layerSet)
         const notifications = buildLayerSetNotifications(layers)
 
-        _.each(
-          notifications,
+        notifications.forEach(
           (notification) => {
             // add them to the main layerSetId number to show up
             this.$store.commit('addNotificationById', { id: this.layerSetId, notification })
@@ -521,9 +518,9 @@ export default {
 
       // we need to get the features first as we are filtering the layer using these
       const featureInfoByScenarioId = await getFeatureIdsByScenarioIds(this.scenarioIds)
-      const featureIds = _.filter(_.map(featureInfoByScenarioId, 'breachlocationid'))
+      const featureIds = Object.values(featureInfoByScenarioId).map(v => v.breachlocationid).filter(Boolean)
       // get all uniq ids
-      this.featureIds = _.uniq(featureIds)
+      this.featureIds = [...new Set(featureIds)]
 
       if (this.scenarioMode === 'compute') {
         // if we are  computing, we can pass them on
@@ -533,7 +530,7 @@ export default {
         this.scenarioInfo = scenarioInfo
       } else {
         // If we are interacting we need to lookup the corresponding features
-        const features = _.map(this.featureIds, this.getFeatureById)
+        const features = this.featureIds.map(this.getFeatureById)
         const layerSets = await this.loadScenarioLayerSetsByFeatures(features)
         this.scenarioLayerSets = layerSets
       }
@@ -544,7 +541,7 @@ export default {
       // load all  scenarios
       this.scenarioLayerSets = []
 
-      if (_.isEmpty(features)) {
+      if (features.length === 0) {
         return Promise.resolve([])
       }
       // collapse first layer
@@ -568,9 +565,9 @@ export default {
       // get a feature by an id
       // get layes  with a geojson attribute
       const flatLayers = flattenLayerSet(this.layerSet)
-      const layers = _.filter(flatLayers, 'geojson')
-      const features = _.flatten(_.map(layers, 'geojson.features'))
-      const feature = _.find(features, ['properties.id', id])
+      const layers = flatLayers.filter(layer => layer.geojson)
+      const features = layers.flatMap(layer => layer.geojson.features)
+      const feature = features.find(feature => feature.properties?.id === id)
       return feature
     },
     async selectFeature (evt) {
@@ -586,8 +583,8 @@ export default {
       const feature = evt.target.feature
       // this is the code to enable/disable the markers
       // TODO: check if we need to use properties.id or feature.id
-      const selectedFeatureIds = _.map(this.selectedFeatures, 'properties.id')
-      const selected = !_.includes(selectedFeatureIds, feature.properties.id)
+      const selectedFeatureIds = this.selectedFeatures.map(f => f.properties.id)
+      const selected = !selectedFeatureIds.includes(feature.properties.id)
       // this looks a bit double, but it's easier to read
       const wasSelected = !selected
 
@@ -608,13 +605,13 @@ export default {
       // administer our own  list of  selected features
       if (wasSelected) {
         // now get rid of  the feature
-        _.remove(this.selectedFeatures, (otherFeature) => {
-          return otherFeature.properties.id === feature.properties.id
-        })
+        this.selectedFeatures = this.selectedFeatures.filter(otherFeature =>
+          otherFeature.properties.id !== feature.properties.id
+        )
         // get rid of scenarioLayers that are not  currently selected
         const scenarioLayerSets = this.scenarioLayerSets.filter((layerSet) => {
           // if  this layerSet was  created based on our feature, remove it
-          const selectedIds = _.map(this.selectedFeatures, 'id')
+          const selectedIds = this.selectedFeatures.map(f => f.id)
           return selectedIds.includes(layerSet.feature.id)
         })
         this.scenarioLayerSets = scenarioLayerSets
@@ -634,7 +631,7 @@ export default {
 
       if (wasSelected) {
         // if we deselected the selectedFeature reset the selectedFeature
-        if (_.isEqual(feature, this.selectedFeature)) {
+        if (deepEqual(feature, this.selectedFeature)) {
           this.selectedFeature = null
         }
       }
@@ -655,16 +652,15 @@ export default {
         // get the old marker and reset it
         // TODO: use old icon.
         const layerType = getLayerType(feature)
-        const icon = _.get(iconsByLayerType, layerType, defaultIcon)
+        const icon = iconsByLayerType[layerType] ?? defaultIcon
         marker.setIcon(icon)
         delete this.selectedMarkersById[feature.id]
       } else {
         // we are setting a marker
         if (this.selectFeatureMode === 'single') {
           // clear old markers
-          const markersToReset = _.values(this.selectedMarkersById)
-          _.each(
-            markersToReset,
+          const markersToReset = Object.values(this.selectedMarkersById)
+          markersToReset.forEach(
             (marker) => {
               marker.setIcon(defaultIcon)
             }
@@ -685,7 +681,7 @@ export default {
       // and clean
       layerSet = cleanLayerSet(layerSet)
 
-      _.each(layerSet.layers, layer => {
+      layerSet.layers.forEach(layer => {
         layer.breachId = layerSet.id
       })
       layerSet = selectVariantsInLayerSet(layerSet, this.scenarioIds)
@@ -695,8 +691,7 @@ export default {
       const layers = flattenLayerSet(layerSet)
       const notifications = buildLayerSetNotifications(layers)
 
-      _.each(
-        notifications,
+      notifications.forEach(
         (notification) => {
           // add them to the main layerSetId number to show up
           this.$store.commit('addNotificationById', { id: this.layerSetId, notification })
@@ -715,11 +710,11 @@ export default {
       layerSet = cleanLayerSet(layerSet)
 
       // Set the first layer as visible
-      _.each(layerSet.layers, layer => {
+      layerSet.layers.forEach(layer => {
         layer.properties.visible = false
       })
-      if (!_.isEmpty(layerSet.layers)) {
-        _.first(layerSet.layers).properties.visible = true
+      if (layerSet.layers.length > 0) {
+        layerSet.layers[0].properties.visible = true
       }
       // store the scenario layerset
       return layerSet

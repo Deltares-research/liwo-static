@@ -1,5 +1,3 @@
-import _ from 'lodash'
-
 import store from '@/store'
 
 import {
@@ -45,11 +43,11 @@ export async function loadBreach (feature, layerSetId) {
   // TODO: consider making this async, otherwise we lock the browser
   let bands = await Promise.all(promises)
   // remove undefined/null bands
-  bands = _.filter(bands)
+  bands = bands.filter(Boolean)
 
   // merge layers of all unorganized sets
   // and use the feature name
-  const layers = _.flatten(_.map(bands, 'layers'))
+  const layers = bands.flatMap(band => band.layers)
   const layerSet = {
     id: breachId,
     feature: feature,
@@ -77,16 +75,16 @@ export async function computeCombinedScenario (scenarioIds, band, layerSetId) {
   let bands = await Promise.all(promises)
 
   // remove undefined/null bands
-  bands = _.filter(bands)
+  bands = bands.filter(Boolean)
 
   // convert bands to layerlike objects
   const layers = bands.map((band) => {
     // if it looks like a layer, then it is a layer
     // lookup the translation
-    const bandNl = _.get(BREACH_LAYERS_EN, band.band)
+    const bandNl = BREACH_LAYERS_EN[band.band]
     const title = bandNl
     band.title = title
-    band.metadata = _.clone(band)
+    band.metadata = { ...band }
     band.map = {
       title: `Gecombineerd Scenario [${getUnitByBand(band)}]`,
       type: 'tile',
@@ -138,16 +136,19 @@ export async function getScenarioInfo (scenarioIds, featureInfoByScenarioId) {
     return
   }
 
-  const bandCounts = _.countBy(data.features.flatMap((x) => x.properties.band_names))
+  const bandCounts = data.features.flatMap((x) => x.properties.band_names).reduce((acc, val) => {
+    acc[val] = (acc[val] || 0) + 1
+    return acc
+  }, {})
 
-  const featureCollectionProperties = _.get(data, 'properties', {})
+  const featureCollectionProperties = data?.properties ?? {}
   featureCollectionProperties.bandCounts = bandCounts
   data.properties = featureCollectionProperties
 
   if (featureInfoByScenarioId) {
     data.features.forEach(
       (feature) => {
-        const extraProperties = _.get(featureInfoByScenarioId, feature.properties.Scenario_ID, {})
+        const extraProperties = featureInfoByScenarioId?.[feature.properties.Scenario_ID] ?? {}
         // store the extra properties in the feature
         Object.assign(feature.properties, extraProperties)
       }
@@ -220,7 +221,7 @@ async function loadBreachLayer (breachId, layerName, layerSetId) {
   // get the first layerset if available, otherwise return null
   let result = null
   // if this layerset is not available layerset can be null
-  if (_.has(data, '[0].layerset[0]')) {
+  if (Array.isArray(data) && data[0]?.layerset?.[0] !== undefined) {
     result = { ...data[0].layerset[0] }
   }
   return result
@@ -299,7 +300,7 @@ export async function getFeatureIdsByScenarioIds (scenarioIds) {
   const responses = await Promise.all(promises)
   const results = {}
   // TODO: return more info (featureIdsByScenarioIds)
-  _.each(responses, (response) => {
+  responses.forEach((response) => {
     results[response.scenarioId] = response
   })
   return results

@@ -22,8 +22,6 @@
 
 <script>
 
-import _ from 'lodash'
-
 export default {
   props: {
     layers: {
@@ -34,7 +32,7 @@ export default {
   methods: {
     updateLayer (layer, index) {
       // update layer at index index in the layers list and emit the update event
-      const layers = _.clone(this.layers)
+      const layers = [...this.layers]
       layers[index] = layer
       this.$emit('update:layers', layers)
     },
