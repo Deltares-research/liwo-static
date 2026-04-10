@@ -60,7 +60,7 @@ export const idSameAs = value => obj => getId(obj) === value
  * idIncludedIn(myArray)({ id: 'bar' }) // true
  * idIncludedIn(myArray)({ id: 'baz' }) // false
  */
-export const idIncludedIn = array => obj => array.includes(getId(obj))
+export const idIncludedIn = array => obj => array && array.includes(getId(obj))
 
 /**
  * Checks if an array is not emoty
