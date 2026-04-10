@@ -1,7 +1,5 @@
 import _ from 'lodash'
 
-import store from '@/store'
-
 import {
   BREACH_LAYERS_EN,
   BREACH_LAYERS_NL,
@@ -15,7 +13,7 @@ import { fetchWithRetry } from './fetch-with-retry'
 
 const headers = { Accept: 'application/json', 'Content-Type': 'application/json' }
 
-export async function loadBreach (feature, layerSetId) {
+export async function loadBreach (feature) {
   // Load breach data from the geoserver
 
   // the breach id is hidden here
@@ -38,14 +36,24 @@ export async function loadBreach (feature, layerSetId) {
 
   const promises = breachLayers.map(
     // pass along  layerSetId for notifications
-    layerName => loadBreachLayer(breachId, layerName, layerSetId)
+    layerName => loadBreachLayer(breachId, layerName)
   )
 
   // the layers are a bit out of order, so restructure them
   // TODO: consider making this async, otherwise we lock the browser
-  let bands = await Promise.all(promises)
-  // remove undefined/null bands
-  bands = _.filter(bands)
+  const results = await Promise.all(promises)
+
+  // aggregate notifications and variantFilterProperties from all band results
+  const notifications = []
+  const variantFilterProperties = []
+  let bands = []
+  results.forEach(r => {
+    notifications.push(...r.notifications)
+    variantFilterProperties.push(...r.variantFilterProperties)
+    if (r.result) {
+      bands.push(r.result)
+    }
+  })
 
   // merge layers of all unorganized sets
   // and use the feature name
@@ -57,10 +65,10 @@ export async function loadBreach (feature, layerSetId) {
     title: feature.properties.name,
     layers: layers
   }
-  return layerSet
+  return { layerSet, notifications, variantFilterProperties }
 }
 
-export async function computeCombinedScenario (scenarioIds, band, layerSetId) {
+export async function computeCombinedScenario (scenarioIds, band) {
   // combine multiple breachesinto a new scenario
   // Load combined breaches map, computed by the backend
   // The computation is done in Google Earth Engine / HydroEngine
@@ -70,14 +78,21 @@ export async function computeCombinedScenario (scenarioIds, band, layerSetId) {
   // load  all the variants
   const promises = selectedLayers.map(
     // pass along  layerSetId for notifications
-    bandName => loadBreachesLayer(scenarioIds, bandName, layerSetId)
+    bandName => loadBreachesLayer(scenarioIds, bandName)
   )
   // the layers are a bit out of order, so restructure them
   // TODO: consider making this async, otherwise we lock the browser
-  let bands = await Promise.all(promises)
+  const results = await Promise.all(promises)
 
-  // remove undefined/null bands
-  bands = _.filter(bands)
+  // aggregate notifications from all band results
+  const notifications = []
+  let bands = []
+  results.forEach(r => {
+    notifications.push(...r.notifications)
+    if (r.result) {
+      bands.push(r.result)
+    }
+  })
 
   // convert bands to layerlike objects
   const layers = bands.map((band) => {
@@ -108,7 +123,7 @@ export async function computeCombinedScenario (scenarioIds, band, layerSetId) {
     title: title,
     layers
   }
-  return layerSet
+  return { layerSet, notifications }
 }
 
 export async function getScenarioInfo (scenarioIds, featureInfoByScenarioId) {
@@ -176,8 +191,10 @@ async function loadFilterVariants() {
   return filterVariantsPromise
 }
 
-async function loadBreachLayer (breachId, layerName, layerSetId) {
+async function loadBreachLayer (breachId, layerName) {
   // Load the dataset  for a breach
+  const notifications = []
+  const variantFilterProperties = []
   const services = await mapConfig.getServices()
   const BREACHES_BASE_URL = services.WEBSERVICE_URL
   const BREACHES_API_URL = `${BREACHES_BASE_URL}/Tools/FloodImage.asmx/GetScenariosPerBreachGeneric`
@@ -197,12 +214,11 @@ async function loadBreachLayer (breachId, layerName, layerSetId) {
   )
   .then(res => res.json())
   .catch(() => {
-    const notification = {
+    notifications.push({
       message: `Het laden van de kaartlaag "${layerName}" is niet gelukt. Probeer het opnieuw door de kaartlaag nog eens te selecteren.`,
       type: 'warning',
       show: true
-    }
-    store.commit('addNotificationById', { id: layerSetId, notification })
+    })
     console.warn('Fetching breach layer failed', `"${layerName}"`)
     return null
   })
@@ -212,7 +228,7 @@ async function loadBreachLayer (breachId, layerName, layerSetId) {
   const properties = await filtersData
 
   if (properties.length) {
-    store.commit('setVariantFilterProperties', { properties, breachId })
+    variantFilterProperties.push({ properties, breachId })
   }
 
   const data = breachData && JSON.parse(breachData.d)
@@ -223,12 +239,13 @@ async function loadBreachLayer (breachId, layerName, layerSetId) {
   if (_.has(data, '[0].layerset[0]')) {
     result = { ...data[0].layerset[0] }
   }
-  return result
+  return { result, notifications, variantFilterProperties }
 }
 
-async function loadBreachesLayer (scenarioIds, band, layerSetId) {
+async function loadBreachesLayer (scenarioIds, band) {
   // TODO: choose appropriate reducer for the band
   // The band here relates to  quantitites
+  const notifications = []
   const services = await mapConfig.getServices()
   const requestOptions = {
     method: 'POST',
@@ -244,33 +261,32 @@ async function loadBreachesLayer (scenarioIds, band, layerSetId) {
   const hydroEngine = services.HYDRO_ENGINE_URL
   const url = `${hydroEngine}/get_liwo_scenarios`
 
-  return fetch(url, requestOptions)
+  const result = await fetch(url, requestOptions)
     .then(resp => {
       return resp.json()
     })
     .then(json => {
       const result = { ...json, type: 'tile' }
       if (result.msg) {
-        const notification = {
+        notifications.push({
           message: 'Het door u gevraagde gecombineerde resultaat kan niet gemaakt worden. Er zijn kaarlagen beschikbaar voor de gevraagde combinatie.',
           type: 'warning',
           show: true
-        }
-        store.commit('addNotificationById', { id: layerSetId, notification })
+        })
       }
       return result
     })
     .catch((error) => {
-      const notification = {
+      notifications.push({
         message: 'Het door u gevraagde gecombineerde resultaat kon niet gemaakt worden.',
         type: 'warning',
         show: true
-      }
+      })
       console.warn('Combined result failed:', error)
-      // notifiy of failure
-      store.commit('addNotificationById', { id: layerSetId, notification })
       return null
     })
+
+  return { result, notifications }
 }
 
 export async function getFeatureIdByScenarioId (scenarioId) {
