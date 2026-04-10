@@ -281,7 +281,7 @@ export default {
       return this.layerSetsById[this.layerSetId]
     },
     currentNotifications () {
-      return this.notificationsById[this.layerSetId] || []
+      return (this.notificationsById && this.notificationsById[this.layerSetId]) || []
     },
     scenarioIds () {
       // unpack the id string to filter all the features
