@@ -1,7 +1,7 @@
 import { generateSelector as selector } from '../../../lib/generate-selector'
 import mockLayerSetData from '../../../mock/layerset.json'
 
-const url = '/#/scenarios/7?center=52.32401,5.35995&zoom=10'
+const url = '/#/scenarios/7'
 
 describe('Scenarios: marker selection', () => {
   beforeEach(() => {
@@ -28,7 +28,7 @@ describe('Scenarios: marker selection', () => {
   })
 
   it('Opens correct layers in panel', () => {
-    const name = "Rijntakken"
+    const name = "Waddenzee"
 
     cy.get('.leaflet-marker-icon')
       .eq(3)
