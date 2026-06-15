@@ -12,11 +12,11 @@ describe('Combine: Export combined scenarios', () => {
       const { body } = req
 
       req.continue((res) => {
-        if (body.breachid === 3408) {
+        if (body.breachid === 1201) {
           return res.send(mockScenarioData['3408'])
         }
 
-        if (body.breachid === 1782) {
+        if (body.breachid === 3191) {
           return res.send(mockScenarioData['1782'])
         }
       })
