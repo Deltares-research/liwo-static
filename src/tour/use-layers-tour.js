@@ -54,7 +54,7 @@ export function useLayersTour() {
         },
       },
       {
-        element: selector("layerset-map-18-link"),
+        element: selector("layerset-map-19-link"),
         popover: {
           title: "Kaartlagen",
           description:
