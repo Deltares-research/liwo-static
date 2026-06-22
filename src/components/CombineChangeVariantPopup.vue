@@ -6,6 +6,7 @@
     disable-scrollbar
     >
       <aside
+        v-if="filteredVariants.length"
         class="change-variant-popup__filters"
         data-tour-id="change-variant-filters"
       >
@@ -25,6 +26,7 @@
         <h3>Beschikbare varianten: ({{ filteredVariants.length  }}):</h3>
 
         <ul
+          v-if="filteredVariants.length"
           class="change-variant-popup__result-list change-variant-popup__scrollable-list"
           data-tour-id="change-variant-options"
         >
@@ -55,8 +57,11 @@
           </li>
         </ul>
 
+        <p v-else>Geen varianten beschikbaar. Pas uw geselecteerde filters aan om varianten te kunnen kiezen.</p>
+
         <footer class="change-variant-popup__footer">
           <button
+            v-if="filteredVariants.length"
             class="btn primary"
             @click.prevent="selectVariant"
             data-tour-id="variant-select-button"
@@ -213,7 +218,7 @@ export default {
     },
 
     filteredVariants () {
-      return this.allVariants.filter(variant => {
+      return this.shownVariants.filter(variant => {
         return Object.entries(this.groupedFilters).every(([prop, filters]) => {
           // Active filter values within the group
           const activeFilterValues = Object.entries(filters)
@@ -251,7 +256,7 @@ export default {
   }
 
   .change-variant-popup__footer {
-    margin-top: 20px;
+    margin-top: auto;
     text-align: right;
   }
 
