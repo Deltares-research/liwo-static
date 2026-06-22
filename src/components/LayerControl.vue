@@ -66,27 +66,8 @@
     </div>
   </form>
 
-  <!-- TODO: this is not a layer setting. Move this to an application settings pane. -->
-  <div v-if="!isEmptyObject(layerVariantOptions)" class="layer-control__options">
-    <!-- TODO: this now  shows up for each band reorganize -->
-    <template v-for="(variant, title, index) in layerVariantOptions">
-      <label v-if="variant.length" :key="title">
-        <span class="layer-control__options-subject">{{ title }}:</span>
-        <layer-control-select
-          :key="index"
-          name="layer-variant"
-          :options="getLayerVariantOptionsWithFallback(variant, id, title)"
-          :modelValue="selectedVariantIndexByBreachBandId[id][title]"
-          @update:modelValue="setLayerVariant(id, title, $event)"
-          v-test="'variant-select'"
-          data-tour-id="layer-variant-select"
-        />
-      </label>
-    </template>
-  </div>
-
     <!-- TODO: this is not a layer setting. Move this to an application settings pane. -->
-  <div v-if="!breachId && layerOptions.length > 1" class="layer-control__options">
+  <div v-if="layerOptions.length > 1" class="layer-control__options">
     <!-- TODO: this now  shows up for each band reorganize -->
     <label>
       <layer-control-select
@@ -103,15 +84,8 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex'
-import _ from 'lodash'
-
-import store from '@/store'
-
 import LayerPopup from '@/components/LayerPopup.vue'
 import LayerControlSelect from '@/components/LayerControlSelect.vue'
-
-import { matchValueToProbability } from '@/lib/probability-filter'
 
 export default {
   props: {
@@ -127,45 +101,18 @@ export default {
       layerVariantOptions: {}
     }
   },
-  mounted () {
-    if (this.breachId) {
-      let indexes = this.variantFilterPropertiesIndex(this.breachId)
-      if (this.selectedVariant) {
-        indexes = this.getOptionsByVariantId(this.selectedVariant)
-      }
-
-      store.commit('setSelectedVariantIndexByBreachBandId', { selectedIndex: indexes, breachBandId: this.id })
-    }
-
-    this.setLayerVariantOptions()
-  },
   computed: {
-    ...mapGetters(['variantFilterPropertiesIndex']),
-    ...mapState(['variantFilterProperties', 'selectedProbabilities', 'selectedVariantIndexByBreachBandId', 'imminentFlood']),
     id () {
       return this.layer.breachBandId
     },
-    breachId () {
-      return this.layer.breachId
-    },
     selectedVariant () {
       return this.layer.properties.selectedVariant
-    },
-    layerSetId () {
-      return parseInt(this.$route.params.id, 10)
     },
     metadata() {
       const variant = this.layer.variants.find(
         (variant) => variant.layer === this.selectedVariant
       );
       return variant?.metadata;
-    },
-    showLayers () {
-      return this.layer.variants.map(vari => {
-        return this.variantFilterProperties[this.breachId].map(prop => {
-          return vari.properties[prop]
-        })
-      })
     },
     layerOptions () {
       const variants = this.layer.variants || []
@@ -175,109 +122,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setSelectedVariantIndexes']),
     isEmptyObject (obj) {
-      return _.isEmpty(obj)
-    },
-    selectedLayerVariantOptions () {
-      const indexes = this.selectedVariantIndexByBreachBandId[this.id]
-
-      return Object.entries(indexes).map(([key, value]) => {
-        const layerVariantOptions = _.get(this.layerVariantOptions, key, {})
-        // TODO: assumption that if title not available, the value is null
-        return {
-          name: key,
-          value: _.get(layerVariantOptions, `[${value}].title`, null)
-        }
-      })
+      return Object.keys(obj).length === 0
     },
 
-    setLayerVariantOptions (variantName = null) {
-      const name = _.get(this.variantFilterProperties, `[${this.breachId}][0]`, '')
-      variantName = variantName || name
-      if (!variantName) {
-        return
-      }
-      const variantOptions = {}
-      const currentVariant = this.layer.variants.find(
-        (variant) => variant.layer === this.selectedVariant
-      );
-      this.variantFilterProperties[this.breachId].forEach(prop => {
-        this.layer.variants.forEach(variant => {
-          // If the property is empty, don't show
-          if (variant.properties[prop] === undefined || variant.properties[prop] === null) { return }
-
-          // If dreigende overstroming is off and the variant has dreigende overstroming, don't show
-          if (!this.imminentFlood && variant.properties['Dreigende overstroming'] === 1) {
-            return
-          }
-
-          let checkVariantAvailable = true
-          // Always check if options are available for the selected Overschrijdingsfrequentie
-          if (prop !== name) {
-            checkVariantAvailable = variant.properties[name] === currentVariant.properties[name]
-          }
-
-          // Always add all Overschrijdingsfrequenties
-          if (checkVariantAvailable) {
-            // First time adding the prop
-            if (!variantOptions[prop]) {
-              variantOptions[prop] = [{
-                title: variant.properties[prop],
-                value: 0
-              }]
-            }
-            // Check if prop not already in list.
-            if (variantOptions[prop] &&
-              !_.get(variantOptions, prop, []).find(opt => opt.title === variant.properties[prop])) {
-              variantOptions[prop].push({
-                title: variant.properties[prop],
-                value: variantOptions[prop].length
-              })
-            }
-          }
-
-          if (prop === 'Overschrijdingsfrequentie') {
-            variantOptions[prop] = variantOptions[prop].filter(option => {
-              const probability = matchValueToProbability(option.title)
-              return this.selectedProbabilities.includes(probability) ||
-                (this.imminentFlood && variant.properties['Dreigende overstroming'] === 1)
-            })
-          }
-        })
-      })
-      this.layerVariantOptions = variantOptions
-      return variantOptions
-    },
-    getLayerVariantOptionsWithFallback (variantOptions, breachBandId, title) {
-      const selectedVariant = this.selectedVariantIndexByBreachBandId[breachBandId][title]
-
-      if (selectedVariant > variantOptions.length - 1) {
-        return [
-          ...variantOptions,
-          {
-            title: 'Geen data beschikbaar',
-            value: selectedVariant,
-            disabled: true
-          }
-        ]
-      }
-
-      return variantOptions
-    },
-    getOptionsByVariantId (variantId) {
-      const variant = this.layer.variants.find(
-        (variant) => variant.layer === variantId
-      );
-      const indexes = {}
-      Object.entries(_.get(this.variantFilterProperties, this.breachId, {})).forEach(filter => {
-        const options = _.get(this.setLayerVariantOptions(), filter[1], []).find(options => {
-          return options.title === variant.properties[filter[1]]
-        })
-        indexes[filter[1]] = _.get(options, 'value', null)
-      })
-      return indexes
-    },
     setTransparency ({ target }) {
       // Create a copy of the layer with the new opacity
       const layer = { ...this.layer }
@@ -299,39 +147,6 @@ export default {
         }
       })
     },
-    setLayerVariant (breachBandId, title, value) {
-      this.selectedVariantIndexByBreachBandId[breachBandId][title] = value
-
-      const selectedLayerVariantOptions = this.selectedLayerVariantOptions()
-      const filteredVariantOptions = selectedLayerVariantOptions.filter(option => option.value !== null)
-      // TODO: Find the correct variant for the selection of options.
-      let variant = this.layer.variants
-        .find(variant => filteredVariantOptions
-          .every(option => variant.properties[option.name] === option.value)
-        )
-
-      if (!variant) {
-        const val = filteredVariantOptions.find(opt => opt.name === title)
-        variant = this.layer.variants
-          .find(variant => variant.properties[title] === val.value)
-      }
-
-      const index = this.layer.variants
-        .findIndex(object => object.layer === variant.layer)
-
-      this.selectLayerOption(index)
-
-      if (this.breachId) {
-        let indexes = this.variantFilterPropertiesIndex(this.breachId)
-
-        if (this.selectedVariant) {
-          indexes = this.getOptionsByVariantId(this.selectedVariant)
-        }
-
-        store.commit('setSelectedVariantIndexByBreachBandId', { selectedIndex: indexes, breachBandId: this.id })
-        this.setSelectedVariantIndexes({ selectedIndex: indexes })
-      }
-    },
     selectLayerOption (index) {
       this.$emit('select:variant', {
         layer: this.layer,
@@ -345,20 +160,6 @@ export default {
     },
     toggleInfoPopup () {
       this.infoPopupIsOpen = !this.infoPopupIsOpen
-    }
-  },
-  watch: {
-    selectedProbabilities (newVal, oldVal) {
-      if (!newVal) { return }
-      if (newVal !== oldVal) {
-        if(this.layerVariantOptions.Overschrijdingsfrequentie) {
-          const variantIndex = _.get(this.selectedVariantIndexByBreachBandId, `[${this.id}].Overschrijdingsfrequentie`, 0)
-          this.setLayerVariant('Overschrijdingsfrequentie', this.layerVariantOptions.Overschrijdingsfrequentie[variantIndex].value)
-        }
-      }
-    },
-    imminentFlood () {
-      this.setLayerVariantOptions()
     }
   },
   components: {

@@ -9,9 +9,6 @@ let mutations
 let actions
 
 beforeEach(() => {
-  getters = {
-    variantFilterPropertiesIndex: () => () => []
-  }
   actions = {
     loadLayerSetById: () => {}
   }
