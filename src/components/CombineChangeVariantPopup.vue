@@ -118,46 +118,6 @@ export default {
       this.$emit('close')
     },
 
-    /**
-     * Returns a object in the following structure
-     * {
-     *  "Overschrijdingsfrequentie": { // All filters from variantPropertiesToShow
-     *      "10": { // key is value found for "Overschrijdingsfrequentie" in all variants
-     *        count: 1 // total amount found for the value "10"
-     *        filtered: true // Whether this filter is active
-     *      }
-     *   }
-     * }
-     */
-    getGroupedFilters () {
-      return this.allVariants.reduce((filters, variant) => {
-        this.variantPropertiesToShow.forEach(prop => {
-          const valueInVariant = variant.properties[prop]
-
-          if (valueInVariant === undefined || valueInVariant === null) {
-            return
-          }
-
-          if (!filters[prop]) {
-            filters[prop] = {}
-          }
-
-          if (!filters[prop][valueInVariant]) {
-            filters[prop][valueInVariant] = {
-              count: 0,
-              // We know that Overschrijdingsfrequentie is always present in the variantPropertiesToShow
-              // As default only filters with the prop Overschrijdingsfrequentie should be active
-              // that way all variants are shown by default
-              filtered: prop === 'Overschrijdingsfrequentie'
-            }
-          }
-          filters[prop][valueInVariant].count = filters[prop][valueInVariant].count + 1
-        })
-
-        return filters
-      }, {})
-    },
-
     getPropsForVariant (variant) {
       const props = this.variantPropertiesToShow
         .filter(prop => variant.properties[prop] !== null && variant.properties[prop] !== undefined)
@@ -228,11 +188,48 @@ export default {
           return activeFilterValues.length === 0 || activeFilterValues.some(value => variant.properties[prop] === value)
         })
       })
-    }
+    },
+
+    /**
+     * Returns a object in the following structure
+     * {
+     *  [probabilityKey]: { // All filters from variantPropertiesToShow
+     *      "10": { // key is value found for probabilityKey in all variants
+     *        count: 1 // total amount found for the value "10"
+     *        filtered: true // Whether this filter is active
+     *      }
+     *   }
+     * }
+     */
+    groupedFilters () {
+      return this.shownVariants.reduce((filters, variant) => {
+        this.variantPropertiesToShow.forEach(prop => {
+          const valueInVariant = variant.properties[prop]
+
+          if (valueInVariant === undefined || valueInVariant === null) {
+            return
+          }
+
+          if (!filters[prop]) {
+            filters[prop] = {}
+          }
+
+          if (!filters[prop][valueInVariant]) {
+            filters[prop][valueInVariant] = {
+              count: 0,
+              // We know that Overschrijdingsfrequentie is always present in the variantPropertiesToShow
+              // As default only filters with the prop Overschrijdingsfrequentie should be active
+              // that way all variants are shown by default
+              filtered: prop === this.probabilityKey
+            }
+          }
+          filters[prop][valueInVariant].count = filters[prop][valueInVariant].count + 1
+        })
+
+        return filters
+      }, {})
+    },
   },
-  async mounted () {
-    this.groupedFilters = this.getGroupedFilters()
-  }
 }
 </script>
 
