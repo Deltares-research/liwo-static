@@ -79,6 +79,8 @@
 import { mapState } from 'vuex'
 import PopUp from './PopUp.vue'
 
+import { matchValueToProbability } from '@/lib/probability-filter'
+
 export default {
   components: {
     PopUp
@@ -97,8 +99,9 @@ export default {
   },
   data () {
     return {
-      groupedFilters: {},
-      selectedVariant: this.currentVariant.layer
+      selectedVariant: this.currentVariant.layer,
+      probabilityKey: 'Overschrijdingsfrequentie',
+      imminentFloodKey: 'Dreigende overstroming'
     }
   },
   methods: {
@@ -172,7 +175,20 @@ export default {
     },
   },
   computed: {
-    ...mapState(['variantFilterProperties']),
+    ...mapState(['variantFilterProperties', 'selectedProbabilities']),
+
+    shownVariants() {
+      return this.allVariants.filter((variant) => {
+        const probability = matchValueToProbability(
+          variant.properties[this.probabilityKey],
+        );
+        return (
+          this.selectedProbabilities.includes(probability) ||
+          (this.imminentFlood &&
+            variant.properties[this.imminentFloodKey] === 1)
+        );
+      });
+    },
 
     /* Which to filter on. This is the response from filter_variants */
     variantPropertiesToShow () {
