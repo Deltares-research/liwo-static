@@ -1,5 +1,3 @@
-import _ from 'lodash'
-
 import mapConfig from '../map.config.js'
 import { loadGeojson } from './load-geojson'
 
@@ -72,7 +70,7 @@ export async function loadLayerSetById (id) {
     layerSet.layers.map(async (layer) => {
       const variants = await Promise.all(
         layer.variants.map(async (variant) => {
-          if (_.includes(['json', 'cluster'], variant.map.type)) {
+          if (['json', 'cluster'].includes(variant.map.type)) {
             const geojson = await loadGeojson(variant.map)
             variant.map.geojson = geojson
           }

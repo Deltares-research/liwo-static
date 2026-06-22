@@ -54,7 +54,6 @@
 <script>
 
 import { mapGetters } from 'vuex'
-import _ from 'lodash'
 
 import ExportPopup from '@/components/ExportPopup.vue'
 import LayerPanel from '@/components/LayerPanel.vue'
@@ -105,7 +104,7 @@ export default {
       }
       let result = flattenLayerSet(this.layerSet)
       result = result.filter(layer => {
-        const result = _.get(layer.layerObj.properties, 'visible', true)
+        const result = layer.layerObj.properties?.visible ?? true
         return result
       })
       return result

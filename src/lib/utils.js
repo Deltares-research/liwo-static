@@ -1,12 +1,3 @@
-import get from 'lodash/fp/get'
-import pipe from 'lodash/fp/pipe'
-import negate from 'lodash/fp/negate'
-import isNull from 'lodash/fp/isNull'
-import isNaN from 'lodash/fp/isNaN'
-import isEmpty from 'lodash/fp/isEmpty'
-import includes from 'lodash/fp/includes'
-import curry from 'lodash/curry'
-
 /**
  * Gets the id property of the provided object
  * _Function is curried_
@@ -15,7 +6,7 @@ import curry from 'lodash/curry'
  * const myObject = { id: 'foo' }
  * getId(myObject) // 'foo'
  */
-export const getId = get('id')
+export const getId = obj => obj?.id
 
 /**
  * Returns true if the value if truthy, false otherwise
@@ -36,7 +27,7 @@ export const isTruthy = val => !!val
  * includedIn(array)(1) // true
  * includedIn(array)(4) // false
  */
-export const includedIn = includes.convert({ rearg: false })
+export const includedIn = arr => val => arr && arr.includes(val)
 
 /**
  * Get the value of the index from the provided array
@@ -58,7 +49,7 @@ export const getByIndexFrom = arr => index => arr && arr[index]
  * idSameAs('foo')(myObject) // true
  * idSameAs('bar')(myObject) // false
  */
-export const idSameAs = value => pipe([getId, id => id === value])
+export const idSameAs = value => obj => getId(obj) === value
 
 /**
  * Checks if the id property of an object is included in the provided array
@@ -69,7 +60,7 @@ export const idSameAs = value => pipe([getId, id => id === value])
  * idIncludedIn(myArray)({ id: 'bar' }) // true
  * idIncludedIn(myArray)({ id: 'baz' }) // false
  */
-export const idIncludedIn = array => pipe([getId, includedIn(array)])
+export const idIncludedIn = array => obj => array && array.includes(getId(obj))
 
 /**
  * Checks if an array is not emoty
@@ -78,7 +69,12 @@ export const idIncludedIn = array => pipe([getId, includedIn(array)])
  * notEmpty([1, 2, 3]) // true
  * notEmpty([]) // false
  */
-export const notEmpty = negate(isEmpty)
+export const notEmpty = val => {
+  if (val == null) return false
+  if (typeof val === 'string' || Array.isArray(val)) return val.length > 0
+  if (typeof val === 'object') return Object.keys(val).length > 0
+  return true
+}
 
 /**
  * Checks if a value is not null
@@ -87,7 +83,7 @@ export const notEmpty = negate(isEmpty)
  * notNull(undefined) // true
  * notNull(null) // false
  */
-export const notNull = negate(isNull)
+export const notNull = val => val !== null
 
 /**
  * Checks if a value if not NaN
@@ -96,7 +92,7 @@ export const notNull = negate(isNull)
  * notNaN(undefined) // true
  * notNaN(NaN) // false
  */
-export const notNaN = negate(isNaN)
+export const notNaN = val => !Number.isNaN(val)
 
 /**
  * Wraps a value in an object with a specified property
@@ -105,8 +101,27 @@ export const notNaN = negate(isNaN)
  * @example
  * wrapInProperty('myNumber', 10) // { myNumber: 10 }
  */
-export const wrapInProperty = curry((property, value) => ({ [property]: value }))
+export const wrapInProperty = property => value => ({ [property]: value })
 
-export const apply = curry((fns, value) => fns.map(fn => fn(value)))
+export const apply = fns => value => fns.map(fn => fn(value))
 
 export const isPromise = (value) => Boolean(value && typeof value.then === 'function')
+
+/**
+ * Returns a copy of the object without the specified keys.
+ *
+ * @example
+ * omit({ a: 1, b: 2, c: 3 }, ['b', 'c']) // { a: 1 }
+ */
+export const omit = (obj, keys) =>
+  Object.fromEntries(Object.entries(obj).filter(([k]) => !keys.includes(k)))
+
+/**
+ * Returns an array with duplicate values removed.
+ *
+ * @example
+ * uniq([1, 2, 2, 3]) // [1, 2, 3]
+ */
+export const uniq = arr => [...new Set(arr)]
+
+export { deepEqual } from 'fast-equals'

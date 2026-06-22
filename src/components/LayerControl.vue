@@ -104,7 +104,6 @@
 
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex'
-import _ from 'lodash'
 
 import store from '@/store'
 
@@ -177,23 +176,23 @@ export default {
   methods: {
     ...mapActions(['setSelectedVariantIndexes']),
     isEmptyObject (obj) {
-      return _.isEmpty(obj)
+      return Object.keys(obj).length === 0
     },
     selectedLayerVariantOptions () {
       const indexes = this.selectedVariantIndexByBreachBandId[this.id]
 
       return Object.entries(indexes).map(([key, value]) => {
-        const layerVariantOptions = _.get(this.layerVariantOptions, key, {})
+        const layerVariantOptions = this.layerVariantOptions[key] ?? {}
         // TODO: assumption that if title not available, the value is null
         return {
           name: key,
-          value: _.get(layerVariantOptions, `[${value}].title`, null)
+          value: layerVariantOptions?.[value]?.title ?? null
         }
       })
     },
 
     setLayerVariantOptions (variantName = null) {
-      const name = _.get(this.variantFilterProperties, `[${this.breachId}][0]`, '')
+      const name = this.variantFilterProperties?.[this.breachId]?.[0] ?? ''
       variantName = variantName || name
       if (!variantName) {
         return
@@ -229,7 +228,7 @@ export default {
             }
             // Check if prop not already in list.
             if (variantOptions[prop] &&
-              !_.get(variantOptions, prop, []).find(opt => opt.title === variant.properties[prop])) {
+              !(variantOptions[prop] ?? []).find(opt => opt.title === variant.properties[prop])) {
               variantOptions[prop].push({
                 title: variant.properties[prop],
                 value: variantOptions[prop].length
@@ -270,11 +269,11 @@ export default {
         (variant) => variant.layer === variantId
       );
       const indexes = {}
-      Object.entries(_.get(this.variantFilterProperties, this.breachId, {})).forEach(filter => {
-        const options = _.get(this.setLayerVariantOptions(), filter[1], []).find(options => {
+      Object.entries(this.variantFilterProperties[this.breachId] ?? {}).forEach(filter => {
+        const options = (this.setLayerVariantOptions()[filter[1]] ?? []).find(options => {
           return options.title === variant.properties[filter[1]]
         })
-        indexes[filter[1]] = _.get(options, 'value', null)
+        indexes[filter[1]] = options?.value ?? null
       })
       return indexes
     },
@@ -352,7 +351,7 @@ export default {
       if (!newVal) { return }
       if (newVal !== oldVal) {
         if(this.layerVariantOptions.Overschrijdingsfrequentie) {
-          const variantIndex = _.get(this.selectedVariantIndexByBreachBandId, `[${this.id}].Overschrijdingsfrequentie`, 0)
+          const variantIndex = this.selectedVariantIndexByBreachBandId?.[this.id]?.Overschrijdingsfrequentie ?? 0
           this.setLayerVariant('Overschrijdingsfrequentie', this.layerVariantOptions.Overschrijdingsfrequentie[variantIndex].value)
         }
       }

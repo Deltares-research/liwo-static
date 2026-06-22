@@ -71,7 +71,6 @@
 </style>
 
 <script>
-import _ from 'lodash'
 import sanitizeValue from '@/lib/sanitize-value'
 
 export default {
@@ -99,7 +98,7 @@ export default {
   },
   methods: {
     formatNotifications () {
-      this.cleanNotifications = _.map(this.notifications, (notification) => {
+      this.cleanNotifications = this.notifications.map((notification) => {
         const result = { ...notification }
         // use default type
         if (!['error', 'warning', 'info', 'confirm'].includes(notification.type)) {

@@ -54,7 +54,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import PopUp from './PopUp.vue'
 import { BREACH_LAYERS_EN } from '@/lib/liwo-identifiers'
 import { getScenarioInfo } from '@/lib/load-breach'
@@ -76,7 +75,7 @@ export default {
   data () {
     // fill the options based on the english translations
     const breachLayers = BREACH_LAYERS_EN
-    const options = _.map(breachLayers, (val, key) => {
+    const options = Object.entries(breachLayers).map(([key, val]) => {
       return { id: key, name: val }
     })
     return {
@@ -98,7 +97,7 @@ export default {
   },
   methods: {
     getBandCount (option) {
-      return _.get(this.bandCounts, option.name, '')
+      return this.bandCounts?.[option.name] ?? ''
     }
   }
 }

@@ -19,8 +19,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
-
 export default {
   name: 'LayerSetList',
   props: {
@@ -41,7 +39,7 @@ export default {
   },
   methods: {
     getName (item) {
-      return _.get(item, 'route', 'viewer')
+      return item?.route ?? 'viewer'
     }
   }
 }
