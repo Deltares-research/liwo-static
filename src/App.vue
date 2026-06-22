@@ -37,8 +37,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { UserManagement } from '@piwikpro/vue-piwik-pro'
-import { mapGetters } from 'vuex'
 import AppHeader from '../src/components/AppHeader.vue'
 import CookieLaw from './components/CookieLaw.vue'
 
@@ -77,9 +77,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'layerSet'
-    ]),
+    ...mapState(['layerSetsById']),
+    layerSetId () {
+      return parseInt(this.$route.params.id, 10)
+    },
+    layerSet() {
+      return this.layerSetsById[this.layerSetId]
+    },
     title () {
       if (this.$route.name === 'viewer') {
         if (this.layerSet) {

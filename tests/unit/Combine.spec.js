@@ -9,26 +9,20 @@ import router from '@/router'
 import { expect, beforeEach, it } from 'vitest'
 
 let store
-let getters
-let mutations
+let state
 let actions
 
 beforeEach(() => {
-  getters = {
-    currentNotifications: () => [],
-    layerSet: () => {},
-    layers: () => {},
+  state = {
+    layerSetsById: {},
+    notificationsById: {},
   }
   actions = {
     loadLayerSetById: () => {}
   }
-  mutations = {
-    setLayerSetId: () => {}
-  }
   store = createStore({
-    getters,
-    actions,
-    mutations
+    state,
+    actions
   })
 })
 

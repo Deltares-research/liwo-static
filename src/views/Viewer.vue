@@ -52,8 +52,7 @@
 </template>
 
 <script>
-
-import { mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 import _ from 'lodash'
 
 import ExportPopup from '@/components/ExportPopup.vue'
@@ -78,6 +77,10 @@ export default {
     NotificationBar
   },
   props: {
+    /**
+     * ID from the route
+     * generated in router.js
+     */
     id: {
       type: Number,
       required: true
@@ -91,14 +94,16 @@ export default {
     }
   },
   created () {
-    this.$store.commit('setLayerSetId', this.id)
     this.$store.dispatch('loadLayerSetById', { id: this.id })
   },
   computed: {
-    ...mapGetters([
-      'layerSet',
-      'currentNotifications'
-    ]),
+    ...mapState(['layerSetsById', 'notificationsById']),
+    layerSet() {
+      return this.layerSetsById[this.id]
+    },
+    currentNotifications () {
+      return this.notificationsById[this.id] || []
+    },
     selectedLayers () {
       if (!this.layerSet) {
         return []
