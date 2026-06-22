@@ -5,20 +5,15 @@ import { expect, beforeEach, it } from 'vitest'
 
 let store
 let getters
-let mutations
 let actions
 
 beforeEach(() => {
   actions = {
     loadLayerSetById: () => {}
   }
-  mutations = {
-    setLayerSetId: () => {}
-  }
   store = createStore({
     getters,
     actions,
-    mutations
   })
 })
 

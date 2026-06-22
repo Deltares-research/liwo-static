@@ -164,7 +164,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import _ from 'lodash'
 
 import LiwoMap from '@/components/LiwoMap.vue'
@@ -259,26 +259,29 @@ export default {
     }
   },
   async mounted () {
-    // If the url contains a list of scenarioIds
-    // get the layerSet that corresponds to this map
-    const layerSetId = this.layerSetId
-    // store it
-    this.$store.commit('setLayerSetId', layerSetId)
-    // load the corresponding layerSet
-    await this.$store.dispatch('loadLayerSetById', { id: layerSetId })
-    // now we can load the scenario layerSets (which will look for the ids in the url)
+    /**
+     * If the url contains a list of scenarioIds
+     * get the layerSet that corresponds to this map
+     */
+    await this.$store.dispatch('loadLayerSetById', { id: this.layerSetId })
+    /** now we can load the scenario layerSets (which will look for the ids in the url) */
     this.loadScenarioLayerSetsByRoute()
   },
   computed: {
-    // we get the default layerSet from the store
-    ...mapGetters([
-      'layerSet',
-      'layers',
-      'currentNotifications'
+    ...mapState([
+      'notificationsById',
+      'layerSetsById',
+      'imminentFlood',
+      'selectedProbabilities'
     ]),
-    ...mapState(['imminentFlood', 'selectedProbabilities']),
     layerSetId () {
       return parseInt(this.$route.params.id, 10)
+    },
+    layerSet() {
+      return this.layerSetsById[this.layerSetId]
+    },
+    currentNotifications () {
+      return this.notificationsById[this.layerSetId] || []
     },
     scenarioIds () {
       // unpack the id string to filter all the features
@@ -433,15 +436,6 @@ export default {
       const selectedLayers = [...layers, ...scenarioLayers]
 
       return selectedLayers
-    },
-    controlLayers () {
-      if (!this.layers) {
-        return []
-      }
-
-      return this.layers
-        .filter(layer => layer.iscontrollayer)
-        .map(({ layerObj }) => layerObj)
     },
     getCustomSearchResults() {
       return (query) =>
@@ -679,7 +673,15 @@ export default {
     async loadFeature (feature) {
       // TODO: move this back the store in a scenario module
       // Load the layerSet for the breach and add it to the scenario list
-      let layerSet = await loadBreach(feature, this.layerSetId)
+      const breachResult = await loadBreach(feature)
+      // commit notifications and variantFilterProperties returned by the loader
+      breachResult.notifications.forEach(notification => {
+        this.$store.commit('addNotificationById', { id: this.layerSetId, notification })
+      })
+      breachResult.variantFilterProperties.forEach(({ properties, breachId }) => {
+        this.$store.commit('setVariantFilterProperties', { properties, breachId })
+      })
+      let layerSet = breachResult.layerSet
       // normalize
       layerSet = normalizeLayerSet(layerSet)
       // and clean
@@ -708,7 +710,12 @@ export default {
       // TODO: move this back to the store in a scenario module
       this.layerSetCollapsed = true
       // Load the layerSet for the breach and add it to the scenario list
-      let layerSet = await computeCombinedScenario(scenarioIds, this.band, this.layerSetId)
+      const combinedResult = await computeCombinedScenario(scenarioIds, this.band)
+      // commit notifications returned by the loader
+      combinedResult.notifications.forEach(notification => {
+        this.$store.commit('addNotificationById', { id: this.layerSetId, notification })
+      })
+      let layerSet = combinedResult.layerSet
       // normalize
       layerSet = normalizeLayerSet(layerSet)
       // and clean

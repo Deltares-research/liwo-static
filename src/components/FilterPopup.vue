@@ -53,7 +53,6 @@
 <script>
 import { mapState } from 'vuex'
 import { probabilityConfig } from '@/lib/probability-filter'
-import store from '@/store'
 import PopUp from '@/components/PopUp.vue'
 
 export default {
@@ -81,13 +80,13 @@ export default {
         return this.$store.state.imminentFlood
       },
       set (value) {
-        store.commit('setImminentFlood', value)
+        this.$store.commit('setImminentFlood', value)
       }
     }
   },
   methods: {
     onProbabilitiesChange () {
-      store.commit('setSelectedProbabilities', { probabilities: this.selectedOptions })
+      this.$store.commit('setSelectedProbabilities', { probabilities: this.selectedOptions })
     }
   }
 }
