@@ -97,8 +97,7 @@ export default {
   data () {
     return {
       infoPopupIsOpen: false,
-      noDataAvailableForSelection: false,
-      layerVariantOptions: {}
+      noDataAvailableForSelection: false
     }
   },
   computed: {
@@ -122,10 +121,6 @@ export default {
     }
   },
   methods: {
-    isEmptyObject (obj) {
-      return Object.keys(obj).length === 0
-    },
-
     setTransparency ({ target }) {
       // Create a copy of the layer with the new opacity
       const layer = { ...this.layer }
