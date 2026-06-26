@@ -140,7 +140,11 @@ export default {
     },
   },
   computed: {
-    ...mapState(['variantFilterProperties', 'selectedProbabilities']),
+    ...mapState([
+      'variantFilterProperties',
+      'selectedProbabilities',
+      'imminentFlood'
+    ]),
 
     shownVariants() {
       return this.allVariants.filter((variant) => {
