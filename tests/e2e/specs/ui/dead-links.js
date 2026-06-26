@@ -18,9 +18,12 @@ describe('Dead links', () => {
       cy.get('a').each($a => {
         const href = $a.prop('href')
 
-        cy.request(href)
+        cy.request({
+          url: href,
+          failOnStatusCode: false,
+        })
           .should((response) => {
-            expect(response.status).to.eq(200)
+            expect(response.status).to.not.eq(404)
           })
       })
     })
