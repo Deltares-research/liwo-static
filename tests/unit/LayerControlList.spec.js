@@ -8,9 +8,6 @@ let getters
 let actions
 
 beforeEach(() => {
-  getters = {
-    variantFilterPropertiesIndex: () => () => []
-  }
   actions = {
     loadLayerSetById: () => {}
   }

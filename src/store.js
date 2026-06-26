@@ -27,8 +27,6 @@ export default createStore({
 
     // These are the variants used to filter the layer variant options
     variantFilterProperties: {},
-
-    selectedVariantIndexByBreachBandId: {}
   },
   mutations: {
     setLayerSetById (state, { id, layerSet }) {
@@ -78,18 +76,8 @@ export default createStore({
     setVariantFilterProperties (state, { properties, breachId }) {
       state.variantFilterProperties[breachId] = properties
     },
-    setSelectedVariantIndexByBreachBandId (state, { selectedIndex, breachBandId }) {
-      state.selectedVariantIndexByBreachBandId[breachBandId] = selectedIndex
-    }
   },
   actions: {
-    setSelectedVariantIndexes ({ commit, state }, { selectedIndex }) {
-      const { selectedVariantIndexByBreachBandId } = state
-
-      for (const breachBandId in selectedVariantIndexByBreachBandId) {
-        commit('setSelectedVariantIndexByBreachBandId', { selectedIndex, breachBandId })
-      }
-    },
     async loadLayerSetById ({ commit, state }, { id }) {
       // Skip if we already loaded this layerSet
       if (state.layerSetsById?.[id]) {
@@ -120,15 +108,6 @@ export default createStore({
 
       // TODO: why not in the view...
       commit('setNotificationsById', { id, notifications })
-    }
-
-  },
-  getters: {
-    variantFilterPropertiesIndex: (state) => (breachId) => {
-      const props = state.variantFilterProperties?.[breachId] || []
-
-      return props
-        .reduce((arr, val) => ({ ...arr, [val]: 0 }), {})
     }
   }
 })

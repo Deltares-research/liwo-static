@@ -6,6 +6,7 @@
     disable-scrollbar
     >
       <aside
+        v-if="filteredVariants.length"
         class="change-variant-popup__filters"
         data-tour-id="change-variant-filters"
       >
@@ -25,6 +26,7 @@
         <h3>Beschikbare varianten: ({{ filteredVariants.length  }}):</h3>
 
         <ul
+          v-if="filteredVariants.length"
           class="change-variant-popup__result-list change-variant-popup__scrollable-list"
           data-tour-id="change-variant-options"
         >
@@ -55,8 +57,11 @@
           </li>
         </ul>
 
+        <p v-else>Geen varianten beschikbaar. Pas uw geselecteerde filters aan om varianten te kunnen kiezen.</p>
+
         <footer class="change-variant-popup__footer">
           <button
+            v-if="filteredVariants.length"
             class="btn primary"
             @click.prevent="selectVariant"
             data-tour-id="variant-select-button"
@@ -79,6 +84,8 @@
 import { mapState } from 'vuex'
 import PopUp from './PopUp.vue'
 
+import { matchValueToProbability } from '@/lib/probability-filter'
+
 export default {
   components: {
     PopUp
@@ -97,8 +104,9 @@ export default {
   },
   data () {
     return {
-      groupedFilters: {},
-      selectedVariant: this.currentVariant.layer
+      selectedVariant: this.currentVariant.layer,
+      probabilityKey: 'Overschrijdingsfrequentie',
+      imminentFloodKey: 'Dreigende overstroming'
     }
   },
   methods: {
@@ -108,46 +116,6 @@ export default {
       this.$emit('select:variant', selectedVariant)
 
       this.$emit('close')
-    },
-
-    /**
-     * Returns a object in the following structure
-     * {
-     *  "Overschrijdingsfrequentie": { // All filters from variantPropertiesToShow
-     *      "10": { // key is value found for "Overschrijdingsfrequentie" in all variants
-     *        count: 1 // total amount found for the value "10"
-     *        filtered: true // Whether this filter is active
-     *      }
-     *   }
-     * }
-     */
-    getGroupedFilters () {
-      return this.allVariants.reduce((filters, variant) => {
-        this.variantPropertiesToShow.forEach(prop => {
-          const valueInVariant = variant.properties[prop]
-
-          if (valueInVariant === undefined || valueInVariant === null) {
-            return
-          }
-
-          if (!filters[prop]) {
-            filters[prop] = {}
-          }
-
-          if (!filters[prop][valueInVariant]) {
-            filters[prop][valueInVariant] = {
-              count: 0,
-              // We know that Overschrijdingsfrequentie is always present in the variantPropertiesToShow
-              // As default only filters with the prop Overschrijdingsfrequentie should be active
-              // that way all variants are shown by default
-              filtered: prop === 'Overschrijdingsfrequentie'
-            }
-          }
-          filters[prop][valueInVariant].count = filters[prop][valueInVariant].count + 1
-        })
-
-        return filters
-      }, {})
     },
 
     getPropsForVariant (variant) {
@@ -172,7 +140,24 @@ export default {
     },
   },
   computed: {
-    ...mapState(['variantFilterProperties']),
+    ...mapState([
+      'variantFilterProperties',
+      'selectedProbabilities',
+      'imminentFlood'
+    ]),
+
+    shownVariants() {
+      return this.allVariants.filter((variant) => {
+        const probability = matchValueToProbability(
+          variant.properties[this.probabilityKey],
+        );
+        return (
+          this.selectedProbabilities.includes(probability) ||
+          (this.imminentFlood &&
+            variant.properties[this.imminentFloodKey] === 1)
+        );
+      });
+    },
 
     /* Which to filter on. This is the response from filter_variants */
     variantPropertiesToShow () {
@@ -197,7 +182,7 @@ export default {
     },
 
     filteredVariants () {
-      return this.allVariants.filter(variant => {
+      return this.shownVariants.filter(variant => {
         return Object.entries(this.groupedFilters).every(([prop, filters]) => {
           // Active filter values within the group
           const activeFilterValues = Object.entries(filters)
@@ -207,11 +192,48 @@ export default {
           return activeFilterValues.length === 0 || activeFilterValues.some(value => variant.properties[prop] === value)
         })
       })
-    }
+    },
+
+    /**
+     * Returns a object in the following structure
+     * {
+     *  [probabilityKey]: { // All filters from variantPropertiesToShow
+     *      "10": { // key is value found for probabilityKey in all variants
+     *        count: 1 // total amount found for the value "10"
+     *        filtered: true // Whether this filter is active
+     *      }
+     *   }
+     * }
+     */
+    groupedFilters () {
+      return this.shownVariants.reduce((filters, variant) => {
+        this.variantPropertiesToShow.forEach(prop => {
+          const valueInVariant = variant.properties[prop]
+
+          if (valueInVariant === undefined || valueInVariant === null) {
+            return
+          }
+
+          if (!filters[prop]) {
+            filters[prop] = {}
+          }
+
+          if (!filters[prop][valueInVariant]) {
+            filters[prop][valueInVariant] = {
+              count: 0,
+              // We know that Overschrijdingsfrequentie is always present in the variantPropertiesToShow
+              // As default only filters with the prop Overschrijdingsfrequentie should be active
+              // that way all variants are shown by default
+              filtered: prop === this.probabilityKey
+            }
+          }
+          filters[prop][valueInVariant].count = filters[prop][valueInVariant].count + 1
+        })
+
+        return filters
+      }, {})
+    },
   },
-  async mounted () {
-    this.groupedFilters = this.getGroupedFilters()
-  }
 }
 </script>
 
@@ -235,7 +257,7 @@ export default {
   }
 
   .change-variant-popup__footer {
-    margin-top: 20px;
+    margin-top: auto;
     text-align: right;
   }
 
