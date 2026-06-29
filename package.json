@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@cypress/skip-test": "^2.6.1",
-    "@vitejs/plugin-vue": "^6.0.3",
+    "@vitejs/plugin-vue": "^6.0.7",
     "@vue/test-utils": "^2.4.11",
     "chai-things": "^0.2.0",
     "cypress": "^15.17.0",
