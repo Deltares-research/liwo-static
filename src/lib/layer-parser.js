@@ -176,7 +176,3 @@ export function selectVariantsInLayerSet (layerSet, scenarioIds) {
   })
   return layerSet
 }
-
-export function expandLayers () {
-  return undefined
-}
