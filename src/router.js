@@ -54,7 +54,6 @@ const router = createRouter({
       },
       props: {
         selectFeatureMode: 'single',
-        filterByIds: false,
         scenarioMode: 'lookup'
       }
 
@@ -69,7 +68,6 @@ const router = createRouter({
       },
       props: {
         selectFeatureMode: 'multiple',
-        filterByIds: false,
         scenarioMode: 'lookup'
       }
     },
@@ -83,7 +81,6 @@ const router = createRouter({
       },
       props: {
         selectFeatureMode: 'disabled',
-        filterByIds: true,
         scenarioMode: 'compute'
       }
     },
