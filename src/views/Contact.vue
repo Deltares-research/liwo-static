@@ -5,14 +5,13 @@
         <p>
           Heeft u inhoudelijke, technische (incl. storing) of functionele vragen
           over LIWO, of wilt u een opleiding op maat, dan kunt u hiervoor
-          gebruik maken van het
+          gebruik maken van het contactformulier op de
           <a
-            href="https://iplo.nl/thema/water/applicaties-modellen/berichtgeving-crisismanagement/liwo/contact-liwo/contact-liwo/"
+            href="https://iplo.nl/thema/water/applicaties-modellen/berichtgeving-crisismanagement/liwo/"
             target="_blank"
             rel="noreferrer noopener"
-            >contactformulier</a
-          >
-          van LIWO.
+            >IPLO website</a
+          >.
         </p>
       </div>
     </section>
