@@ -29,26 +29,33 @@ describe('Combine multiple selections: marker selection', () => {
   })
 
   it('Changes marker image on click', () => {
+     cy.get('.leaflet-marker-icon')
+      .eq(3)
+      .click({ force: true })
+    cy.wait('@scenario', { timeout: 4000 })
+
+    cy.get('.leaflet-marker-icon')
+      .eq(4)
+      .click({ force: true })
+    cy.wait('@scenario', { timeout: 4000 })
+
+
+
+    cy.get('.leaflet-marker-icon.icon-active').should('have.length', 2)
+
     cy.get('.leaflet-marker-icon')
       .eq(0)
       .invoke('attr', 'src')
-      .then((srcVal) => {
-        cy.get('.leaflet-marker-icon')
+      .then((iconSrcVal) => {
+        cy.get('.leaflet-marker-icon.icon-active')
           .eq(0)
-          .click({ force: true })
           .invoke('attr', 'src')
-          .should('not.eq', srcVal)
-      })
+          .should('not.eq', iconSrcVal)
 
-    cy.get('.leaflet-marker-icon')
-      .eq(3)
-      .invoke('attr', 'src')
-      .then((srcVal) => {
-        cy.get('.leaflet-marker-icon')
-          .eq(3)
-          .click({ force: true })
+        cy.get('.leaflet-marker-icon.icon-active')
+          .eq(1)
           .invoke('attr', 'src')
-          .should('not.eq', srcVal)
+          .should('not.eq', iconSrcVal)
       })
   })
 

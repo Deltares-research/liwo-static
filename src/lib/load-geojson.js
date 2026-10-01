@@ -12,10 +12,18 @@ async function getFeatures(url, jsonLayer ) {
   return geojson
 }
 
+/**
+ * Loads the geojson for a given layer if it is of type json or cluster.
+ * @returns {Promise<GeoJSON|null>}
+ */
 export async function loadGeojson (jsonLayer) {
-  // no json, nothing to do
+  /**
+   * If the layer is not of type json or cluster
+   * we can assume it does not have a geojson to load
+   * and return the layer as is
+   */
   if (!['json', 'cluster'].includes(jsonLayer.type)) {
-    return Promise.resolve(jsonLayer)
+    return Promise.resolve(null)
   }
 
   const url = `/data/${jsonLayer.layer.replace(/^gebiedsindeling_/, '')}.json`

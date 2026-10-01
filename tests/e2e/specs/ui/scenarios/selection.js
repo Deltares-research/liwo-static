@@ -22,9 +22,14 @@ describe('Scenarios: marker selection', () => {
         cy.get('.leaflet-marker-icon')
           .eq(3)
           .click()
-          .invoke('attr', 'src')
-          .should('not.eq', srcVal)
-      })
+          .then(() =>
+            cy.get('.leaflet-marker-icon.icon-active')
+              .eq(0)
+              .invoke('attr', 'src')
+              .should('not.eq', srcVal)
+        )})
+
+    cy.get('.leaflet-marker-icon.icon-active').should('exist')
   })
 
   it('Opens correct layers in panel', () => {
