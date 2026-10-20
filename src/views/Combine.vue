@@ -391,12 +391,17 @@ export default {
         // if feature is not selected, filter by probabilities
         if (this.selectedProbabilities.length || this.imminentFlood) {
           geojson.features = _.filter(geojson.features, (feature) => {
-            const checkProbabilities = this.selectedProbabilities.some(item => feature.properties[item] > 0)
-            let checkImminentFlood = false
-            if (this.imminentFlood) {
-              checkImminentFlood = feature.properties.dreigende_overstroming === 1
+            const checkProbabilities = this.selectedProbabilities.some(
+              (item) => feature.properties[item] > 0,
+            );
+            const checkImminentFlood =
+              feature.properties.dreigende_overstroming === 1;
+            if (checkImminentFlood) {
+              return this.selectedProbabilities.length > 0
+                ? this.imminentFlood && checkProbabilities
+                : this.imminentFlood;
             }
-            return checkProbabilities || checkImminentFlood
+            return checkProbabilities;
           })
         }
 
