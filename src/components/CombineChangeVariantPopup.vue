@@ -106,8 +106,12 @@ export default {
     return {
       selectedVariant: this.currentVariant.layer,
       probabilityKey: 'Overschrijdingsfrequentie',
-      imminentFloodKey: 'Dreigende overstroming'
+      imminentFloodKey: 'Dreigende overstroming',
+      groupedFilters: []
     }
+  },
+  mounted () {
+    this.groupedFilters = this.getGroupedFilters()
   },
   methods: {
     selectVariant () {
@@ -138,6 +142,46 @@ export default {
         ...props
       ]
     },
+
+    /**
+     * Returns a object in the following structure
+     * {
+     *  [probabilityKey]: { // All filters from variantPropertiesToShow
+     *      "10": { // key is value found for probabilityKey in all variants
+     *        count: 1 // total amount found for the value "10"
+     *        filtered: true // Whether this filter is active
+     *      }
+     *   }
+     * }
+     */
+    getGroupedFilters () {
+      return this.shownVariants.reduce((filters, variant) => {
+        this.variantPropertiesToShow.forEach(prop => {
+          const valueInVariant = variant.properties[prop]
+
+          if (valueInVariant === undefined || valueInVariant === null) {
+            return
+          }
+
+          if (!filters[prop]) {
+            filters[prop] = {}
+          }
+
+          if (!filters[prop][valueInVariant]) {
+            filters[prop][valueInVariant] = {
+              count: 0,
+              // We know that Overschrijdingsfrequentie is always present in the variantPropertiesToShow
+              // As default only filters with the prop Overschrijdingsfrequentie should be active
+              // that way all variants are shown by default
+              filtered: prop === this.probabilityKey
+            }
+          }
+          filters[prop][valueInVariant].count = filters[prop][valueInVariant].count + 1
+        })
+
+        return filters
+      }, {})
+    },
   },
   computed: {
     ...mapState([
@@ -151,11 +195,17 @@ export default {
         const probability = matchValueToProbability(
           variant.properties[this.probabilityKey],
         );
-        return (
-          this.selectedProbabilities.includes(probability) ||
-          (this.imminentFlood &&
-            variant.properties[this.imminentFloodKey] === 1)
-        );
+        const hasProbability = this.selectedProbabilities.includes(probability);
+        const hasImminentFlood =
+          variant.properties[this.imminentFloodKey] === 1;
+
+        if (hasImminentFlood) {
+          return this.selectedProbabilities.length > 0
+            ? hasProbability && this.imminentFlood
+            : hasImminentFlood;
+        }
+
+        return hasProbability;
       });
     },
 
@@ -192,46 +242,6 @@ export default {
           return activeFilterValues.length === 0 || activeFilterValues.some(value => variant.properties[prop] === value)
         })
       })
-    },
-
-    /**
-     * Returns a object in the following structure
-     * {
-     *  [probabilityKey]: { // All filters from variantPropertiesToShow
-     *      "10": { // key is value found for probabilityKey in all variants
-     *        count: 1 // total amount found for the value "10"
-     *        filtered: true // Whether this filter is active
-     *      }
-     *   }
-     * }
-     */
-    groupedFilters () {
-      return this.shownVariants.reduce((filters, variant) => {
-        this.variantPropertiesToShow.forEach(prop => {
-          const valueInVariant = variant.properties[prop]
-
-          if (valueInVariant === undefined || valueInVariant === null) {
-            return
-          }
-
-          if (!filters[prop]) {
-            filters[prop] = {}
-          }
-
-          if (!filters[prop][valueInVariant]) {
-            filters[prop][valueInVariant] = {
-              count: 0,
-              // We know that Overschrijdingsfrequentie is always present in the variantPropertiesToShow
-              // As default only filters with the prop Overschrijdingsfrequentie should be active
-              // that way all variants are shown by default
-              filtered: prop === this.probabilityKey
-            }
-          }
-          filters[prop][valueInVariant].count = filters[prop][valueInVariant].count + 1
-        })
-
-        return filters
-      }, {})
     },
   },
 }
