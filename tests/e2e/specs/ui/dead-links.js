@@ -11,21 +11,24 @@ describe('Dead links', () => {
 
   it('Links to existing links', () => {
     const pages = ['/', '/#/contact', '/#/accessibility', '/#/about']
+    let checkedHrefs = []
 
     pages.forEach(page => {
       cy.visit(page)
 
       cy.get('a').each($a => {
         const href = $a.prop('href')
-
-        cy.request({
-          url: href,
-          failOnStatusCode: false,
-        })
-          .should((response) => {
-            expect(response.status).to.not.eq(404)
+        if (!checkedHrefs.includes(href)) {
+          checkedHrefs.push(href)
+          cy.request({
+            url: href,
+            failOnStatusCode: false,
           })
-      })
+            .should((response) => {
+              expect(response.status).to.not.eq(404)
+            })
+          }
+        })
     })
   })
 })
