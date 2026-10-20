@@ -53,7 +53,6 @@
 
 <script>
 import { mapState } from 'vuex'
-import _ from 'lodash'
 
 import ExportPopup from '@/components/ExportPopup.vue'
 import LayerPanel from '@/components/LayerPanel.vue'
@@ -108,12 +107,10 @@ export default {
       if (!this.layerSet) {
         return []
       }
-      let result = flattenLayerSet(this.layerSet)
-      result = result.filter(layer => {
-        const result = _.get(layer.layerObj.properties, 'visible', true)
-        return result
-      })
-      return result
+
+      return flattenLayerSet(this.layerSet).filter(layer =>
+        layer.layerObj.properties?.visible ?? true
+      )
     },
   },
   methods: {
