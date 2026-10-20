@@ -31,7 +31,7 @@ describe('Scenarios: marker selection', () => {
     const name = "Waddenzee"
 
     cy.get('.leaflet-marker-icon')
-      .eq(3)
+      .eq(1)
       .click()
 
     cy.contains(selector('layer-panel'), name)

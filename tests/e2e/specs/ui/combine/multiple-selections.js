@@ -1,26 +1,13 @@
 import { generateSelector as selector } from '../../../lib/generate-selector'
 import mockLayersetData from '../../../mock/layerset.json'
-import mockScenarioData from '../../../mock/scenarios.json'
+import { testVariants } from '../../../support/constants'
 
 const url = '/#/combine/7'
 
 describe('Combine multiple selections: marker selection', () => {
   beforeEach(() => {
     cy.intercept(new RegExp(/GetLayerSet/), mockLayersetData).as('layerset')
-    cy.intercept("POST", new RegExp(/GetScenariosPerBreachGeneric/), (req) => {
-      const { body } = req
-
-      req.continue((res) => {
-        if (body.breachid === 3191) {
-          return res.send(mockScenarioData['3408'])
-        }
-
-        if (body.breachid === 1201) {
-          return res.send(mockScenarioData['1782'])
-        }
-      })
-    })
-    .as('scenario')
+    cy.intercept("POST", new RegExp(/GetScenariosPerBreachGeneric/)).as('scenario')
 
     cy.visit(url)
 
@@ -54,19 +41,19 @@ describe('Combine multiple selections: marker selection', () => {
 
   it('Opens correct layers in panel', () => {
     cy.get('.leaflet-marker-icon')
-      .eq(3)
+      .eq(1)
       .click({ force: true })
     cy.wait('@scenario', { timeout: 4000 })
 
     cy.get('.leaflet-marker-icon')
-      .eq(4)
+      .eq(2)
       .click({ force: true })
     cy.wait('@scenario', { timeout: 4000 })
 
-    cy.contains(selector('layer-panel'), 'Overstroming Maas kans 1/5 per jaar', { timeout: 4000 })
+    cy.contains(selector('layer-panel'), `${testVariants[0].variantName}`, { timeout: 4000 })
     cy.contains(selector('layer-panel'), 'Waterdiepte', { timeout: 4000 })
 
-    cy.contains(selector('layer-panel'), 'Buitendijkse gebieden Zeeuwse Delta 1:10.000', { timeout: 4000 })
+    cy.contains(selector('layer-panel'), `${testVariants[1].variantName}`, { timeout: 4000 })
     cy.contains(selector('layer-panel'), 'Waterdiepte', { timeout: 4000 })
   })
 

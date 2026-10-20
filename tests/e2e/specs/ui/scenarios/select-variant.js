@@ -1,7 +1,8 @@
 import { generateSelector as selector } from '../../../lib/generate-selector'
+import { testVariants } from '../../../support/constants'
 
 // Use Papendrecht as starting point, because it has more than 2 variants
-const url = '/#/scenarios/6/13535?center=51.83468,4.68206&zoom=15'
+const url = `/#/scenarios/6/${testVariants[0].id}?center=51.83468,4.68206&zoom=15`
 
 describe('Scenarios: select variant', () => {
   it('Can select a new variant from the select variant popup', () => {
@@ -22,13 +23,13 @@ describe('Scenarios: select variant', () => {
     cy.get('button').contains('Wijzig variant').click()
 
     // Check if it was opened by looking at the title
-    cy.get('.pop-up__title').contains('Selecteer variant voor Noord km 977.7 (dkr16 AW112)')
+    cy.get('.pop-up__title').contains(`Selecteer variant voor ${testVariants[0].name}`)
 
     // Check if there are results being displayed
     cy.get(selector('resultItem')).should('have.length.above', 0)
 
-    // First item should be selected in this scenario
-    cy.get(`${selector('resultItem')}:first-child > input[type=radio]`).should('be.checked')
+    // Last item should be selected in this scenario
+    cy.get(`${selector('resultItem')}:last-child > input[type=radio]`).should('be.checked')
 
     let title = ''
 
