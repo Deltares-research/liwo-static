@@ -1,5 +1,7 @@
 import mockLayerSetData from '../../mock/layerset.json'
 import { generateSelector as selector } from '../../lib/generate-selector'
+import { testVariants } from '../../support/constants'
+
 
 const url = '/#/viewer/1?center=52,5&zoom=4'
 
@@ -33,7 +35,7 @@ describe('URL', () => {
   it('Changes when scenario ID is changed', () => {
     cy.intercept(new RegExp(/GetLayerSet/), mockLayerSetData).as('layerset')
     cy.intercept(new RegExp(/GetMap/), '').as('map')
-    cy.visit('/#/combine/7/19422,19428?center=52.38608,5.34897&zoom=10')
+    cy.visit(`/#/combine/7/${testVariants.map(variant => variant.id).join(',')}?center=52.38608,5.34897&zoom=10`)
 
     cy.get(selector('layer-panel')).should('be.visible')
     cy.wait('@layerset', { timeout: 4000 })
@@ -46,6 +48,6 @@ describe('URL', () => {
       .click({ force: true })
 
     cy.url()
-      .should('contain', '/combine/7/19428', { timeout: 30000 })
+      .should('contain', `/combine/7/${testVariants[0].id}`, { timeout: 30000 })
   })
 })
