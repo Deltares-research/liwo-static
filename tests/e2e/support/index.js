@@ -21,3 +21,9 @@ import '@cypress/skip-test/support'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+afterEach(function () {
+  if (this.currentTest.state === 'failed') {
+    cy.stop()
+  }
+})
