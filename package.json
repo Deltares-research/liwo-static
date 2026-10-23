@@ -45,7 +45,7 @@
     "chai-things": "^0.2.0",
     "cypress": "^15.17.0",
     "eslint": "^9.39.1",
-    "eslint-plugin-cypress": "^5.2.0",
+    "eslint-plugin-cypress": "^6.4.2",
     "eslint-plugin-vue": "^10.9.2",
     "happy-dom": "^20.10.6",
     "imports-loader": "^5.0.0",
