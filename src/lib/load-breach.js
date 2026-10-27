@@ -1,5 +1,3 @@
-import _ from 'lodash'
-
 import {
   BREACH_LAYERS_EN,
   BREACH_LAYERS_NL,
@@ -8,336 +6,377 @@ import {
   BREACH_STRESS,
   getLayerType,
 } from "@/lib/liwo-identifiers";
-import mapConfig from '../map.config'
-import { fetchWithRetry } from './fetch-with-retry'
+import mapConfig from "../map.config";
+import { fetchWithRetry } from "./fetch-with-retry";
+import { cleanLayerSet, flattenLayerSet, normalizeLayer } from "./layer-parser";
+import { getCleanLayerSetByRawLayerSet } from "./load-layersets";
 
-const headers = { Accept: 'application/json', 'Content-Type': 'application/json' }
+const headers = {
+  Accept: "application/json",
+  "Content-Type": "application/json",
+};
 
-export async function loadBreach (feature) {
+export async function loadBreach(feature) {
   // Load breach data from the geoserver
 
   // the breach id is hidden here
-  const breachId = feature.properties.id
+  const breachId = feature.properties.id;
 
   // TODO: there's also a code PRIM, should we not use that?
-  const layerType = getLayerType(feature)
+  const layerType = getLayerType(feature);
 
   // we have different breach layers, depending on the type
-  let breachLayers = []
+  let breachLayers = [];
   if (
     layerType === BREACH_PRIMARY ||
     layerType === BREACH_REGIONAL ||
     layerType === BREACH_STRESS
   ) {
-    breachLayers = BREACH_LAYERS_NL
+    breachLayers = BREACH_LAYERS_NL;
   } else {
-    breachLayers = [`${layerType}.${breachId}`]
+    breachLayers = [`${layerType}.${breachId}`];
   }
 
   const promises = breachLayers.map(
     // pass along  layerSetId for notifications
-    layerName => loadBreachLayer(breachId, layerName)
-  )
+    (layerName) => loadBreachLayer(breachId, layerName),
+  );
 
   // the layers are a bit out of order, so restructure them
   // TODO: consider making this async, otherwise we lock the browser
-  const results = await Promise.all(promises)
+  const results = await Promise.all(promises);
 
   // aggregate notifications and variantFilterProperties from all band results
-  const notifications = []
-  const variantFilterProperties = []
-  let bands = []
-  results.forEach(r => {
-    notifications.push(...r.notifications)
-    variantFilterProperties.push(...r.variantFilterProperties)
+  const notifications = [];
+  const variantFilterProperties = [];
+  let bands = [];
+  results.forEach((r) => {
+    notifications.push(...r.notifications);
+    variantFilterProperties.push(...r.variantFilterProperties);
     if (r.result) {
-      bands.push(r.result)
+      bands.push(r.result);
     }
-  })
+  });
 
   // merge layers of all unorganized sets
   // and use the feature name
-  const layers = _.flatten(_.map(bands, 'layers'))
+  const layers = bands
+    .map((band) =>
+      band.layers.map((layer) => {
+        return {
+          ...normalizeLayer(layer),
+          breachId,
+        };
+      }),
+    )
+    .flat();
   const layerSet = {
     id: breachId,
     feature: feature,
     name: feature.properties.name,
     title: feature.properties.name,
-    layers: layers
-  }
-  return { layerSet, notifications, variantFilterProperties }
+    layers,
+  };
+
+  return {
+    layerSet: cleanLayerSet(layerSet),
+    notifications,
+    variantFilterProperties,
+  };
 }
 
-export async function computeCombinedScenario (scenarioIds, band) {
+export async function computeCombinedScenario(scenarioIds, band) {
   // combine multiple breachesinto a new scenario
   // Load combined breaches map, computed by the backend
   // The computation is done in Google Earth Engine / HydroEngine
   // the breach id is hidden here
 
-  const selectedLayers = [band]
+  const selectedLayers = [band];
   // load  all the variants
   const promises = selectedLayers.map(
     // pass along  layerSetId for notifications
-    bandName => loadBreachesLayer(scenarioIds, bandName)
-  )
+    (bandName) => loadBreachesLayer(scenarioIds, bandName),
+  );
   // the layers are a bit out of order, so restructure them
   // TODO: consider making this async, otherwise we lock the browser
-  const results = await Promise.all(promises)
+  const results = await Promise.all(promises);
 
   // aggregate notifications from all band results
-  const notifications = []
-  let bands = []
-  results.forEach(r => {
-    notifications.push(...r.notifications)
+  const notifications = [];
+  let bands = [];
+  results.forEach((r) => {
+    notifications.push(...r.notifications);
     if (r.result) {
-      bands.push(r.result)
+      bands.push(r.result);
     }
-  })
+  });
 
   // convert bands to layerlike objects
   const layers = bands.map((band) => {
     // if it looks like a layer, then it is a layer
     // lookup the translation
-    const bandNl = _.get(BREACH_LAYERS_EN, band.band)
-    const title = bandNl
-    band.title = title
-    band.metadata = _.clone(band)
+    const bandNl = BREACH_LAYERS_EN[band.band];
+    const title = bandNl;
+    band.title = title;
+    band.metadata = { ...band };
     band.map = {
       title: `Gecombineerd Scenario [${getUnitByBand(band)}]`,
-      type: 'tile',
+      type: "tile",
       url: band.url,
-      namespace: 'LIWO_MEGO',
-    }
+      namespace: "LIWO_MEGO",
+    };
     const layer = {
       id: band.mapid,
       variants: [band],
       title: title,
-    }
-    return layer
-  })
-  const title = 'Gecombineerd scenario'
-  const layerSet = {
-    id: scenarioIds.join(','),
-    scenarioIds,
+      name: title,
+    };
+    return layer;
+  });
+  const title = "Gecombineerd scenario";
+
+  const layerSet = await getCleanLayerSetByRawLayerSet({
+    id: scenarioIds.join(","),
     name: title,
     title: title,
-    layers
-  }
-  return { layerSet, notifications }
+    feature: {},
+    layers,
+  });
+  return { layerSet, notifications };
 }
 
-export async function getScenarioInfo (scenarioIds, featureInfoByScenarioId) {
-  const services = await mapConfig.getServices()
-  const hydroEngine = services.HYDRO_ENGINE_URL
+export async function getScenarioInfo(scenarioIds, featureInfoByScenarioId) {
+  const services = await mapConfig.getServices();
+  const hydroEngine = services.HYDRO_ENGINE_URL;
 
-  const url = `${hydroEngine}/get_liwo_scenarios_info`
+  const url = `${hydroEngine}/get_liwo_scenarios_info`;
 
   /* pass scenario ids under the name liwo_ids */
   const body = {
     liwo_ids: scenarioIds,
-    collection: services.DATASET_VERSION
-  }
+    collection: services.DATASET_VERSION,
+  };
 
   const resp = await fetch(url, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(body)
-  })
+    body: JSON.stringify(body),
+  });
 
-  const data = await resp.json()
+  const data = await resp.json();
 
   if (!data) {
-    console.warn('no data received', resp, data)
-    return
+    console.warn("no data received", resp, data);
+    return;
   }
 
-  const bandCounts = _.countBy(data.features.flatMap((x) => x.properties.band_names))
+  const bandCounts = data.features
+    .flatMap((x) => x.properties.band_names)
+    .reduce((acc, val) => {
+      acc[val] = (acc[val] || 0) + 1;
+      return acc;
+    }, {});
 
-  const featureCollectionProperties = _.get(data, 'properties', {})
-  featureCollectionProperties.bandCounts = bandCounts
-  data.properties = featureCollectionProperties
+  const featureCollectionProperties = data?.properties ?? {};
+  featureCollectionProperties.bandCounts = bandCounts;
+  data.properties = featureCollectionProperties;
 
   if (featureInfoByScenarioId) {
-    data.features.forEach(
-      (feature) => {
-        const extraProperties = _.get(featureInfoByScenarioId, feature.properties.Scenario_ID, {})
-        // store the extra properties in the feature
-        Object.assign(feature.properties, extraProperties)
-      }
-    )
+    data.features.forEach((feature) => {
+      const extraProperties =
+        featureInfoByScenarioId?.[feature.properties.Scenario_ID] ?? {};
+      // store the extra properties in the feature
+      Object.assign(feature.properties, extraProperties);
+    });
   }
 
-  return data
+  return data;
 }
 
 let filterVariantsPromise = null;
 
 async function loadFilterVariants() {
-  if(!filterVariantsPromise) {
-    const services = await mapConfig.getServices()
-    const FILTERS_BASE_URL = services.WEBSERVICE_URL_V2
-    const FILTERS_API_URL = `${FILTERS_BASE_URL}/filter_variants`
+  if (!filterVariantsPromise) {
+    const services = await mapConfig.getServices();
+    const FILTERS_BASE_URL = services.WEBSERVICE_URL_V2;
+    const FILTERS_API_URL = `${FILTERS_BASE_URL}/filter_variants`;
 
     filterVariantsPromise = fetch(FILTERS_API_URL, {
-      method: 'GET',
-      mode: 'cors',
-      credentials: 'omit',
-      headers
-    }).then(res => res.json())
-  }
-
-  return filterVariantsPromise
-}
-
-async function loadBreachLayer (breachId, layerName) {
-  // Load the dataset  for a breach
-  const notifications = []
-  const variantFilterProperties = []
-  const services = await mapConfig.getServices()
-  const BREACHES_BASE_URL = services.WEBSERVICE_URL
-  const BREACHES_API_URL = `${BREACHES_BASE_URL}/Tools/FloodImage.asmx/GetScenariosPerBreachGeneric`
-
-  const breachFetch = await fetchWithRetry(
-    BREACHES_API_URL,
-    {
-      method: "POST",
+      method: "GET",
       mode: "cors",
       credentials: "omit",
       headers,
-      body: JSON.stringify({
-        breachid: breachId,
-        layername: layerName,
-      }),
-    }
-  )
-  .then(res => res.json())
-  .catch(() => {
-    notifications.push({
-      message: `Het laden van de kaartlaag "${layerName}" is niet gelukt. Probeer het opnieuw door de kaartlaag nog eens te selecteren.`,
-      type: 'warning',
-      show: true
-    })
-    console.warn('Fetching breach layer failed', `"${layerName}"`)
-    return null
-  })
-
-  const [breachData, filtersData] = await Promise.all([breachFetch, loadFilterVariants()])
-
-  const properties = await filtersData
-
-  if (properties.length) {
-    variantFilterProperties.push({ properties, breachId })
+    }).then((res) => res.json());
   }
 
-  const data = breachData && JSON.parse(breachData.d)
-
-  // get the first layerset if available, otherwise return null
-  let result = null
-  // if this layerset is not available layerset can be null
-  if (_.has(data, '[0].layerset[0]')) {
-    result = { ...data[0].layerset[0] }
-  }
-  return { result, notifications, variantFilterProperties }
+  return filterVariantsPromise;
 }
 
-async function loadBreachesLayer (scenarioIds, band) {
+async function loadBreachLayer(breachId, layerName) {
+  // Load the dataset  for a breach
+  const notifications = [];
+  const variantFilterProperties = [];
+  const services = await mapConfig.getServices();
+  const BREACHES_BASE_URL = services.WEBSERVICE_URL;
+  const BREACHES_API_URL = `${BREACHES_BASE_URL}/Tools/FloodImage.asmx/GetScenariosPerBreachGeneric`;
+
+  const breachFetch = await fetchWithRetry(BREACHES_API_URL, {
+    method: "POST",
+    mode: "cors",
+    credentials: "omit",
+    headers,
+    body: JSON.stringify({
+      breachid: breachId,
+      layername: layerName,
+    }),
+  })
+    .then((res) => res.json())
+    .catch(() => {
+      notifications.push({
+        message: `Het laden van de kaartlaag "${layerName}" is niet gelukt. Probeer het opnieuw door de kaartlaag nog eens te selecteren.`,
+        type: "warning",
+        show: true,
+      });
+      console.warn("Fetching breach layer failed", `"${layerName}"`);
+      return null;
+    });
+
+  const [breachData, filtersData] = await Promise.all([
+    breachFetch,
+    loadFilterVariants(),
+  ]);
+
+  const properties = await filtersData;
+
+  if (properties.length) {
+    variantFilterProperties.push({ properties, breachId });
+  }
+
+  const data = breachData && JSON.parse(breachData.d);
+
+  // get the first layerset if available, otherwise return null
+  let result = null;
+  // if this layerset is not available layerset can be null
+  if (Array.isArray(data) && data[0]?.layerset?.[0] !== undefined) {
+    result = { ...data[0].layerset[0] };
+  }
+  return { result, notifications, variantFilterProperties };
+}
+
+async function loadBreachesLayer(scenarioIds, band) {
   // TODO: choose appropriate reducer for the band
   // The band here relates to  quantitites
-  const notifications = []
-  const services = await mapConfig.getServices()
+  const notifications = [];
+  const services = await mapConfig.getServices();
   const requestOptions = {
-    method: 'POST',
-    mode: 'cors',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    mode: "cors",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       liwo_ids: scenarioIds,
       band,
-      reducer: 'max',
-      collection: services.DATASET_VERSION
-    })
-  }
-  const hydroEngine = services.HYDRO_ENGINE_URL
-  const url = `${hydroEngine}/get_liwo_scenarios`
+      reducer: "max",
+      collection: services.DATASET_VERSION,
+    }),
+  };
+  const hydroEngine = services.HYDRO_ENGINE_URL;
+  const url = `${hydroEngine}/get_liwo_scenarios`;
 
   const result = await fetch(url, requestOptions)
-    .then(resp => {
-      return resp.json()
+    .then((resp) => {
+      return resp.json();
     })
-    .then(json => {
-      const result = { ...json, type: 'tile' }
+    .then((json) => {
+      const result = { ...json, type: "tile" };
       if (result.msg) {
         notifications.push({
-          message: 'Het door u gevraagde gecombineerde resultaat kan niet gemaakt worden. Er zijn kaarlagen beschikbaar voor de gevraagde combinatie.',
-          type: 'warning',
-          show: true
-        })
+          message:
+            "Het door u gevraagde gecombineerde resultaat kan niet gemaakt worden. Er zijn kaarlagen beschikbaar voor de gevraagde combinatie.",
+          type: "warning",
+          show: true,
+        });
       }
-      return result
+      return result;
     })
     .catch((error) => {
       notifications.push({
-        message: 'Het door u gevraagde gecombineerde resultaat kon niet gemaakt worden.',
-        type: 'warning',
-        show: true
-      })
-      console.warn('Combined result failed:', error)
-      return null
-    })
+        message:
+          "Het door u gevraagde gecombineerde resultaat kon niet gemaakt worden.",
+        type: "warning",
+        show: true,
+      });
+      console.warn("Combined result failed:", error);
+      return null;
+    });
 
-  return { result, notifications }
+  return { result, notifications };
 }
 
-export async function getFeatureIdByScenarioId (scenarioId) {
+export async function getFeatureIdByScenarioId(scenarioId) {
   // to know which feature corresponds to a scenario we have to call a webservice.
   // TODO: store scenario info in the features...
 
-  const services = await mapConfig.getServices()
-  const promise = fetch(`${services.WEBSERVICE_URL}/Maps.asmx/GetBreachLocationId`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({ floodsimulationid: scenarioId })
-  })
-    .then(res => res.json())
-    .then(data => JSON.parse(data.d))
-    .then(data => {
+  const services = await mapConfig.getServices();
+  const promise = fetch(
+    `${services.WEBSERVICE_URL}/Maps.asmx/GetBreachLocationId`,
+    {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ floodsimulationid: scenarioId }),
+    },
+  )
+    .then((res) => res.json())
+    .then((data) => JSON.parse(data.d))
+    .then((data) => {
       // add the scenarioId to the result
-      const result = { ...data, scenarioId }
-      return result
-    })
-  return promise
+      const result = { ...data, scenarioId };
+      return result;
+    });
+  return promise;
 }
 
-export async function getFeatureIdsByScenarioIds (scenarioIds) {
+export async function getFeatureIdsByScenarioIds(scenarioIds) {
   // This is very ackward logic to get back the list of feature ids that corresponds to a list of scenario's
-  const promises = scenarioIds.map(getFeatureIdByScenarioId)
-  const responses = await Promise.all(promises)
-  const results = {}
+  const promises = scenarioIds.map(getFeatureIdByScenarioId);
+  const responses = await Promise.all(promises);
+  const results = {};
   // TODO: return more info (featureIdsByScenarioIds)
-  _.each(responses, (response) => {
+  responses.forEach((response) => {
     results[response.scenarioId] = response
   })
-  return results
+  return results;
+}
+
+export function getFeatureByBreachLocationId(layerSet, breachLocationId) {
+  const flatLayers = flattenLayerSet(layerSet);
+  const layers = flatLayers.filter((layer) => layer.geojson);
+  const features = layers.flatMap((layer) => layer.geojson.features);
+  const feature = features.find(
+    (feature) => feature.properties?.id === breachLocationId,
+  );
+
+  return feature;
 }
 
 function getUnitByBand(band) {
   switch (band.band) {
-    case 'affected':
-      return '#/ha'
-    case 'arrivaltime':
-      return 'uur'
-    case 'damage':
-      return '€/ha'
-    case 'fatalities':
-      return '#/ha'
-    case 'riserate':
-      return 'm/h'
-    case 'velocity':
-      return 'm/s'
-    case 'waterdepth':
-      return 'm'
+    case "affected":
+      return "#/ha";
+    case "arrivaltime":
+      return "uur";
+    case "damage":
+      return "€/ha";
+    case "fatalities":
+      return "#/ha";
+    case "riserate":
+      return "m/h";
+    case "velocity":
+      return "m/s";
+    case "waterdepth":
+      return "m";
     default:
-      return '-'
+      return "-";
   }
 }

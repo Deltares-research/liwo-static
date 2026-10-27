@@ -2,7 +2,7 @@
 import { createStore } from 'vuex'
 
 import { loadLayerSetById } from './lib/load-layersets'
-import { flattenLayerSet, normalizeLayerSet, cleanLayerSet } from './lib/layer-parser'
+import { flattenLayerSet } from './lib/layer-parser'
 import buildLayerSetNotifications from './lib/build-layerset-notifications'
 
 export default createStore({
@@ -79,34 +79,25 @@ export default createStore({
   },
   actions: {
     async loadLayerSetById ({ commit, state }, { id }) {
-      // Skip if we already loaded this layerSet
+      /**
+       * Skip if we already loaded this layerSet
+       */
       if (state.layerSetsById?.[id]) {
         return
       }
-      // Load a layerSet
-      // Make  sure you don't add any interaction here  yet.
-      // This should just load and clean up, no filtering, no dependency on any view state
 
-      // load the raw layerSet
-      const layerSetRaw = await loadLayerSetById(id)
-      // the data we get from the api is a bit unorganized so normalize it
-      // Actually I think we're  unnormalizing....
-      // deep clone before and after or look at  json response to compare what changed
-      const layerSetNormalized = normalizeLayerSet(layerSetRaw)
-      // There might be some issues that we need to  fix...
-      const layerSet = cleanLayerSet(layerSetNormalized)
-
-      // The layers are in a deep  structure. Flatten it before  building the notifications
-      const layers = flattenLayerSet(layerSet)
-
-      const currentNotifications = state.notificationsById[id] || []
-      const notifications = [...currentNotifications, ...buildLayerSetNotifications(layers)]
-
-      // TODO: the function is called setLayerSet[s]
-      // but it only loads  the layers of 1 layerSet, make this consistent
+      /**
+       * Load the layerSet and store it in the state
+       */
+      const layerSet = await loadLayerSetById(id)
       commit('setLayerSetById', { id, layerSet: layerSet })
 
-      // TODO: why not in the view...
+      /**
+       * Build the notifications and store it in the state
+       */
+      const layers = flattenLayerSet(layerSet)
+      const currentNotifications = state.notificationsById[id] || []
+      const notifications = [...currentNotifications, ...buildLayerSetNotifications(layers)]
       commit('setNotificationsById', { id, notifications })
     }
   }
