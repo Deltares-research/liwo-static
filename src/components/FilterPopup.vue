@@ -2,7 +2,7 @@
 <pop-up class="filter-popup" title="Filter" @close="$emit('close')">
   <form class="filter-popup__form" id="genericform" novalidate="novalidate">
     <fieldset class="control-group" @change="onProbabilitiesChange" data-tour-id="filter-form-probabilities">
-      <legend class="control-label">Kansklasse:</legend>
+      <legend class="control-label">Filter op kansklasse:</legend>
       <ul class="choice-options">
         <li
           class="choice-options__item"
@@ -43,7 +43,7 @@
           id="probability-imminent-flood"
           v-model="imminentFlood"
         />
-        Dreigende overstroming
+        Inclusief dreigende overstroming
       </label>
     </fieldset>
   </form>
