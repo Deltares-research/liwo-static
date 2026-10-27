@@ -28,7 +28,7 @@ describe('Scenarios: marker selection', () => {
   })
 
   it('Opens correct layers in panel', () => {
-    const name = "Waddenzee"
+    const name = "Onbeschermd_Maas"
 
     cy.get('.leaflet-marker-icon')
       .eq(1)
