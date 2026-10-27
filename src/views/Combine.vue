@@ -397,12 +397,10 @@ export default {
             const checkImminentFlood =
               feature.properties.dreigende_overstroming === 1;
             if (checkImminentFlood) {
-              return this.selectedProbabilities.length > 0
-                ? this.imminentFlood && checkProbabilities
-                : this.imminentFlood;
+              return checkProbabilities && this.imminentFlood;
             }
             return checkProbabilities;
-          })
+          });
         }
 
         // if no probabilities are selected, return an empty array of features

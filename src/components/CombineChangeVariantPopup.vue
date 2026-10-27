@@ -200,9 +200,7 @@ export default {
           variant.properties[this.imminentFloodKey] === 1;
 
         if (hasImminentFlood) {
-          return this.selectedProbabilities.length > 0
-            ? hasProbability && this.imminentFlood
-            : hasImminentFlood;
+          return hasProbability && this.imminentFlood;
         }
 
         return hasProbability;
