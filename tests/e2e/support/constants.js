@@ -2,22 +2,21 @@
  * @note This should be two real variants.
  * Since the live data can be changed and ids could change
  * we need to update this when live data changes so tests keep working
- * These variants should be
- * cy.get('.leaflet-marker-icon').eq(1), cy.get('.leaflet-marker-icon').eq(2),
- * cy.get('.leaflet-marker-icon').eq(3) and cy.get('.leaflet-marker-icon').eq(4)
+ * The first two variants should be
+ * cy.get('.leaflet-marker-icon').eq(1) and cy.get('.leaflet-marker-icon').eq(2)
  */
 export const testVariants = [
   {
-    id: 115917,
-    name: "Waddenzee",
-    variantName: "Buitendijkse gebieden Waddenzee en Waddeneilanden 1:10.000",
-    breachId: 3105
+    id: 115825,
+    name: "Onbeschermd_Maas",
+    variantName: "Onbeschermd gebied Maas 1:10000",
+    breachId: 2233
   },
   {
-    id: 20936,
-    name: "Meren",
-    variantName: "Buitendijkse gebieden Meren 1:10.000",
-    breachId: 2142
+    id: 115778,
+    name: "Hedwige",
+    variantName: "Hedwigepolder_T100000_GISanalyse",
+    breachId: 1977
   },
   {
     id: 20941,
